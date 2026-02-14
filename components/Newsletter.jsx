@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
@@ -22,9 +18,7 @@ export default function Newsletter() {
     try {
       const res = await fetch("/api/newsletter", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
@@ -38,7 +32,7 @@ export default function Newsletter() {
         setMessage("You're subscribed.");
         setEmail("");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
       setMessage("Something went wrong.");
     }
@@ -47,55 +41,101 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="relative pb-28 bg-linear-to-b from-white to-slate-50 overflow-hidden">
-      
-      <div className="relative max-w-3xl mx-auto px-6 text-center">
+    <section className="relative py-20 bg-linear-to-b from-white to-slate-50 overflow-hidden">
+      <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
+
+        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900"
+          className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-slate-900"
         >
           Get weekly EP Investing updates
         </motion.h2>
 
-        <p className="text-slate-600 mt-6 text-lg">
+        <p className="text-slate-600 mt-5 text-base sm:text-lg max-w-xl mx-auto">
           Institutional-grade insights on climate capital and funding opportunities.
         </p>
 
+        {/* Form Wrapper */}
         <form
           onSubmit={handleSubmit}
-          className="mt-10 flex flex-col sm:flex-row items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-lg focus-within:ring-2 focus-within:ring-emerald-500/30 transition"
+          className="mt-10"
         >
-          <input
-            type="email"
-            required
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 px-4 py-3 outline-none text-sm md:text-base bg-transparent"
-          />
+          <div className="
+            flex flex-col
+            sm:flex-row
+            gap-3
+            sm:gap-0
+            bg-white
+            border
+            border-slate-200
+            rounded-2xl
+            shadow-lg
+            overflow-hidden
+            max-w-xl
+            mx-auto
+          ">
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 text-white text-sm font-medium shadow-md hover:bg-emerald-700 transition disabled:opacity-70"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={16} />
-                Subscribing
-              </>
-            ) : (
-              "Subscribe"
-            )}
-          </button>
+            {/* Input */}
+            <input
+              type="email"
+              required
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="
+                w-full
+                px-5
+                py-4
+                text-sm
+                sm:text-base
+                outline-none
+                bg-transparent
+              "
+            />
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+                w-full
+                sm:w-auto
+                px-6
+                py-4
+                sm:py-0
+                bg-emerald-600
+                text-white
+                text-sm
+                font-medium
+                hover:bg-emerald-700
+                transition
+                flex
+                items-center
+                justify-center
+                gap-2
+                disabled:opacity-70
+              "
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={16} />
+                  Subscribing
+                </>
+              ) : (
+                "Subscribe"
+              )}
+            </button>
+          </div>
         </form>
 
+        {/* Status Message */}
         {status !== "idle" && (
           <div
-            className={`mt-4 flex items-center justify-center gap-2 text-sm ${
+            className={`mt-5 flex items-center justify-center gap-2 text-sm ${
               status === "success"
                 ? "text-emerald-600"
                 : "text-red-500"
@@ -110,7 +150,7 @@ export default function Newsletter() {
           </div>
         )}
 
-        <p className="text-xs text-slate-400 mt-4">
+        <p className="text-xs text-slate-400 mt-5">
           No spam. Only signal.
         </p>
       </div>

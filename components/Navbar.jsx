@@ -108,9 +108,9 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-0 left-0 w-full bg-white z-40 pt-24 pb-10 px-6 md:hidden shadow-xl"
+            className="fixed top-0 left-0 w-full bg-white z-40 pt-24 pb-8 px-6 md:hidden shadow-xl"
           >
-            <div className="flex flex-col gap-6 text-lg font-medium text-slate-700">
+            <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
               {navItems.map((item) => {
 const isActive = pathname.endsWith(item.link);
                 return(
@@ -118,7 +118,7 @@ const isActive = pathname.endsWith(item.link);
                   key={item.id}
                   href={item.link}
                   onClick={() => setIsOpen(false)}
-                  className={`${isActive ? "text-emerald-600" : "text-slate-600"} border-b pb-3 hover:text-emerald-600 transition`}
+                  className={`${isActive ? "bg-emerald-50 text-emerald-600" : "text-slate-600"} p-2 rounded-md hover:bg-emerald-50 hover:text-emerald-600 transition`}
                 >
                   {item.name}
                 </Link>

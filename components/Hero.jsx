@@ -46,27 +46,34 @@ export default function Hero() {
 
         {/* Premium Search Box */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="pt-12"
-        >
-          <div className="flex items-center bg-white border border-slate-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-emerald-500/30">
-            
-            <div className="pl-5 text-slate-400">
-              <Search size={20} />
-            </div>
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.4, duration: 0.8 }}
+  className="pt-12"
+>
+  <div className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-emerald-500/30 p-2">
+    
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
 
-            <input
-              placeholder="Search direct air capture, Breakthrough Energy..."
-              className="flex-1 py-4 px-4 text-sm md:text-base outline-none bg-transparent"
-            />
+      {/* Input Wrapper */}
+      <div className="flex items-center flex-1 px-4">
+        <Search size={18} className="text-slate-400 mr-3" />
 
-            <button className="-ml-10 m-2 px-6 py-3 rounded-lg bg-emerald-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:bg-emerald-700 transition-all duration-300">
-              Search
-            </button>
-          </div>
-        </motion.div>
+        <input
+          placeholder="Search direct air capture, Breakthrough Energy..."
+          className="w-full py-3 text-sm md:text-base outline-none bg-transparent placeholder:text-slate-400"
+        />
+      </div>
+
+      {/* Button */}
+      <button className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 text-white text-sm font-medium shadow-md hover:bg-emerald-700 hover:shadow-lg transition-all duration-300">
+        Search
+      </button>
+
+    </div>
+  </div>
+</motion.div>
+
 
         {/* Tag Pills */}
         <motion.div
