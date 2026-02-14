@@ -71,10 +71,10 @@ export default function StartHere() {
               className="group relative bg-white border border-slate-200/70 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300"
             >
               {/* Subtle top accent line */}
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-green-500 to-emerald-400 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 rounded-t-2xl" />
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-emerald-500 to-emerald-400 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 rounded-t-2xl" />
 
               {/* Icon */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-green-50 text-green-600 mb-6 group-hover:scale-105 transition">
+              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-6 group-hover:scale-105 transition">
                 <item.icon size={22} />
               </div>
 
@@ -89,7 +89,7 @@ export default function StartHere() {
               </p>
 
               {/* CTA */}
-              <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-green-600 group-hover:gap-3 transition-all">
+              <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-600 group-hover:gap-3 transition-all">
                 {item.btn}
                 <ArrowRight size={16} />
               </div>

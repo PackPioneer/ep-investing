@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 
 const tags = [
   "direct_air_capture",
-  "green_hydrogen",
+  "emerald_hydrogen",
   "nuclear_technologies",
   "carbon_capture",
 ];
@@ -15,7 +15,7 @@ export default function Hero() {
     <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white pt-32 pb-28">
       
       {/* Subtle Background Glow */}
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-200 h-[50%] bg-green-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-200 h-[50%] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         
@@ -27,7 +27,7 @@ export default function Hero() {
           className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.1] text-slate-900"
         >
           Climate investing intelligence —
-          <span className="block bg-linear-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+          <span className="block bg-linear-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
             built for action.
           </span>
         </motion.h1>
@@ -51,7 +51,7 @@ export default function Hero() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="pt-12"
         >
-          <div className="flex items-center bg-white border border-slate-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500/30">
+          <div className="flex items-center bg-white border border-slate-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-emerald-500/30">
             
             <div className="pl-5 text-slate-400">
               <Search size={20} />
@@ -62,7 +62,7 @@ export default function Hero() {
               className="flex-1 py-4 px-4 text-sm md:text-base outline-none bg-transparent"
             />
 
-            <button className="-ml-10 m-2 px-6 py-3 rounded-lg bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:bg-green-700 transition-all duration-300">
+            <button className="-ml-10 m-2 px-6 py-3 rounded-lg bg-emerald-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:bg-emerald-700 transition-all duration-300">
               Search
             </button>
           </div>

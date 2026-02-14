@@ -49,7 +49,7 @@ export default function Navbar() {
           >
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 bg-linear-to-br from-green-500 to-green-700 rounded-md shadow-sm group-hover:scale-105 transition" />
+              <div className="w-7 h-7 bg-linear-to-br from-emerald-500 to-emerald-700 rounded-md shadow-sm group-hover:scale-105 transition" />
               <span className="font-semibold text-lg tracking-tight text-slate-900">
                 EP Investing
               </span>
@@ -65,12 +65,12 @@ export default function Navbar() {
                   href={item.link}
                   className={"relative group"}
                 >
-                  <span className={`${isActive ? "text-green-600" : "text-slate-600"} transition-colors group-hover:text-slate-900`}>
+                  <span className={`${isActive ? "text-emerald-600" : "text-slate-600"} transition-colors group-hover:text-slate-900`}>
                     {item.name}
                   </span>
 
                   {/* Premium Underline Animation */}
-                  <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-emerald-600 transition-all duration-300 group-hover:w-full" />
                 </Link>
                 )
               })}
@@ -79,9 +79,9 @@ export default function Navbar() {
             {/* Right Section */}
             <div className="flex items-center gap-4">
               {/* Desktop CTA */}
-              <Link href={'/get-matched'} className="hidden md:inline-flex relative overflow-hidden px-5 py-2 rounded-md bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all">
+              <Link href={'/get-matched'} className="hidden md:inline-flex relative overflow-hidden px-5 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all">
                 <span className="relative z-10">Get Matched</span>
-                <span className="absolute inset-0 bg-linear-to-r from-green-500 to-green-700 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                <span className="absolute inset-0 bg-linear-to-r from-emerald-500 to-emerald-700 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               </Link>
 
               {/* Mobile Hamburger */}
@@ -118,14 +118,14 @@ const isActive = pathname.endsWith(item.link);
                   key={item.id}
                   href={item.link}
                   onClick={() => setIsOpen(false)}
-                  className={`${isActive ? "text-green-600" : "text-slate-600"} border-b pb-3 hover:text-green-600 transition`}
+                  className={`${isActive ? "text-emerald-600" : "text-slate-600"} border-b pb-3 hover:text-emerald-600 transition`}
                 >
                   {item.name}
                 </Link>
                 )
               })}
 
-              <Link href={'/get-matched'} onClick={() => setIsOpen(false)} className="text-center mt-6 bg-green-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
+              <Link href={'/get-matched'} onClick={() => setIsOpen(false)} className="text-center mt-6 bg-emerald-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
                 Get Matched
               </Link>
             </div>

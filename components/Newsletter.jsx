@@ -47,7 +47,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="relative py-32 bg-linear-to-b from-white to-slate-50 overflow-hidden">
+    <section className="relative pb-28 bg-linear-to-b from-white to-slate-50 overflow-hidden">
       
       <div className="relative max-w-3xl mx-auto px-6 text-center">
         <motion.h2
@@ -66,7 +66,7 @@ export default function Newsletter() {
 
         <form
           onSubmit={handleSubmit}
-          className="mt-10 flex flex-col sm:flex-row items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-lg focus-within:ring-2 focus-within:ring-green-500/30 transition"
+          className="mt-10 flex flex-col sm:flex-row items-center gap-4 bg-white border border-slate-200 rounded-xl p-3 shadow-lg focus-within:ring-2 focus-within:ring-emerald-500/30 transition"
         >
           <input
             type="email"
@@ -80,7 +80,7 @@ export default function Newsletter() {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white text-sm font-medium shadow-md hover:bg-green-700 transition disabled:opacity-70"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-600 text-white text-sm font-medium shadow-md hover:bg-emerald-700 transition disabled:opacity-70"
           >
             {loading ? (
               <>
@@ -97,7 +97,7 @@ export default function Newsletter() {
           <div
             className={`mt-4 flex items-center justify-center gap-2 text-sm ${
               status === "success"
-                ? "text-green-600"
+                ? "text-emerald-600"
                 : "text-red-500"
             }`}
           >

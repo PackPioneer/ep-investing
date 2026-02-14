@@ -31,7 +31,7 @@ const items = [
 
 export default function ExploreSection() {
   return (
-    <section className="relative bg-white overflow-hidden">
+    <section className="relative bg-white overflow-hidden pb-28">
       
       {/* Subtle background depth */}
       <div className="absolute inset-0 bg-linear-to-b from-slate-50/60 to-white pointer-events-none" />
@@ -64,10 +64,10 @@ export default function ExploreSection() {
               className="group relative bg-white border border-slate-200/70 rounded-2xl p-10 shadow-sm hover:shadow-2xl transition-all duration-300"
             >
               {/* Hover Accent Glow */}
-              <div className="absolute inset-0 rounded-2xl bg-green-500/5 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none" />
 
               {/* Icon */}
-              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-green-50 text-green-600 mb-8 group-hover:scale-105 transition">
+              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-8 group-hover:scale-105 transition">
                 <item.icon size={24} />
               </div>
 
@@ -82,7 +82,7 @@ export default function ExploreSection() {
               </p>
 
               {/* CTA */}
-              <div className="mt-8 inline-flex items-center gap-2 text-green-600 font-medium text-sm group-hover:gap-3 transition-all">
+              <div className="mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
                 {item.btn}
                 <ArrowUpRight size={16} />
               </div>
