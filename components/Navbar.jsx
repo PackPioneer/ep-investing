@@ -125,7 +125,7 @@ const isActive = pathname.endsWith(item.link);
                 )
               })}
 
-              <Link href={'/get-matched'} className="text-center mt-6 bg-green-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
+              <Link href={'/get-matched'} onClick={() => setIsOpen(false)} className="text-center mt-6 bg-green-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
                 Get Matched
               </Link>
             </div>
