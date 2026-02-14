@@ -15,7 +15,7 @@ export default function Hero() {
     <section className="relative overflow-hidden bg-linear-to-b from-white via-slate-50 to-white pt-32 pb-28">
       
       {/* Subtle Background Glow */}
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-200 h-200 bg-green-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-200 h-[50%] bg-green-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         
