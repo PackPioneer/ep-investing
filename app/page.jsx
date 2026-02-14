@@ -1,7 +1,15 @@
+import ExploreSection from "@/components/ExploreSection"
+import Hero from "@/components/Hero"
+import Newsletter from "@/components/Newsletter"
+import StartHere from "@/components/StartHere"
+
 const page = () => {
   return (
     <div>
-      <h2>Home Page</h2>
+      <Hero />
+      <StartHere />
+      <ExploreSection />
+      <Newsletter />
     </div>
   )
 }
