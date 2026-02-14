@@ -4,19 +4,25 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  "Companies",
-  "Investors",
-  "Grants",
-  "Jobs",
-  "Experts",
-  "Insights",
+  {
+    id: 1,
+    name: "Investors",
+    link: "/investors"
+  },
+  {
+    id: 2,
+    name: "Founders",
+    link: "/founders"
+  },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,30 +56,33 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-              {navItems.map((item) => (
-                <Link
-                  key={item}
-                  href="#"
-                  className="relative group"
+            <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+              {navItems.map((item) => {
+                const isActive = pathname.endsWith(item.link);
+                return(
+                  <Link
+                  key={item.id}
+                  href={item.link}
+                  className={"relative group"}
                 >
-                  <span className="transition-colors group-hover:text-slate-900">
-                    {item}
+                  <span className={`${isActive ? "text-green-600" : "text-slate-600"} transition-colors group-hover:text-slate-900`}>
+                    {item.name}
                   </span>
 
                   {/* Premium Underline Animation */}
                   <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full" />
                 </Link>
-              ))}
+                )
+              })}
             </nav>
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
               {/* Desktop CTA */}
-              <button className="hidden md:inline-flex relative overflow-hidden px-5 py-2 rounded-md bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all">
+              <Link href={'/get-matched'} className="hidden md:inline-flex relative overflow-hidden px-5 py-2 rounded-md bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg transition-all">
                 <span className="relative z-10">Get Matched</span>
                 <span className="absolute inset-0 bg-linear-to-r from-green-500 to-green-700 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-              </button>
+              </Link>
 
               {/* Mobile Hamburger */}
               <button
@@ -102,20 +111,23 @@ export default function Navbar() {
             className="fixed top-0 left-0 w-full bg-white z-40 pt-24 pb-10 px-6 md:hidden shadow-xl"
           >
             <div className="flex flex-col gap-6 text-lg font-medium text-slate-700">
-              {navItems.map((item) => (
-                <Link
-                  key={item}
-                  href="#"
+              {navItems.map((item) => {
+const isActive = pathname.endsWith(item.link);
+                return(
+                  <Link
+                  key={item.id}
+                  href={item.link}
                   onClick={() => setIsOpen(false)}
-                  className="border-b pb-3 hover:text-green-600 transition"
+                  className={`${isActive ? "text-green-600" : "text-slate-600"} border-b pb-3 hover:text-green-600 transition`}
                 >
-                  {item}
+                  {item.name}
                 </Link>
-              ))}
+                )
+              })}
 
-              <button className="mt-6 bg-green-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
+              <Link href={'/get-matched'} className="text-center mt-6 bg-green-600 text-white py-3 rounded-md shadow-md hover:shadow-lg transition">
                 Get Matched
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}
