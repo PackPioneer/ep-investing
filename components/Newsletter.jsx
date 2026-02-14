@@ -41,7 +41,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="relative py-20 bg-linear-to-b from-white to-slate-50 overflow-hidden">
+    <section className="relative pb-20 bg-linear-to-b from-white to-slate-50 overflow-hidden">
       <div className="max-w-3xl mx-auto px-5 sm:px-6 text-center">
 
         {/* Heading */}
