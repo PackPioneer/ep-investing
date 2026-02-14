@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Building2, Landmark, CheckCircle2, ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default function FoundersPage() {
   return (
@@ -12,7 +13,7 @@ export default function FoundersPage() {
         {/* Subtle background layer */}
         <div className="absolute inset-0 bg-linear-to-br from-emerald-50 via-white to-slate-100 opacity-70" />
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-20 lg:py-32">
           <div className="max-w-3xl">
 
             <motion.div
@@ -20,7 +21,7 @@ export default function FoundersPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-slate-900">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-slate-900">
                 For Founders
               </h1>
 
@@ -29,17 +30,17 @@ export default function FoundersPage() {
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-7 py-3.5 rounded-xl font-medium transition shadow-md hover:shadow-lg">
+                <Link href={'/get-matched'} className="bg-emerald-600 hover:bg-emerald-700 text-white px-7 py-3.5 rounded-xl font-medium transition shadow-md hover:shadow-lg text-center">
                   Get Matched
-                </button>
+                </Link>
 
-                <button className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition">
+                <Link href={'/investors'} className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition text-center">
                   Browse Investors
-                </button>
+                </Link>
 
-                <button className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition">
+                <Link href={'/grants'} className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition text-center">
                   Browse Grants
-                </button>
+                </Link>
               </div>
             </motion.div>
 
@@ -106,7 +107,7 @@ export default function FoundersPage() {
 
 
       {/* ================= APPLICATION SECTION ================= */}
-      <section className="bg-slate-900 text-white py-20 lg:py-28">
+      <section className=" text-slate-900 py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-6 lg:px-8">
 
           <div className="text-center max-w-2xl mx-auto">
