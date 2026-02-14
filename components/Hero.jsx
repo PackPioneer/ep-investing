@@ -24,7 +24,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-5xl md:text-6xl font-semibold tracking-tight leading-[1.1] text-slate-900"
+          className="text-4xl md:text-6xl font-semibold tracking-tight leading-[1.1] text-slate-900"
         >
           Climate investing intelligence —
           <span className="block bg-linear-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
@@ -49,7 +49,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="mt-12"
+          className="pt-12"
         >
           <div className="flex items-center bg-white border border-slate-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500/30">
             
@@ -62,7 +62,7 @@ export default function Hero() {
               className="flex-1 py-4 px-4 text-sm md:text-base outline-none bg-transparent"
             />
 
-            <button className="m-2 px-6 py-3 rounded-lg bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:bg-green-700 transition-all duration-300">
+            <button className="-ml-10 m-2 px-6 py-3 rounded-lg bg-green-600 text-white text-sm font-medium shadow-md hover:shadow-lg hover:bg-green-700 transition-all duration-300">
               Search
             </button>
           </div>

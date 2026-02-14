@@ -38,7 +38,7 @@ const items = [
 
 export default function StartHere() {
   return (
-    <section className="relative py-28 bg-linear-to-b from-white to-slate-50">
+    <section className="relative pb-28 bg-linear-to-b from-white to-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Heading */}

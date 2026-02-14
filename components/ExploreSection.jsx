@@ -31,7 +31,7 @@ const items = [
 
 export default function ExploreSection() {
   return (
-    <section className="relative py-32 bg-white overflow-hidden">
+    <section className="relative bg-white overflow-hidden">
       
       {/* Subtle background depth */}
       <div className="absolute inset-0 bg-linear-to-b from-slate-50/60 to-white pointer-events-none" />
