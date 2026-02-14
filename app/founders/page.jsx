@@ -1,94 +1,102 @@
 "use client"
 
 import { motion } from "framer-motion"
-import {
-  Building2,
-  Landmark,
-  CheckCircle2,
-  ArrowRight
-} from "lucide-react"
+import { Building2, Landmark, CheckCircle2, ArrowRight } from "lucide-react"
 
 export default function FoundersPage() {
   return (
-    <div className="bg-[#F8FAFC] text-slate-900">
+    <div className="bg-[#F5F7FA] text-slate-900">
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden border-b bg-linear-to-b from-white to-slate-50">
-        <div className="max-w-7xl mx-auto px-6 py-24">
+      <section className="relative overflow-hidden bg-white">
+        {/* Subtle background layer */}
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-50 via-white to-slate-100 opacity-70" />
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl"
-          >
-            <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-tight">
-              For Founders
-            </h1>
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+          <div className="max-w-3xl">
 
-            <p className="mt-6 text-xl text-slate-600 leading-relaxed">
-              Raise faster with structured investor discovery.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-slate-900">
+                For Founders
+              </h1>
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition shadow-sm">
-                Get Matched
-              </button>
+              <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed">
+                Structured investor and grant discovery for serious climate founders.
+              </p>
 
-              <button className="border border-slate-300 bg-white px-6 py-3 rounded-xl font-medium hover:bg-slate-100 transition">
-                Browse Investors
-              </button>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-7 py-3.5 rounded-xl font-medium transition shadow-md hover:shadow-lg">
+                  Get Matched
+                </button>
 
-              <button className="border border-slate-300 bg-white px-6 py-3 rounded-xl font-medium hover:bg-slate-100 transition">
-                Browse Grants
-              </button>
-            </div>
-          </motion.div>
+                <button className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition">
+                  Browse Investors
+                </button>
+
+                <button className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition">
+                  Browse Grants
+                </button>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
+
 
       {/* ================= WHAT YOU GET ================= */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-semibold text-center tracking-tight">
-            What you get
-          </h2>
+      <section className="py-20 lg:py-28">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
 
-          <div className="mt-16 grid md:grid-cols-3 gap-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight">
+              What you get
+            </h2>
+            <p className="mt-4 text-slate-600">
+              Precision matching designed for high-quality capital alignment.
+            </p>
+          </div>
 
-            {/* Card 1 */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
-              <Building2 className="text-emerald-600" size={32} />
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+
+            {/* Card */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <Building2 className="text-emerald-600" size={24} />
+              </div>
               <h3 className="mt-6 text-lg font-semibold">
-                Investors aligned to your stage
+                Stage-Aligned Investors
               </h3>
               <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-                Get matched with investors focused on your sector, 
-                traction, and fundraising round.
+                Investors filtered by sector, traction, and round — not generic lists.
               </p>
             </div>
 
-            {/* Card 2 */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
-              <Landmark className="text-emerald-600" size={32} />
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <Landmark className="text-emerald-600" size={24} />
+              </div>
               <h3 className="mt-6 text-lg font-semibold">
-                Grants relevant to your work
+                Curated Grants
               </h3>
               <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-                Curated grant opportunities matched to your focus area 
-                with smart deadline tracking.
+                Deadline-aware grants relevant to your technology and geography.
               </p>
             </div>
 
-            {/* Card 3 */}
-            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
-              <CheckCircle2 className="text-emerald-600" size={32} />
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <CheckCircle2 className="text-emerald-600" size={24} />
+              </div>
               <h3 className="mt-6 text-lg font-semibold">
-                Clear “why matched” insights
+                Transparent Match Logic
               </h3>
               <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-                Transparent reasoning behind each investor or grant 
-                recommendation.
+                Clear explanations on why each investor or grant fits your company.
               </p>
             </div>
 
@@ -96,22 +104,21 @@ export default function FoundersPage() {
         </div>
       </section>
 
-      {/* ================= MATCH SECTION ================= */}
-      <section className="bg-white border-t py-24">
-        <div className="max-w-4xl mx-auto px-6">
 
-          <div className="text-center">
-            <h2 className="text-3xl font-semibold tracking-tight">
+      {/* ================= APPLICATION SECTION ================= */}
+      <section className="bg-slate-900 text-white py-20 lg:py-28">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8">
+
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight">
               Get Matched with Investors & Grants
             </h2>
-            <p className="mt-4 text-slate-600">
-              Tell us about your company — receive personalized, 
-              pre-vetted investors and grants.
+            <p className="mt-4 text-slate-400">
+              Submit your company details. We curate, filter, and send qualified capital opportunities.
             </p>
           </div>
 
-          {/* Form Card */}
-          <div className="mt-14 bg-white p-10 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="mt-14 bg-white text-slate-900 rounded-3xl p-8 lg:p-10 shadow-2xl">
 
             <div className="grid gap-6">
 
@@ -120,7 +127,7 @@ export default function FoundersPage() {
                 className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 outline-none"
               />
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid sm:grid-cols-2 gap-6">
                 <input
                   placeholder="Work Email"
                   className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 outline-none"
@@ -146,12 +153,12 @@ export default function FoundersPage() {
                 <option>Asia</option>
               </select>
 
-              <button className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition flex items-center justify-center gap-2">
+              <button className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-xl font-medium transition flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                 Get Matched <ArrowRight size={18} />
               </button>
 
-              <p className="text-sm text-slate-500 text-center mt-2">
-                We’ll send relevant investors & grants shortly.
+              <p className="text-sm text-slate-500 text-center">
+                We respond within 48 hours.
               </p>
 
             </div>
