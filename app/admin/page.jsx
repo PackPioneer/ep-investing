@@ -1,15 +1,23 @@
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
 
-export default async function AdminPage() {
-  const user = await currentUser();
+import Card from "./components/Card";
 
+export default function AdminDashboard() {
   return (
-    <section className="h-screen">
-      <div className="flex items-start justify-start mx-auto max-w-7xl pt-32 px-5">
-      <h1 className="text-3xl font-bold">
-        Welcome {user?.firstName}
+    <div>
+
+      <h1 className="text-3xl font-semibold mb-8">
+        Dashboard
       </h1>
+
+      <div className="grid md:grid-cols-3 gap-6">
+
+        <Card title="Investors" value="120+" />
+        <Card title="Companies" value="80+" />
+        <Card title="Grants" value="45+" />
+
+      </div>
+
     </div>
-    </section>
   );
 }
