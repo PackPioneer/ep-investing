@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import axios from "axios";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
@@ -11,34 +12,33 @@ export default function Newsletter() {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setStatus("idle");
+  e.preventDefault();
+  setLoading(true);
+  setStatus("idle");
 
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+  try {
+    await axios.post("/api/newsletter", { email });
 
-      const data = await res.json();
+    setStatus("success");
+    setMessage("You're subscribed.");
+    setEmail("");
+  } catch (err) {
+    setStatus("error");
 
-      if (!res.ok) {
-        setStatus("error");
-        setMessage(data.message);
-      } else {
-        setStatus("success");
-        setMessage("You're subscribed.");
-        setEmail("");
-      }
-    } catch {
-      setStatus("error");
+    if (err.response) {
+      // Server responded with error
+      setMessage(err.response.data?.message || "Something went wrong.");
+    } else if (err.request) {
+      // No response received
+      setMessage("Server not responding.");
+    } else {
+      // Other errors
       setMessage("Something went wrong.");
     }
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
 
   return (
     <section className="relative pb-20 bg-linear-to-b from-white to-slate-50 overflow-hidden">
