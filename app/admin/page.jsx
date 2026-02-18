@@ -4,7 +4,7 @@ import Card from "./components/Card";
 
 export default function AdminDashboard() {
   return (
-    <div>
+    <div className="max-w-6xl mx-auto">
 
       <h1 className="text-3xl font-semibold mb-8">
         Dashboard

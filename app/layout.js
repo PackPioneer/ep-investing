@@ -3,6 +3,7 @@ import "./globals.css";
 // import Navbar from "@/components/Navbar";
 // import Footer from "@/components/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,10 @@ export default function RootLayout({ children }) {
       >
         {/* <Navbar /> */}
         {children}
+        <Toaster
+  position="top-center"
+  reverseOrder={false}
+/>
         {/* <Footer /> */}
       </body>
     </html>

@@ -27,14 +27,18 @@ export async function GET(_request, context) {
     );
   }
 }
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
     await connectDB();
+
+        // ✅ unwrap params
+    const { params } = context;
+    const { id } = await params;
 
     const body = await req.json();
 
     const updated = await Investor.findByIdAndUpdate(
-      params.id,
+      id,
       body,
       { new: true }
     );
@@ -45,11 +49,15 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(_req, { params }) {
+export async function DELETE(_req, context) {
   try {
     await connectDB();
 
-    await Investor.findByIdAndDelete(params.id);
+    // ✅ unwrap params
+    const { params } = context;
+    const { id } = await params;
+
+    await Investor.findByIdAndDelete(id);
 
     return NextResponse.json({ message: "Deleted" });
   } catch (error) {
