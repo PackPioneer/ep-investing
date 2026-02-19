@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import SkeletonCard from "@/components/SkeletonCard";
 
 const filters = [
   { label: "1 Day", value: "1d" },
@@ -27,11 +28,14 @@ const chartTabs = [
   { label: "Subscribers", value: "subscribers" },
 ];
 
+
 export default function AdminDashboard() {
   const [filter, setFilter] = useState("7d");
   const [stats, setStats] = useState(null);
   const [chartType, setChartType] = useState("investors");
   const [chartData, setChartData] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+const [loadingChart, setLoadingChart] = useState(true);
 
   useEffect(() => {
     fetchStats();
@@ -41,17 +45,19 @@ export default function AdminDashboard() {
     fetchChart();
   }, [chartType]);
 
-  const fetchStats = async () => {
-    const res = await axios.get(`/api/admin/stats?filter=${filter}`);
-    setStats(res.data);
-  };
+const fetchStats = async () => {
+  setLoadingStats(true);
+  const res = await axios.get(`/api/admin/stats?filter=${filter}`);
+  setStats(res.data);
+  setLoadingStats(false);
+};
 
-  const fetchChart = async () => {
-    const res = await axios.get(
-      `/api/admin/chart?type=${chartType}`
-    );
-    setChartData(res.data);
-  };
+const fetchChart = async () => {
+  setLoadingChart(true);
+  const res = await axios.get(`/api/admin/chart?type=${chartType}`);
+  setChartData(res.data);
+  setLoadingChart(false);
+};
 
   const formatGrowth = (g) => {
     if (g > 0) return `+${g.toFixed(1)}%`;
@@ -85,32 +91,19 @@ export default function AdminDashboard() {
       {/* Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-
-          <Card
-            title="Investors"
-            value={stats.investors.current}
-            growth={formatGrowth(stats.investors.growth)}
-          />
-
-          <Card
-            title="Companies"
-            value={stats.companies.current}
-            growth={formatGrowth(stats.companies.growth)}
-          />
-
-          <Card
-            title="Grants"
-            value={stats.grants.current}
-            growth={formatGrowth(stats.grants.growth)}
-          />
-
-          <Card
-            title="Subscribers"
-            value={stats.subscribers.current}
-            growth={formatGrowth(stats.subscribers.growth)}
-          />
-
-        </div>
+  {loadingStats
+    ? Array(4)
+        .fill(0)
+        .map((_, i) => <SkeletonCard key={i} />)
+    : (
+      <>
+        <Card title="Investors" value={stats.investors.current} growth={formatGrowth(stats.investors.growth)} />
+        <Card title="Companies" value={stats.companies.current} growth={formatGrowth(stats.companies.growth)} />
+        <Card title="Grants" value={stats.grants.current} growth={formatGrowth(stats.grants.growth)} />
+        <Card title="Subscribers" value={stats.subscribers.current} growth={formatGrowth(stats.subscribers.growth)} />
+      </>
+    )}
+</div>
       )}
 
       {/* Chart Section */}
@@ -139,20 +132,20 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <XAxis dataKey="_id" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="count"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <div className="h-80 flex items-center justify-center">
+  {loadingChart ? (
+    <div className="animate-pulse w-full h-full bg-gray-100 rounded-xl" />
+  ) : (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={chartData}>
+        <XAxis dataKey="_id" />
+        <YAxis />
+        <Tooltip />
+        <Line type="monotone" dataKey="count" strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+  )}
+</div>
 
       </div>
 
