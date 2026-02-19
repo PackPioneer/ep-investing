@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldX, ArrowLeft, Home } from "lucide-react";
+import { ShieldX, ArrowLeft, Home, LogOut } from "lucide-react";
+import { SignOutButton } from "@clerk/nextjs";
 
 export default function NotAuthorizedPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 px-6">
-      
+
       <div className="max-w-md w-full bg-white shadow-xl rounded-2xl p-8 text-center border">
 
         {/* Icon */}
@@ -25,12 +26,13 @@ export default function NotAuthorizedPage() {
         <p className="text-gray-500 text-sm mb-6">
           You do not have permission to access this page.
           <br />
-          Please contact the administrator if you believe this is a mistake.
+          Try logging in with a different account.
         </p>
 
         {/* Actions */}
         <div className="flex flex-col gap-3">
 
+          {/* Home */}
           <Link
             href="/"
             className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-2.5 rounded-lg hover:bg-emerald-700 transition"
@@ -39,13 +41,13 @@ export default function NotAuthorizedPage() {
             Go to Home
           </Link>
 
-          <button
-            onClick={() => window.history.back()}
-            className="flex items-center justify-center gap-2 border py-2.5 rounded-lg hover:bg-gray-50 transition"
-          >
-            <ArrowLeft size={16} />
-            Go Back
-          </button>
+          {/* 🔥 Sign Out */}
+          <SignOutButton redirectUrl="/admin">
+            <button className="flex items-center justify-center gap-2 border border-red-200 text-red-600 py-2.5 rounded-lg hover:bg-red-50 transition">
+              <LogOut size={16} />
+              Sign out & switch account
+            </button>
+          </SignOutButton>
 
         </div>
 
