@@ -1,64 +1,54 @@
 import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+// 1. Define routes that require Admin check
+// We use a negative lookahead (?!/login) to ensure the login page itself isn't protected by this rule
+const isAdminRoute = createRouteMatcher(["/admin((?!/login).*)"]);
 
 const ADMIN_EMAILS =
   process.env.ADMIN_EMAILS?.split(",").map(e => e.trim().toLowerCase()) || [];
 
 export default clerkMiddleware(async (auth, req) => {
-  const { method } = req;
+  const { userId } = await auth();
   const { pathname } = req.nextUrl;
 
-  const { userId } = await auth();
-
-  // 🔐 ADMIN ROUTES
+  // 🔐 PROTECT ADMIN ROUTES
   if (isAdminRoute(req)) {
-    // 1. If NOT logged in → redirect to login
+    // If not logged in, Clerk handles the redirect to your sign-in page
     if (!userId) {
-      return auth().redirectToSignIn(); // ✅ FIX
+      const { redirectToSignIn } = await auth();
+      return redirectToSignIn({ returnBackUrl: req.url });
     }
 
-    // 2. If logged in → check admin
-    let isAdmin = false;
-
+    // If logged in, check if they are in the allowed email list
     try {
       const client = await clerkClient();
       const user = await client.users.getUser(userId);
-
       const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
 
-      isAdmin = ADMIN_EMAILS.includes(email);
+      if (!ADMIN_EMAILS.includes(email || "")) {
+        // Redirect non-admins to a safe page
+        return NextResponse.redirect(new URL("/not-authorized", req.url));
+      }
     } catch (err) {
-      console.error(err);
-    }
-
-    // 3. If not admin → redirect home
-    if (!isAdmin) {
-      return Response.redirect(new URL("/not-authorized", req.url));
+      console.error("Clerk Error:", err);
+      return NextResponse.redirect(new URL("/", req.url));
     }
   }
 
-  // 🔐 API protection
-  if (pathname.startsWith("/api")) {
-    if (method === "GET") return;
-
+  // 🔐 API PROTECTION
+  if (pathname.startsWith("/api") && req.method !== "GET") {
     if (!userId) {
-      return auth().redirectToSignIn();
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    
+    // Admin check for API
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
 
-    let isAdmin = false;
-
-    try {
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
-
-      const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
-
-      isAdmin = ADMIN_EMAILS.includes(email);
-    } catch (err) {}
-
-    if (!isAdmin) {
-      return Response.json({ error: "Unauthorized" }, { status: 403 });
+    if (!ADMIN_EMAILS.includes(email || "")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
 });
