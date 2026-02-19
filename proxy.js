@@ -1,23 +1,54 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 
-const isAdminRoute = createRouteMatcher([
-  "/admin(.*)",
-]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+
+const ADMIN_EMAILS =
+  process.env.ADMIN_EMAILS?.split(",").map(e => e.trim().toLowerCase()) || [];
 
 export default clerkMiddleware(async (auth, req) => {
+
   const { method } = req;
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith("/admin/login")) {
-    return;
+  const { userId } = await auth();
+
+  let isAdmin = false;
+
+  if (userId) {
+    try {
+      const client = await clerkClient(); // ✅ FIX HERE
+
+      const user = await client.users.getUser(userId);
+
+      const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
+
+
+      isAdmin = ADMIN_EMAILS.includes(email);
+
+
+    } catch (err) {
+      console.error("Clerk error:", err);
+    }
   }
 
+  // 🔐 Admin pages
   if (isAdminRoute(req)) {
     await auth.protect();
+
+    if (!isAdmin) {
+      return Response.redirect(new URL("/", req.url));
+    }
   }
 
-  if (req.nextUrl.pathname.startsWith("/api") && method !== "GET") {
+  // 🔐 API protection
+  if (pathname.startsWith("/api")) {
+    if (method === "GET") return;
+
     await auth.protect();
+
+    if (!isAdmin) {
+      return Response.json({ error: "Unauthorized" }, { status: 403 });
+    }
   }
 });
 

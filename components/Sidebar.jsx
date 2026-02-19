@@ -32,51 +32,58 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Top Bar */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-neutral-300 bg-white">
+      {/* ================= MOBILE TOP BAR ================= */}
+      <div className="md:hidden flex items-center justify-between px-4 py-3 border-b bg-white sticky top-0 z-40">
         <button onClick={() => setIsOpen(true)}>
           <Menu size={22} />
         </button>
 
-        <h1 className="font-semibold">EP Investing</h1>
+        <h1 className="font-semibold tracking-tight">
+          EP Investing
+        </h1>
 
-        <UserButton afterSignOutUrl="/" />
+        <UserButton fallbackRedirectUrl="/" />
       </div>
 
-      {/* Overlay */}
+      {/* ================= OVERLAY ================= */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
         />
       )}
 
-      {/* Sidebar */}
+      {/* ================= SIDEBAR ================= */}
       <aside
-  className={`
-    fixed top-0 left-0 z-50 h-screen bg-white border-r border-neutral-300 flex flex-col transition-all duration-300
-    ${collapsed ? "w-14" : "w-64"}
-    ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-  `}
->
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-neutral-300">
+        className={`
+          fixed top-0 left-0 z-50 h-screen bg-white border-r border-neutral-200 flex flex-col transition-all duration-300
+          ${collapsed ? "w-16" : "w-64"}
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+        {/* ================= HEADER ================= */}
+        <div className="flex items-center justify-between px-4 py-4 border-b border-neutral-200">
           {!collapsed && (
-            <h1 className="text-lg font-semibold tracking-wide">
+            <h1 className="text-lg font-semibold tracking-tight">
               EP Investing
             </h1>
           )}
 
           <div className="flex items-center gap-2">
-            {/* Collapse Button (desktop only) */}
+            {/* Collapse */}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:block p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+              className="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 transition"
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft
+                size={18}
+                className={`transition ${
+                  collapsed ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
-            {/* Close Button (mobile only) */}
+            {/* Close (Mobile) */}
             <button
               onClick={() => setIsOpen(false)}
               className="md:hidden p-2"
@@ -86,8 +93,8 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Menu */}
-        <nav className="flex-1 px-2 py-4 space-y-2">
+        {/* ================= MENU ================= */}
+        <nav className="flex-1 px-2 py-4 space-y-1">
           {menu.map((item) => {
             const active = pathname === item.href;
             const Icon = item.icon;
@@ -96,13 +103,19 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
-                onClick={() => setIsOpen(false)} // close on click mobile
-                className={`group flex items-center gap-3 px-3 py-2 rounded-lg transition relative
-                ${active
-                    ? "bg-emerald-600 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                onClick={() => setIsOpen(false)}
+                className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
+                ${
+                  active
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "text-gray-600 hover:bg-neutral-100"
+                }`}
               >
+                {/* Active Indicator */}
+                {active && (
+                  <span className="absolute left-0 top-0 h-full w-1 bg-emerald-500 rounded-r-full" />
+                )}
+
                 <Icon size={18} />
 
                 {!collapsed && (
@@ -122,16 +135,17 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* User */}
-        <div className="border-t border-neutral-300 p-4 flex items-center gap-3">
-          <UserButton afterSignOutUrl="/" />
+        {/* ================= USER ================= */}
+        <div className="border-t border-neutral-200 p-4 flex items-center gap-3">
+          <UserButton fallbackRedirectUrl="/" />
 
           {!collapsed && user && (
             <div className="flex flex-col text-sm">
               <span className="font-medium">
                 {user.fullName || "User"}
               </span>
-              <span className="text-gray-500 text-xs">
+
+              <span className="text-gray-500 text-xs truncate">
                 {user.primaryEmailAddress?.emailAddress}
               </span>
             </div>
