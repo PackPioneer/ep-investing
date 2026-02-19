@@ -8,6 +8,7 @@ import {
   Users,
   Building2,
   Landmark,
+  Mail,
   ChevronLeft,
   Menu,
   X,
@@ -19,6 +20,7 @@ const menu = [
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
   { name: "Grants", href: "/admin/grants", icon: Landmark },
+  { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
 ];
 
 export default function Sidebar() {

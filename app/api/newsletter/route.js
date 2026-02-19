@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import Subscriber from "@/models/Subscriber";
-import dbConnect from "@/lib/mongodb";
+import connectDB from "@/lib/mongodb";
+
+export async function GET() {
+  await connectDB();
+  const data = await Subscriber.find().sort({ createdAt: -1 });
+  return Response.json(data);
+}
 
 export async function POST(req) {
   try {
@@ -13,7 +19,7 @@ export async function POST(req) {
       );
     }
 
-    await dbConnect();
+    await connectDB();
 
     const existing = await Subscriber.findOne({ email });
 
