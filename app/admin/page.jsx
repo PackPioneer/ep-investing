@@ -1,100 +1,158 @@
 "use client";
 
-import Card from "./components/Card";
-import Chart from "./components/Chart";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import axios from "axios";
+import Card from "./components/Card";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const filters = [
   { label: "1 Day", value: "1d" },
   { label: "7 Days", value: "7d" },
   { label: "28 Days", value: "28d" },
   { label: "1 Year", value: "1y" },
-  { label: "Lifetime", value: "lifetime" },
+  { label: "Lifetime", value: "all" },
+];
+
+const chartTabs = [
+  { label: "Investors", value: "investors" },
+  { label: "Companies", value: "companies" },
+  { label: "Grants", value: "grants" },
+  { label: "Subscribers", value: "subscribers" },
 ];
 
 export default function AdminDashboard() {
-  const [data, setData] = useState(null);
-  const [range, setRange] = useState("lifetime");
-  const [loading, setLoading] = useState(false);
-
-  const fetchDashboard = async (selectedRange = range) => {
-    setLoading(true);
-
-    try {
-      const res = await axios.get(`/api/dashboard?range=${selectedRange}`);
-      setData(res.data);
-    } catch (err) {
-      toast.error("Failed to load dashboard");
-    }
-
-    setLoading(false);
-  };
+  const [filter, setFilter] = useState("7d");
+  const [stats, setStats] = useState(null);
+  const [chartType, setChartType] = useState("investors");
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    fetchDashboard();
-  }, []);
+    fetchStats();
+  }, [filter]);
 
-  const handleFilter = (value) => {
-    setRange(value);
-    fetchDashboard(value);
+  useEffect(() => {
+    fetchChart();
+  }, [chartType]);
+
+  const fetchStats = async () => {
+    const res = await axios.get(`/api/admin/stats?filter=${filter}`);
+    setStats(res.data);
   };
 
-  if (!data) return <p>Loading...</p>;
+  const fetchChart = async () => {
+    const res = await axios.get(
+      `/api/admin/chart?type=${chartType}`
+    );
+    setChartData(res.data);
+  };
+
+  const formatGrowth = (g) => {
+    if (g > 0) return `+${g.toFixed(1)}%`;
+    return `${g.toFixed(1)}%`;
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
 
-      <h1 className="text-3xl font-semibold mb-6">Dashboard</h1>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold">Dashboard</h1>
 
-      {/* FILTERS */}
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {filters.map((f) => (
-          <button
-            key={f.value}
-            onClick={() => handleFilter(f.value)}
-            className={`px-4 py-2 rounded-lg border text-sm ${
-              range === f.value
-                ? "bg-emerald-600 text-white"
-                : "bg-white hover:bg-gray-100"
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
+        <div className="flex gap-2 flex-wrap">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`px-4 py-1.5 rounded-lg text-sm ${
+                filter === f.value
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* CARDS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        <Card title="Investors" value={data.totals.investors} />
-        <Card title="Companies" value={data.totals.companies} />
-        <Card title="Grants" value={data.totals.grants} />
-        <Card title="Subscribers" value={data.totals.subscribers} />
-      </div>
+      {/* Cards */}
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
 
-      {/* CHARTS */}
-      <div className="grid md:grid-cols-2 gap-6">
+          <Card
+            title="Investors"
+            value={stats.investors.current}
+            growth={formatGrowth(stats.investors.growth)}
+          />
 
-        <Chart
-          title="Investors Growth"
-          data={data.charts.investors}
-        />
+          <Card
+            title="Companies"
+            value={stats.companies.current}
+            growth={formatGrowth(stats.companies.growth)}
+          />
 
-        <Chart
-          title="Companies Growth"
-          data={data.charts.companies}
-        />
+          <Card
+            title="Grants"
+            value={stats.grants.current}
+            growth={formatGrowth(stats.grants.growth)}
+          />
 
-        <Chart
-          title="Grants Growth"
-          data={data.charts.grants}
-        />
+          <Card
+            title="Subscribers"
+            value={stats.subscribers.current}
+            growth={formatGrowth(stats.subscribers.growth)}
+          />
 
-        <Chart
-          title="Subscribers Growth"
-          data={data.charts.subscribers}
-        />
+        </div>
+      )}
+
+      {/* Chart Section */}
+      <div className="bg-white p-6 rounded-xl border shadow-sm">
+
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg font-semibold">
+            Growth Analytics
+          </h2>
+
+          {/* Chart Tabs */}
+          <div className="flex gap-2 flex-wrap">
+            {chartTabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setChartType(tab.value)}
+                className={`px-3 py-1 rounded-lg text-sm ${
+                  chartType === tab.value
+                    ? "bg-emerald-600 text-white"
+                    : "bg-gray-100"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="_id" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="count"
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
       </div>
 
