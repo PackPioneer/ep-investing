@@ -8,6 +8,7 @@ import {
   Briefcase,
   ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 const items = [
   {
@@ -15,24 +16,28 @@ const items = [
     desc: "Discover climate-focused companies, co-investors, and funding signals — all in one intelligent platform.",
     btn: "Explore investor intelligence",
     icon: Users,
+    link: "/investors"
   },
   {
     title: "Founders",
     desc: "Get matched with investors, grants, and experts aligned to your climate solution and stage.",
     btn: "Find capital & support",
     icon: Lightbulb,
+    link: "/founders"
   },
   {
     title: "Experts",
     desc: "Showcase your expertise and connect with startups, investors, and institutions that need it.",
     btn: "Join the expert network",
     icon: UserCheck,
+    link: "/"
   },
   {
     title: "Job Seekers",
     desc: "Find meaningful roles across climate tech, energy transition, and sustainability-driven organizations.",
     btn: "Browse climate jobs",
     icon: Briefcase,
+    link: "/"
   },
 ];
 
@@ -89,10 +94,10 @@ export default function StartHere() {
               </p>
 
               {/* CTA */}
-              <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-600 group-hover:gap-3 transition-all">
+              <Link href={item.link} className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-600 group-hover:gap-3 transition-all">
                 {item.btn}
                 <ArrowRight size={16} />
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>

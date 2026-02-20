@@ -7,6 +7,7 @@ import {
   FileText,
   ArrowUpRight,
 } from "lucide-react";
+import Link from "next/link";
 
 const items = [
   {
@@ -14,18 +15,21 @@ const items = [
     desc: "Browse climate and energy transition companies by sector, maturity, traction signals, and capital raised.",
     btn: "Explore companies",
     icon: Building2,
+    link: "/companies"
   },
   {
     title: "Investors",
     desc: "Discover venture funds, angels, strategics, and institutional capital actively deploying in climate.",
     btn: "Browse investors",
     icon: Landmark,
+    link: "/investors"
   },
   {
     title: "Grants",
     desc: "Track global non-dilutive funding opportunities from governments, foundations, and institutions.",
     btn: "View active grants",
     icon: FileText,
+    link: "/founders"
   },
 ];
 
@@ -82,10 +86,11 @@ export default function ExploreSection() {
               </p>
 
               {/* CTA */}
-              <div className="mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
+              <Link href={item.link} className="mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
+                
                 {item.btn}
                 <ArrowUpRight size={16} />
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>
