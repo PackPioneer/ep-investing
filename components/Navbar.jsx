@@ -17,6 +17,11 @@ const navItems = [
     name: "Founders",
     link: "/founders"
   },
+  {
+    id: 3,
+    name: "Companies",
+    link: "/companies"
+  },
 ];
 
 export default function Navbar() {

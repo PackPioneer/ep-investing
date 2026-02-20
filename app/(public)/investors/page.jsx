@@ -58,10 +58,6 @@ const [loading, setLoading] = useState(true);
               Get Matched (2 minutes)
             </Link>
 
-            {/* <Link href={'/investors'} className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition text-center">
-              Browse Investors
-            </Link> */}
-
             <Link href={'/founders'} className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition text-center">
               Browse Founders
             </Link>
