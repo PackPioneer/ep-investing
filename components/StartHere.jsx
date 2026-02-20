@@ -2,42 +2,34 @@
 
 import { motion } from "framer-motion";
 import {
-  Users,
-  Lightbulb,
-  UserCheck,
-  Briefcase,
-  ArrowRight,
+  Building2,
+  Landmark,
+  FileText,
+  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 
 const items = [
   {
+    title: "Companies",
+    desc: "Browse climate and energy transition companies by sector, maturity, traction signals, and capital raised.",
+    btn: "Explore companies",
+    icon: Building2,
+    link: "/companies"
+  },
+  {
     title: "Investors",
-    desc: "Discover climate-focused companies, co-investors, and funding signals — all in one intelligent platform.",
-    btn: "Explore investor intelligence",
-    icon: Users,
+    desc: "Discover venture funds, angels, strategics, and institutional capital actively deploying in climate.",
+    btn: "Browse investors",
+    icon: Landmark,
     link: "/investors"
   },
   {
-    title: "Founders",
-    desc: "Get matched with investors, grants, and experts aligned to your climate solution and stage.",
-    btn: "Find capital & support",
-    icon: Lightbulb,
+    title: "Grants",
+    desc: "Track global non-dilutive funding opportunities from governments, foundations, and institutions.",
+    btn: "View active grants",
+    icon: FileText,
     link: "/founders"
-  },
-  {
-    title: "Experts",
-    desc: "Showcase your expertise and connect with startups, investors, and institutions that need it.",
-    btn: "Join the expert network",
-    icon: UserCheck,
-    link: "/"
-  },
-  {
-    title: "Job Seekers",
-    desc: "Find meaningful roles across climate tech, energy transition, and sustainability-driven organizations.",
-    btn: "Browse climate jobs",
-    icon: Briefcase,
-    link: "/"
   },
 ];
 
@@ -63,40 +55,41 @@ export default function StartHere() {
           </p>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+         {/* Structured Grid */}
+        <div className="grid lg:grid-cols-3 gap-10">
           {items.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              whileHover={{ y: -6 }}
-              className="group relative bg-white border border-slate-200/70 rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300"
+              transition={{ delay: i * 0.12, duration: 0.6 }}
+              whileHover={{ y: -8 }}
+              className="group relative bg-white border border-slate-200/70 rounded-2xl p-10 shadow-sm hover:shadow-2xl transition-all duration-300"
             >
-              {/* Subtle top accent line */}
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-linear-to-r from-emerald-500 to-emerald-400 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 rounded-t-2xl" />
+              {/* Hover Accent Glow */}
+              <div className="absolute inset-0 rounded-2xl bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none" />
 
               {/* Icon */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-6 group-hover:scale-105 transition">
-                <item.icon size={22} />
+              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-8 group-hover:scale-105 transition">
+                <item.icon size={24} />
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-semibold text-slate-900">
+              <h3 className="text-2xl font-semibold text-slate-900">
                 {item.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-4 text-slate-600 leading-relaxed text-sm">
+              <p className="mt-5 text-slate-600 leading-relaxed">
                 {item.desc}
               </p>
 
               {/* CTA */}
-              <Link href={item.link} className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-emerald-600 group-hover:gap-3 transition-all">
+              <Link href={item.link} className="mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
+                
                 {item.btn}
-                <ArrowRight size={16} />
+                <ArrowUpRight size={16} />
               </Link>
             </motion.div>
           ))}
