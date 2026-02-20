@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function GetMatchedPage() {
   return (
@@ -37,6 +38,7 @@ export default function GetMatchedPage() {
               title="I'm an Investor"
               desc="Discover deal flow matched to your investment focus."
               button="Find Startups to Fund"
+              link="/investors"
             />
 
             <PathCard
@@ -44,6 +46,7 @@ export default function GetMatchedPage() {
               title="I'm a Founder"
               desc="Connect with funders and grants aligned to your stage."
               button="Find Investors & Grants"
+              link="/founders"
             />
 
           </div>
@@ -128,7 +131,7 @@ export default function GetMatchedPage() {
 
 /* ================= COMPONENTS ================= */
 
-function PathCard({ icon, title, desc, button }) {
+function PathCard({ icon, title, desc, button, link }) {
   return (
     <motion.div
       whileHover={{ y: -6 }}
@@ -138,10 +141,10 @@ function PathCard({ icon, title, desc, button }) {
       <h3 className="mt-6 text-2xl font-semibold">{title}</h3>
       <p className="mt-4 text-slate-600">{desc}</p>
 
-      <button className="mt-8 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition flex items-center justify-center gap-2 mx-auto">
+      <Link href={link} className="mt-8 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition flex items-center justify-center gap-2 mx-auto">
         {button}
         <ArrowRight size={18} />
-      </button>
+      </Link>
     </motion.div>
   );
 }

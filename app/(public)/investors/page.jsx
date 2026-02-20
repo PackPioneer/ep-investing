@@ -54,17 +54,17 @@ const [loading, setLoading] = useState(true);
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            <button className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">
+            <Link href={'/get-matched'} className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition text-center">
               Get Matched (2 minutes)
-            </button>
+            </Link>
 
-            <button className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition">
+            {/* <Link href={'/investors'} className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition text-center">
               Browse Investors
-            </button>
+            </Link> */}
 
-            <button className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition">
-              Browse Companies
-            </button>
+            <Link href={'/founders'} className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition text-center">
+              Browse Founders
+            </Link>
           </div>
         </div>
       </section>
