@@ -163,10 +163,10 @@ const [loading, setLoading] = useState(true);
 
               {/* CTA */}
               <Link
-                href={`/investors/${i._id}`}
-                className="flex items-center gap-1 mt-5 font-medium text-slate-700 hover:text-black underline"
+                href={i.website}
+                className="flex items-center gap-1 mt-5 font-medium text-slate-700 hover:text-black underline" target="_blank"
               >
-                View Details <ArrowRight size={16} />
+                Visit website <ArrowRight size={16} />
               </Link>
             </div>
           );

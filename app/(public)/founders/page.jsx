@@ -186,7 +186,7 @@ const [loading, setLoading] = useState(true);
 
       {/* ================= WHAT YOU GET ================= */}
       <section className="py-20 lg:py-28">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-6 md:px-0">
 
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight">
