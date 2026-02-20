@@ -7,10 +7,10 @@ import { Search } from "lucide-react";
 
 // ... tags array same as before
 const tags = [
-  "direct_air_capture",
-  "emerald_hydrogen",
-  "nuclear_technologies",
-  "carbon_capture",
+  "climate ventures",
+  "hydrogen",
+  "grant",
+  "climate finance",
 ];
 
 

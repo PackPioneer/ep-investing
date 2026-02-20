@@ -10,7 +10,6 @@ import {
   ArrowLeft, 
   ExternalLink, 
   MapPin, 
-  Search 
 } from "lucide-react";
 import Link from "next/link";
 
