@@ -48,7 +48,7 @@ const [loading, setLoading] = useState(true);
                 For Founders
               </h1>
 
-              <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed">
+              <p className="mt-6 text-lg text-slate-600 max-w-xl leading-relaxed">
                 Structured investor and grant discovery for serious climate founders.
               </p>
 
@@ -61,9 +61,6 @@ const [loading, setLoading] = useState(true);
                   Browse Investors
                 </Link>
 
-                <Link href={'/grants'} className="border border-slate-300 bg-white px-7 py-3.5 rounded-xl font-medium hover:bg-slate-100 transition text-center">
-                  Browse Grants
-                </Link>
               </div>
             </motion.div>
 
