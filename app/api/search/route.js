@@ -5,42 +5,31 @@ import Company from "@/models/Company";
 import Grant from "@/models/Grant";
 
 export async function GET(req) {
-  await dbConnect();
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const q = searchParams.get("q");
 
-  const { searchParams } = new URL(req.url);
-  const q = searchParams.get("q");
+    if (!q) return NextResponse.json({ investors: [], companies: [], grants: [] });
 
-  if (!q) return NextResponse.json({});
+    const regex = new RegExp(q, "i");
 
-  const regex = new RegExp(q, "i");
+    const [investors, companies, grants] = await Promise.all([
+      Investor.find({
+        $or: [{ name: regex }, { focus: regex }], // MongoDB handles regex in arrays automatically
+      }).limit(10).lean(),
 
-  const [investors, companies, grants] = await Promise.all([
-    Investor.find({
-      $or: [
-        { name: regex },
-        { focus: { $in: [regex] } },
-      ],
-    }).limit(10),
+      Company.find({
+        $or: [{ name: regex }, { tags: regex }],
+      }).limit(10).lean(),
 
-    Company.find({
-      $or: [
-        { name: regex },
-        { tags: { $in: [regex] } },
-      ],
-    }).limit(10),
+      Grant.find({
+        $or: [{ title: regex }, { funder: regex }, { tags: regex }],
+      }).limit(10).lean(),
+    ]);
 
-    Grant.find({
-      $or: [
-        { title: regex },
-        { funder: regex },
-        { tags: { $in: [regex] } },
-      ],
-    }).limit(10),
-  ]);
-
-  return NextResponse.json({
-    investors,
-    companies,
-    grants,
-  });
+    return NextResponse.json({ investors, companies, grants });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

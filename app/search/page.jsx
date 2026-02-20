@@ -1,183 +1,126 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Building2, Wallet, GraduationCap, Loader2, ArrowLeft, ExternalLink, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [data, setData] = useState({
-    investors: [],
-    companies: [],
-    grants: [],
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  // 🔥 Fetch from your API
   useEffect(() => {
-    if (!query) return;
-
-    const fetchData = async () => {
+    const fetchResults = async () => {
+      if (!query) return;
       setLoading(true);
-
       try {
-        const res = await fetch(`/api/search?q=${query}`);
-        const json = await res.json();
-        setData(json);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        setResults(data);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
-
-    fetchData();
+    fetchResults();
   }, [query]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-28 min-h-screen">
+    <div className="min-h-screen bg-slate-50 pt-20 pb-12">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        <div className="mb-10">
+          <Link href="/" className="text-sm text-slate-500 hover:text-emerald-600 flex items-center gap-1 mb-2 transition-colors">
+            <ArrowLeft size={14} /> Back to Search
+          </Link>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Results for <span className="text-emerald-600 italic">"{query}"</span>
+          </h1>
+        </div>
 
-      {/* Title */}
-      <h1 className="text-3xl font-semibold mb-8">
-        Results for "{query}"
-      </h1>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24">
+            <Loader2 className="animate-spin text-emerald-500 mb-4" size={40} />
+            <p className="text-slate-500 font-medium">Scanning the ecosystem...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <ResultSection title="Companies" icon={<Building2 />} type="company" items={results?.companies} />
+            <ResultSection title="Investors" icon={<Wallet />} type="investors" items={results?.investors} />
+            <ResultSection title="Grants" icon={<GraduationCap />} type="founders" items={results?.grants} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {/* ================= INVESTORS ================= */}
-          {data.investors?.length > 0 && (
-            <section className="mb-12">
-              <h2 className="text-xl font-semibold mb-4">Investors</h2>
+function ResultSection({ title, icon, items, type }) {
+  return (
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-center gap-3 px-2">
+        <div className="p-2 bg-emerald-100 text-emerald-700 rounded-lg">{icon}</div>
+        <h2 className="font-bold text-slate-800 text-lg">{title}</h2>
+        <span className="text-xs font-bold px-2 py-0.5 bg-slate-200 text-slate-600 rounded-full">
+          {items?.length || 0}
+        </span>
+      </div>
 
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {data.investors.map((i) => (
-                  <Link
-                    key={i._id}
-                    href={`/investors/${i._id}`}
-                    className="border rounded-xl p-4 hover:shadow"
-                  >
-                    <h3 className="font-medium">{i.name}</h3>
-
-                    {i.type && (
-                      <p className="text-sm text-emerald-600">
-                        {i.type}
-                      </p>
-                    )}
-
-                    {i.focus?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {i.focus.slice(0, 3).map((f, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-gray-100 px-2 py-1 rounded"
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </Link>
-                ))}
+      <div className="space-y-3">
+        {items?.length > 0 ? (
+          items.map((item) => (
+            <Link 
+              key={item._id} 
+              href={`/${type}/${item._id}`}
+              className="block bg-white border border-slate-200 p-5 rounded-2xl hover:border-emerald-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                  {item.name || item.title}
+                </h3>
+                <ExternalLink size={14} className="text-slate-300 group-hover:text-emerald-400" />
               </div>
-            </section>
-          )}
 
-          {/* ================= COMPANIES ================= */}
-          {data.companies?.length > 0 && (
-            <section className="mb-12">
-              <h2 className="text-xl font-semibold mb-4">Companies</h2>
-
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {data.companies.map((c) => (
-                  <div
-                    key={c._id}
-                    className="border rounded-xl p-4 hover:shadow"
-                  >
-                    <h3 className="font-medium">{c.name}</h3>
-
-                    {c.tags?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {c.tags.slice(0, 3).map((t, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-gray-100 px-2 py-1 rounded"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+              {/* Dynamic Metadata based on Schema */}
+              <div className="text-xs space-y-2">
+                {type === "founder" && (
+                  <div className="flex flex-wrap gap-2">
+                    <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase font-bold tracking-wider">{item.stage}</span>
+                    <span className="text-slate-500 flex items-center gap-1"><MapPin size={12}/> {item.location}</span>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
+                )}
 
-          {/* ================= GRANTS ================= */}
-          {data.grants?.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold mb-4">Grants</h2>
-
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {data.grants.map((g) => (
-                  <div
-                    key={g._id}
-                    className="border rounded-xl p-4 hover:shadow"
-                  >
-                    <h3 className="font-medium">{g.title}</h3>
-
-                    {g.funder && (
-                      <p className="text-sm text-gray-500">
-                        {g.funder}
-                      </p>
-                    )}
-
-                    {g.tags?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {g.tags.slice(0, 3).map((t, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-gray-100 px-2 py-1 rounded"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {g.link && (
-                      <a
-                        href={g.link}
-                        target="_blank"
-                        className="text-emerald-600 text-sm mt-3 inline-block"
-                      >
-                        Apply →
-                      </a>
-                    )}
+                {type === "investors" && (
+                  <div className="flex flex-wrap gap-2">
+                    <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium capitalize">{item.type}</span>
+                    <p className="text-slate-500 italic line-clamp-1">{item.focus?.join(" • ")}</p>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
+                )}
 
-          {/* EMPTY STATE */}
-          {!loading &&
-            data.investors?.length === 0 &&
-            data.companies?.length === 0 &&
-            data.grants?.length === 0 && (
-              <p className="text-gray-500">
-                No results found.
-              </p>
-            )}
-        </>
-      )}
+                {type === "grant" && (
+                  <div className="flex flex-col gap-1">
+                    <p className="text-emerald-600 font-bold">
+                      Up to ${item.amountMax?.toLocaleString()}
+                    </p>
+                    <p className="text-slate-400">Funder: {item.funder}</p>
+                  </div>
+                )}
+
+                <p className="text-slate-500 line-clamp-2 mt-2 leading-relaxed">
+                  {item.description || (item.tags && item.tags.join(", "))}
+                </p>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <div className="bg-slate-100/50 border border-dashed border-slate-300 rounded-2xl p-8 text-center">
+            <p className="text-sm text-slate-400">No {title.toLowerCase()} found</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
