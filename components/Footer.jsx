@@ -1,6 +1,7 @@
 "use client"
 
 import { Mail, Linkedin, Facebook } from "lucide-react"
+import Link from "next/link"
 
 export default function Footer() {
   return (
@@ -37,29 +38,27 @@ export default function Footer() {
           {/* Platform */}
           <div>
             <h4 className="text-white font-medium mb-4">Platform</h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li className="hover:text-white cursor-pointer transition">Companies</li>
-              <li className="hover:text-white cursor-pointer transition">Investors</li>
-              <li className="hover:text-white cursor-pointer transition">Grants</li>
-              <li className="hover:text-white cursor-pointer transition">Jobs</li>
+            <ul className="space-y-3 text-sm text-slate-400 flex flex-col">
+              <Link href={'/companies'} className="hover:text-white cursor-pointer transition">Companies</Link>
+              <Link href={'/investors'} className="hover:text-white cursor-pointer transition">Investors</Link>
+              <Link href={'/founders'} className="hover:text-white cursor-pointer transition">Founders</Link>
             </ul>
           </div>
 
           {/* Resources */}
           <div>
             <h4 className="text-white font-medium mb-4">Resources</h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li className="hover:text-white cursor-pointer transition">Experts</li>
-              <li className="hover:text-white cursor-pointer transition">Insights</li>
-              <li className="hover:text-white cursor-pointer transition">Submit</li>
-              <li className="hover:text-white cursor-pointer transition">Get Matched</li>
+            <ul className="space-y-3 text-sm text-slate-400 flex flex-col">
+              <Link href={'#'} className="hover:text-white cursor-pointer transition">Experts</Link>
+              <Link href={'#'} className="hover:text-white cursor-pointer transition">Insights</Link>
+              <Link href={'#'} className="hover:text-white cursor-pointer transition">Get Matched</Link>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
         <div className="border-t border-white/10 mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-          <p>© {new Date().getFullYear()} EP Investing. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} EP Investing. All rights reserved. | Designed with ❤ by <Link className="hover:text-white cursor-pointer transition" href={'https://websidezone.com/'} target="_blank">Websidezone</Link></p>
 
           <div className="flex gap-6">
             <span className="hover:text-white cursor-pointer transition">
@@ -74,3 +73,4 @@ export default function Footer() {
     </footer>
   )
 }
+ 
