@@ -14,19 +14,23 @@ import { useEffect, useState } from "react";
 export default function InvestorsPage() {
 
   const [investors, setInvestors] = useState([]);
+const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchInvestors = async () => {
-      try {
-        const res = await axios.get("/api/investors");
-        setInvestors(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const fetchInvestors = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/api/investors");
+      setInvestors(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchInvestors();
-  }, []);
+  fetchInvestors();
+}, []);
   
   return (
     <div className="bg-white text-slate-900">
@@ -71,73 +75,103 @@ export default function InvestorsPage() {
   <div className="max-w-6xl mx-auto">
 
     <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-      
-      {investors.map((i) => {
-        return (
-          <div
-            key={i._id}
-            className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-          >
-            {/* Top Section */}
-            <div>
 
-              {/* Logo + Name Row */}
-              <div className="flex items-center gap-3 mb-3">
-                
-                {/* Logo */}
-                {i.logo ? (
-                  <img
-                    src={i.logo}
-                    alt={i.name}
-                    className="w-10 h-10 object-contain rounded-md border border-slate-200 p-1 bg-white"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-md bg-slate-200 flex items-center justify-center text-xs text-slate-500">
-                    N/A
+      {loading ? (
+        // ================= SKELETON =================
+        Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm animate-pulse"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-slate-200 rounded-md"></div>
+              <div className="h-4 w-32 bg-slate-200 rounded"></div>
+            </div>
+
+            <div className="h-4 w-24 bg-slate-200 rounded mb-3"></div>
+
+            <div className="flex gap-2">
+              <div className="h-5 w-12 bg-slate-200 rounded-full"></div>
+              <div className="h-5 w-16 bg-slate-200 rounded-full"></div>
+              <div className="h-5 w-14 bg-slate-200 rounded-full"></div>
+            </div>
+
+            <div className="h-4 w-28 bg-slate-200 rounded mt-6"></div>
+          </div>
+        ))
+      ) : investors.length === 0 ? (
+        // ================= EMPTY STATE =================
+        <div className="col-span-full text-center text-slate-500 py-10">
+          No investors found.
+        </div>
+      ) : (
+        // ================= ACTUAL DATA =================
+        investors.map((i) => {
+          return (
+            <div
+              key={i._id}
+              className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+            >
+              {/* Top Section */}
+              <div>
+
+                {/* Logo + Name */}
+                <div className="flex items-center gap-3 mb-3">
+                  
+                  {i.logo ? (
+                    <img
+                      src={i.logo}
+                      alt={i.name}
+                      className="w-10 h-10 object-contain rounded-md border border-slate-200 p-1 bg-white"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-md bg-slate-200 flex items-center justify-center text-xs text-slate-500">
+                      N/A
+                    </div>
+                  )}
+
+                  <h3 className="font-semibold text-slate-800 leading-tight">
+                    {i.name}
+                  </h3>
+                </div>
+
+                {/* Type */}
+                {i.type && (
+                  <p className="mb-3 text-sm">
+                    Type:{" "}
+                    <span className="text-emerald-600 font-medium capitalize">
+                      {i.type.replace("-", " ")}
+                    </span>
+                  </p>
+                )}
+
+                {/* Focus */}
+                {i.focus && i.focus.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {i.focus.slice(0, 3).map((f, index) => (
+                      <span
+                        key={index}
+                        className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full"
+                      >
+                        {f}
+                      </span>
+                    ))}
                   </div>
                 )}
 
-                {/* Name */}
-                <h3 className="font-semibold text-slate-800 leading-tight">
-                  {i.name}
-                </h3>
               </div>
 
-              {/* Type */}
-              {i.type && (
-                <p className="mb-3">Type: <span className="text-emerald-600 font-medium capitalize">
-                  {i.type.replace("-", " ")}
-                </span></p>
-              )}
-
-              {/* Focus Tags */}
-              {i.focus && i.focus.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {i.focus.slice(0, 3).map((f, index) => (
-                    <span
-                      key={index}
-                      className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full"
-                    >
-                      {f}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-            </div>
-
-            {/* Bottom CTA */}
-            {
+              {/* CTA */}
               <Link
-  href={`/investors/${i._id}`}
-  className="flex items-center gap-1 mt-5 font-medium text-slate-700 hover:text-black underline"
->
-  View Details <ArrowRight size={16} />
-</Link>
-            }
-          </div>
-        );
-      })}
+                href={`/investors/${i._id}`}
+                className="flex items-center gap-1 mt-5 font-medium text-slate-700 hover:text-black underline"
+              >
+                View Details <ArrowRight size={16} />
+              </Link>
+            </div>
+          );
+        })
+      )}
 
     </div>
 
