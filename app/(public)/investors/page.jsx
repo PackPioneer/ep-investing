@@ -181,40 +181,43 @@ const [loading, setLoading] = useState(true);
 
 
 
-      {/* ================= WHY EP ================= */}
-      <section className="py-24 px-6 bg-slate-50">
-        <div className="max-w-6xl mx-auto text-center">
+<section className="py-24 px-4 sm:px-6 bg-linear-to-b from-slate-50 to-white">
+  <div className="max-w-6xl mx-auto text-center">
 
-          <h2 className="text-3xl md:text-4xl font-semibold">
-            Why EP Investing
-          </h2>
+    {/* Heading */}
+    <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight">
+      Why EP Investing
+    </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
+    <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
+      A smarter way to discover, track, and invest in climate innovation.
+    </p>
 
-            {/* Card 1 */}
-            <FeatureCard
-              icon={<Building2 size={28} />}
-              title="Discover Companies"
-              desc="Browse climate tech by sector, traction signals, and stage."
-            />
+    {/* Cards */}
+    <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 mt-14 sm:mt-16">
 
-            {/* Card 2 */}
-            <FeatureCard
-              icon={<Landmark size={28} />}
-              title="Track Grants"
-              desc="Monitor non-dilutive and blended finance opportunities."
-            />
+      <PremiumCard
+        icon={<Building2 size={26} />}
+        title="Discover Companies"
+        desc="Explore curated climate tech startups by sector, traction, and stage."
+      />
 
-            {/* Card 3 */}
-            <FeatureCard
-              icon={<Target size={28} />}
-              title="Get Smart Matches"
-              desc="Receive recommendations aligned to thesis, stage, and geography."
-            />
+      <PremiumCard
+        icon={<Landmark size={26} />}
+        title="Track Grants"
+        desc="Stay updated with non-dilutive funding, subsidies, and blended finance."
+      />
 
-          </div>
-        </div>
-      </section>
+      <PremiumCard
+        icon={<Target size={26} />}
+        title="Smart Matching"
+        desc="Get AI-driven recommendations aligned with your thesis and geography."
+      />
+
+    </div>
+
+  </div>
+</section>
 
       {/* ================= HOW IT WORKS ================= */}
       <section className="py-24 px-6">
@@ -305,17 +308,34 @@ const [loading, setLoading] = useState(true);
 
 /* ================= COMPONENTS ================= */
 
-function FeatureCard({ icon, title, desc }) {
+function PremiumCard({ icon, title, desc }) {
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg transition-all"
+      whileHover={{ y: -8, scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      className="relative group rounded-2xl p-px bg-linear-to-br from-emerald-400/40 via-transparent to-slate-200/40"
     >
-      <div className="text-emerald-600">{icon}</div>
-      <h3 className="mt-6 text-xl font-semibold">{title}</h3>
-      <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-        {desc}
-      </p>
+      <div className="h-full w-full bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm group-hover:shadow-xl transition-all duration-300">
+
+        {/* Icon */}
+        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
+          {icon}
+        </div>
+
+        {/* Title */}
+        <h3 className="mt-6 text-lg sm:text-xl font-semibold text-slate-800">
+          {title}
+        </h3>
+
+        {/* Description */}
+        <p className="mt-3 text-slate-600 text-sm leading-relaxed">
+          {desc}
+        </p>
+
+        {/* Hover underline */}
+        <div className="mt-6 w-10 h-0.5 bg-emerald-500 group-hover:w-16 transition-all duration-300"></div>
+
+      </div>
     </motion.div>
   );
 }
