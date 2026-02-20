@@ -1,19 +1,42 @@
 "use client"
 
+import axios from "axios";
 import { motion } from "framer-motion"
 import { Building2, Landmark, CheckCircle2, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react";
 
 export default function FoundersPage() {
+
+
+const [founders, setFounders] = useState([]);
+const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+  const fetchFounders = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/api/grants");
+      setFounders(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchFounders();
+}, []);
+
   return (
     <div className="bg-[#F5F7FA] text-slate-900">
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden bg-white">
         {/* Subtle background layer */}
-        <div className="absolute inset-0 bg-linear-to-br from-emerald-50 via-white to-slate-100 opacity-70" />
+        {/* <div className="absolute inset-0 bg-linear-to-br from-emerald-50 via-white to-slate-100 opacity-70" /> */}
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-20 lg:py-32">
+        <div className="relative max-w-6xl mx-auto px-6 md:px-0 pt-28 pb-20 lg:py-32">
           <div className="max-w-3xl">
 
             <motion.div
@@ -47,6 +70,118 @@ export default function FoundersPage() {
           </div>
         </div>
       </section>
+
+
+<section className="relative bg-white pb-24 px-4 sm:px-6">
+  <div className="max-w-6xl mx-auto">
+
+    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+
+      {loading ? (
+        // ================= SKELETON =================
+        Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm animate-pulse"
+          >
+            <div className="h-5 w-40 bg-slate-200 rounded mb-3"></div>
+            <div className="h-4 w-28 bg-slate-200 rounded mb-3"></div>
+
+            <div className="flex gap-2 mb-4">
+              <div className="h-5 w-16 bg-slate-200 rounded-full"></div>
+              <div className="h-5 w-20 bg-slate-200 rounded-full"></div>
+            </div>
+
+            <div className="h-4 w-32 bg-slate-200 rounded"></div>
+          </div>
+        ))
+      ) : founders.length === 0 ? (
+        // ================= EMPTY =================
+        <div className="col-span-full text-center text-slate-500 py-10">
+          No founders available.
+        </div>
+      ) : (
+        // ================= DATA =================
+        founders.map((g) => {
+          return (
+            <div
+              key={g._id}
+              className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+            >
+              {/* TOP */}
+              <div>
+
+                {/* Title */}
+                <h3 className="font-semibold text-slate-800 text-lg leading-tight">
+                  {g.title}
+                </h3>
+
+                {/* Funder */}
+                {g.funder && (
+                  <p className="mt-2 text-sm text-slate-600">
+                    Funded by{" "}
+                    <span className="text-emerald-600 font-medium">
+                      {g.funder}
+                    </span>
+                  </p>
+                )}
+
+                {/* Deadline */}
+                {g.deadline && (
+                  <p className="mt-2 text-sm text-red-500">
+                    Deadline:{" "}
+                    {new Date(g.deadline).toLocaleDateString()}
+                  </p>
+                )}
+
+                {/* Amount */}
+                {(g.amountMin || g.amountMax) && (
+                  <p className="mt-2 text-sm text-slate-700 font-medium">
+                    Funding:{" "}
+                    {g.amountMin && `₹${g.amountMin.toLocaleString()}`}
+                    {g.amountMin && g.amountMax && " - "}
+                    {g.amountMax && `₹${g.amountMax.toLocaleString()}`}
+                  </p>
+                )}
+
+                {/* Tags */}
+                {g.tags && g.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {g.tags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+              </div>
+
+              {/* CTA */}
+              {g.link && (
+                <a
+                  href={g.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 mt-5 font-medium text-emerald-600 hover:text-emerald-700 underline"
+                >
+                  Apply Now
+                  <ArrowRight size={16} />
+                </a>
+              )}
+            </div>
+          );
+        })
+      )}
+
+    </div>
+
+  </div>
+</section>
+
 
 
       {/* ================= WHAT YOU GET ================= */}
