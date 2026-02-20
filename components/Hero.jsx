@@ -11,6 +11,7 @@ const tags = [
   "hydrogen",
   "grant",
   "climate finance",
+  "google"
 ];
 
 
