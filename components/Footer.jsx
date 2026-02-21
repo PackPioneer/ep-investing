@@ -61,12 +61,12 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} EP Investing. All rights reserved. | Designed with ❤ by <Link className="hover:text-white cursor-pointer transition" href={'https://websidezone.com/'} target="_blank">Websidezone</Link></p>
 
           <div className="flex gap-6">
-            <span className="hover:text-white cursor-pointer transition">
+            <Link href={"/privacy-policy"} className="hover:text-white cursor-pointer transition">
               Privacy Policy
-            </span>
-            <span className="hover:text-white cursor-pointer transition">
+            </Link>
+            <Link href={"/terms-and-conditions"} className="hover:text-white cursor-pointer transition">
               Terms of Service
-            </span>
+            </Link>
           </div>
         </div>
       </div>
