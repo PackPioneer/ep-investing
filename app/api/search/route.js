@@ -1,35 +1,53 @@
-import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Investor from "@/models/Investor";
-import Company from "@/models/Company";
-import Grant from "@/models/Grant";
+// app/api/search/route.js
+import { supabase } from "@/lib/supabase";
 
 export async function GET(req) {
   try {
-    await dbConnect();
     const { searchParams } = new URL(req.url);
-    const q = searchParams.get("q");
+    const query = searchParams.get('q') || '';
 
-    if (!q) return NextResponse.json({ investors: [], companies: [], grants: [] });
+    if (!query) {
+      return Response.json({ companies: [], investors: [], grants: [] });
+    }
 
-    const regex = new RegExp(q, "i");
+    // Search companies
+    const { data: companies, error: companiesError } = await supabase
+      .from('companies')
+      .select('*')
+      .or(`name.ilike.%${query}%,description.ilike.%${query}%,core_technology.ilike.%${query}%`)
+      .limit(20);
 
-    const [investors, companies, grants] = await Promise.all([
-      Investor.find({
-        $or: [{ name: regex }, { focus: regex }], // MongoDB handles regex in arrays automatically
-      }).limit(10).lean(),
+    if (companiesError) console.error('Companies search error:', companiesError);
 
-      Company.find({
-        $or: [{ name: regex }, { tags: regex }],
-      }).limit(10).lean(),
+    // Search VC firms (investors)
+    const { data: investors, error: investorsError } = await supabase
+      .from('vc_firms')
+      .select('*')
+      .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
+      .limit(20);
 
-      Grant.find({
-        $or: [{ title: regex }, { funder: regex }, { tags: regex }],
-      }).limit(10).lean(),
-    ]);
+    if (investorsError) console.error('Investors search error:', investorsError);
 
-    return NextResponse.json({ investors, companies, grants });
+    // Search grants
+    const { data: grants, error: grantsError } = await supabase
+      .from('grants')
+      .select('*')
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%,funder_name.ilike.%${query}%`)
+      .limit(20);
+
+    if (grantsError) console.error('Grants search error:', grantsError);
+
+    return Response.json({
+      companies: companies || [],
+      investors: investors || [],
+      grants: grants || []
+    });
+
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('Search error:', error);
+    return Response.json(
+      { message: "Error performing search" },
+      { status: 500 }
+    );
   }
 }

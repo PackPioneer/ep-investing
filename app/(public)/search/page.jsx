@@ -36,8 +36,8 @@ function ResultSection({ title, icon, items, type }) {
         {items?.length > 0 ? (
           items.map((item) => (
             <Link 
-              key={item._id} 
-              href={`/${type}/${item._id}`}
+              key={item.id} 
+              href={`/${type}/${item.id}`}
               className="block bg-white border border-slate-200 p-5 rounded-2xl hover:border-emerald-300 hover:shadow-md transition-all group"
             >
               <div className="flex justify-between items-start mb-2">
@@ -51,41 +51,55 @@ function ResultSection({ title, icon, items, type }) {
               <div className="text-xs space-y-2">
                 {type === "companies" && (
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase font-bold tracking-wider">
-                      {item.stage || "Not Specified"}
-                    </span>
-                    {item.location && (
-                      <span className="text-slate-500 flex items-center gap-1">
-                        <MapPin size={12}/> {item.location}
+                    {item.production_status && (
+                      <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase font-bold tracking-wider text-[10px]">
+                        {item.production_status}
                       </span>
                     )}
+                    {(item.headquarters_location || item.location) && (
+                      <span className="text-slate-500 flex items-center gap-1">
+                        <MapPin size={12}/> {item.headquarters_location || item.location}
+                      </span>
+                    )}
+                    {item.industry_tags?.slice(0, 2).map(tag => (
+                      <span key={tag} className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[10px] font-medium">
+                        {tag.replace(/_/g, ' ')}
+                      </span>
+                    ))}
                   </div>
                 )}
 
                 {type === "investors" && (
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium capitalize">
-                      {item.type || "VC"}
+                    <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium capitalize text-[10px]">
+                      VC Firm
                     </span>
-                    <p className="text-slate-500 italic line-clamp-1">
-                      {item.focus?.join(" • ")}
-                    </p>
+                    {item.climate_focus_areas?.slice(0, 3).map(focus => (
+                      <span key={focus} className="text-slate-500 text-[10px]">
+                        {focus}
+                      </span>
+                    ))}
                   </div>
                 )}
 
                 {type === "founders" && (
                   <div className="flex flex-col gap-1">
-                    <p className="text-emerald-600 font-bold">
-                      {item.amountMax 
-                        ? `Up to $${item.amountMax.toLocaleString()}` 
-                        : "Grant funding"}
-                    </p>
-                    <p className="text-slate-400">Funder: {item.funder}</p>
+                    {(item.amount_max_usd || item.amountMax) && (
+                      <p className="text-emerald-600 font-bold">
+                        Up to ${(item.amount_max_usd || item.amountMax).toLocaleString()}
+                      </p>
+                    )}
+                    <p className="text-slate-400">Funder: {item.funder_name || item.funder}</p>
+                    {item.deadline_date && (
+                      <p className="text-red-500 font-medium text-[10px]">
+                        Deadline: {new Date(item.deadline_date).toLocaleDateString()}
+                      </p>
+                    )}
                   </div>
                 )}
 
                 <p className="text-slate-500 line-clamp-2 mt-2 leading-relaxed">
-                  {item.description || (item.tags && item.tags.join(", "))}
+                  {item.description || item.core_technology || (item.industry_tags && item.industry_tags.join(", "))}
                 </p>
               </div>
             </Link>
@@ -102,7 +116,6 @@ function ResultSection({ title, icon, items, type }) {
 
 /**
  * SearchResults Component
- * Handles the data fetching logic using URL parameters
  */
 function SearchResults() {
   const searchParams = useSearchParams();

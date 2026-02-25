@@ -1,14 +1,18 @@
-import connectDB from "@/lib/mongodb";
-import Investor from "@/models/Investor";
+// app/api/investors/route.js
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    await connectDB();
+    const { data: investors, error } = await supabase
+      .from('vc_firms')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    const investors = await Investor.find().sort({ createdAt: -1 });
+    if (error) throw error;
 
     return Response.json(investors);
   } catch (error) {
+    console.error('Error fetching investors:', error);
     return Response.json(
       { message: "Error fetching investors" },
       { status: 500 }
@@ -18,14 +22,19 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    await connectDB();
-
     const data = await req.json();
 
-    const investor = await Investor.create(data);
+    const { data: investor, error } = await supabase
+      .from('vc_firms')
+      .insert([data])
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return Response.json(investor);
   } catch (error) {
+    console.error('Error creating investor:', error);
     return Response.json(
       { message: "Error creating investor" },
       { status: 500 }

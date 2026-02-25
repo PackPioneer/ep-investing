@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.37.5",
+    "@supabase/supabase-js": "^2.97.0",
     "axios": "^1.13.5",
     "cloudinary": "^2.9.0",
     "lucide-react": "^0.564.0",

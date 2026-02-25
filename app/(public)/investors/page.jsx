@@ -105,7 +105,7 @@ const [loading, setLoading] = useState(true);
         investors.map((i) => {
           return (
             <div
-              key={i._id}
+              key={i.id}
               className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               {/* Top Section */}

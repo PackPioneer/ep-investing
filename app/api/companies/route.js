@@ -1,11 +1,14 @@
-import connectDB from "@/lib/mongodb";
-import Company from "@/models/Company";
+// app/api/companies/route.js
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    await connectDB();
+    const { data: companies, error } = await supabase
+      .from('companies')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    const companies = await Company.find().sort({ createdAt: -1 });
+    if (error) throw error;
 
     return Response.json(companies);
   } catch (error) {
@@ -18,11 +21,15 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    await connectDB();
-
     const data = await req.json();
 
-    const company = await Company.create(data);
+    const { data: company, error } = await supabase
+      .from('companies')
+      .insert([data])
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return Response.json(company);
   } catch (error) {

@@ -1,66 +1,76 @@
-import connectDB from "@/lib/mongodb";
-import Investor from "@/models/Investor";
-import { NextResponse } from "next/server";
+// app/api/investors/[id]/route.js
+import { supabase } from "@/lib/supabase";
 
-export async function GET(_request, context) {
+export async function GET(req, { params }) {
   try {
-    await connectDB();
-
-    // ✅ unwrap params
-    const { params } = context;
     const { id } = await params;
 
-    const investor = await Investor.findById(id);
+    const { data: investor, error } = await supabase
+      .from('vc_firms')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
 
     if (!investor) {
-      return NextResponse.json(
+      return Response.json(
         { message: "Investor not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(investor);
+    return Response.json(investor);
   } catch (error) {
-    return NextResponse.json(
-      { message: "Error fetching investor", error: error.message },
+    console.error('Error fetching investor:', error);
+    return Response.json(
+      { message: "Error fetching investor" },
       { status: 500 }
     );
   }
 }
-export async function PUT(req, context) {
+
+export async function PUT(req, { params }) {
   try {
-    await connectDB();
-
-        // ✅ unwrap params
-    const { params } = context;
     const { id } = await params;
+    const updates = await req.json();
 
-    const body = await req.json();
+    const { data: investor, error } = await supabase
+      .from('vc_firms')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
 
-    const updated = await Investor.findByIdAndUpdate(
-      id,
-      body,
-      { new: true }
-    );
+    if (error) throw error;
 
-    return NextResponse.json(updated);
+    return Response.json(investor);
   } catch (error) {
-    return NextResponse.json({ message: "Update failed" }, { status: 500 });
+    console.error('Error updating investor:', error);
+    return Response.json(
+      { message: "Error updating investor" },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(_req, context) {
+export async function DELETE(req, { params }) {
   try {
-    await connectDB();
-
-    // ✅ unwrap params
-    const { params } = context;
     const { id } = await params;
 
-    await Investor.findByIdAndDelete(id);
+    const { error } = await supabase
+      .from('vc_firms')
+      .delete()
+      .eq('id', id);
 
-    return NextResponse.json({ message: "Deleted" });
+    if (error) throw error;
+
+    return Response.json({ message: "Investor deleted" });
   } catch (error) {
-    return NextResponse.json({ message: "Delete failed" }, { status: 500 });
+    console.error('Error deleting investor:', error);
+    return Response.json(
+      { message: "Error deleting investor" },
+      { status: 500 }
+    );
   }
 }

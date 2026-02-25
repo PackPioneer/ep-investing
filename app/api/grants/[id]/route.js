@@ -1,45 +1,76 @@
-import connectDB from "@/lib/mongodb";
-import Grant from "@/models/Grant";
+// app/api/grants/[id]/route.js
+import { supabase } from "@/lib/supabase";
 
-export async function GET(_req, context) {
-
-      // ✅ unwrap params
-    const { params } = context;
+export async function GET(req, { params }) {
+  try {
     const { id } = await params;
 
-  await connectDB();
+    const { data: grant, error } = await supabase
+      .from('grants')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  const data = await Grant.findById(id);
+    if (error) throw error;
 
-  return Response.json(data);
+    if (!grant) {
+      return Response.json(
+        { message: "Grant not found" },
+        { status: 404 }
+      );
+    }
+
+    return Response.json(grant);
+  } catch (error) {
+    console.error('Error fetching grant:', error);
+    return Response.json(
+      { message: "Error fetching grant" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function PUT(req, context) {
-  await connectDB();
-
-        // ✅ unwrap params
-    const { params } = context;
+export async function PUT(req, { params }) {
+  try {
     const { id } = await params;
+    const updates = await req.json();
 
-  const body = await req.json();
+    const { data: grant, error } = await supabase
+      .from('grants')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
 
-  const data = await Grant.findByIdAndUpdate(
-    id,
-    body,
-    { new: true }
-  );
+    if (error) throw error;
 
-  return Response.json(data);
+    return Response.json(grant);
+  } catch (error) {
+    console.error('Error updating grant:', error);
+    return Response.json(
+      { message: "Error updating grant" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function DELETE(_req, context) {
-  await connectDB();
-
-        // ✅ unwrap params
-    const { params } = context;
+export async function DELETE(req, { params }) {
+  try {
     const { id } = await params;
 
-  await Grant.findByIdAndDelete(id);
+    const { error } = await supabase
+      .from('grants')
+      .delete()
+      .eq('id', id);
 
-  return Response.json({ message: "Deleted" });
+    if (error) throw error;
+
+    return Response.json({ message: "Grant deleted" });
+  } catch (error) {
+    console.error('Error deleting grant:', error);
+    return Response.json(
+      { message: "Error deleting grant" },
+      { status: 500 }
+    );
+  }
 }

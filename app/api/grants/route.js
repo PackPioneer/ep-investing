@@ -1,14 +1,18 @@
-import connectDB from "@/lib/mongodb";
-import Grant from "@/models/Grant";
+// app/api/grants/route.js
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    await connectDB();
+    const { data: grants, error } = await supabase
+      .from('grants')
+      .select('*')
+      .order('deadline_date', { ascending: true, nullsLast: true });
 
-    const grants = await Grant.find().sort({ deadline: 1 });
+    if (error) throw error;
 
     return Response.json(grants);
   } catch (error) {
+    console.error('Error fetching grants:', error);
     return Response.json(
       { message: "Error fetching grants" },
       { status: 500 }
@@ -18,14 +22,19 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    await connectDB();
-
     const data = await req.json();
 
-    const grant = await Grant.create(data);
+    const { data: grant, error } = await supabase
+      .from('grants')
+      .insert([data])
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return Response.json(grant);
   } catch (error) {
+    console.error('Error creating grant:', error);
     return Response.json(
       { message: "Error creating grant" },
       { status: 500 }
