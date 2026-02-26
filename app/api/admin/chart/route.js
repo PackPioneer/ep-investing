@@ -16,7 +16,6 @@ const tables = {
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") || "investors";
-
   const table = tables[type];
 
   if (!table) {
@@ -32,7 +31,6 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Group by date
   const grouped = {};
   for (const row of data) {
     const date = row.created_at?.split("T")[0];
@@ -40,6 +38,5 @@ export async function GET(req) {
   }
 
   const result = Object.entries(grouped).map(([_id, count]) => ({ _id, count }));
-
   return NextResponse.json(result);
 }
