@@ -7,21 +7,16 @@ const supabase = createClient(
 );
 
 export async function GET() {
-  const { data, error } = await supabase
-    .from("subscribers")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
-}
-
-export async function POST(req) {
-  const { email } = await req.json();
-  if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
-  const { data, error } = await supabase
-    .from("subscribers")
-    .insert([{ email, created_at: new Date().toISOString() }])
-    .select();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data[0]);
+  const [investors, companies, grants, subscribers] = await Promise.all([
+    supabase.from("vc_firms").select("id", { count: "exact", head: true }),
+    supabase.from("companies").select("id", { count: "exact", head: true }),
+    supabase.from("grants").select("id", { count: "exact", head: true }),
+    supabase.from("subscribers").select("id", { count: "exact", head: true }),
+  ]);
+  return NextResponse.json({
+    investors: investors.count || 0,
+    companies: companies.count || 0,
+    grants: grants.count || 0,
+    subscribers: subscribers.count || 0,
+  });
 }

@@ -6,9 +6,17 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export async function DELETE(req, { params }) {
-  const { id } = params;
-  const { error } = await supabase.from("subscribers").delete().eq("id", id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ success: true });
+export async function GET() {
+  const [investors, companies, grants, subscribers] = await Promise.all([
+    supabase.from("vc_firms").select("id", { count: "exact", head: true }),
+    supabase.from("companies").select("id", { count: "exact", head: true }),
+    supabase.from("grants").select("id", { count: "exact", head: true }),
+    supabase.from("subscribers").select("id", { count: "exact", head: true }),
+  ]);
+  return NextResponse.json({
+    investors: investors.count || 0,
+    companies: companies.count || 0,
+    grants: grants.count || 0,
+    subscribers: subscribers.count || 0,
+  });
 }
