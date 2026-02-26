@@ -1,43 +1,45 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Investor from "@/models/Investor";
-import Company from "@/models/Company";
-import Grant from "@/models/Grant";
-import Subscriber from "@/models/Subscriber";
+import { createClient } from "@supabase/supabase-js";
 
-const models = {
-  investors: Investor,
-  companies: Company,
-  grants: Grant,
-  subscribers: Subscriber,
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+const tables = {
+  investors: "vc_firms",
+  companies: "companies",
+  grants: "grants",
+  subscribers: "subscribers",
 };
 
 export async function GET(req) {
-  await dbConnect();
-
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") || "investors";
 
-  const Model = models[type];
+  const table = tables[type];
 
-  if (!Model) {
+  if (!table) {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
-  const data = await Model.aggregate([
-    {
-      $group: {
-        _id: {
-          $dateToString: {
-            format: "%Y-%m-%d",
-            date: "$createdAt",
-          },
-        },
-        count: { $sum: 1 },
-      },
-    },
-    { $sort: { _id: 1 } },
-  ]);
+  const { data, error } = await supabase
+    .from(table)
+    .select("created_at")
+    .order("created_at", { ascending: true });
 
-  return NextResponse.json(data);
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Group by date
+  const grouped = {};
+  for (const row of data) {
+    const date = row.created_at?.split("T")[0];
+    if (date) grouped[date] = (grouped[date] || 0) + 1;
+  }
+
+  const result = Object.entries(grouped).map(([_id, count]) => ({ _id, count }));
+
+  return NextResponse.json(result);
 }
