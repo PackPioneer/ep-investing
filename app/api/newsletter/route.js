@@ -1,45 +1,27 @@
 import { NextResponse } from "next/server";
-import Subscriber from "@/models/Subscriber";
-import connectDB from "@/lib/mongodb";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export async function GET() {
-  await connectDB();
-  const data = await Subscriber.find().sort({ createdAt: -1 });
-  return Response.json(data);
+  const { data, error } = await supabase
+    .from("subscribers")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }
 
 export async function POST(req) {
-  try {
-    const { email } = await req.json();
-
-    if (!email || !email.includes("@")) {
-      return NextResponse.json(
-        { message: "Invalid email address" },
-        { status: 400 }
-      );
-    }
-
-    await connectDB();
-
-    const existing = await Subscriber.findOne({ email });
-
-    if (existing) {
-      return NextResponse.json(
-        { message: "Already subscribed" },
-        { status: 400 }
-      );
-    }
-
-    await Subscriber.create({ email });
-
-    return NextResponse.json(
-      { message: "Subscribed successfully" },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { message: "Server error" },
-      { status: 500 }
-    );
-  }
+  const { email } = await req.json();
+  if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
+  const { data, error } = await supabase
+    .from("subscribers")
+    .insert([{ email, created_at: new Date().toISOString() }])
+    .select();
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data[0]);
 }

@@ -1,18 +1,14 @@
-import connectDB from "@/lib/mongodb";
-import Subscriber from "@/models/Subscriber";
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-export async function DELETE(_req, context) {
-  try {
-    await connectDB();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
-    const { params } = context;
-    const {id} = await params;
-
-  await Subscriber.findByIdAndDelete(id);
-
-  return NextResponse.json({ message: "Deleted" })
-  } catch (error) {
-    return NextResponse.json({ message: "Delete failed" }, { status: 500 });
-  };
+export async function DELETE(req, { params }) {
+  const { id } = params;
+  const { error } = await supabase.from("subscribers").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ success: true });
 }
