@@ -35,24 +35,6 @@ export default function CompanyProfilePage() {
   return (
     <div className="min-h-screen bg-[#0a0d0f] text-[#e8ede8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 border-b border-[#1e2428] bg-[#0a0d0f]/90 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investment</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/search" className="text-sm text-[#6b7a72] border border-[#252c32] rounded-md px-3 py-1.5 hover:text-[#e8ede8] transition-all">
-              Browse companies
-            </Link>
-            <Link href="/get-matched" className="text-sm bg-[#c8f560] text-[#0a0d0f] font-semibold rounded-md px-4 py-1.5 hover:bg-[#d4ff6b] transition-all">
-              Claim your company
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         {/* Back */}
