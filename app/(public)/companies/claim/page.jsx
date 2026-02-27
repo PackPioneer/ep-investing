@@ -81,14 +81,14 @@ export default function ClaimCompanyPage() {
   if (step === 3) return (
     <div className="min-h-[80vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
-        <div className="w-16 h-16 rounded-full bg-[rgba(200,245,96,0.1)] border border-[#1e2e24] flex items-center justify-center mx-auto mb-6">
-          <CheckCircle size={32} className="text-[#c8f560]" />
+        <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
+          <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8] mb-3">You're on the list</h2>
-        <p className="text-[#6b7a72] text-sm leading-relaxed mb-8">
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">You're on the list</h2>
+        <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           We'll verify your company and reach out to {form.contact_email} within 1–2 business days to complete your listing.
         </p>
-        <Link href="/search" className="inline-flex items-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#d4ff6b] transition-all">
+        <Link href="/search" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
           Browse companies <ArrowRight size={14} />
         </Link>
       </div>
@@ -96,19 +96,19 @@ export default function ClaimCompanyPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0d0f] text-[#e8ede8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 text-[#c8f560] text-xs font-mono tracking-widest uppercase border border-[#1e2e24] bg-[#151d18] rounded-full px-3 py-1.5 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c8f560]" />
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             For Companies
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#e8ede8] mb-4">
+          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
             Claim your company profile
           </h1>
-          <p className="text-[#6b7a72] text-base max-w-lg mx-auto leading-relaxed font-light">
+          <p className="text-[#4a5568] text-base max-w-lg mx-auto leading-relaxed font-light">
             Get verified, control your profile, and get discovered by investors and grant bodies actively deploying capital.
           </p>
         </div>
@@ -116,8 +116,8 @@ export default function ClaimCompanyPage() {
         {/* Trust strip */}
         <div className="flex flex-wrap justify-center gap-6 mb-14">
           {TRUST.map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-2 text-sm text-[#6b7a72]">
-              <Icon size={14} className="text-[#c8f560]" />
+            <div key={label} className="flex items-center gap-2 text-sm text-[#4a5568]">
+              <Icon size={14} className="text-[#2d6a4f]" />
               {label}
             </div>
           ))}
@@ -131,36 +131,36 @@ export default function ClaimCompanyPage() {
                 <button key={plan.id} onClick={() => setSelectedPlan(plan.id)}
                   className={`text-left rounded-2xl border p-8 transition-all ${
                     selectedPlan === plan.id
-                      ? "border-[#c8f560] bg-[rgba(200,245,96,0.04)]"
-                      : "border-[#1e2428] bg-[#111518] hover:border-[#252c32]"
+                      ? "border-[#2d6a4f] bg-[rgba(200,245,96,0.04)]"
+                      : "border-[#e2e6ed] bg-[#ffffff] hover:border-[#d0d6e0]"
                   }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-[#e8ede8] text-lg">{plan.name}</h3>
+                        <h3 className="font-semibold text-[#0f1a14] text-lg">{plan.name}</h3>
                         {plan.accent && (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[rgba(200,245,96,0.1)] text-[#c8f560] border border-[#1e2e24]">Popular</span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[rgba(45,106,79,0.08)] text-[#2d6a4f] border border-[#c8d8cc]">Popular</span>
                         )}
                       </div>
-                      <p className="text-sm text-[#6b7a72] font-light">{plan.desc}</p>
+                      <p className="text-sm text-[#4a5568] font-light">{plan.desc}</p>
                     </div>
                     <div className="text-right flex-shrink-0 ml-4">
-                      <span style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#c8f560]">{plan.price}</span>
-                      <span className="text-xs text-[#4a5550] font-mono">{plan.period}</span>
+                      <span style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{plan.price}</span>
+                      <span className="text-xs text-[#718096] font-mono">{plan.period}</span>
                     </div>
                   </div>
                   <ul className="flex flex-col gap-2 mt-4">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-sm text-[#6b7a72]">
-                        <CheckCircle size={13} className="text-[#c8f560] flex-shrink-0" />
+                      <li key={f} className="flex items-center gap-2 text-sm text-[#4a5568]">
+                        <CheckCircle size={13} className="text-[#2d6a4f] flex-shrink-0" />
                         {f}
                       </li>
                     ))}
                   </ul>
                   <div className={`mt-6 w-full py-2.5 rounded-lg text-sm font-semibold text-center transition-all ${
                     selectedPlan === plan.id
-                      ? "bg-[#c8f560] text-[#0a0d0f]"
-                      : "bg-[#171c20] text-[#6b7a72] border border-[#252c32]"
+                      ? "bg-[#2d6a4f] text-[#f2f4f8]"
+                      : "bg-[#f8f9fb] text-[#4a5568] border border-[#d0d6e0]"
                   }`}>
                     {selectedPlan === plan.id ? "✓ Selected" : "Select plan"}
                   </div>
@@ -170,26 +170,26 @@ export default function ClaimCompanyPage() {
 
             <div className="text-center">
               <button onClick={() => setStep(2)}
-                className="inline-flex items-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg px-8 py-3.5 hover:bg-[#d4ff6b] transition-all">
+                className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-8 py-3.5 hover:bg-[#235a40] transition-all">
                 Continue with {PLANS.find(p => p.id === selectedPlan)?.name}
                 <ArrowRight size={14} />
               </button>
-              <p className="text-xs text-[#4a5550] font-mono mt-3">No payment required yet — we'll verify first</p>
+              <p className="text-xs text-[#718096] font-mono mt-3">No payment required yet — we'll verify first</p>
             </div>
           </>
         )}
 
         {step === 2 && (
           <div className="max-w-xl mx-auto">
-            <button onClick={() => setStep(1)} className="text-sm text-[#6b7a72] hover:text-[#e8ede8] transition-colors mb-8 flex items-center gap-1">
+            <button onClick={() => setStep(1)} className="text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8 flex items-center gap-1">
               ← Back to plans
             </button>
 
-            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#1e2428]">
-                <Building2 size={18} className="text-[#c8f560]" />
-                <h2 className="font-semibold text-[#e8ede8]">Company details</h2>
-                <span className="ml-auto text-xs font-mono text-[#c8f560] px-2 py-0.5 rounded-full border border-[#1e2e24] bg-[#151d18]">
+            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
+                <Building2 size={18} className="text-[#2d6a4f]" />
+                <h2 className="font-semibold text-[#0f1a14]">Company details</h2>
+                <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6]">
                   {PLANS.find(p => p.id === selectedPlan)?.name}
                 </span>
               </div>
@@ -203,8 +203,8 @@ export default function ClaimCompanyPage() {
                   { name: "contact_role", label: "Your role", placeholder: "CEO, Founder, Marketing…", required: false },
                 ].map((field) => (
                   <div key={field.name} className="flex flex-col gap-1.5">
-                    <label className="text-xs font-mono text-[#6b7a72] tracking-wider uppercase">
-                      {field.label} {field.required && <span className="text-[#c8f560]">*</span>}
+                    <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">
+                      {field.label} {field.required && <span className="text-[#2d6a4f]">*</span>}
                     </label>
                     <input
                       name={field.name}
@@ -213,14 +213,14 @@ export default function ClaimCompanyPage() {
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       required={field.required}
-                      className="bg-[#0a0d0f] border border-[#252c32] rounded-lg px-4 py-3 text-sm text-[#e8ede8] placeholder-[#4a5550] outline-none focus:border-[#c8f560] transition-colors"
+                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
                     />
                   </div>
                 ))}
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-mono text-[#6b7a72] tracking-wider uppercase">
-                    Brief description <span className="text-[#4a5550]">(optional)</span>
+                  <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">
+                    Brief description <span className="text-[#718096]">(optional)</span>
                   </label>
                   <textarea
                     name="description"
@@ -228,16 +228,16 @@ export default function ClaimCompanyPage() {
                     onChange={handleChange}
                     placeholder="What does your company do? What's your core technology?"
                     rows={3}
-                    className="bg-[#0a0d0f] border border-[#252c32] rounded-lg px-4 py-3 text-sm text-[#e8ede8] placeholder-[#4a5550] outline-none focus:border-[#c8f560] transition-colors resize-none"
+                    className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
                   />
                 </div>
 
                 <button type="submit" disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#d4ff6b] transition-all disabled:opacity-60 mt-2">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
                   {loading ? "Submitting…" : "Submit claim request"}
                   {!loading && <ArrowRight size={14} />}
                 </button>
-                <p className="text-xs text-[#4a5550] font-mono text-center">We'll verify and reach out within 1–2 business days</p>
+                <p className="text-xs text-[#718096] font-mono text-center">We'll verify and reach out within 1–2 business days</p>
               </form>
             </div>
           </div>

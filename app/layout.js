@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0d0f]`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f2f4f8]`}>
           <Navbar />
           {children}
           <Toaster position="top-center" reverseOrder={false} />

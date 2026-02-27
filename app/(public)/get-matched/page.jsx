@@ -10,7 +10,7 @@ const PATHS = [
     icon: TrendingUp,
     title: "I'm an Investor",
     desc: "Find deal flow matched to your thesis — climate companies by stage, technology, and traction.",
-    color: "text-[#c8f560]",
+    color: "text-[#2d6a4f]",
     fields: [
       { name: "name", label: "Your name", placeholder: "Otto Gunderson", required: true },
       { name: "email", label: "Email", placeholder: "otto@fund.com", required: true, type: "email" },
@@ -87,14 +87,14 @@ export default function GetMatchedPage() {
   if (done) return (
     <div className="min-h-[80vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
-        <div className="w-16 h-16 rounded-full bg-[rgba(200,245,96,0.1)] border border-[#1e2e24] flex items-center justify-center mx-auto mb-6">
-          <CheckCircle size={32} className="text-[#c8f560]" />
+        <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
+          <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8] mb-3">Request received</h2>
-        <p className="text-[#6b7a72] text-sm leading-relaxed mb-8">
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Request received</h2>
+        <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           Thanks — we'll review your submission and follow up at {form.email} within 2–3 business days with your matched results.
         </p>
-        <Link href="/" className="inline-flex items-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#d4ff6b] transition-all">
+        <Link href="/" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
           Back to home <ArrowRight size={14} />
         </Link>
       </div>
@@ -102,19 +102,19 @@ export default function GetMatchedPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0d0f] text-[#e8ede8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-4xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 text-[#c8f560] text-xs font-mono tracking-widest uppercase border border-[#1e2e24] bg-[#151d18] rounded-full px-3 py-1.5 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c8f560]" />
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             Matching Service
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#e8ede8] mb-4">
+          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
             Get matched
           </h1>
-          <p className="text-[#6b7a72] text-base max-w-md mx-auto leading-relaxed font-light">
+          <p className="text-[#4a5568] text-base max-w-md mx-auto leading-relaxed font-light">
             Tell us who you are and what you're looking for — we'll match you manually from our curated database.
           </p>
         </div>
@@ -124,13 +124,13 @@ export default function GetMatchedPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {PATHS.map((p) => (
               <button key={p.id} onClick={() => { setSelectedPath(p.id); setStep(2); setForm({}); }}
-                className="text-left bg-[#111518] border border-[#1e2428] rounded-2xl p-7 flex flex-col gap-4 hover:border-[#c8f560] hover:bg-[#171c20] transition-all group">
+                className="text-left bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
                 <p.icon size={24} className={p.color} />
                 <div>
-                  <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#e8ede8] mb-2">{p.title}</h3>
-                  <p className="text-sm text-[#6b7a72] leading-relaxed font-light">{p.desc}</p>
+                  <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">{p.title}</h3>
+                  <p className="text-sm text-[#4a5568] leading-relaxed font-light">{p.desc}</p>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-[#c8f560] font-mono mt-auto pt-2 group-hover:gap-2 transition-all">
+                <div className="flex items-center gap-1 text-xs text-[#2d6a4f] font-mono mt-auto pt-2 group-hover:gap-2 transition-all">
                   Get started <ArrowRight size={11} />
                 </div>
               </button>
@@ -141,21 +141,21 @@ export default function GetMatchedPage() {
         {/* Step 2 — Form */}
         {step === 2 && path && (
           <div className="max-w-xl mx-auto">
-            <button onClick={() => setStep(1)} className="text-sm text-[#6b7a72] hover:text-[#e8ede8] transition-colors mb-8 flex items-center gap-1">
+            <button onClick={() => setStep(1)} className="text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8 flex items-center gap-1">
               <ArrowLeft size={13} /> Back
             </button>
 
-            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#1e2428]">
+            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
                 <path.icon size={18} className={path.color} />
-                <h2 className="font-semibold text-[#e8ede8]">{path.title}</h2>
+                <h2 className="font-semibold text-[#0f1a14]">{path.title}</h2>
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 {path.fields.map((field) => (
                   <div key={field.name} className="flex flex-col gap-1.5">
-                    <label className="text-xs font-mono text-[#6b7a72] tracking-wider uppercase">
-                      {field.label} {field.required && <span className="text-[#c8f560]">*</span>}
+                    <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">
+                      {field.label} {field.required && <span className="text-[#2d6a4f]">*</span>}
                     </label>
                     <input
                       name={field.name}
@@ -164,14 +164,14 @@ export default function GetMatchedPage() {
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       required={field.required}
-                      className="bg-[#0a0d0f] border border-[#252c32] rounded-lg px-4 py-3 text-sm text-[#e8ede8] placeholder-[#4a5550] outline-none focus:border-[#c8f560] transition-colors"
+                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
                     />
                   </div>
                 ))}
 
                 {path.textarea && (
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-mono text-[#6b7a72] tracking-wider uppercase">
+                    <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">
                       {path.textarea.label}
                     </label>
                     <textarea
@@ -180,17 +180,17 @@ export default function GetMatchedPage() {
                       onChange={handleChange}
                       placeholder={path.textarea.placeholder}
                       rows={4}
-                      className="bg-[#0a0d0f] border border-[#252c32] rounded-lg px-4 py-3 text-sm text-[#e8ede8] placeholder-[#4a5550] outline-none focus:border-[#c8f560] transition-colors resize-none"
+                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
                     />
                   </div>
                 )}
 
                 <button type="submit" disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#d4ff6b] transition-all disabled:opacity-60 mt-2">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
                   {loading ? "Submitting…" : "Submit match request"}
                   {!loading && <ArrowRight size={14} />}
                 </button>
-                <p className="text-xs text-[#4a5550] font-mono text-center">We review manually and respond within 2–3 business days</p>
+                <p className="text-xs text-[#718096] font-mono text-center">We review manually and respond within 2–3 business days</p>
               </form>
             </div>
           </div>
