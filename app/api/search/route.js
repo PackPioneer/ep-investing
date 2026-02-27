@@ -14,7 +14,7 @@ export async function GET(req) {
     const { data: companies, error: companiesError } = await supabase
       .from('companies')
       .select('*')
-      .or(`name.ilike.%${query}%,description.ilike.%${query}%,core_technology.ilike.%${query}%`)
+      .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
       .limit(20);
 
     if (companiesError) console.error('Companies search error:', companiesError);
