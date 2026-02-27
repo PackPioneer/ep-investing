@@ -1,295 +1,283 @@
 "use client";
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { 
-  ArrowLeft, 
-  ExternalLink, 
-  MapPin, 
-  Rocket, 
-  Tag as TagIcon, 
-  Globe,
-  Users,
-  DollarSign,
-  Calendar,
-  Building,
-  Target,
-  TrendingUp,
-  Factory
-} from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock } from "lucide-react";
 
-export default function SingleCompanyPage() {
+export default function CompanyProfilePage() {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCompany = async () => {
-      try {
-        const res = await axios.get(`/api/companies/${id}`);
-        setCompany(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) fetchCompany();
+    if (!id) return;
+    fetch(`/api/companies/${id}`)
+      .then((r) => r.json())
+      .then((data) => { setCompany(data); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-slate-500 font-medium font-sans">Loading company data...</p>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-[#0a0d0f] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#c8f560] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
-  if (!company) return <div className="p-20 text-center text-slate-500">Company not found.</div>;
+  if (!company) return (
+    <div className="min-h-screen bg-[#0a0d0f] flex items-center justify-center text-[#6b7a72]">
+      Company not found.
+    </div>
+  );
+
+  const tags = company.industry_tags || (company.sector ? [company.sector] : []);
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen py-20 font-sans">
-      {/* ================= HERO SECTION ================= */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-6 pt-12 pb-10">
-          <Link
-            href="/search"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-emerald-600 transition-colors mb-8 group"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Search
+    <div className="min-h-screen bg-[#0a0d0f] text-[#e8ede8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+
+      {/* NAV */}
+      <nav className="sticky top-0 z-50 border-b border-[#1e2428] bg-[#0a0d0f]/90 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
+            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investing</span>
           </Link>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              {/* Logo / Placeholder */}
-              {company.logo_url ? (
-                <div className="w-24 h-24 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-center overflow-hidden">
-                  <img src={company.logo_url} alt={company.name} className="max-w-full max-h-full object-contain" />
-                </div>
-              ) : (
-                <div className="w-24 h-24 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center text-emerald-400 font-bold text-2xl">
-                  {company.name?.charAt(0)}
-                </div>
-              )}
-
-              <div>
-                <div className="flex flex-wrap items-center gap-3 mb-2">
-                  <h1 className="text-4xl font-bold text-slate-900 tracking-tight">{company.name}</h1>
-                  {company.production_status && (
-                    <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border
-                      ${company.production_status === 'commercial' ? 'bg-green-50 text-green-700 border-green-100' : ''}
-                      ${company.production_status === 'pilot' ? 'bg-blue-50 text-blue-700 border-blue-100' : ''}
-                      ${company.production_status === 'research' ? 'bg-gray-50 text-gray-700 border-gray-100' : ''}
-                      ${company.production_status === 'scaled' ? 'bg-purple-50 text-purple-700 border-purple-100' : ''}
-                    `}>
-                      {company.production_status}
-                    </span>
-                  )}
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-4 text-slate-500 text-sm font-medium">
-                  {(company.headquarters_location || company.location) && (
-                    <div className="flex items-center gap-1.5">
-                      <MapPin size={16} className="text-slate-400" />
-                      {company.headquarters_location || company.location}
-                    </div>
-                  )}
-                  {company.url && (
-                    <a href={company.url} target="_blank" className="flex items-center gap-1.5 hover:text-emerald-600 transition-colors">
-                      <Globe size={16} className="text-slate-400" />
-                      {new URL(company.url).hostname}
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <a
-                href={company.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-8 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 active:scale-[0.98]"
-              >
-                Visit Site
-                <ExternalLink size={18} />
-              </a>
-            </div>
+          <div className="flex items-center gap-3">
+            <Link href="/search" className="text-sm text-[#6b7a72] border border-[#252c32] rounded-md px-3 py-1.5 hover:text-[#e8ede8] transition-all">
+              Browse companies
+            </Link>
+            <Link href="/get-matched" className="text-sm bg-[#c8f560] text-[#0a0d0f] font-semibold rounded-md px-4 py-1.5 hover:bg-[#d4ff6b] transition-all">
+              Claim your company
+            </Link>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* ================= MAIN CONTENT ================= */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
-          {/* LEFT COLUMN: Overview */}
-          <div className="lg:col-span-2 space-y-12">
-            
-            {/* About Section */}
-            <section>
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">About</h2>
-              <p className="text-xl text-slate-600 leading-relaxed font-light">
-                {company.description || "No description available for this company."}
-              </p>
-            </section>
+      <div className="max-w-6xl mx-auto px-6 py-10">
 
-            {/* Core Technology */}
-            {company.core_technology && (
-              <section className="bg-white border border-slate-200 rounded-2xl p-8">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <Rocket size={14} />
-                  Core Technology
-                </h2>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {company.core_technology}
-                </p>
-              </section>
-            )}
+        {/* Back */}
+        <Link href="/search" className="inline-flex items-center gap-2 text-sm text-[#6b7a72] hover:text-[#e8ede8] transition-colors mb-8">
+          <ArrowLeft size={14} /> Back to search
+        </Link>
 
-            {/* Key Customers */}
-            {company.key_customers && (
-              <section className="bg-white border border-slate-200 rounded-2xl p-8">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <Users size={14} />
-                  Key Customers
-                </h2>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {company.key_customers}
-                </p>
-              </section>
-            )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {/* Target Market */}
-            {company.target_market && (
-              <section className="bg-white border border-slate-200 rounded-2xl p-8">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <Target size={14} />
-                  Target Market
-                </h2>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {company.target_market}
-                </p>
-              </section>
-            )}
+          {/* LEFT COLUMN */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
 
-            {/* Recent Milestones */}
-            {company.recent_milestones && (
-              <section className="bg-white border border-slate-200 rounded-2xl p-8">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <TrendingUp size={14} />
-                  Recent Milestones
-                </h2>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {company.recent_milestones}
-                </p>
-              </section>
-            )}
-
-            {/* Manufacturing Capability */}
-            {company.manufacturing_capability && (
-              <section className="bg-white border border-slate-200 rounded-2xl p-8">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                  <Factory size={14} />
-                  Manufacturing Capability
-                </h2>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  {company.manufacturing_capability}
-                </p>
-              </section>
-            )}
-
-            {/* Industry Tags */}
-            {company.industry_tags?.length > 0 && (
-              <section>
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                  <TagIcon size={14} />
-                  Industries
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {company.industry_tags.map((tag, i) => (
-                    <div
-                      key={i}
-                      className="px-4 py-2 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full text-sm font-semibold hover:bg-emerald-100 transition-all cursor-default"
-                    >
-                      {tag.replace(/_/g, ' ')}
+            {/* HERO CARD */}
+            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-8">
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <div className="flex items-center gap-5">
+                  {company.logo_url ? (
+                    <img src={company.logo_url} alt={company.name} className="w-16 h-16 rounded-xl object-contain bg-white p-2" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-xl bg-[#1e2428] flex items-center justify-center text-2xl font-bold text-[#c8f560]">
+                      {(company.name || company.url || "?")[0].toUpperCase()}
                     </div>
+                  )}
+                  <div>
+                    <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8] leading-tight">
+                      {company.name || company.url}
+                    </h1>
+                    {company.url && (
+                      <a href={company.url} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-[#6b7a72] hover:text-[#c8f560] transition-colors mt-1">
+                        <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
+                      </a>
+                    )}
+                  </div>
+                </div>
+                {company.production_status && (
+                  <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-mono border border-[#1e2e24] bg-[#151d18] text-[#c8f560]">
+                    {company.production_status}
+                  </div>
+                )}
+              </div>
+
+              {/* Tags */}
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {tags.map((tag) => (
+                    <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#1e2e24] bg-[#151d18] text-[#6b7a72]">
+                      {tag}
+                    </span>
                   ))}
                 </div>
-              </section>
+              )}
+
+              {/* Description */}
+              {company.description && (
+                <p className="text-[#6b7a72] leading-relaxed text-sm font-light">
+                  {company.description}
+                </p>
+              )}
+            </div>
+
+            {/* CORE TECHNOLOGY */}
+            {company.core_technology && (
+              <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <Cpu size={16} className="text-[#c8f560]" />
+                  <h2 className="text-sm font-semibold text-[#e8ede8] tracking-wide uppercase text-xs font-mono">Core Technology</h2>
+                </div>
+                <p className="text-sm text-[#6b7a72] leading-relaxed">{company.core_technology}</p>
+              </div>
             )}
-          </div>
 
-          {/* RIGHT COLUMN: Company Details Card */}
-          <aside className="lg:col-span-1">
-            <div className="bg-white border border-slate-200 rounded-2xl p-8 sticky top-8 shadow-sm space-y-8">
-              <h3 className="text-lg font-bold text-slate-900">Company Intel</h3>
-              
-              {/* Production Status */}
-              {company.production_status && (
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                    <Rocket size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Production Status</p>
-                    <p className="text-slate-900 font-semibold capitalize mt-0.5">{company.production_status}</p>
-                  </div>
+            {/* KEY CUSTOMERS */}
+            {company.key_customers && (
+              <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <Users size={16} className="text-[#c8f560]" />
+                  <h2 className="text-xs font-mono font-semibold text-[#e8ede8] tracking-wide uppercase">Key Customers</h2>
                 </div>
-              )}
-
-              {/* Headquarters */}
-              {(company.headquarters_location || company.location) && (
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headquarters</p>
-                    <p className="text-slate-900 font-semibold mt-0.5">{company.headquarters_location || company.location}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Founded */}
-              {company.founding_year && (
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                    <Calendar size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Founded</p>
-                    <p className="text-slate-900 font-semibold mt-0.5">{company.founding_year}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Funding Raised */}
-              {company.total_funding_raised && (
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 shrink-0">
-                    <DollarSign size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Funding Raised</p>
-                    <p className="text-slate-900 font-semibold mt-0.5">{company.total_funding_raised}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-6 border-t border-slate-100">
-                <div className="text-xs text-slate-400">
-                  Last updated: {new Date(company.updated_at || company.created_at).toLocaleDateString()}
+                <div className="flex flex-wrap gap-2">
+                  {company.key_customers.split(",").map((c) => (
+                    <span key={c} className="px-3 py-1.5 rounded-lg text-sm bg-[#171c20] border border-[#252c32] text-[#6b7a72]">
+                      {c.trim()}
+                    </span>
+                  ))}
                 </div>
               </div>
-            </div>
-          </aside>
+            )}
 
+            {/* RECENT MILESTONES */}
+            {company.recent_milestones && (
+              <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <Star size={16} className="text-[#c8f560]" />
+                  <h2 className="text-xs font-mono font-semibold text-[#e8ede8] tracking-wide uppercase">Recent Milestones</h2>
+                </div>
+                <p className="text-sm text-[#6b7a72] leading-relaxed">{company.recent_milestones}</p>
+              </div>
+            )}
+
+            {/* MANUFACTURING */}
+            {company.manufacturing_capability && (
+              <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-7">
+                <div className="flex items-center gap-2 mb-4">
+                  <Factory size={16} className="text-[#c8f560]" />
+                  <h2 className="text-xs font-mono font-semibold text-[#e8ede8] tracking-wide uppercase">Manufacturing Capability</h2>
+                </div>
+                <p className="text-sm text-[#6b7a72] leading-relaxed">{company.manufacturing_capability}</p>
+              </div>
+            )}
+
+            {/* INVESTOR PRO LOCKED */}
+            <div className="bg-[#111518] border border-[#252c32] rounded-2xl p-7 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#111518] pointer-events-none" />
+              <div className="flex items-center gap-2 mb-5">
+                <Lock size={16} className="text-[#4a5550]" />
+                <h2 className="text-xs font-mono font-semibold text-[#4a5550] tracking-wide uppercase">Restricted Company Intelligence</h2>
+              </div>
+              <div className="flex flex-col gap-3">
+                {["Raise round / stage", "Estimated revenue range", "Employee count signals", "Lead investors"].map((field) => (
+                  <div key={field} className="flex items-center justify-between py-2 border-b border-[#1e2428] last:border-0">
+                    <span className="text-sm text-[#4a5550]">{field}</span>
+                    <div className="h-4 w-24 bg-[#1e2428] rounded-sm" />
+                  </div>
+                ))}
+              </div>
+              <Link href="/get-matched"
+                className="mt-6 w-full flex items-center justify-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg py-3 hover:bg-[#d4ff6b] transition-colors">
+                Upgrade to Investor Pro ($129/mo) <ChevronRight size={14} />
+              </Link>
+            </div>
+
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div className="flex flex-col gap-5">
+
+            {/* QUICK FACTS */}
+            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-6">
+              <h3 className="text-xs font-mono font-semibold text-[#6b7a72] tracking-widest uppercase mb-5">Quick Facts</h3>
+              <div className="flex flex-col gap-4">
+                {company.founding_year && (
+                  <div className="flex items-start gap-3">
+                    <Calendar size={14} className="text-[#c8f560] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#4a5550] font-mono mb-1">Founded</div>
+                      <div className="text-sm text-[#e8ede8]">{company.founding_year}</div>
+                    </div>
+                  </div>
+                )}
+                {(company.location || company.headquarters_location) && (
+                  <div className="flex items-start gap-3">
+                    <MapPin size={14} className="text-[#c8f560] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#4a5550] font-mono mb-1">Location</div>
+                      <div className="text-sm text-[#e8ede8]">{company.location || company.headquarters_location}</div>
+                    </div>
+                  </div>
+                )}
+                {company.total_funding_raised && (
+                  <div className="flex items-start gap-3">
+                    <TrendingUp size={14} className="text-[#c8f560] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#4a5550] font-mono mb-1">Total Funding</div>
+                      <div className="text-sm text-[#e8ede8]">{company.total_funding_raised}</div>
+                    </div>
+                  </div>
+                )}
+                {company.target_market && (
+                  <div className="flex items-start gap-3">
+                    <Target size={14} className="text-[#c8f560] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#4a5550] font-mono mb-1">Target Market</div>
+                      <div className="text-sm text-[#e8ede8]">{company.target_market}</div>
+                    </div>
+                  </div>
+                )}
+                {company.production_status && (
+                  <div className="flex items-start gap-3">
+                    <Factory size={14} className="text-[#c8f560] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#4a5550] font-mono mb-1">Status</div>
+                      <div className="text-sm text-[#e8ede8] capitalize">{company.production_status}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {company.url && (
+                <a href={company.url} target="_blank" rel="noopener noreferrer"
+                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#252c32] text-[#e8ede8] text-sm rounded-lg py-2.5 hover:border-[#c8f560] hover:text-[#c8f560] transition-all">
+                  <Globe size={14} /> Visit website
+                </a>
+              )}
+            </div>
+
+            {/* RELEVANT GRANTS */}
+            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-6">
+              <h3 className="text-xs font-mono font-semibold text-[#6b7a72] tracking-widest uppercase mb-4">Relevant Grants</h3>
+              {[
+                { name: "DOE Advanced R&D Program", date: "Mar 12" },
+                { name: "ARPA-E OPEN 2025", date: "Mar 28" },
+                { name: "Clean Energy Initiative", date: "Apr 5" },
+              ].map((grant) => (
+                <div key={grant.name} className="flex items-start justify-between py-2.5 border-b border-[#1e2428] last:border-0">
+                  <span className="text-xs text-[#6b7a72]">{grant.name}</span>
+                  <span className="text-xs font-mono text-[#ff9650] ml-2 flex-shrink-0">{grant.date}</span>
+                </div>
+              ))}
+              <Link href="/grants" className="mt-4 text-xs text-[#c8f560] font-mono hover:underline flex items-center gap-1">
+                Browse all grants →
+              </Link>
+            </div>
+
+            {/* CTA */}
+            <div className="bg-[#111518] border border-[#1e2428] rounded-2xl p-6">
+              <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#e8ede8] mb-2">Is this your company?</h3>
+              <p className="text-xs text-[#6b7a72] leading-relaxed mb-4">Claim your profile to add your logo, edit your description, and appear in investor discovery.</p>
+              <Link href="/get-matched"
+                className="w-full flex items-center justify-center gap-2 bg-[#c8f560] text-[#0a0d0f] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#d4ff6b] transition-colors">
+                Claim this company
+              </Link>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
