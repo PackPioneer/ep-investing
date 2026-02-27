@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import Navbar from "@/components/Navbar";
-// import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 
@@ -16,27 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EP Investing",
-  description: "By Websidezone",
+  title: "EP Investing — Climate Finance Intelligence",
+  description: "Search companies, investors, grants, and jobs across the energy transition.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-<html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* <Navbar /> */}
-        {children}
-        <Toaster
-  position="top-center"
-  reverseOrder={false}
-/>
-        {/* <Footer /> */}
-      </body>
-    </html>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0d0f]`}>
+          <Navbar />
+          {children}
+          <Toaster position="top-center" reverseOrder={false} />
+        </body>
+      </html>
     </ClerkProvider>
-    
   );
 }
