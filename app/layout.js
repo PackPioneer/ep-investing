@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EP Investing — Climate Finance Intelligence",
+  title: "EP Investment — Climate Finance Intelligence",
   description: "Search companies, investors, grants, and jobs across the energy transition.",
 };
 

@@ -1,9 +1,9 @@
 // app/terms-and-conditions/page.jsx
 
 export const metadata = {
-  title: "Terms & Conditions | EP Investing",
+  title: "Terms & Conditions | EP Investment",
   description:
-    "Read the terms and conditions governing the use of EP Investing platform and services.",
+    "Read the terms and conditions governing the use of EP Investment platform and services.",
 };
 
 export default function TermsAndConditions() {
@@ -16,7 +16,7 @@ export default function TermsAndConditions() {
 
       <section className="space-y-6">
         <p>
-          By accessing or using EP Investing, you agree to comply with and be
+          By accessing or using EP Investment, you agree to comply with and be
           bound by these Terms and Conditions. If you do not agree, please do not
           use our platform.
         </p>
@@ -51,7 +51,7 @@ export default function TermsAndConditions() {
             3. Matching and Listings
           </h2>
           <p>
-            EP Investing provides information and matching services between
+            EP Investment provides information and matching services between
             investors, founders, and opportunities. We do not guarantee:
           </p>
           <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -67,7 +67,7 @@ export default function TermsAndConditions() {
           </h2>
           <p>
             All content, branding, and materials on this platform are the
-            intellectual property of EP Investing and may not be used without
+            intellectual property of EP Investment and may not be used without
             permission.
           </p>
         </div>

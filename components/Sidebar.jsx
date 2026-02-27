@@ -39,7 +39,7 @@ export default function Sidebar() {
         </button>
 
         <h1 className="font-semibold tracking-tight">
-          EP Investing
+          EP Investment
         </h1>
 
         <UserButton fallbackRedirectUrl="/" />
@@ -65,7 +65,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between px-4 py-4 border-b border-neutral-200">
           {!collapsed && (
             <h1 className="text-lg font-semibold tracking-tight">
-              EP Investing
+              EP Investment
             </h1>
           )}
 

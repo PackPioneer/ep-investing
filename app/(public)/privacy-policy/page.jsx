@@ -1,9 +1,9 @@
 // app/privacy-policy/page.jsx
 
 export const metadata = {
-  title: "Privacy Policy | EP Investing",
+  title: "Privacy Policy | EP Investment",
   description:
-    "Learn how EP Investing collects, uses, and protects your personal information while using our platform.",
+    "Learn how EP Investment collects, uses, and protects your personal information while using our platform.",
 };
 
 export default function PrivacyPolicy() {
@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
 
       <section className="space-y-6">
         <p>
-          EP Investing ("we", "our", "us") respects your privacy and is committed
+          EP Investment ("we", "our", "us") respects your privacy and is committed
           to protecting your personal data. This Privacy Policy explains how we
           collect, use, and safeguard your information when you use our platform.
         </p>

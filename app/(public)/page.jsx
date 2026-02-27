@@ -89,7 +89,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-base font-normal text-[#e8ede8]">EP Investing</span>
+            <span style={{ fontFamily: "Georgia, serif" }} className="text-base font-normal text-[#e8ede8]">EP Investment</span>
           </Link>
           <div className="hidden md:flex items-center gap-7 text-sm text-[#6b7a72]">
             {["Companies", "Investors", "Grants", "Categories", "Jobs", "Experts"].map((item) => (
@@ -220,7 +220,7 @@ export default function HomePage() {
       {/* DIRECTORY BLOCKS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8]">Explore EP Investing</h2>
+          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8]">Explore EP Investment</h2>
           <Link href="/search" className="text-xs text-[#6b7a72] font-mono tracking-wider hover:text-[#c8f560] transition-colors">View all →</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -342,7 +342,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#e8ede8] mb-3">
-              Get weekly <em className="text-[#c8f560] not-italic">EP Investing</em> updates
+              Get weekly <em className="text-[#c8f560] not-italic">EP Investment</em> updates
             </h2>
             <p className="text-[#6b7a72] text-sm leading-relaxed font-light max-w-sm">
               New investors, grant deadlines, verified companies seeking capital — delivered every week.
@@ -374,7 +374,7 @@ export default function HomePage() {
 
       {/* FOOTER */}
       <footer className="border-t border-[#1e2428] max-w-full px-8 py-8 flex items-center justify-between">
-        <span style={{ fontFamily: "Georgia, serif" }} className="text-[#6b7a72] text-sm">EP Investing</span>
+        <span style={{ fontFamily: "Georgia, serif" }} className="text-[#6b7a72] text-sm">EP Investment</span>
         <div className="flex gap-6">
           {["Companies", "Investors", "Grants", "Pricing", "About"].map((item) => (
             <Link key={item} href={`/${item.toLowerCase()}`} className="text-xs text-[#4a5550] hover:text-[#6b7a72] transition-colors">

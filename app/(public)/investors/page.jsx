@@ -182,7 +182,7 @@ const [loading, setLoading] = useState(true);
 
     {/* Heading */}
     <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight">
-      Why EP Investing
+      Why EP Investment
     </h2>
 
     <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">

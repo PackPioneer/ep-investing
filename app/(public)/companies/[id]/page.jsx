@@ -40,7 +40,7 @@ export default function CompanyProfilePage() {
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investing</span>
+            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investment</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/search" className="text-sm text-[#6b7a72] border border-[#252c32] rounded-md px-3 py-1.5 hover:text-[#e8ede8] transition-all">

@@ -42,7 +42,7 @@ const PATHS = [
     id: "expert",
     icon: Users,
     title: "I'm an Expert",
-    desc: "Join the EP Investing experts directory — get hired for consulting, advisory, and fractional roles.",
+    desc: "Join the EP Investment experts directory — get hired for consulting, advisory, and fractional roles.",
     color: "text-[#c4b5fd]",
     fields: [
       { name: "name", label: "Your name", placeholder: "Otto Gunderson", required: true },

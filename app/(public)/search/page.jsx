@@ -267,7 +267,7 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investing</span>
+            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">EP Investment</span>
           </Link>
           <div className="hidden md:flex items-center gap-7 text-sm text-[#6b7a72]">
             {["Companies", "Investors", "Grants", "Categories", "Jobs", "Experts"].map(item => (

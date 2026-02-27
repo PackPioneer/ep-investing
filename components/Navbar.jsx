@@ -30,7 +30,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-2 h-2 rounded-full bg-[#c8f560] animate-pulse" />
             <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#e8ede8]">
-              EP Investing
+              EP Investment
             </span>
           </Link>
 

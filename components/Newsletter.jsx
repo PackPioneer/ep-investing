@@ -52,7 +52,7 @@ export default function Newsletter() {
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-slate-900"
         >
-          Get weekly EP Investing updates
+          Get weekly EP Investment updates
         </motion.h2>
 
         <p className="text-slate-600 mt-5 text-base sm:text-lg max-w-xl mx-auto">

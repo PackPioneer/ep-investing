@@ -14,7 +14,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <h2 className="text-white text-xl font-semibold tracking-tight">
-              EP Investing
+              EP Investment
             </h2>
             <p className="mt-4 text-slate-400 leading-relaxed text-sm max-w-sm">
               Backing the next generation of energy innovation. 
@@ -58,7 +58,7 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="border-t border-white/10 mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-          <p>© {new Date().getFullYear()} EP Investing. All rights reserved. | Designed with ❤ by <Link className="hover:text-white cursor-pointer transition" href={'https://websidezone.com/'} target="_blank">Websidezone</Link></p>
+          <p>© {new Date().getFullYear()} EP Investment. All rights reserved. | Designed with ❤ by <Link className="hover:text-white cursor-pointer transition" href={'https://websidezone.com/'} target="_blank">Websidezone</Link></p>
 
           <div className="flex gap-6">
             <Link href={"/privacy-policy"} className="hover:text-white cursor-pointer transition">
