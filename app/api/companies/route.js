@@ -1,41 +1,15 @@
-// app/api/companies/route.js
 import { supabase } from "@/lib/supabase";
 
 export async function GET() {
-  try {
-    const { data: companies, error } = await supabase
-      .from('companies')
-      .select('*')
-      .order('created_at', { ascending: false });
+  const { data: companies, error } = await supabase
+    .from('companies')
+    .select('id, name, url, description, sector, logo_url, industry_tags, founding_year, headquarters_location, core_technology, production_status, total_funding_raised')
+    .order('id', { ascending: true })
+    .limit(50);
 
-    if (error) throw error;
-
-    return Response.json(companies);
-  } catch (error) {
-    return Response.json(
-      { message: "Error fetching companies" },
-      { status: 500 }
-    );
+  if (error) {
+    return Response.json({ message: error.message, details: error }, { status: 500 });
   }
-}
 
-export async function POST(req) {
-  try {
-    const data = await req.json();
-
-    const { data: company, error } = await supabase
-      .from('companies')
-      .insert([data])
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    return Response.json(company);
-  } catch (error) {
-    return Response.json(
-      { message: "Error creating company" },
-      { status: 500 }
-    );
-  }
+  return Response.json(companies);
 }
