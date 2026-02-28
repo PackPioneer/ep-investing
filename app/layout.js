@@ -15,8 +15,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EP Investment — Climate Finance Intelligence",
-  description: "Search companies, investors, grants, and jobs across the energy transition.",
+  title: "EP Investment — Climate & Energy Intelligence",
+  description: "Discover 654 climate and energy companies, 135 investors, and 47 grants across the energy transition.",
+  metadataBase: new URL("https://epinvesting.com"),
+  openGraph: {
+    title: "EP Investment — Climate & Energy Intelligence",
+    description: "Discover climate and energy companies, investors, and grants across the energy transition.",
+    url: "https://epinvesting.com",
+    siteName: "EP Investment",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "EP Investment" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EP Investment — Climate & Energy Intelligence",
+    description: "Discover climate and energy companies, investors, and grants across the energy transition.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }) {
