@@ -1,353 +1,177 @@
-"use client"
+"use client";
 
-import axios from "axios";
-import { motion } from "framer-motion";
-import {
-  Building2,
-  Landmark,
-  Target,
-  ArrowRight,
-} from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { ArrowRight, Search, Globe, TrendingUp } from "lucide-react";
 
-export default function InvestorsPage() {
+const TYPES = ["All", "venture_capital", "private_equity", "family_office", "corporate_vc", "government", "philanthropy"];
 
-  const [investors, setInvestors] = useState([]);
-const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-  const fetchInvestors = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("/api/investors");
-      setInvestors(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchInvestors();
-}, []);
-  
+function InvestorCard({ investor }) {
   return (
-    <div className="bg-white text-slate-900">
-
-      {/* ================= HERO ================= */}
-      <section className="relative pt-28 pb-24 px-6">
-        <div className="max-w-6xl mx-auto">
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-semibold tracking-tight"
-          >
-            For Investors
-          </motion.h1>
-
-          <p className="mt-6 text-lg text-slate-600 max-w-2xl">
-            Deal flow for the energy transition — curated, searchable,
-            and signal-driven.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            <Link href={'/get-matched'} className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition text-center">
-              Get Matched (2 minutes)
-            </Link>
-
-            <Link href={'/founders'} className="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition text-center">
-              Browse Founders
-            </Link>
+    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
+      <div className="flex items-start gap-3">
+        {investor.logo ? (
+          <img src={investor.logo} alt={investor.name}
+            className="w-10 h-10 object-contain rounded-lg border border-[#e2e6ed] p-1 bg-white flex-shrink-0" />
+        ) : (
+          <div className="w-10 h-10 rounded-lg bg-[#eef1f6] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
+            {(investor.name || "?")[0].toUpperCase()}
           </div>
+        )}
+        <div className="min-w-0">
+          <h3 className="font-semibold text-[#0f1a14] text-sm leading-snug group-hover:text-[#2d6a4f] transition-colors">
+            {investor.name}
+          </h3>
+          {investor.type && (
+            <span className="text-[10px] font-mono text-[#718096] capitalize">
+              {investor.type.replace(/_/g, " ")}
+            </span>
+          )}
         </div>
-      </section>
+      </div>
 
-
-
-<section className="relative pb-24 px-4 sm:px-6">
-  <div className="max-w-6xl mx-auto">
-
-    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-
-      {loading ? (
-        // ================= SKELETON =================
-        Array.from({ length: 6 }).map((_, index) => (
-          <div
-            key={index}
-            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm animate-pulse"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-slate-200 rounded-md"></div>
-              <div className="h-4 w-32 bg-slate-200 rounded"></div>
-            </div>
-
-            <div className="h-4 w-24 bg-slate-200 rounded mb-3"></div>
-
-            <div className="flex gap-2">
-              <div className="h-5 w-12 bg-slate-200 rounded-full"></div>
-              <div className="h-5 w-16 bg-slate-200 rounded-full"></div>
-              <div className="h-5 w-14 bg-slate-200 rounded-full"></div>
-            </div>
-
-            <div className="h-4 w-28 bg-slate-200 rounded mt-6"></div>
-          </div>
-        ))
-      ) : investors.length === 0 ? (
-        // ================= EMPTY STATE =================
-        <div className="col-span-full text-center text-slate-500 py-10">
-          No investors found.
-        </div>
-      ) : (
-        // ================= ACTUAL DATA =================
-        investors.map((i) => {
-          return (
-            <div
-              key={i.id}
-              className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-            >
-              {/* Top Section */}
-              <div>
-
-                {/* Logo + Name */}
-                <div className="flex items-center gap-3 mb-3">
-                  
-                  {i.logo ? (
-                    <img
-                      src={i.logo}
-                      alt={i.name}
-                      className="w-10 h-10 object-contain rounded-md border border-slate-200 p-1 bg-white"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-md bg-slate-200 flex items-center justify-center text-xs text-slate-500">
-                      N/A
-                    </div>
-                  )}
-
-                  <h3 className="font-semibold text-slate-800 leading-tight">
-                    {i.name}
-                  </h3>
-                </div>
-
-                {/* Type */}
-                {i.type && (
-                  <p className="mb-3 text-sm">
-                    Type:{" "}
-                    <span className="text-emerald-600 font-medium capitalize">
-                      {i.type.replace("-", " ")}
-                    </span>
-                  </p>
-                )}
-
-                {/* Focus */}
-                {i.focus && i.focus.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {i.focus.slice(0, 3).map((f, index) => (
-                      <span
-                        key={index}
-                        className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full"
-                      >
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-              </div>
-
-              {/* CTA */}
-              <Link
-                href={i.website}
-                className="flex items-center gap-1 mt-5 font-medium text-slate-700 hover:text-black underline" target="_blank"
-              >
-                Visit website <ArrowRight size={16} />
-              </Link>
-            </div>
-          );
-        })
+      {investor.description && (
+        <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-2 font-light">
+          {investor.description}
+        </p>
       )}
 
-    </div>
-
-  </div>
-</section>
-
-
-
-
-<section className="py-24 px-4 sm:px-6 bg-linear-to-b from-slate-50 to-white">
-  <div className="max-w-6xl mx-auto text-center">
-
-    {/* Heading */}
-    <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight">
-      Why EP Investment
-    </h2>
-
-    <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
-      A smarter way to discover, track, and invest in climate innovation.
-    </p>
-
-    {/* Cards */}
-    <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3 mt-14 sm:mt-16">
-
-      <PremiumCard
-        icon={<Building2 size={26} />}
-        title="Discover Companies"
-        desc="Explore curated climate tech startups by sector, traction, and stage."
-      />
-
-      <PremiumCard
-        icon={<Landmark size={26} />}
-        title="Track Grants"
-        desc="Stay updated with non-dilutive funding, subsidies, and blended finance."
-      />
-
-      <PremiumCard
-        icon={<Target size={26} />}
-        title="Smart Matching"
-        desc="Get AI-driven recommendations aligned with your thesis and geography."
-      />
-
-    </div>
-
-  </div>
-</section>
-
-      {/* ================= HOW IT WORKS ================= */}
-      <section className="py-24 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-
-          <h2 className="text-3xl md:text-4xl font-semibold">
-            How Matching Works
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-12 mt-16 text-left">
-
-            <Step
-              number="1"
-              title="Tell us your focus"
-              desc="Select sectors, stage, check size, and climate themes."
-            />
-
-            <Step
-              number="2"
-              title="We recommend opportunities"
-              desc="Curated lists of startups and signals that match your criteria."
-            />
-
-            <Step
-              number="3"
-              title="Save, shortlist & request intros"
-              desc="Build a shortlist and request introductions directly."
-            />
-
-          </div>
+      {investor.focus && investor.focus.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {investor.focus.slice(0, 3).map((f, i) => (
+            <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#e2e6ed] text-[#4a5568]">
+              {f}
+            </span>
+          ))}
         </div>
-      </section>
+      )}
 
-      {/* ================= FORM SECTION ================= */}
-      <section className="py-24 px-6 bg-slate-50">
-        <div className="max-w-5xl mx-auto">
+      <div className="mt-auto pt-3 border-t border-[#e2e6ed] flex items-center justify-between">
+        {investor.website ? (
+          <a href={investor.website} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-[#2d6a4f] font-medium hover:underline">
+            Visit website <ArrowRight size={11} />
+          </a>
+        ) : (
+          <span className="text-xs text-[#718096] font-mono">No website</span>
+        )}
+        <Link href="/get-matched"
+          className="text-[10px] font-mono text-[#718096] hover:text-[#2d6a4f] transition-colors">
+          Get intro →
+        </Link>
+      </div>
+    </div>
+  );
+}
 
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold">
-              Investing in Climate Tech?
-            </h2>
-            <p className="mt-4 text-slate-600">
-              Tell us your focus areas and we’ll match you to relevant deals.
+export default function InvestorsPage() {
+  const [investors, setInvestors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState("All");
+
+  useEffect(() => {
+    fetch("/api/investors")
+      .then(r => r.json())
+      .then(data => { setInvestors(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = investors.filter(inv => {
+    const matchSearch = !search ||
+      inv.name?.toLowerCase().includes(search.toLowerCase()) ||
+      inv.description?.toLowerCase().includes(search.toLowerCase());
+    const matchType = type === "All" || inv.type === type;
+    return matchSearch && matchType;
+  });
+
+  return (
+    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="max-w-6xl mx-auto px-6 py-16">
+
+        {/* Header */}
+        <div className="flex items-end justify-between gap-6 flex-wrap mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
+              Investors
+            </div>
+            <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl text-[#0f1a14] mb-2">
+              Climate Investors
+            </h1>
+            <p className="text-[#4a5568] text-base font-light max-w-xl">
+              VCs, family offices, and institutional investors deploying capital across the energy transition.
             </p>
           </div>
-
-          <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-slate-200">
-
-            <div className="grid md:grid-cols-2 gap-8">
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Full Name
-                </label>
-                <input
-                  className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500/30 outline-none"
-                  placeholder="Full Name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  className="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500/30 outline-none"
-                  placeholder="you@fund.com"
-                />
-              </div>
-
-            </div>
-
-            <div className="mt-10">
-              <button className="w-full md:w-auto px-8 py-4 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition flex items-center justify-center gap-2">
-                Get Matched Today
-                <ArrowRight size={18} />
-              </button>
-            </div>
-
+          <div className="text-right">
+            <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#2d6a4f]">{investors.length}</div>
+            <div className="text-xs font-mono text-[#718096]">investors tracked</div>
           </div>
         </div>
-      </section>
 
-    </div>
-  );
-}
-
-/* ================= COMPONENTS ================= */
-
-function PremiumCard({ icon, title, desc }) {
-  return (
-    <motion.div
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 200, damping: 15 }}
-      className="relative group rounded-2xl p-px bg-linear-to-br from-emerald-400/40 via-transparent to-slate-200/40"
-    >
-      <div className="h-full w-full bg-white/90 backdrop-blur-xl border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm group-hover:shadow-xl transition-all duration-300">
-
-        {/* Icon */}
-        <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-          {icon}
+        {/* Search */}
+        <div className="flex flex-col md:flex-row gap-3 mb-6">
+          <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
+            <Search size={14} className="text-[#718096]" />
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search investors…"
+              className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {TYPES.map(t => (
+              <button key={t} onClick={() => setType(t)}
+                className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
+                  type === t
+                    ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
+                    : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                }`}>
+                {t === "All" ? "All types" : t.replace(/_/g, " ")}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Title */}
-        <h3 className="mt-6 text-lg sm:text-xl font-semibold text-slate-800">
-          {title}
-        </h3>
+        {/* Result count */}
+        {!loading && (
+          <p className="text-xs font-mono text-[#718096] mb-5">
+            {filtered.length} investor{filtered.length !== 1 ? "s" : ""}
+          </p>
+        )}
 
-        {/* Description */}
-        <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-          {desc}
-        </p>
+        {/* Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="bg-white border border-[#e2e6ed] rounded-xl p-6 h-44 animate-pulse" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-24 border border-dashed border-[#e2e6ed] rounded-2xl bg-white">
+            <p className="text-[#718096] text-sm">No investors found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map(inv => <InvestorCard key={inv.id} investor={inv} />)}
+          </div>
+        )}
 
-        {/* Hover underline */}
-        <div className="mt-6 w-10 h-0.5 bg-emerald-500 group-hover:w-16 transition-all duration-300"></div>
-
-      </div>
-    </motion.div>
-  );
-}
-
-function Step({ number, title, desc }) {
-  return (
-    <div>
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-semibold">
-          {number}
+        {/* CTA */}
+        <div className="mt-14 bg-white border border-[#e2e6ed] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-1">
+              Investing in climate?
+            </h3>
+            <p className="text-sm text-[#4a5568] font-light">
+              Get matched to companies and co-investors aligned to your thesis.
+            </p>
+          </div>
+          <Link href="/get-matched"
+            className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+            Get matched <ArrowRight size={14} />
+          </Link>
         </div>
-        <h3 className="text-lg font-semibold">{title}</h3>
+
       </div>
-      <p className="mt-4 text-slate-600 text-sm leading-relaxed">
-        {desc}
-      </p>
     </div>
   );
 }
