@@ -18,7 +18,6 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close mobile menu on route change
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
   return (
@@ -26,7 +25,6 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 border-b border-[#e2e6ed] bg-[#f2f4f8]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-14">
 
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
             <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#0f1a14]">
@@ -34,7 +32,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-7">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
@@ -47,19 +44,17 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Right CTAs */}
           <div className="hidden md:flex items-center gap-3">
             <Link href="/get-matched"
               className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
               Get matched
             </Link>
-            <Link href="/get-matched"
+            <Link href="/onboarding/company"
               className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
               Claim your company
             </Link>
           </div>
 
-          {/* Mobile hamburger */}
           <button className="md:hidden p-2 text-[#4a5568] hover:text-[#0f1a14] transition-colors"
             onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -67,7 +62,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="fixed inset-0 top-14 z-40 bg-[#f2f4f8] border-t border-[#e2e6ed] md:hidden">
           <div className="flex flex-col p-6 gap-2">
@@ -89,7 +83,7 @@ export default function Navbar() {
                 className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0] hover:text-[#0f1a14] transition-all">
                 Get matched
               </Link>
-              <Link href="/get-matched"
+              <Link href="/onboarding/company"
                 className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
                 Claim your company
               </Link>
