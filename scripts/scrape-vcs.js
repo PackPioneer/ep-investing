@@ -1,6 +1,4 @@
 // scripts/scrape-vcs.js
-// Run: NEXT_PUBLIC_SUPABASE_URL=... NEXT_PUBLIC_SUPABASE_ANON_KEY=... node scripts/scrape-vcs.js
-
 const { createClient } = require("@supabase/supabase-js");
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,7 +34,8 @@ const VC_URLS = [
 const BAD_NAMES = [
   "home","index","welcome","main","landing","page","loading","untitled",
   "just a moment","attention required","403","404","error","access denied",
-  "cloudflare","please wait","redirecting",
+  "cloudflare","please wait","redirecting","upcoming events","events",
+  "coming soon","maintenance",
 ];
 
 const CLIMATE_KEYWORDS = [
@@ -64,6 +63,19 @@ const GEO_KEYWORDS = {
   "Latin America": ["latin america","latam","brazil","mexico","colombia","chile"],
 };
 
+function decodeEntities(str) {
+  return str
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&#x27;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+
 async function fetchPage(url) {
   try {
     const res = await fetch(url, {
@@ -86,7 +98,6 @@ function stripHtml(html) {
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#\d+;/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -101,13 +112,16 @@ function domainToName(url) {
     .trim();
 }
 
-function isGoodName(name, url) {
+function isGoodName(name) {
   if (!name || name.length < 2) return false;
   const lower = name.toLowerCase().trim();
   if (BAD_NAMES.some(bad => lower === bad || lower.startsWith(bad + " "))) return false;
   if (name.length > 60) return false;
-  if (name.split(" ").length > 6) return false;
-  if (/[.!?]/.test(name) && name.split(" ").length > 4) return false;
+  if (name.split(" ").length > 7) return false;
+  // Reject if it contains HTML entities
+  if (/&#\d+;|&[a-z]+;/.test(name)) return false;
+  // Reject if it looks like a sentence (has verb-like patterns)
+  if (/\b(don't|don&#|we're|you're|it's|isn't)\b/i.test(name)) return false;
   return true;
 }
 
@@ -116,21 +130,21 @@ function extractName(html, url) {
 
   const ogSiteName = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']+)["']/i)?.[1]
     || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:site_name["']/i)?.[1];
-  if (ogSiteName) candidates.push(ogSiteName.trim());
+  if (ogSiteName) candidates.push(decodeEntities(ogSiteName.trim()));
 
   const ogTitle = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i)?.[1]
     || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:title["']/i)?.[1];
-  if (ogTitle) candidates.push(ogTitle.replace(/\s*[|\-–—:·•].*$/, "").trim());
+  if (ogTitle) candidates.push(decodeEntities(ogTitle.replace(/\s*[|\-–—:·•].*$/, "").trim()));
 
   const titleTag = html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1];
-  if (titleTag) candidates.push(titleTag.replace(/\s*[|\-–—:·•].*$/, "").trim());
+  if (titleTag) candidates.push(decodeEntities(titleTag.replace(/\s*[|\-–—:·•].*$/, "").trim()));
 
   const h1 = html.match(/<h1[^>]*>([^<]+)<\/h1>/i)?.[1]?.trim();
-  if (h1) candidates.push(h1);
+  if (h1) candidates.push(decodeEntities(h1));
 
   for (const candidate of candidates) {
     const clean = candidate.replace(/\s+/g, " ").trim();
-    if (isGoodName(clean, url)) return clean.slice(0, 80);
+    if (isGoodName(clean)) return clean.slice(0, 80);
   }
 
   return domainToName(url);
@@ -147,16 +161,19 @@ function extractMeta(html, url) {
     || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:description["']/i)?.[1];
   const metaDesc = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i)?.[1]
     || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["']/i)?.[1];
-  const description = (ogDesc || metaDesc || "").replace(/\s+/g, " ").trim().slice(0, 600);
+  const description = decodeEntities((ogDesc || metaDesc || "").replace(/\s+/g, " ").trim()).slice(0, 600);
 
   const ogImage = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)?.[1]
     || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i)?.[1];
   let logo_url = null;
   if (ogImage) {
-    logo_url = ogImage.startsWith("http") ? ogImage : new URL(ogImage, url).href;
-  } else {
+    try { logo_url = ogImage.startsWith("http") ? ogImage : new URL(ogImage, url).href; } catch {}
+  }
+  if (!logo_url) {
     const favicon = html.match(/<link[^>]*rel=["'][^"']*icon[^"']*["'][^>]*href=["']([^"']+)["']/i)?.[1];
-    if (favicon) logo_url = favicon.startsWith("http") ? favicon : new URL(favicon, url).href;
+    if (favicon) {
+      try { logo_url = favicon.startsWith("http") ? favicon : new URL(favicon, url).href; } catch {}
+    }
   }
 
   const climate_focus_areas = CLIMATE_KEYWORDS.filter(k => fullText.includes(k)).slice(0, 8);
@@ -190,24 +207,12 @@ function extractMeta(html, url) {
     geographies.length > 0 ? `investing in ${geographies.slice(0, 2).join(" and ")}` : "",
   ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim() + ".";
 
-  return {
-    url: website,
-    name,
-    description,
-    logo_url,
-    climate_focus_areas: climate_focus_areas.length > 0 ? climate_focus_areas : null,
-    investment_stages: investment_stages.length > 0 ? investment_stages : null,
-    geographies: geographies.length > 0 ? geographies : null,
-    fund_size,
-    sweet_spot_check_size,
-    ai_summary,
-  };
+  return { url: website, name, description, logo_url, climate_focus_areas: climate_focus_areas.length > 0 ? climate_focus_areas : null, investment_stages: investment_stages.length > 0 ? investment_stages : null, geographies: geographies.length > 0 ? geographies : null, fund_size, sweet_spot_check_size, ai_summary };
 }
 
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.error("❌ Missing env vars. Run:");
-    console.error("   NEXT_PUBLIC_SUPABASE_URL=https://vfcfdoaxlbkfqpfzhzvu.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key node scripts/scrape-vcs.js");
+    console.error("❌ Missing env vars.");
     process.exit(1);
   }
 
@@ -223,45 +228,28 @@ async function main() {
     const cleanUrl = new URL(url).origin;
     const existingName = existingMap.get(cleanUrl);
 
-    if (existingName && isGoodName(existingName, url)) {
-      console.log(`  ⏭  Skipping (good name exists): ${existingName}`);
+    if (existingName && isGoodName(existingName)) {
+      console.log(`  ⏭  Skipping (good): ${existingName}`);
       skipped++;
       continue;
     }
 
-    if (existingName) {
-      console.log(`  🔄 Re-scraping bad name "${existingName}": ${url}`);
-    } else {
-      console.log(`  🔍 Scraping: ${url}`);
-    }
+    if (existingName) console.log(`  🔄 Re-scraping bad name "${existingName}": ${url}`);
+    else console.log(`  🔍 Scraping: ${url}`);
 
     const html = await fetchPage(url);
     const meta = extractMeta(html, url);
 
-    if (!meta?.name) {
-      console.log(`  ✗ No data: ${url}`);
-      failed++;
-      continue;
-    }
+    if (!meta?.name) { console.log(`  ✗ No data: ${url}`); failed++; continue; }
 
     if (existingName) {
       const { error } = await supabase.from("vc_firms").update(meta).eq("url", cleanUrl);
-      if (error) {
-        console.log(`  ✗ Update error for ${meta.name}: ${error.message}`);
-        failed++;
-      } else {
-        console.log(`  ✓ Updated: "${existingName}" → "${meta.name}"`);
-        updated++;
-      }
+      if (error) { console.log(`  ✗ Update error: ${error.message}`); failed++; }
+      else { console.log(`  ✓ Updated: "${existingName}" → "${meta.name}"`); updated++; }
     } else {
       const { error } = await supabase.from("vc_firms").insert(meta);
-      if (error) {
-        console.log(`  ✗ Insert error for ${meta.name}: ${error.message}`);
-        failed++;
-      } else {
-        console.log(`  ✓ Added: ${meta.name}`);
-        added++;
-      }
+      if (error) { console.log(`  ✗ Insert error: ${error.message}`); failed++; }
+      else { console.log(`  ✓ Added: ${meta.name}`); added++; }
     }
 
     await new Promise(r => setTimeout(r, 800));
