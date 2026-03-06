@@ -47,8 +47,8 @@ function InvestorCard({ investor }) {
       )}
 
       <div className="mt-auto pt-3 border-t border-[#e2e6ed] flex items-center justify-between">
-        {investor.website ? (
-          <a href={investor.website} target="_blank" rel="noopener noreferrer"
+          {(investor.url || investor.website) ? (
+          <a href={investor.url || investor.website} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1 text-xs text-[#2d6a4f] font-medium hover:underline">
             Visit website <ArrowRight size={11} />
           </a>
