@@ -134,30 +134,72 @@ const TAG_KEYWORDS = {
   ],
 };
 
-// Broad climate terms — used as a fallback signal that this is a legit climate company
-const BROAD_CLIMATE = [
-  'climate tech', 'cleantech', 'clean energy', 'renewable energy', 'net zero',
-  'net-zero', 'energy transition', 'decarbonization', 'zero emission',
-  'low carbon', 'carbon neutral', 'sustainable energy', 'green energy',
-  'climate change', 'clean power',
-];
+// ─── AI-powered classification via Claude API ────────────────────────────────
+// Uses keyword matching first (fast), falls back to Claude API for no-matches.
 
-function classifyCompany(name, description) {
+function classifyByKeywords(name, description) {
   const text = `${name} ${description}`.toLowerCase();
   const matched = [];
-
   for (const [tag, keywords] of Object.entries(TAG_KEYWORDS)) {
-    if (keywords.some(kw => text.includes(kw.toLowerCase()))) {
-      matched.push(tag);
-    }
+    if (keywords.some(kw => text.includes(kw.toLowerCase()))) matched.push(tag);
   }
-
   return matched;
 }
 
+async function classifyWithClaude(name, description) {
+  const validTags = Object.keys(TAG_KEYWORDS).join(', ');
+  const prompt = `You are classifying a climate/energy company into industry tags.
+
+Company name: ${name}
+Description: ${description || 'No description available'}
+
+Valid tags (pick 1-3 that best apply):
+${validTags}
+
+Respond with ONLY a JSON array of matching tags, e.g. ["solar", "battery_storage"]
+If the company does not clearly fit any tag, respond with ["industrial_decarbonization"] as a catch-all.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const data = await res.json();
+    const raw = data?.content?.[0]?.text?.trim() || '[]';
+    const text = raw.replace(/```[a-z]*\n?|\n?```/g, '').trim();
+    const tags = JSON.parse(text);
+    // Validate — only return tags that exist in our list
+    const validTagSet = new Set(Object.keys(TAG_KEYWORDS));
+    return tags.filter(t => validTagSet.has(t));
+  } catch (err) {
+    console.log(`      ⚠ Claude API error: ${err.message} — using industrial_decarbonization`);
+    return ['industrial_decarbonization'];
+  }
+}
+
+async function classifyCompany(name, description) {
+  // Try keywords first (free, instant)
+  const keywordTags = classifyByKeywords(name, description);
+  if (keywordTags.length > 0) return keywordTags;
+
+  // Fall back to Claude API for accurate classification
+  return await classifyWithClaude(name, description);
+}
+
 function isBroadlyClimate(name, description) {
-  const text = `${name} ${description}`.toLowerCase();
-  return BROAD_CLIMATE.some(t => text.includes(t));
+  // Kept for compatibility but no longer used for filtering
+  return true;
 }
 
 // ─── Scrape a company page ───────────────────────────────────────────────────
@@ -296,7 +338,7 @@ async function main() {
     }
 
     // Classify
-    const tags = classifyCompany(info.name, info.description || '');
+    const tags = await classifyCompany(info.name, info.description || '');
     const broadClimate = isBroadlyClimate(info.name, info.description || '');
 
     if (tags.length === 0) {
