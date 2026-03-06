@@ -10,12 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 import { parse } from 'node-html-parser';
 import { NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+// Clients initialized inside handler
 
 const VALID_TAGS = [
   'battery_storage', 'carbon_credits', 'clean_cooking', 'direct_air_capture',
@@ -99,6 +94,12 @@ Reply with ONLY a JSON array, e.g. ["solar", "battery_storage"]`,
 }
 
 export async function POST(req) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+
   try {
     const body = await req.json();
     const { url, name: submittedName, description: submittedDesc, submitter_email } = body;

@@ -12,12 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { parse } from 'node-html-parser';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+// Clients initialized inside handler to avoid build-time errors
 
 const CATEGORY_PROMPTS = {
   battery_storage:            'List 15 real funded startup companies working on battery storage, lithium-ion, solid-state batteries, or grid-scale energy storage. Include website URLs.',
@@ -36,7 +31,7 @@ const CATEGORY_PROMPTS = {
   wind_energy:                'List 15 real funded startup companies in wind turbines, offshore wind, or wind project development. Include website URLs.',
 };
 
-async function discoverForCategory(category) {
+async function discoverForCategory(category, ANTHROPIC_KEY) {
   const prompt = CATEGORY_PROMPTS[category];
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -83,6 +78,13 @@ export async function GET(req) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // Initialize clients inside handler so env vars are available at runtime
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+
   try {
     // Get existing hostnames
     const { data: existing } = await supabase.from('companies').select('url');
@@ -103,7 +105,7 @@ export async function GET(req) {
     let added = 0;
 
     for (const category of thisWeek) {
-      const discovered = await discoverForCategory(category);
+      const discovered = await discoverForCategory(category, ANTHROPIC_KEY);
 
       for (const company of discovered) {
         let hostname;
