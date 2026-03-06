@@ -1,261 +1,347 @@
-// scripts/scrape-vcs.js
-const { createClient } = require("@supabase/supabase-js");
+/**
+ * EP Investing — VC Scraper v3
+ *
+ * Improvements over v2:
+ *  - Puppeteer fallback for JS-rendered sites
+ *  - Better logo sourcing: Clearbit > Google favicon > og:image
+ *  - Manual name overrides for known firms
+ *  - Dry-run mode: NODE_ENV=dry node scripts/scrape-vcs.js
+ *
+ * Usage (run from project root):
+ *   node scripts/scrape-vcs.js                    # full run
+ *   NODE_ENV=dry node scripts/scrape-vcs.js        # dry run (no DB writes)
+ *   ONLY_BAD_NAMES=1 node scripts/scrape-vcs.js   # only fix bad-name records
+ *
+ * Install deps first:
+ *   npm install puppeteer node-html-parser he
+ */
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { createClient } from '@supabase/supabase-js';
+import { parse } from 'node-html-parser';
+import he from 'he';
+import puppeteer from 'puppeteer';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { existsSync, readFileSync } from 'fs';
 
-const VC_URLS = [
-  "https://www.antler.co/",
-  "https://www.sputnikatx.com/",
-  "https://launch.co/",
-  "https://www.rebelfund.vc/",
-  "https://www.lvlup.vc/",
-  "https://www.pioneerfund.vc/",
-  "https://www.generalcatalyst.com/",
-  "https://www.manaventures.vc/",
-  "https://www.southparkcommons.com/",
-  "https://www.transposeplatform.vc/",
-  "https://www.8090industries.com/",
-  "https://www.afore.vc/",
-  "https://www.boost.vc/",
-  "https://drivecapital.com/",
-  "https://www.joinef.com/",
-  "https://www.everywhere.vc/",
-  "https://www.hustlefund.vc/",
-  "https://ritualcapital.com/",
-  "https://www.schematicventures.com/",
-  "https://www.serviceprovidercapital.com/",
-  "https://www.streamlined.vc/",
-  "https://www.eranyc.com/",
-  "https://www.2100.vc/",
-  "https://www.34stud.io/",
-];
+// ─── Load env from project root (no dotenv needed) ──────────────────────────
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const root = resolve(__dirname, '..');
+const envLocal = resolve(root, '.env.local');
+const envFile  = resolve(root, '.env');
+const envPath  = existsSync(envLocal) ? envLocal : existsSync(envFile) ? envFile : null;
 
-const BAD_NAMES = [
-  "home","index","welcome","main","landing","page","loading","untitled",
-  "just a moment","attention required","403","404","error","access denied",
-  "cloudflare","please wait","redirecting","upcoming events","events",
-  "coming soon","maintenance",
-];
-
-const CLIMATE_KEYWORDS = [
-  "climate","energy","cleantech","clean tech","sustainability","sustainable",
-  "carbon","net zero","decarbonization","hydrogen","solar","wind","battery",
-  "nuclear","ev","electric vehicle","renewable","green","environment",
-  "emissions","transition","nature","ocean","water","food","agriculture",
-  "biodiversity","circular economy","waste","materials","deep tech","hard tech",
-];
-
-const STAGE_KEYWORDS = {
-  "pre-seed": ["pre-seed","preseed","idea stage","day zero","day 0","pre seed","earliest stage"],
-  "seed": ["seed stage","seed fund","seed investor","seed capital","seed round","seed check"],
-  "series-a": ["series a","series-a"],
-  "series-b": ["series b","series-b"],
-  "growth": ["growth stage","growth equity","late stage","growth capital"],
-};
-
-const GEO_KEYWORDS = {
-  "United States": ["united states","u.s.","america","north america","new york","san francisco","austin","chicago","boston","los angeles","silicon valley"],
-  "Europe": ["europe","european","uk ","london","berlin","paris","stockholm","amsterdam"],
-  "Global": ["global","worldwide","international","across the world"],
-  "Africa": ["africa","african","nairobi","lagos","cape town"],
-  "Asia": ["asia","asian","southeast asia","singapore","tokyo","beijing","india"],
-  "Latin America": ["latin america","latam","brazil","mexico","colombia","chile"],
-};
-
-function decodeEntities(str) {
-  return str
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&#x27;/g, "'")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+if (!envPath) {
+  console.error('❌ No .env.local or .env file found in project root.');
+  process.exit(1);
 }
 
-async function fetchPage(url) {
+// Parse the env file manually — no dotenv dependency required
+for (const line of readFileSync(envPath, 'utf8').split('\n')) {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith('#')) continue;
+  const eqIdx = trimmed.indexOf('=');
+  if (eqIdx === -1) continue;
+  const key = trimmed.slice(0, eqIdx).trim();
+  const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+  if (key && !(key in process.env)) process.env[key] = val;
+}
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('❌ Missing env vars. Need NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local');
+  console.error(`   Looked in: ${envLocal}`);
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const DRY_RUN       = process.env.NODE_ENV === 'dry';
+const ONLY_BAD_NAMES = process.env.ONLY_BAD_NAMES === '1';
+const CONCURRENCY   = 5;
+const PUPPETEER_TIMEOUT = 15000;
+
+// ─── Manual name overrides ──────────────────────────────────────────────────
+// Key = lowercase domain (no www), Value = correct display name
+
+const NAME_OVERRIDES = {
+  'sequoiacap.com':          'Sequoia Capital',
+  'a16z.com':                'Andreessen Horowitz',
+  'lightspeedvp.com':        'Lightspeed Venture Partners',
+  'lsvp.com':                'Lightspeed Venture Partners',
+  'accel.com':               'Accel',
+  'nea.com':                 'New Enterprise Associates',
+  'greylock.com':            'Greylock',
+  'indexventures.com':       'Index Ventures',
+  'generalatlantic.com':     'General Atlantic',
+  'generalcatalyst.com':     'General Catalyst',
+  'kpcb.com':                'Kleiner Perkins',
+  'kleinerperkins.com':      'Kleiner Perkins',
+  'firstround.com':          'First Round Capital',
+  'foundationcapital.com':   'Foundation Capital',
+  'usv.com':                 'Union Square Ventures',
+  'bvp.com':                 'Bessemer Venture Partners',
+  'battery.com':             'Battery Ventures',
+  'ycombinator.com':         'Y Combinator',
+  '500.co':                  '500 Startups',
+  'techstars.com':           'Techstars',
+  // Add more as needed
+};
+
+// ─── Logo overrides ─────────────────────────────────────────────────────────
+// Force a specific logo for firms whose og:image is a hero image
+
+const LOGO_OVERRIDES = {};
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+function domainFromUrl(url) {
   try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-      },
-      signal: AbortSignal.timeout(15000),
-    });
-    return await res.text();
-  } catch (err) {
-    console.warn(`  ⚠ Could not fetch ${url}: ${err.message}`);
+    return new URL(url.startsWith('http') ? url : `https://${url}`)
+      .hostname.replace(/^www\./, '').toLowerCase();
+  } catch {
     return null;
   }
 }
 
-function stripHtml(html) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+const BAD_NAME_PATTERNS = [
+  /^https?:\/\//i,
+  /^www\./i,
+  /home|upcoming events|menu|skip to/i,
+  /\.(com|io|co|vc)$/i,
+  /^[\W\d]+$/,
+];
+
+function isBadName(name) {
+  if (!name || name.trim().length < 2) return true;
+  if (name.trim().length > 60) return true;
+  return BAD_NAME_PATTERNS.some(p => p.test(name.trim()));
 }
 
-function domainToName(url) {
-  const hostname = new URL(url).hostname.replace(/^www\./, "");
-  const base = hostname.split(".")[0];
-  return base
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, c => c.toUpperCase())
-    .trim();
-}
+// ─── Logo resolution ─────────────────────────────────────────────────────────
 
-function isGoodName(name) {
-  if (!name || name.length < 2) return false;
-  const lower = name.toLowerCase().trim();
-  if (BAD_NAMES.some(bad => lower === bad || lower.startsWith(bad + " "))) return false;
-  if (name.length > 60) return false;
-  if (name.split(" ").length > 7) return false;
-  // Reject if it contains HTML entities
-  if (/&#\d+;|&[a-z]+;/.test(name)) return false;
-  // Reject if it looks like a sentence (has verb-like patterns)
-  if (/\b(don't|don&#|we're|you're|it's|isn't)\b/i.test(name)) return false;
-  return true;
-}
+async function resolveLogo(domain, ogImage) {
+  if (LOGO_OVERRIDES[domain]) return LOGO_OVERRIDES[domain];
 
-function extractName(html, url) {
-  const candidates = [];
+  // 1. Clearbit (best quality logos)
+  const clearbit = `https://logo.clearbit.com/${domain}`;
+  try {
+    const res = await fetch(clearbit, { method: 'HEAD', signal: AbortSignal.timeout(4000) });
+    if (res.ok) return clearbit;
+  } catch { /* ignore */ }
 
-  const ogSiteName = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']+)["']/i)?.[1]
-    || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:site_name["']/i)?.[1];
-  if (ogSiteName) candidates.push(decodeEntities(ogSiteName.trim()));
-
-  const ogTitle = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i)?.[1]
-    || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:title["']/i)?.[1];
-  if (ogTitle) candidates.push(decodeEntities(ogTitle.replace(/\s*[|\-–—:·•].*$/, "").trim()));
-
-  const titleTag = html.match(/<title[^>]*>([^<]+)<\/title>/i)?.[1];
-  if (titleTag) candidates.push(decodeEntities(titleTag.replace(/\s*[|\-–—:·•].*$/, "").trim()));
-
-  const h1 = html.match(/<h1[^>]*>([^<]+)<\/h1>/i)?.[1]?.trim();
-  if (h1) candidates.push(decodeEntities(h1));
-
-  for (const candidate of candidates) {
-    const clean = candidate.replace(/\s+/g, " ").trim();
-    if (isGoodName(clean)) return clean.slice(0, 80);
-  }
-
-  return domainToName(url);
-}
-
-function extractMeta(html, url) {
-  if (!html) return null;
-  const fullText = stripHtml(html).toLowerCase();
-  const website = new URL(url).origin;
-
-  const name = extractName(html, url);
-
-  const ogDesc = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i)?.[1]
-    || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:description["']/i)?.[1];
-  const metaDesc = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i)?.[1]
-    || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["']/i)?.[1];
-  const description = decodeEntities((ogDesc || metaDesc || "").replace(/\s+/g, " ").trim()).slice(0, 600);
-
-  const ogImage = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)?.[1]
-    || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i)?.[1];
-  let logo_url = null;
+  // 2. og:image only if it looks like an actual logo
   if (ogImage) {
-    try { logo_url = ogImage.startsWith("http") ? ogImage : new URL(ogImage, url).href; } catch {}
-  }
-  if (!logo_url) {
-    const favicon = html.match(/<link[^>]*rel=["'][^"']*icon[^"']*["'][^>]*href=["']([^"']+)["']/i)?.[1];
-    if (favicon) {
-      try { logo_url = favicon.startsWith("http") ? favicon : new URL(favicon, url).href; } catch {}
+    const lower = ogImage.toLowerCase();
+    if (lower.includes('logo') || lower.includes('icon') || lower.includes('brand')) {
+      return ogImage;
     }
   }
 
-  const climate_focus_areas = CLIMATE_KEYWORDS.filter(k => fullText.includes(k)).slice(0, 8);
+  // 3. Google favicon as reliable fallback
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+}
 
-  const investment_stages = [];
-  for (const [stage, keywords] of Object.entries(STAGE_KEYWORDS)) {
-    if (keywords.some(k => fullText.includes(k))) investment_stages.push(stage);
-  }
-  if (investment_stages.length === 0 && (fullText.includes("venture") || fullText.includes("invest"))) {
-    investment_stages.push("seed");
-  }
+// ─── HTML parsing ────────────────────────────────────────────────────────────
 
-  const geographies = [];
-  for (const [geo, keywords] of Object.entries(GEO_KEYWORDS)) {
-    if (keywords.some(k => fullText.includes(k))) geographies.push(geo);
-  }
+function parseHtml(html, url) {
+  const root = parse(html);
+  const getMeta = (prop) => {
+    const el = root.querySelector(`meta[property="${prop}"]`) ||
+               root.querySelector(`meta[name="${prop}"]`);
+    return el?.getAttribute('content')?.trim() || null;
+  };
 
-  const fundSizeMatch = fullText.match(/\$\s*(\d+(?:\.\d+)?)\s*(m|million|b|billion)\s*(?:fund|capital|raised|aum|assets)/i);
-  const fund_size = fundSizeMatch
-    ? `$${fundSizeMatch[1]}${fundSizeMatch[2].toLowerCase().startsWith("b") ? "B" : "M"}`
+  const rawTitle =
+    getMeta('og:site_name') ||
+    getMeta('og:title') ||
+    root.querySelector('title')?.text?.trim() ||
+    null;
+
+  const name = rawTitle
+    ? he.decode(rawTitle.split(/[|\-–—]/)[0].trim())
     : null;
 
-  const checkMatch = fullText.match(/\$\s*(\d+(?:k|m)?)\s*(?:to|-)\s*\$?\s*(\d+(?:k|m)?)\s*(?:check|ticket|investment|deal)/i);
-  const sweet_spot_check_size = checkMatch ? `$${checkMatch[1]} - $${checkMatch[2]}` : null;
+  const description = getMeta('og:description') || getMeta('description') || null;
 
-  const ai_summary = [
-    name, "is a",
-    investment_stages.length > 0 ? investment_stages.join("/") : "venture capital",
-    "firm",
-    climate_focus_areas.length > 0 ? `focused on ${climate_focus_areas.slice(0, 3).join(", ")}` : "",
-    geographies.length > 0 ? `investing in ${geographies.slice(0, 2).join(" and ")}` : "",
-  ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim() + ".";
+  let ogImage = getMeta('og:image') || null;
+  if (ogImage) {
+    try { ogImage = new URL(ogImage, url).href; } catch { /* keep as-is */ }
+  }
 
-  return { url: website, name, description, logo_url, climate_focus_areas: climate_focus_areas.length > 0 ? climate_focus_areas : null, investment_stages: investment_stages.length > 0 ? investment_stages : null, geographies: geographies.length > 0 ? geographies : null, fund_size, sweet_spot_check_size, ai_summary };
+  return { name, description, ogImage };
 }
+
+// ─── Fetch scraper ───────────────────────────────────────────────────────────
+
+async function scrapeWithFetch(url) {
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EPInvestingBot/1.0)' },
+    signal: AbortSignal.timeout(8000),
+    redirect: 'follow',
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return parseHtml(await res.text(), url);
+}
+
+// ─── Puppeteer scraper ───────────────────────────────────────────────────────
+
+let browser = null;
+
+async function getBrowser() {
+  if (!browser) {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+  }
+  return browser;
+}
+
+async function scrapeWithPuppeteer(url) {
+  const b = await getBrowser();
+  const page = await b.newPage();
+  try {
+    await page.setUserAgent('Mozilla/5.0 (compatible; EPInvestingBot/1.0)');
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: PUPPETEER_TIMEOUT });
+    await new Promise(r => setTimeout(r, 2000)); // let JS render
+    return parseHtml(await page.content(), url);
+  } finally {
+    await page.close();
+  }
+}
+
+// ─── Core scrape logic ───────────────────────────────────────────────────────
+
+async function scrapeVC(record) {
+  const url = record.url;
+  if (!url) return null;
+
+  const domain = domainFromUrl(url);
+  if (!domain) return null;
+
+  const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+  let name = NAME_OVERRIDES[domain] || null;
+  let description = null;
+  let ogImage = null;
+  let usedPuppeteer = false;
+
+  if (!name || isBadName(record.name)) {
+    try {
+      const result = await scrapeWithFetch(fullUrl);
+      name = name || result.name;
+      description = result.description;
+      ogImage = result.ogImage;
+
+      if (isBadName(name)) {
+        console.log(`  ⚡ Fetch got bad name, trying Puppeteer: ${domain}`);
+        const pr = await scrapeWithPuppeteer(fullUrl);
+        if (!isBadName(pr.name)) {
+          name = pr.name;
+          description = pr.description || description;
+          ogImage = pr.ogImage || ogImage;
+          usedPuppeteer = true;
+        }
+      }
+    } catch (err) {
+      try {
+        console.log(`  ⚡ Fetch failed (${err.message}), trying Puppeteer: ${domain}`);
+        const pr = await scrapeWithPuppeteer(fullUrl);
+        if (!isBadName(pr.name)) {
+          name = pr.name;
+          description = pr.description;
+          ogImage = pr.ogImage;
+          usedPuppeteer = true;
+        }
+      } catch (puppErr) {
+        console.log(`  ✗ Both methods failed for ${domain}: ${puppErr.message}`);
+      }
+    }
+  }
+
+  // Domain-based name fallback
+  if (isBadName(name)) {
+    name = domain
+      .replace(/\.(com|io|co|vc|capital|fund|ventures?)$/, '')
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  return {
+    id: record.id,
+    name: name.trim(),
+    description: description?.slice(0, 500) || null,
+    logo: await resolveLogo(domain, ogImage),
+    _usedPuppeteer: usedPuppeteer,
+  };
+}
+
+// ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.error("❌ Missing env vars.");
-    process.exit(1);
-  }
+  console.log(`\n🔍 EP Investing VC Scraper v3${DRY_RUN ? ' [DRY RUN]' : ''}${ONLY_BAD_NAMES ? ' [BAD NAMES ONLY]' : ''}\n`);
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-  const { data: existing } = await supabase.from("vc_firms").select("url, name");
-  const existingMap = new Map((existing || []).map(e => [e.url?.replace(/\/$/, ""), e.name]));
+  let query = supabase.from('vc_firms').select('id, name, url, logo_url').order('id');
+  const { data: firms, error } = await query;
+  if (error) throw error;
 
-  console.log(`\n📋 ${VC_URLS.length} URLs to process — ${existingMap.size} already in DB\n`);
+  const toProcess = firms.filter(f => {
+    if (!f.url) return false;
+    if (ONLY_BAD_NAMES && !isBadName(f.name)) return false;
+    return true;
+  });
 
-  let added = 0, updated = 0, skipped = 0, failed = 0;
+  console.log(`📋 ${toProcess.length} records to process out of ${firms.length} total\n`);
 
-  for (const url of VC_URLS) {
-    const cleanUrl = new URL(url).origin;
-    const existingName = existingMap.get(cleanUrl);
+  let updated = 0, failed = 0;
 
-    if (existingName && isGoodName(existingName)) {
-      console.log(`  ⏭  Skipping (good): ${existingName}`);
-      skipped++;
-      continue;
+  for (let i = 0; i < toProcess.length; i += CONCURRENCY) {
+    const batch = toProcess.slice(i, i + CONCURRENCY);
+    const results = await Promise.allSettled(batch.map(r => scrapeVC(r)));
+
+    for (let j = 0; j < results.length; j++) {
+      const record = batch[j];
+      const r = results[j];
+
+      if (r.status === 'rejected' || !r.value) {
+        console.log(`  ✗ [${record.id}] ${record.url} — ${r.reason?.message || 'no result'}`);
+        failed++;
+        continue;
+      }
+
+      const res = r.value;
+      console.log(`  ✓ [${res.id}] ${res.name}${res._usedPuppeteer ? ' (puppeteer)' : ''}`);
+
+      if (!DRY_RUN) {
+        const { error: err } = await supabase
+          .from('vc_firms')
+          .update({ name: res.name, description: res.description, logo_url: res.logo })
+          .eq('id', res.id);
+        if (err) { console.log(`    ⚠ DB: ${err.message}`); failed++; }
+        else updated++;
+      } else {
+        updated++;
+      }
     }
 
-    if (existingName) console.log(`  🔄 Re-scraping bad name "${existingName}": ${url}`);
-    else console.log(`  🔍 Scraping: ${url}`);
-
-    const html = await fetchPage(url);
-    const meta = extractMeta(html, url);
-
-    if (!meta?.name) { console.log(`  ✗ No data: ${url}`); failed++; continue; }
-
-    if (existingName) {
-      const { error } = await supabase.from("vc_firms").update(meta).eq("url", cleanUrl);
-      if (error) { console.log(`  ✗ Update error: ${error.message}`); failed++; }
-      else { console.log(`  ✓ Updated: "${existingName}" → "${meta.name}"`); updated++; }
-    } else {
-      const { error } = await supabase.from("vc_firms").insert(meta);
-      if (error) { console.log(`  ✗ Insert error: ${error.message}`); failed++; }
-      else { console.log(`  ✓ Added: ${meta.name}`); added++; }
-    }
-
-    await new Promise(r => setTimeout(r, 800));
+    const done = Math.min(i + CONCURRENCY, toProcess.length);
+    console.log(`\n[${done}/${toProcess.length}]\n`);
+    if (i + CONCURRENCY < toProcess.length) await sleep(500);
   }
 
-  console.log(`\n✅ Done — ${added} added, ${updated} updated, ${skipped} skipped, ${failed} failed\n`);
+  if (browser) await browser.close();
+
+  console.log('─────────────────────────────────');
+  console.log(`✅ Updated: ${updated}  ✗ Failed: ${failed}`);
+  if (DRY_RUN) console.log('(Dry run — no DB changes were made)');
 }
 
-main().catch(console.error);
+main().catch(err => {
+  console.error('Fatal:', err);
+  if (browser) browser.close();
+  process.exit(1);
+});

@@ -1,12 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Building2,
-  Landmark,
-  FileText,
-  ArrowUpRight,
-} from "lucide-react";
+import { Building2, Landmark, FileText, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -35,28 +30,27 @@ const items = [
 
 export default function ExploreSection() {
   return (
-    <section className="relative bg-white overflow-hidden pb-28">
-      
-      {/* Subtle background depth */}
-      <div className="absolute inset-0 bg-linear-to-b from-slate-50/60 to-white pointer-events-none" />
+    <section className="relative bg-white overflow-hidden pb-16 md:pb-28">
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-50/60 to-white pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Header Row */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 md:mb-16 gap-4">
           <div>
-            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
               Explore EP Investment
             </h2>
-            <p className="mt-4 text-slate-600 max-w-2xl text-lg">
+            <p className="mt-3 text-slate-600 max-w-2xl text-base md:text-lg">
               Structured intelligence across capital, companies, and
               non-dilutive funding — built for climate markets.
             </p>
           </div>
         </div>
 
-        {/* Structured Grid */}
-        <div className="grid lg:grid-cols-3 gap-10">
+        {/* Grid — single col on mobile, 3 col on large */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {items.map((item, i) => (
             <motion.div
               key={item.title}
@@ -65,29 +59,23 @@ export default function ExploreSection() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.12, duration: 0.6 }}
               whileHover={{ y: -8 }}
-              className="group relative bg-white border border-slate-200/70 rounded-2xl p-10 shadow-sm hover:shadow-2xl transition-all duration-300"
+              className="group relative bg-white border border-slate-200/70 rounded-2xl p-6 md:p-10 shadow-sm hover:shadow-2xl transition-all duration-300"
             >
-              {/* Hover Accent Glow */}
               <div className="absolute inset-0 rounded-2xl bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none" />
 
-              {/* Icon */}
-              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-8 group-hover:scale-105 transition">
-                <item.icon size={24} />
+              <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-6 md:mb-8 group-hover:scale-105 transition">
+                <item.icon size={22} />
               </div>
 
-              {/* Title */}
-              <h3 className="text-2xl font-semibold text-slate-900">
+              <h3 className="text-xl md:text-2xl font-semibold text-slate-900">
                 {item.title}
               </h3>
 
-              {/* Description */}
-              <p className="mt-5 text-slate-600 leading-relaxed">
+              <p className="mt-3 md:mt-5 text-slate-600 leading-relaxed text-sm md:text-base">
                 {item.desc}
               </p>
 
-              {/* CTA */}
-              <Link href={item.link} className="mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
-                
+              <Link href={item.link} className="mt-6 md:mt-8 inline-flex items-center gap-2 text-emerald-600 font-medium text-sm group-hover:gap-3 transition-all">
                 {item.btn}
                 <ArrowUpRight size={16} />
               </Link>

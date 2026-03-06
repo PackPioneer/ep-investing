@@ -38,7 +38,8 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f2f4f8]`}>
+        {/* overflow-x-hidden prevents any rogue element from causing horizontal scroll */}
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f2f4f8] overflow-x-hidden`}>
           <Navbar />
           {children}
           <Toaster position="top-center" reverseOrder={false} />
