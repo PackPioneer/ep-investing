@@ -6,7 +6,7 @@ export async function GET() {
     const { data: investors, error } = await supabase
       .from('vc_firms')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('id', { ascending: false });
 
     if (error) throw error;
 
