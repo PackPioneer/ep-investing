@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, Globe, MapPin, Calendar, ChevronRight } from "lucide-react";
+import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 
 const INDUSTRY_FILTERS = [
@@ -12,11 +12,47 @@ const INDUSTRY_FILTERS = [
   "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage"
 ];
 
+const STAGE_COLORS = {
+  pre_seed:  "bg-slate-100 text-slate-600",
+  seed:      "bg-blue-100 text-blue-700",
+  series_a:  "bg-violet-100 text-violet-700",
+  series_b:  "bg-purple-100 text-purple-700",
+  series_c:  "bg-fuchsia-100 text-fuchsia-700",
+  growth:    "bg-emerald-100 text-emerald-700",
+  public:    "bg-amber-100 text-amber-700",
+  unknown:   "bg-slate-100 text-slate-500",
+};
+
+const STAGE_LABELS = {
+  pre_seed: "Pre-Seed", seed: "Seed", series_a: "Series A",
+  series_b: "Series B", series_c: "Series C", growth: "Growth",
+  public: "Public", unknown: "Unknown",
+};
+
+const MODEL_LABELS = {
+  b2b: "B2B", b2c: "B2C", b2g: "B2G", hardware: "Hardware",
+  software: "Software", project_developer: "Project Dev",
+  marketplace: "Marketplace", mixed: "Mixed",
+};
+
+const GEO_LABELS = {
+  us: "🇺🇸 US", europe: "🇪🇺 Europe", asia: "🌏 Asia",
+  africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA",
+  global: "🌐 Global", oceania: "🌏 Oceania",
+};
+
 function CompanyCard({ company }) {
   const tags = company.industry_tags || (company.sector ? [company.sector] : []);
+  const stage = company.funding_stage;
+  const model = company.business_model;
+  const geos = company.target_geographies || [];
+  const segments = company.customer_segment || [];
+
   return (
     <Link href={`/companies/${company.id}`}
       className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+
+      {/* Top row: logo + name + chevron */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {company.logo_url ? (
@@ -33,31 +69,49 @@ function CompanyCard({ company }) {
         <ChevronRight size={14} className="text-[#718096] group-hover:text-[#2d6a4f] flex-shrink-0 mt-0.5 transition-colors" />
       </div>
 
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-              {tag.replace(/_/g, " ")}
-            </span>
-          ))}
-          {company.production_status && (
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
-              {company.production_status}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Badges row: stage + model + industry tags */}
+      <div className="flex flex-wrap gap-1.5">
+        {stage && stage !== 'unknown' && (
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STAGE_COLORS[stage] || STAGE_COLORS.unknown}`}>
+            {STAGE_LABELS[stage] || stage}
+          </span>
+        )}
+        {model && (
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+            {MODEL_LABELS[model] || model}
+          </span>
+        )}
+        {tags.slice(0, 2).map(tag => (
+          <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+            {tag.replace(/_/g, " ")}
+          </span>
+        ))}
+      </div>
 
+      {/* Description */}
       {(company.description || company.core_technology) && (
         <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-2 font-light">
           {company.description || company.core_technology}
         </p>
       )}
 
-      <div className="flex items-center gap-3 mt-auto">
-        {(company.location || company.headquarters_location) && (
+      {/* Customer segments */}
+      {segments.length > 0 && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <Users size={10} className="text-[#718096]" />
+          {segments.slice(0, 3).map(s => (
+            <span key={s} className="text-[10px] text-[#718096] font-mono capitalize">
+              {s}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Bottom row: location + founding year + geographies */}
+      <div className="flex items-center gap-3 mt-auto flex-wrap">
+        {(company.location) && (
           <span className="text-[10px] text-[#718096] flex items-center gap-1 font-mono">
-            <MapPin size={10} /> {company.location || company.headquarters_location}
+            <MapPin size={10} /> {company.location}
           </span>
         )}
         {company.founding_year && (
@@ -65,6 +119,11 @@ function CompanyCard({ company }) {
             <Calendar size={10} /> {company.founding_year}
           </span>
         )}
+        {geos.slice(0, 2).map(g => (
+          <span key={g} className="text-[10px] text-[#718096] font-mono">
+            {GEO_LABELS[g] || g}
+          </span>
+        ))}
       </div>
     </Link>
   );
@@ -89,9 +148,21 @@ function InvestorCard({ investor }) {
         </div>
         <ChevronRight size={14} className="text-[#718096] group-hover:text-[#2d6a4f] flex-shrink-0 mt-0.5 transition-colors" />
       </div>
-      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] self-start">
-        VC Firm
-      </span>
+      <div className="flex flex-wrap gap-1.5">
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+          VC Firm
+        </span>
+        {investor.fund_size && (
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-emerald-50 text-emerald-700">
+            {investor.fund_size}
+          </span>
+        )}
+        {(investor.investment_stages || []).slice(0, 2).map(s => (
+          <span key={s} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+            {s.replace(/_/g, " ")}
+          </span>
+        ))}
+      </div>
       {investor.description && (
         <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-2 font-light">{investor.description}</p>
       )}
@@ -109,9 +180,16 @@ function GrantCard({ grant }) {
         </h3>
         <ChevronRight size={14} className="text-[#718096] group-hover:text-[#2d6a4f] flex-shrink-0 mt-0.5 transition-colors" />
       </div>
-      {grant.funder_name && (
-        <span className="text-xs text-[#4a5568] font-mono">Funder: {grant.funder_name}</span>
-      )}
+      <div className="flex flex-wrap gap-1.5">
+        {grant.funder_name && (
+          <span className="text-xs text-[#4a5568] font-mono">Funder: {grant.funder_name}</span>
+        )}
+        {grant.amount && (
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            {grant.amount}
+          </span>
+        )}
+      </div>
       {grant.deadline_date && (
         <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[rgba(255,150,80,0.1)] text-[#ff9650] border border-[rgba(255,150,80,0.2)] self-start">
           Deadline: {new Date(grant.deadline_date).toLocaleDateString()}
@@ -167,13 +245,10 @@ function SearchResults() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
-
-      {/* Back + Search bar */}
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-6">
           <ArrowLeft size={14} /> Back to home
         </Link>
-
         <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all mb-5">
           <div className="flex items-center flex-1 px-4 gap-3">
             <Search size={15} className="text-[#718096] flex-shrink-0" />
@@ -188,8 +263,6 @@ function SearchResults() {
             Search
           </button>
         </form>
-
-        {/* Industry filter chips */}
         <div className="flex flex-wrap gap-2">
           {INDUSTRY_FILTERS.map(tag => (
             <button key={tag} onClick={() => handleFilter(tag)}
@@ -204,7 +277,6 @@ function SearchResults() {
         </div>
       </div>
 
-      {/* Results header */}
       <div className="flex items-center justify-between mb-6">
         <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
           {query ? <>Results for <em className="text-[#2d6a4f]">"{query}"</em></> : "Browse all"}
@@ -212,7 +284,6 @@ function SearchResults() {
         <span className="text-sm text-[#4a5568] font-mono">{companies.length + investors.length + grants.length} results</span>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 mb-6 bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-1 w-fit">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -230,7 +301,6 @@ function SearchResults() {
         ))}
       </div>
 
-      {/* Results */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-32 gap-4">
           <Loader2 className="animate-spin text-[#2d6a4f]" size={32} />
@@ -262,7 +332,6 @@ function SearchResults() {
 export default function SearchPage() {
   return (
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-
       <Suspense fallback={
         <div className="flex items-center justify-center py-32">
           <Loader2 className="animate-spin text-[#2d6a4f]" size={32} />
