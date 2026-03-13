@@ -56,7 +56,8 @@ function CompanyCard({ company }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {company.logo_url ? (
-            <img src={company.logo_url} alt={company.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" />
+            <img src={company.logo_url} alt={company.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
+            <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e2e6ed] items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(company.name||company.url||"?")[0].toUpperCase()}</div>
           ) : (
             <div className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
               {(company.name || company.url || "?")[0].toUpperCase()}
@@ -136,7 +137,8 @@ function InvestorCard({ investor }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {investor.logo_url ? (
-            <img src={investor.logo_url} alt={investor.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" />
+            <img src={investor.logo_url} alt={investor.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
+            <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e2e6ed] items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(investor.name||"?")[0].toUpperCase()}</div>
           ) : (
             <div className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
               {(investor.name || "?")[0].toUpperCase()}
