@@ -67,7 +67,7 @@ export default function CompanyOnboarding() {
   const [form, setForm] = useState({
     company_name: "", website: "", contact_name: "", contact_email: "", contact_role: "",
     sector: "", stage: "", funding_round: "", location: "", description: "", funding_raised: "",
-    looking_to_raise: false, is_hiring: false, seeking_partnerships: false,
+    looking_to_raise: false, is_hiring: false, seeking_partnerships: false, other_signal: "", other_sector: "",
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -173,7 +173,23 @@ export default function CompanyOnboarding() {
                           : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>{s.replace(/_/g, " ")}</button>
                   ))}
+                  <button key="other" type="button" onClick={() => set("sector", "other")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
+                      form.sector === "other"
+                        ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
+                        : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
+                    }`}>other</button>
                 </div>
+                {form.sector === "other" && (
+                  <div className="mt-2">
+                    <input
+                      value={form.other_sector}
+                      onChange={e => set("other_sector", e.target.value)}
+                      placeholder="Please specify your sector…"
+                      className={inputClass}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

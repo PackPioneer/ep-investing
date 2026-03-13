@@ -11,6 +11,9 @@ export default function SubmitCompanyPage() {
   const [lookingToRaise, setLookingToRaise] = useState(false);
   const [isHiring, setIsHiring] = useState(false);
   const [seekingPartnerships, setSeekingPartnerships] = useState(false);
+  const [otherSignal, setOtherSignal] = useState("");
+  const [sector, setSector] = useState("");
+  const [otherSector, setOtherSector] = useState("");
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
@@ -31,6 +34,8 @@ export default function SubmitCompanyPage() {
           looking_to_raise: lookingToRaise,
           is_hiring: isHiring,
           seeking_partnerships: seekingPartnerships,
+          other_signal: otherSignal.trim() || undefined,
+          sector: sector === "other" ? otherSector.trim() : sector || undefined,
         }),
       });
       const data = await res.json();
@@ -38,7 +43,7 @@ export default function SubmitCompanyPage() {
         setStatus("success");
         setMessage(`"${data.company?.name}" has been added to our database.`);
         setUrl(""); setName(""); setDescription(""); setEmail("");
-        setLookingToRaise(false); setIsHiring(false); setSeekingPartnerships(false);
+        setLookingToRaise(false); setIsHiring(false); setSeekingPartnerships(false); setOtherSignal(""); setSector(""); setOtherSector("");
       } else {
         setStatus("error");
         setMessage(data.error || "Something went wrong. Please try again.");
@@ -132,6 +137,83 @@ export default function SubmitCompanyPage() {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Industry
+              </label>
+              <div className="flex flex-wrap gap-2">
+                  <button key="green_hydrogen" type="button" onClick={() => setSector(sector === "green_hydrogen" ? "" : "green_hydrogen")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "green_hydrogen" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    green hydrogen
+                  </button>
+                  <button key="nuclear_technologies" type="button" onClick={() => setSector(sector === "nuclear_technologies" ? "" : "nuclear_technologies")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "nuclear_technologies" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    nuclear technologies
+                  </button>
+                  <button key="battery_storage" type="button" onClick={() => setSector(sector === "battery_storage" ? "" : "battery_storage")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "battery_storage" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    battery storage
+                  </button>
+                  <button key="electric_aviation" type="button" onClick={() => setSector(sector === "electric_aviation" ? "" : "electric_aviation")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "electric_aviation" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    electric aviation
+                  </button>
+                  <button key="solar" type="button" onClick={() => setSector(sector === "solar" ? "" : "solar")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "solar" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    solar
+                  </button>
+                  <button key="wind_energy" type="button" onClick={() => setSector(sector === "wind_energy" ? "" : "wind_energy")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "wind_energy" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    wind energy
+                  </button>
+                  <button key="ev_charging" type="button" onClick={() => setSector(sector === "ev_charging" ? "" : "ev_charging")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "ev_charging" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    ev charging
+                  </button>
+                  <button key="industrial_decarb" type="button" onClick={() => setSector(sector === "industrial_decarb" ? "" : "industrial_decarb")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "industrial_decarb" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    industrial decarb
+                  </button>
+                  <button key="carbon_credits" type="button" onClick={() => setSector(sector === "carbon_credits" ? "" : "carbon_credits")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "carbon_credits" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    carbon credits
+                  </button>
+                  <button key="direct_air_capture" type="button" onClick={() => setSector(sector === "direct_air_capture" ? "" : "direct_air_capture")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "direct_air_capture" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    direct air capture
+                  </button>
+                  <button key="saf_efuels" type="button" onClick={() => setSector(sector === "saf_efuels" ? "" : "saf_efuels")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "saf_efuels" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    saf efuels
+                  </button>
+                  <button key="geothermal" type="button" onClick={() => setSector(sector === "geothermal" ? "" : "geothermal")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "geothermal" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    geothermal
+                  </button>
+                  <button key="clean_cooking" type="button" onClick={() => setSector(sector === "clean_cooking" ? "" : "clean_cooking")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "clean_cooking" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    clean cooking
+                  </button>
+                  <button key="grid_storage" type="button" onClick={() => setSector(sector === "grid_storage" ? "" : "grid_storage")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "grid_storage" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    grid storage
+                  </button>
+                  <button key="other" type="button" onClick={() => setSector(sector === "other" ? "" : "other")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "other" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    other
+                  </button>
+              </div>
+              {sector === "other" && (
+                <input
+                  type="text"
+                  value={otherSector}
+                  onChange={e => setOtherSector(e.target.value)}
+                  placeholder="Please specify your industry…"
+                  className="mt-2 w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition"
+                />
+              )}
+            </div>
+
             {/* Signal toggles */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-3">
@@ -167,6 +249,19 @@ export default function SubmitCompanyPage() {
                   );
                 })}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                Other signals
+              </label>
+              <input
+                type="text"
+                value={otherSignal}
+                onChange={e => setOtherSignal(e.target.value)}
+                placeholder="e.g. Seeking distribution partners in Southeast Asia…"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition"
+              />
             </div>
 
             <div>
