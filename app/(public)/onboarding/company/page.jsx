@@ -2,11 +2,35 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, CheckCircle, Building2, MapPin, DollarSign } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Building2, TrendingUp, Users, Handshake } from "lucide-react";
 
 const SECTORS = ["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","wind_energy","ev_charging","industrial_decarb","carbon_credits","direct_air_capture","saf_efuels","geothermal","clean_cooking","grid_storage"];
 const STAGES = ["Pre-revenue","Pilot","Early revenue","Growth","Profitable"];
 const FUNDING_ROUNDS = ["Pre-seed","Seed","Series A","Series B","Series C+","Grant-funded","Bootstrapped"];
+
+const SIGNALS = [
+  {
+    key: "looking_to_raise",
+    icon: TrendingUp,
+    label: "Looking to raise investment",
+    sublabel: "Surface your company to investors on the platform",
+    color: { ring: "ring-blue-500", bg: "bg-blue-50", icon: "text-blue-600", check: "bg-blue-600", border: "border-blue-200" },
+  },
+  {
+    key: "is_hiring",
+    icon: Users,
+    label: "Currently hiring",
+    sublabel: "Show a hiring badge on your company profile",
+    color: { ring: "ring-violet-500", bg: "bg-violet-50", icon: "text-violet-600", check: "bg-violet-600", border: "border-violet-200" },
+  },
+  {
+    key: "seeking_partnerships",
+    icon: Handshake,
+    label: "Open to partnerships & expansion",
+    sublabel: "Signal interest in new markets, channels, or strategic partners",
+    color: { ring: "ring-amber-500", bg: "bg-amber-50", icon: "text-amber-600", check: "bg-amber-600", border: "border-amber-200" },
+  },
+];
 
 function ProgressBar({ step }) {
   const steps = ["Basics", "Details", "Confirm"];
@@ -41,13 +65,13 @@ export default function CompanyOnboarding() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
-    // Step 1
     company_name: "", website: "", contact_name: "", contact_email: "", contact_role: "",
-    // Step 2
     sector: "", stage: "", funding_round: "", location: "", description: "", funding_raised: "",
+    looking_to_raise: false, is_hiring: false, seeking_partnerships: false,
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const toggle = (k) => setForm(f => ({ ...f, [k]: !f[k] }));
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -181,10 +205,40 @@ export default function CompanyOnboarding() {
               </div>
 
               <div>
-                <label className={labelClass}>What does your company do? <span className="text-[#2d6a4f]">*</span></label>
+                <label className={labelClass}>Company description <span className="text-[#2d6a4f]">*</span></label>
                 <textarea value={form.description} onChange={e => set("description", e.target.value)}
                   placeholder="Describe your technology, what problem you solve, and your current traction…"
                   rows={4} className={`${inputClass} resize-none`} />
+              </div>
+
+              {/* Signal toggles */}
+              <div>
+                <label className={labelClass}>Company signals <span className="text-[#718096] normal-case font-normal tracking-normal">— select all that apply</span></label>
+                <div className="flex flex-col gap-2.5 mt-1">
+                  {SIGNALS.map(({ key, icon: Icon, label, sublabel, color: c }) => (
+                    <button key={key} type="button" onClick={() => toggle(key)}
+                      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
+                        form[key] ? `${c.bg} ${c.border} ring-1 ${c.ring}` : "bg-slate-50 border-[#e2e6ed] hover:border-[#c8d8cc]"
+                      }`}>
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${form[key] ? c.bg : "bg-white border border-[#e2e6ed]"}`}>
+                        <Icon size={16} className={form[key] ? c.icon : "text-[#a0aec0]"} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${form[key] ? "text-[#0f1a14]" : "text-[#4a5568]"}`}>{label}</p>
+                        <p className="text-xs text-[#a0aec0] mt-0.5">{sublabel}</p>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        form[key] ? `${c.check} border-transparent` : "border-[#d0d6e0]"
+                      }`}>
+                        {form[key] && (
+                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="flex gap-3 mt-2">
@@ -227,6 +281,16 @@ export default function CompanyOnboarding() {
                   <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
                     <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">About</span>
                     <span className="text-[#4a5568] line-clamp-3 text-xs leading-relaxed">{form.description}</span>
+                  </div>
+                )}
+                {(form.looking_to_raise || form.is_hiring || form.seeking_partnerships) && (
+                  <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
+                    <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">Signals</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {form.looking_to_raise && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">💰 Raising</span>}
+                      {form.is_hiring && <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">🙋 Hiring</span>}
+                      {form.seeking_partnerships && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">🤝 Partnerships</span>}
+                    </div>
                   </div>
                 )}
               </div>
