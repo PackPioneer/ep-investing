@@ -173,8 +173,8 @@ export default function HomePage() {
       <div className="border-y border-[#e2e6ed] bg-[#ffffff] overflow-x-auto">
         <div className="max-w-6xl mx-auto px-6 py-4 flex gap-0">
           {[
-            { num: "654", label: "Companies", sub: "across 14 industries" },
-            { num: "135", label: "Investors", sub: "VC, Angel & Philanthropy" },
+            { num: "1,300+", label: "Companies", sub: "across 14 industries" },
+            { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
             { num: "47", label: "Grants", sub: "with tracked deadlines" },
             { num: "14", label: "Categories", sub: "energy transition coverage" },
           ].map((stat, i) => (
@@ -217,8 +217,8 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { num: "654", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
-            { num: "135", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
+            { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
+            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
             { num: "47", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
           ].map(card => (
             <Link key={card.title} href={card.href}

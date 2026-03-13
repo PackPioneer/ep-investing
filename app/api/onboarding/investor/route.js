@@ -97,7 +97,7 @@ export async function POST(req) {
             <p style="margin: 0 0 12px; font-family: monospace; font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px;">While you wait</p>
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/search"
               style="color: #2d6a4f; font-size: 14px; font-weight: 600; text-decoration: none;">
-              Browse 654 climate companies →
+              Browse 1300+ climate companies →
             </a>
           </div>
           <p style="color: #718096; font-size: 13px; margin: 0;">

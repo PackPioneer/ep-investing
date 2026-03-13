@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "EP Investment — Climate & Energy Intelligence",
-  description: "Discover 654 climate and energy companies, 135 investors, and 47 grants across the energy transition.",
+  description: "Discover 1,300+ climate and energy companies, 350+ investors, and 59 grants across the energy transition.",
   metadataBase: new URL("https://epinvesting.com"),
   openGraph: {
     title: "EP Investment — Climate & Energy Intelligence",
