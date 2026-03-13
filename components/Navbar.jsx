@@ -12,6 +12,7 @@ const navItems = [
   { name: "Experts", href: "/experts" },
   { name: "Jobs", href: "/jobs" },
   { name: "Insights", href: "/insights" },
+  { name: "Pricing", href: "/pricing" },
 ];
 
 export default function Navbar() {
