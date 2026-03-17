@@ -3,18 +3,58 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake } from "lucide-react";
+
+const STAGE_COLORS = {
+  pre_seed: "bg-slate-100 text-slate-600",
+  seed: "bg-blue-100 text-blue-700",
+  series_a: "bg-violet-100 text-violet-700",
+  series_b: "bg-purple-100 text-purple-700",
+  series_c: "bg-fuchsia-100 text-fuchsia-700",
+  growth: "bg-emerald-100 text-emerald-700",
+  public: "bg-amber-100 text-amber-700",
+  unknown: "bg-slate-100 text-slate-500",
+};
+
+const STAGE_LABELS = {
+  pre_seed: "Pre-Seed", seed: "Seed", series_a: "Series A",
+  series_b: "Series B", series_c: "Series C", growth: "Growth",
+  public: "Public", unknown: "Unknown",
+};
+
+const MODEL_LABELS = {
+  b2b: "B2B", b2c: "B2C", b2g: "B2G", hardware: "Hardware",
+  software: "Software", project_developer: "Project Dev",
+  marketplace: "Marketplace", mixed: "Mixed",
+};
+
+const GEO_LABELS = {
+  us: "🇺🇸 US", europe: "🇪🇺 Europe", asia: "🌏 Asia",
+  africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA",
+  global: "🌐 Global", oceania: "🌏 Oceania",
+};
 
 export default function CompanyProfilePage() {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
+  const [grants, setGrants] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
     fetch(`/api/companies/${id}`)
       .then((r) => r.json())
-      .then((data) => { setCompany(data); setLoading(false); })
+      .then((data) => {
+        setCompany(data);
+        setLoading(false);
+        // Fetch relevant grants based on industry tags
+        if (data?.industry_tags?.length > 0) {
+          fetch(`/api/grants?tags=${data.industry_tags[0]}&limit=3`)
+            .then(r => r.json())
+            .then(g => setGrants(Array.isArray(g) ? g : []))
+            .catch(() => {});
+        }
+      })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -31,13 +71,12 @@ export default function CompanyProfilePage() {
   );
 
   const tags = company.industry_tags || (company.sector ? [company.sector] : []);
+  const hasSignals = company.looking_to_raise || company.is_hiring || company.seeking_partnerships;
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-
       <div className="max-w-6xl mx-auto px-6 py-10">
 
-        {/* Back */}
         <Link href="/search" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
           <ArrowLeft size={14} /> Back to search
         </Link>
@@ -48,11 +87,18 @@ export default function CompanyProfilePage() {
           <div className="lg:col-span-2 flex flex-col gap-6">
 
             {/* HERO CARD */}
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-8">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div className="flex items-center gap-5">
                   {company.logo_url ? (
-                    <img src={company.logo_url} alt={company.name} className="w-16 h-16 rounded-xl object-contain bg-white p-2" />
+                    <>
+                      <img src={company.logo_url} alt={company.name}
+                        className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e2e6ed]"
+                        onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
+                      <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e2e6ed] items-center justify-center text-2xl font-bold text-[#2d6a4f]">
+                        {(company.name||"?")[0].toUpperCase()}
+                      </div>
+                    </>
                   ) : (
                     <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f]">
                       {(company.name || company.url || "?")[0].toUpperCase()}
@@ -63,7 +109,8 @@ export default function CompanyProfilePage() {
                       {company.name || company.url}
                     </h1>
                     {company.url && (
-                      <a href={company.url} target="_blank" rel="noopener noreferrer"
+                      <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                        target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
                         <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
                       </a>
@@ -77,14 +124,43 @@ export default function CompanyProfilePage() {
                 )}
               </div>
 
-              {/* Tags */}
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {tags.map((tag) => (
-                    <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-                      {tag}
+              {/* Tags + stage + model */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {company.funding_stage && company.funding_stage !== 'unknown' && (
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STAGE_COLORS[company.funding_stage] || STAGE_COLORS.unknown}`}>
+                    {STAGE_LABELS[company.funding_stage] || company.funding_stage}
+                  </span>
+                )}
+                {company.business_model && (
+                  <span className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-white text-[#2d6a4f]">
+                    {MODEL_LABELS[company.business_model] || company.business_model}
+                  </span>
+                )}
+                {tags.map((tag) => (
+                  <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+                    {tag.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+
+              {/* Signal badges */}
+              {hasSignals && (
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {company.looking_to_raise && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                      💰 Raising
                     </span>
-                  ))}
+                  )}
+                  {company.is_hiring && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                      🙋 Hiring
+                    </span>
+                  )}
+                  {company.seeking_partnerships && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                      🤝 Partnerships
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -98,10 +174,10 @@ export default function CompanyProfilePage() {
 
             {/* CORE TECHNOLOGY */}
             {company.core_technology && (
-              <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Cpu size={16} className="text-[#2d6a4f]" />
-                  <h2 className="text-sm font-semibold text-[#0f1a14] tracking-wide uppercase text-xs font-mono">Core Technology</h2>
+                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Core Technology</h2>
                 </div>
                 <p className="text-sm text-[#4a5568] leading-relaxed">{company.core_technology}</p>
               </div>
@@ -109,7 +185,7 @@ export default function CompanyProfilePage() {
 
             {/* KEY CUSTOMERS */}
             {company.key_customers && (
-              <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Users size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Key Customers</h2>
@@ -126,7 +202,7 @@ export default function CompanyProfilePage() {
 
             {/* RECENT MILESTONES */}
             {company.recent_milestones && (
-              <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Star size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Milestones</h2>
@@ -137,7 +213,7 @@ export default function CompanyProfilePage() {
 
             {/* MANUFACTURING */}
             {company.manufacturing_capability && (
-              <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Factory size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Manufacturing Capability</h2>
@@ -146,9 +222,9 @@ export default function CompanyProfilePage() {
               </div>
             )}
 
-            {/* INVESTOR PRO LOCKED */}
-            <div className="bg-[#ffffff] border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#ffffff] pointer-events-none" />
+            {/* LOCKED INTELLIGENCE */}
+            <div className="bg-white border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
               <div className="flex items-center gap-2 mb-5">
                 <Lock size={16} className="text-[#718096]" />
                 <h2 className="text-xs font-mono font-semibold text-[#718096] tracking-wide uppercase">Restricted Company Intelligence</h2>
@@ -161,9 +237,9 @@ export default function CompanyProfilePage() {
                   </div>
                 ))}
               </div>
-              <Link href="/get-matched"
+              <Link href="/pricing"
                 className="mt-6 w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">
-                Upgrade to Investor Pro ($129/mo) <ChevronRight size={14} />
+                Upgrade to Investor Pro ($149/mo) <ChevronRight size={14} />
               </Link>
             </div>
 
@@ -173,7 +249,7 @@ export default function CompanyProfilePage() {
           <div className="flex flex-col gap-5">
 
             {/* QUICK FACTS */}
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-5">Quick Facts</h3>
               <div className="flex flex-col gap-4">
                 {company.founding_year && (
@@ -203,6 +279,15 @@ export default function CompanyProfilePage() {
                     </div>
                   </div>
                 )}
+                {company.business_model && (
+                  <div className="flex items-start gap-3">
+                    <Briefcase size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#718096] font-mono mb-1">Business Model</div>
+                      <div className="text-sm text-[#0f1a14]">{MODEL_LABELS[company.business_model] || company.business_model}</div>
+                    </div>
+                  </div>
+                )}
                 {company.target_market && (
                   <div className="flex items-start gap-3">
                     <Target size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
@@ -221,10 +306,35 @@ export default function CompanyProfilePage() {
                     </div>
                   </div>
                 )}
+                {/* Target geographies */}
+                {company.target_geographies?.length > 0 && (
+                  <div className="flex items-start gap-3">
+                    <Globe size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#718096] font-mono mb-1">Geographies</div>
+                      <div className="flex flex-wrap gap-1">
+                        {company.target_geographies.map(g => (
+                          <span key={g} className="text-xs text-[#0f1a14]">{GEO_LABELS[g] || g}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {/* Customer segments */}
+                {company.customer_segment?.length > 0 && (
+                  <div className="flex items-start gap-3">
+                    <Users size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-xs text-[#718096] font-mono mb-1">Customers</div>
+                      <div className="text-sm text-[#0f1a14] capitalize">{company.customer_segment.join(", ")}</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {company.url && (
-                <a href={company.url} target="_blank" rel="noopener noreferrer"
+                <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                  target="_blank" rel="noopener noreferrer"
                   className="mt-6 w-full flex items-center justify-center gap-2 border border-[#d0d6e0] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                   <Globe size={14} /> Visit website
                 </a>
@@ -232,28 +342,32 @@ export default function CompanyProfilePage() {
             </div>
 
             {/* RELEVANT GRANTS */}
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-4">Relevant Grants</h3>
-              {[
-                { name: "DOE Advanced R&D Program", date: "Mar 12" },
-                { name: "ARPA-E OPEN 2025", date: "Mar 28" },
-                { name: "Clean Energy Initiative", date: "Apr 5" },
-              ].map((grant) => (
-                <div key={grant.name} className="flex items-start justify-between py-2.5 border-b border-[#e2e6ed] last:border-0">
-                  <span className="text-xs text-[#4a5568]">{grant.name}</span>
-                  <span className="text-xs font-mono text-[#ff9650] ml-2 flex-shrink-0">{grant.date}</span>
-                </div>
-              ))}
+              {grants.length > 0 ? (
+                grants.map((grant) => (
+                  <div key={grant.id} className="flex items-start justify-between py-2.5 border-b border-[#e2e6ed] last:border-0">
+                    <span className="text-xs text-[#4a5568] leading-snug pr-2">{grant.title}</span>
+                    {grant.deadline && (
+                      <span className="text-xs font-mono text-[#ff9650] flex-shrink-0">
+                        {new Date(grant.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </span>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-[#718096]">Browse our grants database for funding opportunities.</p>
+              )}
               <Link href="/grants" className="mt-4 text-xs text-[#2d6a4f] font-mono hover:underline flex items-center gap-1">
                 Browse all grants →
               </Link>
             </div>
 
-            {/* CTA */}
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-6">
+            {/* CLAIM CTA */}
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14] mb-2">Is this your company?</h3>
               <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Claim your profile to add your logo, edit your description, and appear in investor discovery.</p>
-              <Link href="/get-matched"
+              <Link href="/onboarding/company"
                 className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                 Claim this company
               </Link>
