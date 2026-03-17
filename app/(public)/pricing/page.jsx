@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Check, ArrowRight, Search, Briefcase, Building2, TrendingUp, Zap, Star } from "lucide-react";
+import { Check, ArrowRight, Search, Briefcase, Building2, TrendingUp, Zap, Star, Bell, CheckCircle } from "lucide-react";
+
+const LAUNCH_DATE = "April 15, 2025";
 
 const TIERS = [
   {
@@ -12,8 +15,6 @@ const TIERS = [
     icon: Search,
     accent: "#64748b",
     highlighted: false,
-    cta: "Get started",
-    href: "/onboarding/researcher",
     features: [
       "Browse 1,300+ climate companies",
       "View open job listings",
@@ -30,8 +31,6 @@ const TIERS = [
     icon: Briefcase,
     accent: "#7c3aed",
     highlighted: false,
-    cta: "Apply as expert",
-    href: "/experts",
     features: [
       "Everything in Researcher",
       "Expert directory listing",
@@ -49,8 +48,6 @@ const TIERS = [
     accent: "#2d6a4f",
     highlighted: true,
     badge: "Most popular",
-    cta: "Claim your profile",
-    href: "/onboarding/company",
     features: [
       "Everything in Researcher",
       "Verified company profile",
@@ -68,8 +65,6 @@ const TIERS = [
     icon: TrendingUp,
     accent: "#b45309",
     highlighted: false,
-    cta: "Join as investor",
-    href: "/onboarding/investor",
     features: [
       "Everything in Researcher",
       "Full company signal feed",
@@ -81,6 +76,53 @@ const TIERS = [
   },
 ];
 
+function WaitlistForm({ tier }) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | loading | done
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
+    try {
+      await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), plan: tier }),
+      });
+      setStatus("done");
+    } catch {
+      setStatus("done"); // still show success
+    }
+  };
+
+  if (status === "done") return (
+    <div className="flex items-center gap-2 justify-center py-3 text-sm text-[#2d6a4f] font-medium">
+      <CheckCircle size={15} /> We'll remind you on April 15th
+    </div>
+  );
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        required
+        className="w-full px-3 py-2.5 rounded-lg border border-[#d0d6e0] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors bg-white"
+      />
+      <button
+        type="submit"
+        disabled={status === "loading" || !email.trim()}
+        className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all bg-[#2d6a4f] text-white hover:bg-[#235a40] disabled:opacity-50"
+      >
+        <Bell size={13} /> Notify me April 15th
+      </button>
+    </form>
+  );
+}
+
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[#f2f4f8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
@@ -88,14 +130,17 @@ export default function PricingPage() {
       {/* Header */}
       <div className="max-w-5xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-6">
-          <Zap size={11} /> Simple pricing
+          <Zap size={11} /> Launching April 15th
         </div>
         <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
           The intelligence layer<br />for the energy transition
         </h1>
-        <p className="text-[#4a5568] text-lg max-w-xl mx-auto leading-relaxed">
-          Purpose-built for climate professionals. Pick the plan that matches how you use the platform.
+        <p className="text-[#4a5568] text-lg max-w-xl mx-auto leading-relaxed mb-4">
+          Purpose-built for climate professionals. Plans open on April 15th — enter your email below and we'll remind you the moment signups go live.
         </p>
+        <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-mono px-4 py-2 rounded-full">
+          🔒 Subscriptions open April 15, 2025
+        </div>
       </div>
 
       {/* Pricing cards */}
@@ -162,16 +207,8 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                <Link
-                  href={tier.href}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all ${
-                    tier.highlighted
-                      ? "bg-[#2d6a4f] text-white hover:bg-[#235a40]"
-                      : "border border-[#d0d6e0] text-[#0f1a14] hover:border-[#2d6a4f] hover:text-[#2d6a4f] bg-white"
-                  }`}
-                >
-                  {tier.cta} <ArrowRight size={13} />
-                </Link>
+                {/* Waitlist form instead of CTA button */}
+                <WaitlistForm tier={tier.id} />
               </div>
             );
           })}
