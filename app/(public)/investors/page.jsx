@@ -80,7 +80,7 @@ function InvestorCard({ investor }) {
         ) : (
           <span className="text-xs text-[#a0aec0] font-mono">No website</span>
         )}
-        <Link href="/get-matched"
+        <Link href={`/investors/${investor.id}`}
           className="text-[10px] font-mono text-[#718096] hover:text-[#2d6a4f] transition-colors">
           Get intro →
         </Link>
