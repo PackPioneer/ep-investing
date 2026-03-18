@@ -82,7 +82,7 @@ function InvestorCard({ investor }) {
         )}
         <Link href={`/investors/${investor.id}`}
           className="text-[10px] font-mono text-[#718096] hover:text-[#2d6a4f] transition-colors">
-          Get intro →
+          Learn more →
         </Link>
       </div>
     </div>
