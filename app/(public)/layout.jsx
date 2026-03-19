@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 
@@ -16,7 +15,6 @@ export default function PublicLayout({ children }) {
           <span className="text-[#2d6a4f] font-semibold">April 15</span>
         </p>
       </div>
-      <Navbar />
       <main>{children}</main>
       <Footer />
     </>
