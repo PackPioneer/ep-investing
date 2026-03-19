@@ -13,11 +13,9 @@ const INDUSTRY_FILTERS = [
 ];
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public"];
-const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public" };
 const GEO_OPTIONS = ["us","europe","asia","africa","latam","mena","global"];
 const GEO_LABELS_MAP = { us:"🇺🇸 US", europe:"🇪🇺 Europe", asia:"🌏 Asia", africa:"🌍 Africa", latam:"🌎 LatAm", mena:"🌍 MENA", global:"🌐 Global" };
 const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace"];
-const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace" };
 
 const STAGE_COLORS = {
   pre_seed:  "bg-slate-100 text-slate-600",
