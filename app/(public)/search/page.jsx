@@ -252,9 +252,12 @@ function SearchResults() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("q") || "";
-  const [inputValue, setInputValue] = useState(query);
   const [results, setResults] = useState({ companies: [], investors: [], grants: [] });
+  const [meta, setMeta] = useState({});
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [inputValue, setInputValue] = useState(query);
   const [activeTab, setActiveTab] = useState("companies");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -265,16 +268,31 @@ function SearchResults() {
   const [modelFilter, setModelFilter] = useState(null);
   const [signalFilter, setSignalFilter] = useState(null); // "raising" | "hiring" | "partnerships"
 
-  useEffect(() => {
+useEffect(() => {
     setInputValue(query);
     setLoading(true);
-    const url = query ? `/api/search?q=${encodeURIComponent(query)}` : "/api/search?q=";
+    setPage(1);
+    const url = `/api/search?q=${encodeURIComponent(query)}&page=1`;
     fetch(url)
       .then(r => r.json())
-      .then(data => { setResults(data); setLoading(false); })
+      .then(data => { setResults(data); setMeta(data.meta || {}); setLoading(false); })
       .catch(() => setLoading(false));
   }, [query]);
 
+  const loadMore = async () => {
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    const url = `/api/search?q=${encodeURIComponent(query)}&page=${nextPage}`;
+    const data = await fetch(url).then(r => r.json());
+    setResults(prev => ({
+      companies: [...prev.companies, ...(data.companies || [])],
+      investors: [...prev.investors, ...(data.investors || [])],
+      grants: [...prev.grants, ...(data.grants || [])],
+    }));
+    setMeta(data.meta || {});
+    setPage(nextPage);
+    setLoadingMore(false);
+  };
   const handleSearch = (e) => {
     e.preventDefault();
     if (inputValue.trim()) router.push(`/search?q=${encodeURIComponent(inputValue)}`);
@@ -481,6 +499,24 @@ function SearchResults() {
             grants.length > 0
               ? grants.map(g => <GrantCard key={g.id} grant={g} />)
               : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No grants match these filters</div>
+          )}
+  </div>
+      )}
+      {!loading && (
+        <div className="col-span-3 flex justify-center mt-6">
+          {activeTab === "companies" && allCompanies.length < (meta.companiesTotal || 0) && (
+            <button onClick={loadMore} disabled={loadingMore}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#2d6a4f] text-[#2d6a4f] text-sm font-mono hover:bg-[rgba(45,106,79,0.08)] transition-all disabled:opacity-50">
+              {loadingMore ? <Loader2 size={14} className="animate-spin" /> : null}
+              {loadingMore ? "Loading…" : `Load more (${meta.companiesTotal - allCompanies.length} remaining)`}
+            </button>
+          )}
+          {activeTab === "investors" && allInvestors.length < (meta.investorsTotal || 0) && (
+            <button onClick={loadMore} disabled={loadingMore}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-[#2d6a4f] text-[#2d6a4f] text-sm font-mono hover:bg-[rgba(45,106,79,0.08)] transition-all disabled:opacity-50">
+              {loadingMore ? <Loader2 size={14} className="animate-spin" /> : null}
+              {loadingMore ? "Loading…" : `Load more (${meta.investorsTotal - allInvestors.length} remaining)`}
+            </button>
           )}
         </div>
       )}

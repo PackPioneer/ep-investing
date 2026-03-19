@@ -1,14 +1,17 @@
-// app/api/search/route.js
 import { supabase } from "@/lib/supabase";
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = 100;
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
 
-    let companiesQuery = supabase.from('companies').select('*').limit(50);
-    let investorsQuery = supabase.from('vc_firms').select('*').limit(50);
-    let grantsQuery = supabase.from('grants').select('*').limit(50);
+    let companiesQuery = supabase.from('companies').select('*', { count: 'exact' }).range(from, to);
+    let investorsQuery = supabase.from('vc_firms').select('*', { count: 'exact' }).range(from, to);
+    let grantsQuery = supabase.from('grants').select('*', { count: 'exact' }).range(from, to);
 
     if (query) {
       companiesQuery = companiesQuery.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
@@ -17,9 +20,9 @@ export async function GET(req) {
     }
 
     const [
-      { data: companies, error: companiesError },
-      { data: investors, error: investorsError },
-      { data: grants, error: grantsError },
+      { data: companies, count: companiesCount, error: companiesError },
+      { data: investors, count: investorsCount, error: investorsError },
+      { data: grants, count: grantsCount, error: grantsError },
     ] = await Promise.all([companiesQuery, investorsQuery, grantsQuery]);
 
     if (companiesError) console.error('Companies search error:', companiesError);
@@ -30,6 +33,13 @@ export async function GET(req) {
       companies: companies || [],
       investors: investors || [],
       grants: grants || [],
+      meta: {
+        page,
+        limit,
+        companiesTotal: companiesCount || 0,
+        investorsTotal: investorsCount || 0,
+        grantsTotal: grantsCount || 0,
+      }
     });
 
   } catch (error) {
