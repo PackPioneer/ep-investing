@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users } from "lucide-react";
+import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 
 const INDUSTRY_FILTERS = [
@@ -11,6 +11,13 @@ const INDUSTRY_FILTERS = [
   "industrial_decarb", "ev_charging", "carbon_credits",
   "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage"
 ];
+
+const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public"];
+const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public" };
+const GEO_OPTIONS = ["us","europe","asia","africa","latam","mena","global"];
+const GEO_LABELS_MAP = { us:"🇺🇸 US", europe:"🇪🇺 Europe", asia:"🌏 Asia", africa:"🌍 Africa", latam:"🌎 LatAm", mena:"🌍 MENA", global:"🌐 Global" };
+const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace"];
+const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace" };
 
 const STAGE_COLORS = {
   pre_seed:  "bg-slate-100 text-slate-600",
@@ -96,6 +103,27 @@ function CompanyCard({ company }) {
         <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-2 font-light">
           {company.description || company.core_technology}
         </p>
+      )}
+
+      {/* Signal badges */}
+      {(company.looking_to_raise || company.is_hiring || company.seeking_partnerships) && (
+        <div className="flex flex-wrap gap-1.5">
+          {company.looking_to_raise && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+              💰 Raising
+            </span>
+          )}
+          {company.is_hiring && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 flex items-center gap-1">
+              🙋 Hiring
+            </span>
+          )}
+          {company.seeking_partnerships && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+              🤝 Partnerships
+            </span>
+          )}
+        </div>
       )}
 
       {/* Customer segments */}
@@ -208,6 +236,20 @@ function GrantCard({ grant }) {
   );
 }
 
+function FilterChip({ label, active, onClick }) {
+  return (
+    <button onClick={onClick}
+      className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 ${
+        active
+          ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
+          : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+      }`}>
+      {label}
+      {active && <X size={10} className="ml-0.5" />}
+    </button>
+  );
+}
+
 function SearchResults() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -215,8 +257,15 @@ function SearchResults() {
   const [inputValue, setInputValue] = useState(query);
   const [results, setResults] = useState({ companies: [], investors: [], grants: [] });
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState(null);
   const [activeTab, setActiveTab] = useState("companies");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Filter state
+  const [industryFilter, setIndustryFilter] = useState(null);
+  const [stageFilter, setStageFilter] = useState(null);
+  const [geoFilter, setGeoFilter] = useState(null);
+  const [modelFilter, setModelFilter] = useState(null);
+  const [signalFilter, setSignalFilter] = useState(null); // "raising" | "hiring" | "partnerships"
 
   useEffect(() => {
     setInputValue(query);
@@ -231,17 +280,41 @@ function SearchResults() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (inputValue.trim()) router.push(`/search?q=${encodeURIComponent(inputValue)}`);
+    else router.push("/search?q=");
   };
 
-  const handleFilter = (tag) => {
-    const next = activeFilter === tag ? null : tag;
-    setActiveFilter(next);
-    router.push(`/search?q=${encodeURIComponent(next || "")}`);
+  const clearAllFilters = () => {
+    setIndustryFilter(null); setStageFilter(null);
+    setGeoFilter(null); setModelFilter(null); setSignalFilter(null);
   };
 
-  const companies = results.companies || [];
-  const investors = results.investors || [];
-  const grants = results.grants || [];
+  const activeFilterCount = [industryFilter, stageFilter, geoFilter, modelFilter, signalFilter].filter(Boolean).length;
+
+  // Client-side filtering
+  const allCompanies = results.companies || [];
+  const allInvestors = results.investors || [];
+  const allGrants = results.grants || [];
+
+  const companies = allCompanies.filter(c => {
+    if (industryFilter && !(c.industry_tags || []).includes(industryFilter)) return false;
+    if (stageFilter && c.funding_stage !== stageFilter) return false;
+    if (geoFilter && !(c.target_geographies || []).includes(geoFilter)) return false;
+    if (modelFilter && c.business_model !== modelFilter) return false;
+    if (signalFilter === "raising" && !c.looking_to_raise) return false;
+    if (signalFilter === "hiring" && !c.is_hiring) return false;
+    if (signalFilter === "partnerships" && !c.seeking_partnerships) return false;
+    return true;
+  });
+
+  const investors = allInvestors.filter(i => {
+    if (geoFilter && !(i.geographies || []).map(g => g.toLowerCase()).includes(geoFilter)) return false;
+    return true;
+  });
+
+  const grants = allGrants.filter(g => {
+    if (industryFilter && !(g.tags || []).includes(industryFilter)) return false;
+    return true;
+  });
 
   const tabs = [
     { id: "companies", label: "Companies", count: companies.length, icon: Building2 },
@@ -251,11 +324,11 @@ function SearchResults() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-6">
           <ArrowLeft size={14} /> Back to home
         </Link>
-        <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all mb-5">
+        <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all mb-4">
           <div className="flex items-center flex-1 px-4 gap-3">
             <Search size={15} className="text-[#718096] flex-shrink-0" />
             <input
@@ -269,18 +342,100 @@ function SearchResults() {
             Search
           </button>
         </form>
-        <div className="flex flex-wrap gap-2">
-          {INDUSTRY_FILTERS.map(tag => (
-            <button key={tag} onClick={() => handleFilter(tag)}
-              className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
-                activeFilter === tag
-                  ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                  : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
-              }`}>
-              {tag.replace(/_/g, " ")}
+
+        {/* Filter toggle bar */}
+        <div className="flex items-center gap-3 mb-3">
+          <button onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
+              showFilters || activeFilterCount > 0
+                ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
+                : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f]"
+            }`}>
+            <SlidersHorizontal size={11} />
+            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </button>
+          {activeFilterCount > 0 && (
+            <button onClick={clearAllFilters} className="text-xs text-[#718096] hover:text-[#e53e3e] transition-colors font-mono flex items-center gap-1">
+              <X size={11} /> Clear all
             </button>
-          ))}
+          )}
         </div>
+
+        {/* Expandable filter panel */}
+        {showFilters && (
+          <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 mb-4 flex flex-col gap-4">
+
+            {/* Industry */}
+            <div>
+              <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Industry</p>
+              <div className="flex flex-wrap gap-1.5">
+                {INDUSTRY_FILTERS.map(tag => (
+                  <FilterChip key={tag} label={tag.replace(/_/g, " ")}
+                    active={industryFilter === tag}
+                    onClick={() => setIndustryFilter(industryFilter === tag ? null : tag)} />
+                ))}
+              </div>
+            </div>
+
+            {/* Funding stage — companies only */}
+            {activeTab === "companies" && (
+              <div>
+                <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Funding Stage</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {STAGE_OPTIONS.map(s => (
+                    <FilterChip key={s} label={STAGE_LABELS[s]}
+                      active={stageFilter === s}
+                      onClick={() => setStageFilter(stageFilter === s ? null : s)} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Geography */}
+            <div>
+              <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Geography</p>
+              <div className="flex flex-wrap gap-1.5">
+                {GEO_OPTIONS.map(g => (
+                  <FilterChip key={g} label={GEO_LABELS_MAP[g]}
+                    active={geoFilter === g}
+                    onClick={() => setGeoFilter(geoFilter === g ? null : g)} />
+                ))}
+              </div>
+            </div>
+
+            {/* Business model — companies only */}
+            {activeTab === "companies" && (
+              <div>
+                <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Business Model</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {MODEL_OPTIONS.map(m => (
+                    <FilterChip key={m} label={MODEL_LABELS[m]}
+                      active={modelFilter === m}
+                      onClick={() => setModelFilter(modelFilter === m ? null : m)} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Signals — companies only */}
+            {activeTab === "companies" && (
+              <div>
+                <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Signals</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { key: "raising", label: "💰 Raising" },
+                    { key: "hiring", label: "🙋 Hiring" },
+                    { key: "partnerships", label: "🤝 Partnerships" },
+                  ].map(s => (
+                    <FilterChip key={s.key} label={s.label}
+                      active={signalFilter === s.key}
+                      onClick={() => setSignalFilter(signalFilter === s.key ? null : s.key)} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between mb-6">
@@ -317,17 +472,17 @@ function SearchResults() {
           {activeTab === "companies" && (
             companies.length > 0
               ? companies.map(c => <CompanyCard key={c.id} company={c} />)
-              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No companies found</div>
+              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No companies match these filters</div>
           )}
           {activeTab === "investors" && (
             investors.length > 0
               ? investors.map(i => <InvestorCard key={i.id} investor={i} />)
-              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No investors found</div>
+              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No investors match these filters</div>
           )}
           {activeTab === "grants" && (
             grants.length > 0
               ? grants.map(g => <GrantCard key={g.id} grant={g} />)
-              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No grants found</div>
+              : <div className="col-span-3 text-center py-20 text-[#718096] font-mono text-sm">No grants match these filters</div>
           )}
         </div>
       )}
