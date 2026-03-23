@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake } from "lucide-react";
-
+import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
   seed: "bg-blue-100 text-blue-700",
@@ -39,7 +38,10 @@ export default function CompanyProfilePage() {
   const [company, setCompany] = useState(null);
   const [grants, setGrants] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [updates, setUpdates] = useState([]);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
+  const [postingUpdate, setPostingUpdate] = useState(false);
   useEffect(() => {
     if (!id) return;
     fetch(`/api/companies/${id}`)
@@ -48,8 +50,12 @@ export default function CompanyProfilePage() {
         setCompany(data);
         setLoading(false);
         // Fetch relevant grants based on industry tags
+        fetch(`/api/companies/${id}/updates`)
+          .then(r => r.json())
+          .then(u => setUpdates(Array.isArray(u) ? u : []))
+          .catch(() => {});
         if (data?.industry_tags?.length > 0) {
-          fetch(`/api/grants?tags=${data.industry_tags[0]}&limit=3`)
+        fetch(`/api/grants?tags=${data.industry_tags[0]}&limit=3`)
             .then(r => r.json())
             .then(g => setGrants(Array.isArray(g) ? g : []))
             .catch(() => {});
@@ -57,6 +63,26 @@ export default function CompanyProfilePage() {
       })
       .catch(() => setLoading(false));
   }, [id]);
+async function postUpdate(e) {
+    e.preventDefault();
+    if (!updateForm.title.trim()) return;
+    setPostingUpdate(true);
+    try {
+      const res = await fetch(`/api/companies/${id}/updates`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateForm),
+      });
+      if (res.ok) {
+        const newUpdate = await res.json();
+        setUpdates(prev => [newUpdate, ...prev]);
+        setUpdateForm({ title: "", body: "", link: "", type: "milestone" });
+        setShowUpdateForm(false);
+      }
+    } finally {
+      setPostingUpdate(false);
+    }
+  }
 
   if (loading) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
@@ -221,6 +247,87 @@ export default function CompanyProfilePage() {
                 <p className="text-sm text-[#4a5568] leading-relaxed">{company.manufacturing_capability}</p>
               </div>
             )}
+
+            {/* RECENT UPDATES */}
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Rss size={16} className="text-[#2d6a4f]" />
+                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Updates</h2>
+                </div>
+                <button onClick={() => setShowUpdateForm(v => !v)}
+                  className="inline-flex items-center gap-1 text-xs text-[#2d6a4f] font-mono hover:underline">
+                  <Plus size={12} /> Add update
+                </button>
+              </div>
+
+              {showUpdateForm && (
+                <form onSubmit={postUpdate} className="mb-5 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+                  <input
+                    required
+                    placeholder="Title *"
+                    value={updateForm.title}
+                    onChange={e => setUpdateForm(p => ({ ...p, title: e.target.value }))}
+                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                  />
+                  <textarea
+                    placeholder="Details (optional)"
+                    rows={2}
+                    value={updateForm.body}
+                    onChange={e => setUpdateForm(p => ({ ...p, body: e.target.value }))}
+                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none"
+                  />
+                  <input
+                    placeholder="Link (optional)"
+                    value={updateForm.link}
+                    onChange={e => setUpdateForm(p => ({ ...p, link: e.target.value }))}
+                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                  />
+                  <select
+                    value={updateForm.type}
+                    onChange={e => setUpdateForm(p => ({ ...p, type: e.target.value }))}
+                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    <option value="milestone">Milestone</option>
+                    <option value="hiring">Hiring</option>
+                    <option value="funding">Funding</option>
+                    <option value="product">Product</option>
+                    <option value="partnership">Partnership</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <div className="flex gap-2 justify-end">
+                    <button type="button" onClick={() => setShowUpdateForm(false)}
+                      className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
+                    <button type="submit" disabled={postingUpdate}
+                      className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
+                      {postingUpdate ? "Posting..." : "Post update"}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {updates.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {updates.map(u => (
+                    <div key={u.id} className="border-b border-[#e2e6ed] last:border-0 pb-4 last:pb-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0] capitalize">{u.type}</span>
+                        <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
+                      {u.body && <p className="text-xs text-[#4a5568] mt-1 leading-relaxed">{u.body}</p>}
+                      {u.link && (
+                        <a href={u.link} target="_blank" rel="noopener noreferrer"
+                          className="text-xs text-[#2d6a4f] hover:underline mt-1 inline-block">
+                          Read more →
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-[#718096]">No updates yet.</p>
+              )}
+            </div>
 
             {/* LOCKED INTELLIGENCE */}
             <div className="bg-white border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
