@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -48,6 +49,14 @@ export async function POST(req) {
     .select().single();
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  const posthog = getPostHogClient();
+  posthog.identify({ distinctId: contact_email, properties: { email: contact_email, name: contact_name, company: company_name } });
+  posthog.capture({
+    distinctId: contact_email,
+    event: "company_onboarding_submitted",
+    properties: { email: contact_email, company_name, sector, stage, funding_round, looking_to_raise, is_hiring, seeking_partnerships, source: "server" },
+  });
 
   // Notify admin
   await resend.emails.send({

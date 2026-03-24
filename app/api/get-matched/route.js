@@ -3,6 +3,7 @@
 // ============================================================
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -23,6 +24,11 @@ export async function POST(req) {
     .select().single();
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  const posthog = getPostHogClient();
+  posthog.identify({ distinctId: email, properties: { email, name } });
+  posthog.capture({ distinctId: email, event: "get_matched_submitted", properties: { path, email, name, source: "server" } });
+
   return NextResponse.json(data);
 }
 

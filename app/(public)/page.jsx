@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase } from "lucide-react";
+import posthog from "posthog-js";
 
 const quickTags = [
   "direct_air_capture", "green_hydrogen", "nuclear_technologies",
@@ -85,6 +86,7 @@ export default function HomePage() {
     if (e) e.preventDefault();
     const term = override || query;
     if (!term.trim()) return;
+    posthog.capture("search_performed", { query: term, source: "homepage" });
     router.push(`/search?q=${encodeURIComponent(term)}`);
   };
 
@@ -97,6 +99,8 @@ export default function HomePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+      posthog.identify(email, { email });
+      posthog.capture("newsletter_subscribed", { email, source: "homepage" });
       setEmailStatus("success");
       setEmail("");
     } catch {

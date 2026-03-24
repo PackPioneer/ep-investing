@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 const INDUSTRY_FILTERS = [
   "nuclear_technologies", "electric_aviation", "battery_storage",
@@ -295,8 +296,10 @@ useEffect(() => {
   };
   const handleSearch = (e) => {
     e.preventDefault();
-    if (inputValue.trim()) router.push(`/search?q=${encodeURIComponent(inputValue)}`);
-    else router.push("/search?q=");
+    if (inputValue.trim()) {
+      posthog.capture("search_performed", { query: inputValue, source: "search_page" });
+      router.push(`/search?q=${encodeURIComponent(inputValue)}`);
+    } else router.push("/search?q=");
   };
 
   const clearAllFilters = () => {
@@ -388,7 +391,11 @@ useEffect(() => {
                 {INDUSTRY_FILTERS.map(tag => (
                   <FilterChip key={tag} label={tag.replace(/_/g, " ")}
                     active={industryFilter === tag}
-                    onClick={() => setIndustryFilter(industryFilter === tag ? null : tag)} />
+                    onClick={() => {
+                      const next = industryFilter === tag ? null : tag;
+                      setIndustryFilter(next);
+                      if (next) posthog.capture("search_filter_applied", { filter_type: "industry", filter_value: next, query });
+                    }} />
                 ))}
               </div>
             </div>

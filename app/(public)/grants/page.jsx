@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, Clock, DollarSign, FileText, ExternalLink } from "lucide-react";
+import posthog from "posthog-js";
 
 const CATEGORIES = ["All", "direct_air_capture", "green_hydrogen", "nuclear_technologies", "battery_storage", "solar", "wind_energy", "ev_charging", "industrial_decarb", "carbon_credits"];
 
@@ -81,6 +82,7 @@ function GrantCard({ grant }) {
       <div className="mt-auto pt-3 border-t border-[#e2e6ed]">
         {grant.url ? (
           <a href={grant.url} target="_blank" rel="noopener noreferrer"
+            onClick={() => posthog.capture("grant_external_link_clicked", { grant_title: grant.title || grant.name, grant_id: grant.id, url: grant.url })}
             className="flex items-center gap-1 text-xs text-[#2d6a4f] font-medium hover:underline">
             View grant <ExternalLink size={11} />
           </a>

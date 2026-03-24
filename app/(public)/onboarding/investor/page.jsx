@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, CheckCircle, TrendingUp } from "lucide-react";
+import posthog from "posthog-js";
 
 const SECTORS = ["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","wind_energy","ev_charging","industrial_decarb","carbon_credits","direct_air_capture","saf_efuels","geothermal","clean_cooking","grid_storage"];
 const STAGES = ["Pre-seed","Seed","Series A","Series B","Series C+","Growth"];
@@ -75,6 +76,15 @@ export default function InvestorOnboarding() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+      });
+      posthog.identify(form.email, { email: form.email, name: form.name, firm: form.firm });
+      posthog.capture("investor_onboarding_submitted", {
+        email: form.email,
+        firm: form.firm,
+        sectors: form.sectors,
+        stages: form.stages,
+        check_sizes: form.check_sizes,
+        geographies: form.geographies,
       });
       setDone(true);
     } catch (err) { console.error(err); }

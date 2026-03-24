@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -37,6 +38,14 @@ export async function POST(req) {
     .select().single();
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  const posthog = getPostHogClient();
+  posthog.identify({ distinctId: email, properties: { email, name, firm } });
+  posthog.capture({
+    distinctId: email,
+    event: "investor_onboarding_submitted",
+    properties: { email, firm, sectors, stages, check_sizes, geographies, source: "server" },
+  });
 
   // Notify admin
   await resend.emails.send({

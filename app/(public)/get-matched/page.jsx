@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { TrendingUp, Zap, Users, ArrowRight, CheckCircle, ArrowLeft } from "lucide-react";
+import posthog from "posthog-js";
 
 const PATHS = [
   {
@@ -75,6 +76,14 @@ export default function GetMatchedPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, path: selectedPath }),
+      });
+      if (form.email) {
+        posthog.identify(form.email, { email: form.email, name: form.name });
+      }
+      posthog.capture("get_matched_submitted", {
+        path: selectedPath,
+        email: form.email,
+        name: form.name,
       });
       setDone(true);
     } catch (err) {

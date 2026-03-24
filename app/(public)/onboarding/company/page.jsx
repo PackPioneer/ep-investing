@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, CheckCircle, Building2, TrendingUp, Users, Handshake } from "lucide-react";
+import posthog from "posthog-js";
 
 const SECTORS = ["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","wind_energy","ev_charging","industrial_decarb","carbon_credits","direct_air_capture","saf_efuels","geothermal","clean_cooking","grid_storage"];
 const STAGES = ["Pre-revenue","Pilot","Early revenue","Growth","Profitable"];
@@ -80,6 +81,17 @@ export default function CompanyOnboarding() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+      });
+      posthog.identify(form.contact_email, { email: form.contact_email, name: form.contact_name, company: form.company_name });
+      posthog.capture("company_onboarding_submitted", {
+        email: form.contact_email,
+        company_name: form.company_name,
+        sector: form.sector,
+        stage: form.stage,
+        funding_round: form.funding_round,
+        looking_to_raise: form.looking_to_raise,
+        is_hiring: form.is_hiring,
+        seeking_partnerships: form.seeking_partnerships,
       });
       setDone(true);
     } catch (err) { console.error(err); }
