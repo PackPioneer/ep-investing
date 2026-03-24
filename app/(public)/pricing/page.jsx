@@ -1,6 +1,8 @@
 "use client";
 
+
 import { useState } from "react";
+import posthog from "posthog-js"
 import Link from "next/link";
 import { Check, ArrowRight, Search, Briefcase, Building2, TrendingUp, Zap, Star, Bell, CheckCircle } from "lucide-react";
 
@@ -91,6 +93,7 @@ function WaitlistForm({ tier }) {
         body: JSON.stringify({ email: email.trim(), plan: tier }),
       });
       setStatus("done");
+      posthog.capture("waitlist_signup", { email: email.trim(), plan: tier });
     } catch {
       setStatus("done"); // still show success
     }

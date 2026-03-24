@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import posthog from "posthog-js";
 import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
@@ -49,6 +50,7 @@ export default function CompanyProfilePage() {
       .then((data) => {
         setCompany(data);
         setLoading(false);
+        posthog.capture("company_viewed", { company_id: id, company_name: data.name });
         // Fetch relevant grants based on industry tags
         fetch(`/api/companies/${id}/updates`)
           .then(r => r.json())
