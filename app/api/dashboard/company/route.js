@@ -14,3 +14,20 @@ export async function GET() {
   if (error || !data) return Response.json({ error: "No company found" }, { status: 404 });
   return Response.json(data);
 }
+export async function PATCH(req) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await req.json();
+  const { description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags } = body;
+
+  const { data, error } = await supabase
+    .from("companies")
+    .update({ description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags })
+    .eq("clerk_user_id", userId)
+    .select()
+    .single();
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json(data);
+}
