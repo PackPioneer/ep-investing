@@ -97,7 +97,7 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
   async function submitUpdate(e) {
     e.preventDefault();
     setSubmittingUpdate(true);
-    const res = await fetch(`/api/companies/${company.id}/updates`, {
+    const res = await fetch("/api/companies/" + company.id + "/updates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updateForm),
