@@ -49,7 +49,6 @@ export default function CompanyDashboard() {
       })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
-
   async function saveProfile(e) {
     e.preventDefault();
     setSaving(true);
