@@ -21,6 +21,10 @@ export default function CompanyDashboard() {
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobForm, setJobForm] = useState({ title: "", location: "", type: "", contact_email: "", description: "" });
   const [submittingJob, setSubmittingJob] = useState(false);
+  const [updates, setUpdates] = useState([]);
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
+  const [submittingUpdate, setSubmittingUpdate] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -43,13 +47,13 @@ export default function CompanyDashboard() {
         fetch("/api/dashboard/jobs")
           .then(r => r.json())
           .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
-      const companyId = data.id;
-      fetch("/api/companies/" + companyId + "/updates")
+        fetch("/api/companies/" + data.id + "/updates")
           .then(r => r.json())
           .then(u => setUpdates(Array.isArray(u) ? u : []));
-     })
+      })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
+
   async function saveProfile(e) {
     e.preventDefault();
     setSaving(true);
@@ -66,7 +70,8 @@ export default function CompanyDashboard() {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   }
-async function submitJob(e) {
+
+  async function submitJob(e) {
     e.preventDefault();
     setSubmittingJob(true);
     const res = await fetch("/api/dashboard/jobs", {
@@ -82,10 +87,7 @@ async function submitJob(e) {
     }
     setSubmittingJob(false);
   }
-const [updates, setUpdates] = useState([]);
-const [showUpdateForm, setShowUpdateForm] = useState(false);
-const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
-const [submittingUpdate, setSubmittingUpdate] = useState(false);
+
   async function deleteJob(id) {
     await fetch("/api/dashboard/jobs", {
       method: "DELETE",
@@ -94,6 +96,7 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
     });
     setJobs(prev => prev.filter(j => j.id !== id));
   }
+
   async function submitUpdate(e) {
     e.preventDefault();
     setSubmittingUpdate(true);
@@ -110,6 +113,7 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
     }
     setSubmittingUpdate(false);
   }
+
   if (loading) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
@@ -139,11 +143,9 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
           </div>
         </div>
 
-        {/* PROFILE SETTINGS */}
         {form && (
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7 mb-4">
             <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Profile Settings</h2>
-
             <div className="flex flex-col gap-5">
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Description</label>
@@ -152,7 +154,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
                   className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none"
                   placeholder="Describe your company..." />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Funding Stage</label>
@@ -172,7 +173,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
                   </select>
                 </div>
               </div>
-
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Industry Tags (comma separated)</label>
                 <input type="text" value={form.industry_tags}
@@ -180,7 +180,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
                   className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
                   placeholder="solar, battery_storage, b2b..." />
               </div>
-
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Signals</label>
                 <div className="flex flex-wrap gap-4">
@@ -199,7 +198,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
                 </div>
               </div>
             </div>
-
             <div className="flex items-center gap-3 mt-6">
               <button type="submit" disabled={saving}
                 className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
@@ -210,7 +208,7 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
           </form>
         )}
 
-<div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 mb-4">
+        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 mb-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Job Postings</h2>
             <button onClick={() => setShowJobForm(v => !v)}
@@ -218,7 +216,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
               + Add role
             </button>
           </div>
-
           {showJobForm && (
             <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
               <input required placeholder="Job title *" value={jobForm.title}
@@ -254,7 +251,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
               </div>
             </form>
           )}
-
           {jobs.length > 0 ? (
             <div className="flex flex-col gap-3">
               {jobs.map(job => (
@@ -272,6 +268,7 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
             <p className="text-sm text-[#718096]">No open roles yet.</p>
           )}
         </div>
+
         <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Updates</h2>
@@ -280,7 +277,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
               + Add update
             </button>
           </div>
-
           {showUpdateForm && (
             <form onSubmit={submitUpdate} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
               <input required placeholder="Title *" value={updateForm.title}
@@ -312,7 +308,6 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
               </div>
             </form>
           )}
-
           {updates.length > 0 ? (
             <div className="flex flex-col gap-4">
               {updates.map(u => (
@@ -330,7 +325,8 @@ const [submittingUpdate, setSubmittingUpdate] = useState(false);
             <p className="text-sm text-[#718096]">No updates yet.</p>
           )}
         </div>
-    
+
+      </div>
     </div>
   );
 }
