@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { auth } from "@clerk/nextjs/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -17,14 +18,17 @@ export async function POST(req) {
     return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
   }
 
+  const { userId } = await auth();
+
   const { data, error } = await supabase
     .from("claims")
     .insert({
       company_name, company_url, contact_name,
       contact_email, contact_role, description, plan,
       status: "pending",
+      clerk_user_id: userId || null,
     })
-    .select()
+  .select()
     .single();
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
@@ -45,13 +49,19 @@ export async function PATCH(req) {
   const body = await req.json();
   const { id, status, admin_notes, matched_company_id } = body;
 
-  const { data, error } = await supabase
+const { data, error } = await supabase
     .from("claims")
     .update({ status, admin_notes, matched_company_id, updated_at: new Date().toISOString() })
     .eq("id", id)
     .select()
     .single();
 
+  if (!error && status === "approved" && data?.clerk_user_id && matched_company_id) {
+    await supabase
+      .from("companies")
+      .update({ clerk_user_id: data.clerk_user_id })
+      .eq("id", matched_company_id);
+  }
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
   return NextResponse.json(data);
 }
