@@ -43,6 +43,13 @@ export default function CompanyDashboard() {
         fetch("/api/dashboard/jobs")
           .then(r => r.json())
           .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
+      fetch("/api/dashboard/jobs")
+          .then(r => r.json())
+          .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
+        fetch(`/api/companies/${data.id}/updates`)
+          .then(r => r.json())
+          .then(u => setUpdates(Array.isArray(u) ? u : []));
+      })    
       })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
@@ -79,7 +86,10 @@ async function submitJob(e) {
     }
     setSubmittingJob(false);
   }
-
+const [updates, setUpdates] = useState([]);
+const [showUpdateForm, setShowUpdateForm] = useState(false);
+const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
+const [submittingUpdate, setSubmittingUpdate] = useState(false);
   async function deleteJob(id) {
     await fetch("/api/dashboard/jobs", {
       method: "DELETE",
@@ -87,6 +97,22 @@ async function submitJob(e) {
       body: JSON.stringify({ id }),
     });
     setJobs(prev => prev.filter(j => j.id !== id));
+  }
+  async function submitUpdate(e) {
+    e.preventDefault();
+    setSubmittingUpdate(true);
+    const res = await fetch(`/api/companies/${company.id}/updates`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateForm),
+    });
+    if (res.ok) {
+      const newUpdate = await res.json();
+      setUpdates(prev => [newUpdate, ...prev]);
+      setUpdateForm({ title: "", body: "", link: "", type: "milestone" });
+      setShowUpdateForm(false);
+    }
+    setSubmittingUpdate(false);
   }
   if (loading) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
@@ -251,10 +277,64 @@ async function submitJob(e) {
           )}
         </div>
         <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
-          <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-4">Recent Updates</h2>
-          <p className="text-sm text-[#718096]">Post updates about your company.</p>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Updates</h2>
+            <button onClick={() => setShowUpdateForm(v => !v)}
+              className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
+              + Add update
+            </button>
+          </div>
+
+          {showUpdateForm && (
+            <form onSubmit={submitUpdate} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+              <input required placeholder="Title *" value={updateForm.title}
+                onChange={e => setUpdateForm(p => ({ ...p, title: e.target.value }))}
+                className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              <textarea placeholder="Details (optional)" rows={2} value={updateForm.body}
+                onChange={e => setUpdateForm(p => ({ ...p, body: e.target.value }))}
+                className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+              <input placeholder="Link (optional)" value={updateForm.link}
+                onChange={e => setUpdateForm(p => ({ ...p, link: e.target.value }))}
+                className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              <select value={updateForm.type}
+                onChange={e => setUpdateForm(p => ({ ...p, type: e.target.value }))}
+                className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                <option value="milestone">Milestone</option>
+                <option value="hiring">Hiring</option>
+                <option value="funding">Funding</option>
+                <option value="product">Product</option>
+                <option value="partnership">Partnership</option>
+                <option value="other">Other</option>
+              </select>
+              <div className="flex gap-2 justify-end">
+                <button type="button" onClick={() => setShowUpdateForm(false)}
+                  className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
+                <button type="submit" disabled={submittingUpdate}
+                  className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
+                  {submittingUpdate ? "Posting..." : "Post update"}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {updates.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {updates.map(u => (
+                <div key={u.id} className="border-b border-[#e2e6ed] last:border-0 pb-4 last:pb-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
+                    <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  </div>
+                  <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
+                  {u.body && <p className="text-xs text-[#4a5568] mt-1">{u.body}</p>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-[#718096]">No updates yet.</p>
+          )}
         </div>
-      </div>
+    
     </div>
   );
 }
