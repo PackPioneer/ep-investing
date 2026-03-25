@@ -17,6 +17,10 @@ export default function CompanyDashboard() {
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [showJobForm, setShowJobForm] = useState(false);
+  const [jobForm, setJobForm] = useState({ title: "", location: "", type: "", contact_email: "", description: "" });
+  const [submittingJob, setSubmittingJob] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
