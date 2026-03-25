@@ -43,10 +43,11 @@ export default function CompanyDashboard() {
         fetch("/api/dashboard/jobs")
           .then(r => r.json())
           .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
-        fetch(`/api/companies/${data.id}/updates`)
+      const companyId = data.id;
+      fetch("/api/companies/" + companyId + "/updates")
           .then(r => r.json())
           .then(u => setUpdates(Array.isArray(u) ? u : []));
-      })
+     })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
   async function saveProfile(e) {
