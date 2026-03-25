@@ -73,7 +73,3 @@ export default function CompanyDashboard() {
   );
 }
 ```
-
-Then we need the API route to fetch the company. Create:
-```
-mkdir -p "app/api/dashboard" && touch "app/api/dashboard/company/route.js"
