@@ -8,10 +8,6 @@ const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growt
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public", unknown:"Unknown" };
 const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
 const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace", mixed:"Mixed" };
-const [jobs, setJobs] = useState([]);
-const [showJobForm, setShowJobForm] = useState(false);
-const [jobForm, setJobForm] = useState({ title: "", location: "", type: "", contact_email: "", description: "" });
-const [submittingJob, setSubmittingJob] = useState(false);
 
 export default function CompanyDashboard() {
   const { user, isLoaded } = useUser();
