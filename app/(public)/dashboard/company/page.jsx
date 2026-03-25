@@ -1,4 +1,4 @@
-"use client";
+`"use client";
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -43,13 +43,9 @@ export default function CompanyDashboard() {
         fetch("/api/dashboard/jobs")
           .then(r => r.json())
           .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
-      fetch("/api/dashboard/jobs")
-          .then(r => r.json())
-          .then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
         fetch(`/api/companies/${data.id}/updates`)
           .then(r => r.json())
           .then(u => setUpdates(Array.isArray(u) ? u : []));
-      })    
       })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
