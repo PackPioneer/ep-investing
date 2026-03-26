@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 const navItems = [
   { name: "Companies", href: "/search" },
@@ -18,6 +19,7 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { user, isLoaded } = useUser();
 
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
@@ -46,14 +48,26 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/get-matched"
-              className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
-              Get matched
-            </Link>
-            <Link href="/onboarding/company"
-              className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
-              Claim your company
-            </Link>
+            {isLoaded && user ? (
+              <>
+                <Link href="/dashboard/company"
+                  className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
+                  Dashboard
+                </Link>
+                <UserButton afterSignOutUrl="/" />
+              </>
+            ) : (
+              <>
+                <a href="https://accounts.epinvesting.com/sign-in"
+                  className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
+                  Sign in
+                </a>
+                <Link href="/onboarding/company"
+                  className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
+                  Join EP Investing
+                </Link>
+              </>
+            )}
           </div>
 
           <button className="md:hidden p-2 text-[#4a5568] hover:text-[#0f1a14] transition-colors"
@@ -80,14 +94,28 @@ export default function Navbar() {
               );
             })}
             <div className="border-t border-[#e2e6ed] mt-4 pt-4 flex flex-col gap-3">
-              <Link href="/get-matched"
-                className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0] hover:text-[#0f1a14] transition-all">
-                Get matched
-              </Link>
-              <Link href="/onboarding/company"
-                className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
-                Claim your company
-              </Link>
+              {isLoaded && user ? (
+                <>
+                  <Link href="/dashboard/company"
+                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0]">
+                    Dashboard
+                  </Link>
+                  <div className="flex justify-center">
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <a href="https://accounts.epinvesting.com/sign-in"
+                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0]">
+                    Sign in
+                  </a>
+                  <Link href="/onboarding/company"
+                    className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
+                    Join EP Investing
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
