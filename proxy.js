@@ -49,7 +49,6 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
-}
 });
 
 export const config = {
