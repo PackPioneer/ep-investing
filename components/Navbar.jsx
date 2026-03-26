@@ -62,10 +62,24 @@ export default function Navbar() {
                   className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
                   Sign in
                 </a>
-                <Link href="/onboarding/company"
-                  className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
-                  Join EP Investing
-                </Link>
+              <div className="relative group">
+                  <button className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
+                    Join EP Investing ▾
+                  </button>
+                  <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-[#e2e6ed] rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <Link href="/onboarding/company"
+                      className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-t-xl transition-colors">
+                      <span className="text-sm font-semibold text-[#0f1a14]">🏢 I'm a Company</span>
+                      <span className="text-xs text-[#718096] mt-0.5">Claim your profile</span>
+                    </Link>
+                    <div className="border-t border-[#e2e6ed]" />
+                    <Link href="/onboarding/investor"
+                      className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
+                      <span className="text-sm font-semibold text-[#0f1a14]">📈 I'm an Investor</span>
+                      <span className="text-xs text-[#718096] mt-0.5">Get deal flow access</span>
+                    </Link>
+                  </div>
+                </div>
               </>
             )}
           </div>
@@ -109,10 +123,13 @@ export default function Navbar() {
                   <a href="https://accounts.epinvesting.com/sign-in"
                     className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0]">
                     Sign in
-                  </a>
-                  <Link href="/onboarding/company"
+                <Link href="/onboarding/company"
                     className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
-                    Join EP Investing
+                    🏢 Join as Company
+                  </Link>
+                  <Link href="/onboarding/investor"
+                    className="text-center py-3 rounded-lg text-sm border border-[#2d6a4f] text-[#2d6a4f] font-semibold hover:bg-[#f0f7f4] transition-all">
+                    📈 Join as Investor
                   </Link>
                 </>
               )}
