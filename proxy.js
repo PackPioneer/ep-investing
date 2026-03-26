@@ -35,14 +35,12 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
-
-  // 🔐 API PROTECTION
-  if (pathname.startsWith("/api") && req.method !== "GET") {
+// 🔐 API PROTECTION — only for /api/admin routes
+  if (pathname.startsWith("/api/admin") && req.method !== "GET") {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     
-    // Admin check for API
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
     const email = user.primaryEmailAddress?.emailAddress?.toLowerCase();
@@ -51,6 +49,7 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
+}
 });
 
 export const config = {
