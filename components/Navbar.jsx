@@ -131,7 +131,6 @@ export default function Navbar() {
                     className="text-center py-3 rounded-lg text-sm border border-[#2d6a4f] text-[#2d6a4f] font-semibold hover:bg-[#f0f7f4] transition-all">
                     📈 Join as Investor
                   </Link>
-                </>
               )}
             </div>
           </div>
