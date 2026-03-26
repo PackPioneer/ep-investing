@@ -33,7 +33,7 @@ export default function CompanyDashboard() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    if (!user) { router.push("/sign-in"); return; }
+    if (!user) { router.push("/"); return; }
     fetch("/api/dashboard/company")
       .then(r => r.json())
       .then(data => {
