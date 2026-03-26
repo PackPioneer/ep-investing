@@ -61,8 +61,8 @@ export async function PATCH(req) {
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
 
   // On approval — link user to company and send invitation email
-  if (!error && status === "approved" && matched_company_id) {
-    // Link clerk_user_id to company if we have it
+  if (!error && status === "approved") {
+  // Link clerk_user_id to company if we have it
     if (data?.clerk_user_id) {
       await supabase
         .from("companies")
