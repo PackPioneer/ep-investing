@@ -25,6 +25,11 @@ export default function CompanyDashboard() {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
   const [submittingUpdate, setSubmittingUpdate] = useState(false);
+  const [fundingForm, setFundingForm] = useState({ raise_target: "", raise_current: "", raise_close_date: "", min_check_size: "" });
+  const [savingFunding, setSavingFunding] = useState(false);
+  const [savedFunding, setSavedFunding] = useState(false);
+  const [uploadingDeck, setUploadingDeck] = useState(false);
+  const [deckUrl, setDeckUrl] = useState(null);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -43,6 +48,13 @@ export default function CompanyDashboard() {
           seeking_partnerships: data.seeking_partnerships || false,
           industry_tags: (data.industry_tags || []).join(", "),
         });
+        setFundingForm({
+          raise_target: data.raise_target || "",
+          raise_current: data.raise_current || "",
+          raise_close_date: data.raise_close_date || "",
+          min_check_size: data.min_check_size || "",
+        });
+        setDeckUrl(data.pitch_deck_url || null);
         setLoading(false);
         fetch("/api/dashboard/jobs")
           .then(r => r.json())
@@ -113,7 +125,35 @@ export default function CompanyDashboard() {
     }
     setSubmittingUpdate(false);
   }
+  async function saveFunding(e) {
+    e.preventDefault();
+    setSavingFunding(true);
+    await fetch("/api/dashboard/company", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fundingForm),
+    });
+    setSavingFunding(false);
+    setSavedFunding(true);
+    setTimeout(() => setSavedFunding(false), 3000);
+  }
 
+  async function uploadDeck(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingDeck(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/dashboard/pitch-deck", {
+      method: "POST",
+      body: formData,
+    });
+    if (res.ok) {
+      const { url } = await res.json();
+      setDeckUrl(url);
+    }
+    setUploadingDeck(false);
+  }
   if (loading) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
@@ -325,7 +365,63 @@ export default function CompanyDashboard() {
             <p className="text-sm text-[#718096]">No updates yet.</p>
           )}
         </div>
+ <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 mt-4">
+          <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Funding Round</h2>
+          <p className="text-xs text-[#718096] mb-5">This information is only visible to verified investors.</p>
+          
+          <form onSubmit={saveFunding} className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Target Raise</label>
+                <input type="text" placeholder="e.g. $2M" value={fundingForm.raise_target}
+                  onChange={e => setFundingForm(p => ({ ...p, raise_target: e.target.value }))}
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              </div>
+              <div>
+                <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Raised So Far</label>
+                <input type="text" placeholder="e.g. $500K" value={fundingForm.raise_current}
+                  onChange={e => setFundingForm(p => ({ ...p, raise_current: e.target.value }))}
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Close Date</label>
+                <input type="date" value={fundingForm.raise_close_date}
+                  onChange={e => setFundingForm(p => ({ ...p, raise_close_date: e.target.value }))}
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              </div>
+              <div>
+                <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Min Check Size</label>
+                <input type="text" placeholder="e.g. $25K" value={fundingForm.min_check_size}
+                  onChange={e => setFundingForm(p => ({ ...p, min_check_size: e.target.value }))}
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button type="submit" disabled={savingFunding}
+                className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
+                {savingFunding ? "Saving..." : "Save funding details"}
+              </button>
+              {savedFunding && <span className="text-sm text-[#2d6a4f] font-medium">✓ Saved</span>}
+            </div>
+          </form>
 
+          <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
+            <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Pitch Deck (PDF)</label>
+            {deckUrl && (
+              <div className="flex items-center gap-3 mb-3">
+                <a href={deckUrl} target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-[#2d6a4f] hover:underline">View current pitch deck →</a>
+              </div>
+            )}
+            <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+              {uploadingDeck ? "Uploading..." : deckUrl ? "Replace pitch deck" : "Upload pitch deck"}
+              <input type="file" accept=".pdf" onChange={uploadDeck} className="hidden" disabled={uploadingDeck} />
+            </label>
+            <p className="text-xs text-[#718096] mt-2">PDF only. Only visible to verified investors.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
