@@ -73,21 +73,27 @@ export async function PATCH(req) {
     // Send invitation email via Clerk + Resend
     if (data?.contact_email) {
       try {
-        const clerk = await clerkClient();
-        const invitation = await clerk.invitations.createInvitation({
-          emailAddress: data.contact_email,
-          redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`,
-          publicMetadata: {
-            role: "company",
-            company_id: matched_company_id,
-          },
-        });
+        const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
+        let inviteUrl = dashboardUrl;
+
+        try {
+          const clerk = await clerkClient();
+          const invitation = await clerk.invitations.createInvitation({
+            emailAddress: data.contact_email,
+            redirectUrl: dashboardUrl,
+            publicMetadata: { role: "company", company_id: matched_company_id },
+          });
+          inviteUrl = invitation.url;
+        } catch (inviteErr) {
+          // User already exists — just send them the dashboard link directly
+          console.log("User exists, sending direct link");
+        }
 
         await resend.emails.send({
           from: "EP Investing <otto@epinvesting.com>",
           to: data.contact_email,
           subject: `Your ${data.company_name} profile is ready on EP Investing`,
-          html: `
+        html: `
             <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
               <h1 style="font-size: 24px; color: #0f1a14;">Welcome to EP Investing, ${data.contact_name}!</h1>
               <p style="color: #4a5568; line-height: 1.6;">Your company profile for <strong>${data.company_name}</strong> has been approved and is now live on EP Investing.</p>
@@ -99,7 +105,7 @@ export async function PATCH(req) {
                 <li>Upload your pitch deck</li>
                 <li>Add funding round details</li>
               </ul>
-              <a href="${invitation.url}" style="display: inline-block; background: #2d6a4f; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-family: sans-serif; font-weight: 600; margin: 20px 0;">
+              <a href="${inviteUrl}" style="display: inline-block; background: #2d6a4f; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-family: sans-serif; font-weight: 600; margin: 20px 0;">
                 Access your dashboard →
               </a>
               <p style="color: #718096; font-size: 13px; margin-top: 30px;">This link expires in 24 hours. If you have any questions, reply to this email.</p>
