@@ -18,11 +18,12 @@ import { useUser, UserButton } from "@clerk/nextjs";
 const menu = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Investors", href: "/admin/investors", icon: Users },
+  { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
+  { name: "Claims", href: "/admin/claims", icon: Building2 },
   { name: "Grants", href: "/admin/grants", icon: Landmark },
   { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
 ];
-
 export default function Sidebar() {
   const pathname = usePathname();
   const { user } = useUser();
