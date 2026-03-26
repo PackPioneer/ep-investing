@@ -21,7 +21,7 @@ export async function PATCH(req) {
 
   const { data, error } = await supabase
     .from("matched_requests")
-    .update({ status, admin_notes, updated_at: new Date().toISOString() })
+    .update({ status, admin_notes })
     .eq("id", id)
     .select()
     .single();
