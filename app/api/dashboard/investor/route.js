@@ -14,26 +14,11 @@ export async function GET() {
 
   if (!profile) return Response.json({ error: "No investor profile found" }, { status: 404 });
 
-  const focusTags = profile.focus
-    ? profile.focus.split(",").map(f => f.trim()).filter(Boolean)
-    : [];
+  const { data: companies } = await supabase
+    .from("companies")
+    .select("id, name, description, funding_stage, looking_to_raise, is_hiring, seeking_partnerships, industry_tags")
+    .order("created_at", { ascending: false })
+    .limit(50);
 
-  let companies = [];
-  if (focusTags.length > 0) {
-    const { data } = await supabase
-      .from("companies")
-      .select("id, name, description, funding_stage, looking_to_raise, is_hiring, industry_tags")
-      .eq("looking_to_raise", true)
-      .limit(20);
-    companies = data || [];
-  } else {
-    const { data } = await supabase
-      .from("companies")
-      .select("id, name, description, funding_stage, looking_to_raise, is_hiring, industry_tags")
-      .eq("looking_to_raise", true)
-      .limit(20);
-    companies = data || [];
-  }
-
-  return Response.json({ profile, companies });
+  return Response.json({ profile, companies: companies || [] });
 }
