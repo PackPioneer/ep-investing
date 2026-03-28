@@ -166,8 +166,15 @@ export default function CompanyDashboard() {
         <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-2">
           {company?.name} Dashboard
         </h1>
-        <p className="text-sm text-[#4a5568] mb-8">Manage your company profile, jobs, and updates.</p>
-
+<div className="flex items-center justify-between mb-8">
+  <p className="text-sm text-[#4a5568]">Manage your company profile, jobs, and updates.</p>
+  {company?.id && (
+    <a href={`/companies/${company.id}`} target="_blank" rel="noopener noreferrer"
+      className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+      Preview public profile →
+    </a>
+  )}
+</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
             <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
