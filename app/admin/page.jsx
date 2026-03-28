@@ -59,11 +59,11 @@ const fetchChart = async () => {
   setLoadingChart(false);
 };
 
-  const formatGrowth = (g) => {
-    if (g > 0) return `+${g.toFixed(1)}%`;
-    return `${g.toFixed(1)}%`;
-  };
-
+const formatGrowth = (g) => {
+  if (g == null || isNaN(g)) return "—";
+  if (g > 0) return `+${g.toFixed(1)}%`;
+  return `${g.toFixed(1)}%`;
+};
   return (
     <div className="max-w-6xl mx-auto">
 
