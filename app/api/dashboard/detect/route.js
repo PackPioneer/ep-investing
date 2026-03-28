@@ -8,13 +8,20 @@ const supabase = createClient(
 )
 
 export async function GET() {
-  const { userId } = await auth()
+  const { userId, sessionClaims } = await auth()
 
   if (!userId) {
     return NextResponse.json({ type: null }, { status: 401 })
   }
 
-  // Check if user is a company
+  // Check if admin
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',') || []
+  const userEmail = sessionClaims?.email
+  if (adminEmails.includes(userEmail)) {
+    return NextResponse.json({ type: 'admin' })
+  }
+
+  // Check if company
   const { data: company } = await supabase
     .from('companies')
     .select('id')
@@ -25,7 +32,7 @@ export async function GET() {
     return NextResponse.json({ type: 'company' })
   }
 
-  // Check if user is an investor
+  // Check if investor
   const { data: investor } = await supabase
     .from('matched_requests')
     .select('id')

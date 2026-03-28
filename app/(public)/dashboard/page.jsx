@@ -18,7 +18,9 @@ export default async function DashboardPage() {
 
   const data = await res.json()
 
-  if (data.type === 'company') {
+  if (data.type === 'admin') {
+    redirect('/admin')
+  } else if (data.type === 'company') {
     redirect('/dashboard/company')
   } else if (data.type === 'investor') {
     redirect('/dashboard/investor')
