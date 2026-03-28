@@ -1,5 +1,11 @@
 import { redirect } from 'next/navigation'
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+)
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -8,23 +14,36 @@ export default async function DashboardPage() {
     redirect('/sign-in')
   }
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/dashboard/detect`,
-    {
-      headers: { 'x-clerk-user-id': userId },
-      cache: 'no-store',
-    }
-  )
+  const user = await currentUser()
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress
 
-  const data = await res.json()
-
-  if (data.type === 'admin') {
+  // Check admin
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',') || []
+  if (adminEmails.includes(userEmail)) {
     redirect('/admin')
-  } else if (data.type === 'company') {
-    redirect('/dashboard/company')
-  } else if (data.type === 'investor') {
-    redirect('/dashboard/investor')
-  } else {
-    redirect('/')
   }
+
+  // Check company
+  const { data: company } = await supabase
+    .from('companies')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single()
+
+  if (company) {
+    redirect('/dashboard/company')
+  }
+
+  // Check investor
+  const { data: investor } = await supabase
+    .from('matched_requests')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single()
+
+  if (investor) {
+    redirect('/dashboard/investor')
+  }
+
+  redirect('/')
 }
