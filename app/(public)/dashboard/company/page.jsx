@@ -37,7 +37,7 @@ export default function CompanyDashboard() {
     fetch("/api/dashboard/company")
       .then(r => r.json())
       .then(data => {
-        if (!data || data.error) { router.push("/"); return; }
+        if (!data || data.error) { setLoading(false); return; }
         setCompany(data);
         setForm({
           description: data.description || "",

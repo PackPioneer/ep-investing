@@ -24,7 +24,7 @@ export default function InvestorDashboard() {
     fetch("/api/dashboard/investor")
       .then(r => r.json())
       .then(data => {
-        if (!data || data.error) { router.push("/"); return; }
+        if (!data || data.error) { setLoading(false); return; }
         setProfile(data.profile);
         setCompanies(data.companies || []);
         setLoading(false);
