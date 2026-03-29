@@ -1,5 +1,5 @@
-cat > "app/(public)/jobs/page.jsx" << 'EOF'
 "use client";
+cat > "app/(public)/jobs/page.jsx" << 'EOF'
 
 import { useState, useEffect } from "react";
 import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucide-react";
