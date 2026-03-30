@@ -10,8 +10,8 @@ import {
 
 const GEO_LABELS = {
   us: "US", europe: "Europe", asia: "Asia",
-  africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA",
-  global: "🌐 Global", oceania: "🌏 Oceania",
+  africa: "Africa", latam: "LatAm", mena: "MENA",
+  global: "Global", oceania: "Oceania",
 };
 
 const STAGE_COLORS = {
