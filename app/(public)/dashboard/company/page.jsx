@@ -1,4 +1,3 @@
-cat > "app/(public)/dashboard/company/page.jsx" << 'EOF'
 "use client";
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
