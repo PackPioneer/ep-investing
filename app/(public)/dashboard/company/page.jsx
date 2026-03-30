@@ -57,7 +57,7 @@ export default function CompanyDashboard() {
         setDeckUrl(data.pitch_deck_url || null);
         setLoading(false);
         fetch("/api/dashboard/jobs").then(r => r.json()).then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
-        fetch(`/api/companies/${data.id}/updates`).then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
+        fetch("/api/companies/" + data.id + "/updates").then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
       })
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
@@ -86,7 +86,7 @@ export default function CompanyDashboard() {
   async function submitUpdate(e) {
     e.preventDefault();
     setSubmittingUpdate(true);
-    const res = await fetch(`/api/companies/${company.id}/updates`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(updateForm) });
+    const res = await fetch("/api/companies/" + company.id + "/updates", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(updateForm) });
     if (res.ok) { const u = await res.json(); setUpdates(prev => [u, ...prev]); setUpdateForm({ title: "", body: "", link: "", type: "milestone" }); setShowUpdateForm(false); }
     setSubmittingUpdate(false);
   }
@@ -108,10 +108,6 @@ export default function CompanyDashboard() {
     if (res.ok) { const { url } = await res.json(); setDeckUrl(url); }
     setUploadingDeck(false);
   }
-
-  const raisePercent = fundingForm.raise_target && fundingForm.raise_current
-    ? Math.min(100, Math.round((parseFloat(fundingForm.raise_current) / parseFloat(fundingForm.raise_target)) * 100))
-    : 0;
 
   const profileChecks = form ? [
     { label: "Description added", done: !!form.description },
@@ -137,164 +133,131 @@ export default function CompanyDashboard() {
 
   return (
     <div className="flex min-h-screen" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-      {/* Sidebar */}
       <div className="w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0">
         <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base mb-6 px-2">
           EP <span className="text-[#2d6a4f]">Investing</span>
         </div>
         {navItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
-            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors ${activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white"}`}>
+            className={"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
             <span>{item.icon}</span> {item.label}
           </button>
         ))}
       </div>
 
-      {/* Main */}
       <div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
             {company?.name || "Company Dashboard"}
           </h1>
           {company?.id && (
-            <a href={`/companies/${company.id}`} target="_blank" rel="noopener noreferrer"
+            <a href={"/companies/" + company.id} target="_blank" rel="noopener noreferrer"
               className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-              Preview public profile ->
+              Preview public profile
             </a>
           )}
         </div>
 
-        {/* OVERVIEW */}
         {activeTab === "overview" && (
-  <div className="flex flex-col gap-4">
-    {/* Stats */}
-    <div className="grid grid-cols-3 gap-4">
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
-        <div className="text-2xl font-semibold text-[#0f1a14]">{jobs.length}</div>
-      </div>
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Updates Posted</div>
-        <div className="text-2xl font-semibold text-[#0f1a14]">{updates.length}</div>
-      </div>
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
-        <div className="text-2xl font-semibold text-[#0f1a14]">—</div>
-      </div>
-    </div>
-
-    {/* Quick actions */}
-    <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-      <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Quick Actions</div>
-      <div className="flex gap-3 flex-wrap">
-        <button onClick={() => setActiveTab("jobs")}
-          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-          💼 Add job posting
-        </button>
-        <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); }}
-          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-          📄 Post an update
-        </button>
-        <button onClick={() => setActiveTab("funding")}
-          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-          📎 Upload pitch deck
-        </button>
-      </div>
-    </div>
-
-    {/* Profile completeness */}
-    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6">
-      <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Profile Completeness</div>
-      <div className="flex flex-col gap-3">
-        {profileChecks.map(({ label, done }) => (
-          <div key={label} className={`flex items-center gap-2.5 text-sm ${done ? "text-[#2d6a4f]" : "text-[#718096]"}`}>
-            <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 ${done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#d0d6e0]"}`}>
-              {done ? "✓" : ""}
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
+                <div className="text-2xl font-semibold text-[#0f1a14]">{jobs.length}</div>
+              </div>
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Updates Posted</div>
+                <div className="text-2xl font-semibold text-[#0f1a14]">{updates.length}</div>
+              </div>
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
+                <div className="text-2xl font-semibold text-[#0f1a14]">--</div>
+              </div>
             </div>
-            {label}
-          </div>
-        ))}
-      </div>
-    </div>
 
-    <div className="grid grid-cols-2 gap-4">
-      {/* Recent jobs */}
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Jobs</div>
-          <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all -></button>
-        </div>
-        {jobs.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            {jobs.slice(0, 3).map(job => (
-              <div key={job.id} className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-medium text-[#0f1a14]">{job.title}</div>
-                  <div className="text-xs text-[#718096]">{job.location}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs font-mono text-[#718096]">Views</div>
-                  <div className="text-sm font-semibold text-[#0f1a14]">{job.views ?? 0}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-[#718096]">No jobs posted yet.</p>
-        )}
-      </div>
-
-      {/* Recent updates */}
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Updates</div>
-          <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all -></button>
-        </div>
-        {updates.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            {updates.slice(0, 3).map(u => (
-              <div key={u.id}>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
-                  <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                </div>
-                <p className="text-sm font-medium text-[#0f1a14]">{u.title}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-[#718096]">No updates yet.</p>
-        )}
-      </div>
-    </div>
-  </div>
-)}
-        
-
-            {/* Funding banner */}
-            {fundingForm.raise_target && (
-              <div className="bg-[#eef7f2] border border-[#a8d5be] rounded-xl p-5 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-mono text-[#2d6a4f] uppercase tracking-wide mb-1">Active raise</div>
-                  <div className="text-lg font-semibold text-[#0f1a14]">
-                    {fundingForm.raise_current ? `$${fundingForm.raise_current} raised of $${fundingForm.raise_target} target` : `$${fundingForm.raise_target} target`}
-                  </div>
-                  {raisePercent > 0 && (
-                    <div className="mt-2 h-1.5 w-48 bg-[#d1fae5] rounded-full">
-                      <div className="h-1.5 bg-[#2d6a4f] rounded-full" style={{ width: `${raisePercent}%` }} />
-                    </div>
-                  )}
-                </div>
-                <button onClick={() => setActiveTab("funding")} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40]">
-                  Edit round
+            <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Quick Actions</div>
+              <div className="flex gap-3 flex-wrap">
+                <button onClick={() => setActiveTab("jobs")}
+                  className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  💼 Add job posting
+                </button>
+                <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); }}
+                  className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  📄 Post an update
+                </button>
+                <button onClick={() => setActiveTab("funding")}
+                  className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  📎 Upload pitch deck
                 </button>
               </div>
-            
-            )}
+            </div>
+
+            <div className="bg-white border border-[#e2e6ed] rounded-xl p-6">
+              <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Profile Completeness</div>
+              <div className="flex flex-col gap-3">
+                {profileChecks.map(({ label, done }) => (
+                  <div key={label} className={"flex items-center gap-2.5 text-sm " + (done ? "text-[#2d6a4f]" : "text-[#718096]")}>
+                    <div className={"w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 " + (done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#d0d6e0]")}>
+                      {done ? "✓" : ""}
+                    </div>
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Jobs</div>
+                  <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all</button>
+                </div>
+                {jobs.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {jobs.slice(0, 3).map(job => (
+                      <div key={job.id} className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-medium text-[#0f1a14]">{job.title}</div>
+                          <div className="text-xs text-[#718096]">{job.location}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xs font-mono text-[#718096]">Views</div>
+                          <div className="text-sm font-semibold text-[#0f1a14]">{job.views ?? 0}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[#718096]">No jobs posted yet.</p>
+                )}
+              </div>
+
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Updates</div>
+                  <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all</button>
+                </div>
+                {updates.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {updates.slice(0, 3).map(u => (
+                      <div key={u.id}>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
+                          <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                        </div>
+                        <p className="text-sm font-medium text-[#0f1a14]">{u.title}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[#718096]">No updates yet.</p>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* PROFILE */}
         {activeTab === "profile" && form && (
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Profile Settings</div>
@@ -344,12 +307,11 @@ export default function CompanyDashboard() {
               <button type="submit" disabled={saving} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
                 {saving ? "Saving..." : "Save changes"}
               </button>
-              {saved && <span className="text-sm text-[#2d6a4f] font-medium">✓ Saved</span>}
+              {saved && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
             </div>
           </form>
         )}
 
-        {/* FUNDING */}
         {activeTab === "funding" && (
           <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-2">Funding Round</div>
@@ -387,14 +349,14 @@ export default function CompanyDashboard() {
                 <button type="submit" disabled={savingFunding} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
                   {savingFunding ? "Saving..." : "Save funding details"}
                 </button>
-                {savedFunding && <span className="text-sm text-[#2d6a4f] font-medium">✓ Saved</span>}
+                {savedFunding && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
               </div>
             </form>
             <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Pitch Deck (PDF)</label>
               {deckUrl && (
                 <a href={deckUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-[#2d6a4f] hover:underline block mb-3">
-                  View current pitch deck ->
+                  View current pitch deck
                 </a>
               )}
               <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
@@ -406,7 +368,6 @@ export default function CompanyDashboard() {
           </div>
         )}
 
-        {/* JOBS */}
         {activeTab === "jobs" && (
           <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
@@ -467,7 +428,6 @@ export default function CompanyDashboard() {
           </div>
         )}
 
-        {/* UPDATES */}
         {activeTab === "updates" && (
           <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
