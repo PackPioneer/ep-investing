@@ -13,16 +13,16 @@ const quickTags = [
 ];
 
 const categories = [
-  { icon: "⚛️", name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
-  { icon: "✈️", name: "Electric Aviation", count: 74, slug: "electric_aviation" },
-  { icon: "🔋", name: "Battery Storage", count: 69, slug: "battery_storage" },
-  { icon: "💧", name: "Green Hydrogen", count: 64, slug: "green_hydrogen" },
-  { icon: "💨", name: "Wind Energy", count: 60, slug: "wind_energy" },
-  { icon: "⛽", name: "SAF / Efuels", count: 52, slug: "saf_efuels" },
-  { icon: "🌋", name: "Geothermal", count: 39, slug: "geothermal" },
-  { icon: "🏭", name: "Industrial Decarb", count: 37, slug: "industrial_decarb" },
-  { icon: "☀️", name: "Solar", count: 37, slug: "solar" },
-  { icon: "🔌", name: "EV Charging", count: 33, slug: "ev_charging" },
+  { icon: "null", name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
+  { icon: "null", name: "Electric Aviation", count: 74, slug: "electric_aviation" },
+  { icon: "null", name: "Battery Storage", count: 69, slug: "battery_storage" },
+  { icon: "null", name: "Green Hydrogen", count: 64, slug: "green_hydrogen" },
+  { icon: "null", name: "Wind Energy", count: 60, slug: "wind_energy" },
+  { icon: "null", name: "SAF / Efuels", count: 52, slug: "saf_efuels" },
+  { icon: "null", name: "Geothermal", count: 39, slug: "geothermal" },
+  { icon: "null", name: "Industrial Decarb", count: 37, slug: "industrial_decarb" },
+  { icon: "null", name: "Solar", count: 37, slug: "solar" },
+  { icon: "null", name: "EV Charging", count: 33, slug: "ev_charging" },
 ];
 
 const roleTiles = [
@@ -150,9 +150,9 @@ export default function HomePage() {
 
           <div className="flex flex-wrap gap-3 mb-8">
             {[
-              { label: "📈 I'm an Investor", href: "/onboarding/investor" },
-              { label: "🚀 I'm a Founder", href: "/onboarding/company" },
-              { label: "🗂 Browse Directory", href: "/search" },
+              { label: "I'm an Investor", href: "/onboarding/investor" },
+              { label: "I'm a Founder", href: "/onboarding/company" },
+              { label: "Browse Directory", href: "/search" },
             ].map(btn => (
               <Link key={btn.label} href={btn.href}
                 className="flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d6e0] bg-[#ffffff] rounded-lg text-[#0f1a14] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[#f8f9fb] transition-all">
@@ -330,7 +330,7 @@ export default function HomePage() {
           {categories.map(cat => (
             <button key={cat.name} onClick={() => handleSearch(null, cat.slug)}
               className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-2 text-left hover:border-[#2d6a4f] hover:bg-[#f8f9fb] hover:-translate-y-0.5 transition-all">
-              <div className="text-2xl">{cat.icon}</div>
+              {cat.icon && cat.icon !== "null" && <div className="text-2xl">{cat.icon}</div>}
               <div className="text-sm font-medium text-[#0f1a14] leading-snug">{cat.name}</div>
               <div className="text-xs text-[#718096] font-mono">{cat.count} companies</div>
             </button>
