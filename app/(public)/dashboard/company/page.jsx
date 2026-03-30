@@ -286,9 +286,10 @@ export default function CompanyDashboard() {
                   )}
                 </div>
                 <button onClick={() => setActiveTab("funding")} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40]">
-                  Edit round →
+                  Edit round
                 </button>
               </div>
+            
             )}
           </div>
         )}
