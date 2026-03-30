@@ -1,12 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(req) {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+  const user = await currentUser();
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress;
   const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
-  if (!adminEmails.includes(sessionClaims?.email)) {
+
+  if (!adminEmails.includes(userEmail)) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
