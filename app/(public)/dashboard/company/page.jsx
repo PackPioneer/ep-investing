@@ -166,36 +166,110 @@ export default function CompanyDashboard() {
 
         {/* OVERVIEW */}
         {activeTab === "overview" && (
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{jobs.length}</div>
-              </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Updates Posted</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{updates.length}</div>
-              </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">—</div>
-              </div>
-            </div>
+  <div className="flex flex-col gap-4">
+    {/* Stats */}
+    <div className="grid grid-cols-3 gap-4">
+      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
+        <div className="text-2xl font-semibold text-[#0f1a14]">{jobs.length}</div>
+      </div>
+      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Updates Posted</div>
+        <div className="text-2xl font-semibold text-[#0f1a14]">{updates.length}</div>
+      </div>
+      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+        <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
+        <div className="text-2xl font-semibold text-[#0f1a14]">—</div>
+      </div>
+    </div>
 
-            {/* Profile completeness */}
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-6">
-              <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Profile completeness</div>
-              <div className="flex flex-col gap-3">
-                {profileChecks.map(({ label, done }) => (
-                  <div key={label} className={`flex items-center gap-2.5 text-sm ${done ? "text-[#2d6a4f]" : "text-[#718096]"}`}>
-                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 ${done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#d0d6e0]"}`}>
-                      {done ? "✓" : ""}
-                    </div>
-                    {label}
-                  </div>
-                ))}
-              </div>
+    {/* Quick actions */}
+    <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+      <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Quick Actions</div>
+      <div className="flex gap-3 flex-wrap">
+        <button onClick={() => setActiveTab("jobs")}
+          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+          💼 Add job posting
+        </button>
+        <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); }}
+          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+          📄 Post an update
+        </button>
+        <button onClick={() => setActiveTab("funding")}
+          className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+          📎 Upload pitch deck
+        </button>
+      </div>
+    </div>
+
+    {/* Profile completeness */}
+    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6">
+      <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Profile Completeness</div>
+      <div className="flex flex-col gap-3">
+        {profileChecks.map(({ label, done }) => (
+          <div key={label} className={`flex items-center gap-2.5 text-sm ${done ? "text-[#2d6a4f]" : "text-[#718096]"}`}>
+            <div className={`w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 ${done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#d0d6e0]"}`}>
+              {done ? "✓" : ""}
             </div>
+            {label}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      {/* Recent jobs */}
+      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Jobs</div>
+          <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+        </div>
+        {jobs.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {jobs.slice(0, 3).map(job => (
+              <div key={job.id} className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-medium text-[#0f1a14]">{job.title}</div>
+                  <div className="text-xs text-[#718096]">{job.location}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs font-mono text-[#718096]">Views</div>
+                  <div className="text-sm font-semibold text-[#0f1a14]">{job.views ?? 0}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-[#718096]">No jobs posted yet.</p>
+        )}
+      </div>
+
+      {/* Recent updates */}
+      <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Updates</div>
+          <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+        </div>
+        {updates.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {updates.slice(0, 3).map(u => (
+              <div key={u.id}>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
+                  <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                </div>
+                <p className="text-sm font-medium text-[#0f1a14]">{u.title}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-[#718096]">No updates yet.</p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+        
 
             {/* Funding banner */}
             {fundingForm.raise_target && (
