@@ -159,7 +159,7 @@ export default function CompanyDashboard() {
           {company?.id && (
             <a href={`/companies/${company.id}`} target="_blank" rel="noopener noreferrer"
               className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-              Preview public profile →
+              Preview public profile ->
             </a>
           )}
         </div>
@@ -222,7 +222,7 @@ export default function CompanyDashboard() {
       <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Jobs</div>
-          <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+          <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all -></button>
         </div>
         {jobs.length > 0 ? (
           <div className="flex flex-col gap-3">
@@ -248,7 +248,7 @@ export default function CompanyDashboard() {
       <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Updates</div>
-          <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+          <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all -></button>
         </div>
         {updates.length > 0 ? (
           <div className="flex flex-col gap-3">
@@ -394,7 +394,7 @@ export default function CompanyDashboard() {
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Pitch Deck (PDF)</label>
               {deckUrl && (
                 <a href={deckUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-[#2d6a4f] hover:underline block mb-3">
-                  View current pitch deck →
+                  View current pitch deck ->
                 </a>
               )}
               <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
