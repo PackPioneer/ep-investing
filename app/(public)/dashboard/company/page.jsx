@@ -140,7 +140,12 @@ export default function CompanyDashboard() {
         {navItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
             className={"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
-          </span>), { item,: .label })}
+          {navItems.map(item => (
+  <button key={item.id} onClick={() => setActiveTab(item.id)}
+    className={"flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
+    {item.label}
+  </button>
+))}
       </button>
       ))}
     </div><div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
