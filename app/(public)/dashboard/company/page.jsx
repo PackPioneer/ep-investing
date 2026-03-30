@@ -482,7 +482,7 @@ export default function CompanyDashboard() {
             )}
           </div>
         )}
-      </div></>
+      </div>
     </div>
   );
 }
