@@ -1,246 +1,204 @@
-cat > "app/(public)/dashboard/investor/page.jsx" << 'EOF'
 "use client";
-import { useState, useEffect, useMemo } from "react";
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
-const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
+import { useState, useEffect } from "react";
+import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucide-react";
 
-export default function InvestorDashboard() {
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
-  const [profile, setProfile] = useState(null);
-  const [companies, setCompanies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [stageFilter, setStageFilter] = useState(null);
-  const [signalFilter, setSignalFilter] = useState(null);
-  const [sectorFilter, setSectorFilter] = useState(null);
-  const [saved, setSaved] = useState([]);
-  const [activeTab, setActiveTab] = useState("feed");
+const SECTORS = ["All", "ev_charging", "green_hydrogen", "nuclear_technologies", "climate_finance", "battery_storage", "solar"];
 
-  useEffect(() => {
-    if (!isLoaded) return;
-    if (!user) { router.push("/"); return; }
-    fetch("/api/dashboard/investor")
-      .then(r => r.json())
-      .then(data => {
-        if (!data || data.error) { setLoading(false); return; }
-        setProfile(data.profile);
-        setCompanies(data.companies || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    const s = JSON.parse(localStorage.getItem("ep_saved") || "[]");
-    setSaved(s);
-  }, [isLoaded, user]);
-
-  const toggleSave = (id) => {
-    setSaved(prev => {
-      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
-      localStorage.setItem("ep_saved", JSON.stringify(next));
-      return next;
-    });
+function JobCard({ job }) {
+  const handleApply = () => {
+    fetch(`/api/jobs/${job.id}/view`, { method: "POST" }).catch(() => {});
+    if (job.contact_email) window.location.href = `mailto:${job.contact_email}`;
   };
 
-  const allSectors = useMemo(() => {
-    const tags = new Set();
-    companies.forEach(c => (c.industry_tags || []).forEach(t => tags.add(t)));
-    return [...tags].sort();
-  }, [companies]);
+  return (
+    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#2d6a4f] transition-all group">
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
+          {(job.company || job.company_name || "?")[0]}
+        </div>
+        <div>
+          <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors">{job.title}</h3>
+          <div className="flex flex-wrap items-center gap-3 mt-1.5">
+            <span className="text-xs text-[#4a5568]">{job.company || job.company_name}</span>
+            {job.location && (
+              <span className="flex items-center gap-1 text-xs text-[#718096] font-mono">
+                <MapPin size={10} /> {job.location}
+              </span>
+            )}
+            {job.created_at && (
+              <span className="flex items-center gap-1 text-xs text-[#718096] font-mono">
+                <Clock size={10} /> {new Date(job.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </span>
+            )}
+          </div>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {job.type && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.type.replace(/_/g, " ")}</span>}
+            {job.sector && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.sector.replace(/_/g, " ")}</span>}
+          </div>
+        </div>
+      </div>
+      <button onClick={handleApply}
+        className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold text-white bg-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#235a40] transition-all">
+        Apply <ArrowRight size={11} />
+      </button>
+    </div>
+  );
+}
 
-  const filtered = useMemo(() => {
-    let list = activeTab === "saved" ? companies.filter(c => saved.includes(c.id)) : companies;
-    return list.filter(c => {
-      if (search && !c.name?.toLowerCase().includes(search.toLowerCase())) return false;
-      if (stageFilter && c.funding_stage !== stageFilter) return false;
-      if (signalFilter === "raising" && !c.looking_to_raise) return false;
-      if (signalFilter === "hiring" && !c.is_hiring) return false;
-      if (signalFilter === "partnerships" && !c.seeking_partnerships) return false;
-      if (sectorFilter && !(c.industry_tags || []).includes(sectorFilter)) return false;
-      return true;
-    });
-  }, [companies, search, stageFilter, signalFilter, sectorFilter, saved, activeTab]);
+function PostJobForm({ onDone }) {
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ title: "", company: "", location: "", type: "Full-time", sector: "", description: "", contact_email: "" });
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const clearFilters = () => { setSearch(""); setStageFilter(null); setSignalFilter(null); setSectorFilter(null); };
-  const hasFilters = search || stageFilter || signalFilter || sectorFilter;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch("/api/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      onDone();
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
 
-  if (loading) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
+  return (
+    <div className="max-w-xl mx-auto">
+      <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
+        <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
+          <Briefcase size={18} className="text-[#2d6a4f]" />
+          <h2 className="font-semibold text-[#0f1a14]">Post a job</h2>
+          <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6]">Free during beta</span>
+        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {[
+            { name: "title", label: "Job title", placeholder: "e.g. Senior Electrochemist", required: true },
+            { name: "company", label: "Company name", placeholder: "e.g. Verdagy", required: true },
+            { name: "location", label: "Location", placeholder: "e.g. San Jose, CA or Remote", required: true },
+            { name: "contact_email", label: "Contact email", placeholder: "jobs@company.com", required: true, type: "email" },
+          ].map(field => (
+            <div key={field.name} className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">{field.label} <span className="text-[#2d6a4f]">*</span></label>
+              <input name={field.name} type={field.type || "text"} value={form[field.name]} onChange={handleChange}
+                placeholder={field.placeholder} required={field.required}
+                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
+            </div>
+          ))}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Type</label>
+              <select name="type" value={form.type} onChange={handleChange}
+                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] outline-none focus:border-[#2d6a4f] transition-colors">
+                {["Full-time", "Part-time", "Contract", "Fractional", "Advisory"].map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Sector</label>
+              <input name="sector" value={form.sector} onChange={handleChange} placeholder="e.g. green_hydrogen"
+                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Job description</label>
+            <textarea name="description" value={form.description} onChange={handleChange}
+              placeholder="Role responsibilities, requirements..." rows={4}
+              className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none" />
+          </div>
+          <button type="submit" disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
+            {loading ? "Posting…" : "Post job listing"} {!loading && <ArrowRight size={14} />}
+          </button>
+          <p className="text-xs text-[#718096] font-mono text-center">We review all listings before publishing</p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default function JobsPage() {
+  const [view, setView] = useState("board");
+  const [search, setSearch] = useState("");
+  const [sector, setSector] = useState("All");
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/jobs")
+      .then(r => r.json())
+      .then(data => { setJobs(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = jobs.filter(j => {
+    const matchSearch = !search || j.title?.toLowerCase().includes(search.toLowerCase()) || (j.company || j.company_name || "").toLowerCase().includes(search.toLowerCase());
+    const matchSector = sector === "All" || j.sector === sector;
+    return matchSearch && matchSector;
+  });
+
+  if (view === "done") return (
+    <div className="min-h-[80vh] flex items-center justify-center px-6">
+      <div className="max-w-md text-center">
+        <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
+          <CheckCircle size={32} className="text-[#2d6a4f]" />
+        </div>
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Job submitted</h2>
+        <p className="text-[#4a5568] text-sm leading-relaxed mb-8">We'll review and publish your listing within 1 business day.</p>
+        <button onClick={() => setView("board")} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+          View jobs board <ArrowRight size={14} />
+        </button>
+      </div>
     </div>
   );
 
   return (
-    <div className="flex min-h-screen" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-      {/* Sidebar */}
-      <div className="w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0">
-        <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base mb-6 px-2">
-          EP <span className="text-[#2d6a4f]">Investing</span>
-        </div>
-        {[
-          { id: "feed", label: "Deal Flow", icon: "⊞" },
-          { id: "saved", label: "Saved", icon: "◇" },
-        ].map(item => (
-          <button key={item.id} onClick={() => setActiveTab(item.id)}
-            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors ${activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white"}`}>
-            <span className="text-base">{item.icon}</span> {item.label}
-          </button>
-        ))}
-        <Link href="/companies" className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[#9ca8a0] hover:text-white transition-colors">
-          <span className="text-base">⊙</span> Browse All
-        </Link>
-        <div className="text-[10px] font-mono text-[#4a5568] uppercase tracking-widest px-3 mt-4 mb-1">Account</div>
-        <button onClick={() => setActiveTab("profile")}
-          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors ${activeTab === "profile" ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white"}`}>
-          <span className="text-base">◯</span> Profile
-        </button>
-      </div>
-
-      {/* Main */}
-      <div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
-        {activeTab === "profile" ? (
+    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="max-w-4xl mx-auto px-6 py-16">
+        <div className="flex items-start justify-between mb-10 gap-4 flex-wrap">
           <div>
-            <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-6">Your Profile</h1>
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
-              <div className="grid grid-cols-2 gap-6">
-                {[["Name", profile?.name],["Firm", profile?.firm],["Focus", profile?.focus],["Stage", profile?.stage],["Check size", profile?.check_size]]
-                  .filter(([,v]) => v).map(([k,v]) => (
-                    <div key={k}>
-                      <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">{k}</div>
-                      <div className="text-sm text-[#0f1a14]">{v}</div>
-                    </div>
-                  ))}
-              </div>
+            <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
+              Climate Jobs
             </div>
+            <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14]">Jobs board</h1>
+            <p className="text-[#4a5568] text-sm mt-2 font-light">Roles across the energy transition — from deep tech to climate finance.</p>
           </div>
-        ) : (
+          <button onClick={() => setView(view === "post" ? "board" : "post")}
+            className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
+            {view === "post" ? "← Browse jobs" : <> Post a job <ArrowRight size={13} /></>}
+          </button>
+        </div>
+
+        {view === "post" ? <PostJobForm onDone={() => setView("done")} /> : (
           <>
-            <div className="flex items-center justify-between mb-6">
-              <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
-                {activeTab === "saved" ? "Saved Companies" : "Deal Flow"}
-              </h1>
-              <span className="text-sm text-[#718096]">Welcome back{profile?.name ? `, ${profile.name}` : ""}</span>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Companies Raising</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{companies.filter(c => c.looking_to_raise).length}</div>
-                <div className="text-xs text-[#2d6a4f] mt-1">Active opportunities</div>
+            <div className="flex flex-col md:flex-row gap-3 mb-6">
+              <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all">
+                <Search size={14} className="text-[#718096]" />
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search job titles or companies…"
+                  className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#718096] outline-none" />
               </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Saved</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{saved.length}</div>
-                <div className="text-xs text-[#2d6a4f] mt-1 cursor-pointer" onClick={() => setActiveTab("saved")}>View saved →</div>
-              </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Sectors Tracked</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{profile?.focus ? profile.focus.split(",").length : "—"}</div>
-                <div className="text-xs text-[#718096] mt-1">{profile?.focus?.split(",").slice(0,2).join(" · ")}</div>
-              </div>
-            </div>
-
-            {/* Feed */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-              {/* Search */}
-              <input type="text" placeholder="Search by company name..."
-                value={search} onChange={e => setSearch(e.target.value)}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-[#f8f9fb] focus:outline-none focus:border-[#2d6a4f] mb-3" />
-
-              {/* Stage chips */}
-              <div className="flex flex-wrap gap-2 mb-2">
-                {STAGES.map(s => (
-                  <button key={s} onClick={() => setStageFilter(stageFilter === s ? null : s)}
-                    className={`text-xs px-3 py-1 rounded-full border transition-colors ${stageFilter === s ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"}`}>
-                    {STAGE_LABELS[s]}
+              <div className="flex gap-2 flex-wrap">
+                {SECTORS.slice(0, 5).map(s => (
+                  <button key={s} onClick={() => setSector(s)}
+                    className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"}`}>
+                    {s === "All" ? "All" : s.replace(/_/g, " ")}
                   </button>
                 ))}
               </div>
-
-              {/* Signal chips */}
-              <div className="flex flex-wrap gap-2 mb-2">
-                {[["raising","💰 Raising"],["hiring","🙋 Hiring"],["partnerships","🤝 Partnerships"]].map(([val, label]) => (
-                  <button key={val} onClick={() => setSignalFilter(signalFilter === val ? null : val)}
-                    className={`text-xs px-3 py-1 rounded-full border transition-colors ${signalFilter === val ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"}`}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Sector chips */}
-              {allSectors.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {allSectors.map(s => (
-                    <button key={s} onClick={() => setSectorFilter(sectorFilter === s ? null : s)}
-                      className={`text-xs px-3 py-1 rounded-full border transition-colors ${sectorFilter === s ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"}`}>
-                      {s.replace(/_/g, " ")}
-                    </button>
-                  ))}
-                </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              {loading ? (
+                <div className="text-center py-20 text-[#718096] font-mono text-sm">Loading jobs…</div>
+              ) : filtered.length > 0 ? (
+                filtered.map(job => <JobCard key={job.id} job={job} />)
+              ) : (
+                <div className="text-center py-20 text-[#718096] font-mono text-sm">No jobs found</div>
               )}
-
-              {hasFilters && (
-                <button onClick={clearFilters} className="text-xs text-[#718096] hover:text-[#0f1a14] mb-4 underline block">
-                  Clear filters
-                </button>
-              )}
-
-              {/* Company cards */}
-              <div className="flex flex-col gap-3 mt-2">
-                {filtered.length > 0 ? filtered.map(company => (
-                  <div key={company.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors bg-[#fafbfc]">
-                    <div className="flex gap-3 items-start">
-                      <div className="w-9 h-9 rounded-lg bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-sm font-semibold text-[#2d6a4f] flex-shrink-0">
-                        {company.name?.[0] || "?"}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">
-                            {company.name}
-                          </Link>
-                          {company.funding_stage && (
-                            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">
-                              {STAGE_LABELS[company.funding_stage] || company.funding_stage.replace(/_/g, " ")}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-[#718096] mb-2 line-clamp-1">{company.description}</p>
-                        <div className="flex gap-2 flex-wrap">
-                          {company.looking_to_raise && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">💰 Raising</span>}
-                          {company.is_hiring && <span className="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">🙋 Hiring</span>}
-                          {company.seeking_partnerships && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">🤝 Partnerships</span>}
-                          {(company.industry_tags || []).slice(0,2).map(t => (
-                            <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{t.replace(/_/g, " ")}</span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-3 flex-shrink-0 ml-4">
-                      <button onClick={() => toggleSave(company.id)}
-                        className={`text-lg transition-colors ${saved.includes(company.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0] hover:text-[#2d6a4f]"}`}>
-                        {saved.includes(company.id) ? "★" : "☆"}
-                      </button>
-                      {company.raise_target && (
-                        <div className="text-right">
-                          <div className="text-xs font-mono text-[#718096]">Target</div>
-                          <div className="text-sm font-semibold text-[#0f1a14]">{company.raise_target}</div>
-                        </div>
-                      )}
-                      <Link href={`/companies/${company.id}`} className="text-xs text-[#2d6a4f] font-mono hover:underline">
-                        View →
-                      </Link>
-                    </div>
-                  </div>
-                )) : (
-                  <p className="text-sm text-[#718096] py-4">
-                    {activeTab === "saved" ? "No saved companies yet." : hasFilters ? "No companies match your filters." : "No companies found."}
-                  </p>
-                )}
-              </div>
+            </div>
+            <div className="mt-10 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
+              <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">Hiring in climate?</h3>
+              <p className="text-sm text-[#4a5568] mb-5 font-light">Post your role to reach thousands of climate professionals.</p>
+              <button onClick={() => setView("post")} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+                Post a job <ArrowRight size={13} />
+              </button>
             </div>
           </>
         )}
@@ -248,4 +206,3 @@ export default function InvestorDashboard() {
     </div>
   );
 }
-EOF
