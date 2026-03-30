@@ -43,6 +43,7 @@ export default function CompanyProfilePage() {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
   const [postingUpdate, setPostingUpdate] = useState(false);
+  const [isInvestor, setIsInvestor] = useState(false);
   useEffect(() => {
     if (!id) return;
     fetch(`/api/companies/${id}`)
@@ -64,6 +65,10 @@ export default function CompanyProfilePage() {
         }
       })
       .catch(() => setLoading(false));
+      fetch("/api/auth/investor-check")
+  .then(r => r.json())
+  .then(d => setIsInvestor(d.isInvestor))
+  .catch(() => {});
   }, [id]);
 async function postUpdate(e) {
     e.preventDefault();
@@ -332,27 +337,79 @@ async function postUpdate(e) {
             </div>
 
             {/* LOCKED INTELLIGENCE */}
-            <div className="bg-white border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
-              <div className="flex items-center gap-2 mb-5">
-                <Lock size={16} className="text-[#718096]" />
-                <h2 className="text-xs font-mono font-semibold text-[#718096] tracking-wide uppercase">Restricted Company Intelligence</h2>
-              </div>
-              <div className="flex flex-col gap-3">
-                {["Raise round / stage", "Estimated revenue range", "Employee count signals", "Lead investors"].map((field) => (
-                  <div key={field} className="flex items-center justify-between py-2 border-b border-[#e2e6ed] last:border-0">
-                    <span className="text-sm text-[#718096]">{field}</span>
-                    <div className="h-4 w-24 bg-[#e2e6ed] rounded-sm" />
-                  </div>
-                ))}
-              </div>
-              <Link href="/pricing"
-                className="mt-6 w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">
-                Upgrade to Investor Pro ($149/mo) <ChevronRight size={14} />
-              </Link>
+            {isInvestor ? (
+  <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+    <div className="flex items-center gap-2 mb-5">
+      <Lock size={16} className="text-[#2d6a4f]" />
+      <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investor Intelligence</h2>
+    </div>
+    <div className="flex flex-col gap-4">
+      {company.raise_target && (
+        <div>
+          <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Target Raise</div>
+          <div className="text-sm font-semibold text-[#0f1a14]">${Number(company.raise_target).toLocaleString()}</div>
+        </div>
+      )}
+      {company.raise_current && (
+        <div>
+          <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Raised So Far</div>
+          <div className="text-sm font-semibold text-[#0f1a14]">${Number(company.raise_current).toLocaleString()}</div>
+          {company.raise_target && (
+            <div className="mt-2 h-1.5 w-full bg-[#d1fae5] rounded-full">
+              <div className="h-1.5 bg-[#2d6a4f] rounded-full"
+                style={{ width: `${Math.min(100, Math.round((company.raise_current / company.raise_target) * 100))}%` }} />
             </div>
-
+          )}
+        </div>
+      )}
+      {company.raise_close_date && (
+        <div>
+          <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Round Close Date</div>
+          <div className="text-sm font-semibold text-[#0f1a14]">
+            {new Date(company.raise_close_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
           </div>
+        </div>
+      )}
+      {company.min_check_size && (
+        <div>
+          <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Min Check Size</div>
+          <div className="text-sm font-semibold text-[#0f1a14]">${Number(company.min_check_size).toLocaleString()}</div>
+        </div>
+      )}
+      {company.pitch_deck_url && (
+        <div className="pt-2 border-t border-[#e2e6ed]">
+          <a href={company.pitch_deck_url} target="_blank" rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+            View Pitch Deck
+          </a>
+        </div>
+      )}
+      {!company.raise_target && !company.pitch_deck_url && (
+        <p className="text-sm text-[#718096]">This company hasn't added funding details yet.</p>
+      )}
+    </div>
+  </div>
+) : (
+  <div className="bg-white border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
+    <div className="flex items-center gap-2 mb-5">
+      <Lock size={16} className="text-[#718096]" />
+      <h2 className="text-xs font-mono font-semibold text-[#718096] tracking-wide uppercase">Investor Intelligence</h2>
+    </div>
+    <div className="flex flex-col gap-3">
+      {["Target raise amount", "Raised so far", "Round close date", "Min check size", "Pitch deck"].map((field) => (
+        <div key={field} className="flex items-center justify-between py-2 border-b border-[#e2e6ed] last:border-0">
+          <span className="text-sm text-[#718096]">{field}</span>
+          <div className="h-4 w-24 bg-[#e2e6ed] rounded-sm" />
+        </div>
+      ))}
+    </div>
+    <Link href="/pricing"
+      className="mt-6 w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">
+      Unlock Investor Access
+    </Link>
+  </div>
+)}
 
           {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-5">
