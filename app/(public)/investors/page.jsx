@@ -58,16 +58,16 @@ function InvestorCard({ investor }) {
       {/* Extra info row */}
       <div className="flex flex-wrap gap-3 text-[10px] font-mono text-[#718096]">
         {investor.investment_stages?.length > 0 && (
-          <span>📈 {investor.investment_stages.join(", ")}</span>
+          <span> {investor.investment_stages.join(", ")}</span>
         )}
         {investor.fund_size && (
-          <span>💰 {investor.fund_size}</span>
+          <span> {investor.fund_size}</span>
         )}
         {investor.sweet_spot_check_size && (
-          <span>✍️ {investor.sweet_spot_check_size}</span>
+          <span> {investor.sweet_spot_check_size}</span>
         )}
         {investor.geographies?.length > 0 && (
-          <span>🌍 {investor.geographies.slice(0, 2).join(", ")}</span>
+          <span> {investor.geographies.slice(0, 2).join(", ")}</span>
         )}
       </div>
 

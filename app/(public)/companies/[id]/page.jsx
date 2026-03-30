@@ -29,9 +29,9 @@ const MODEL_LABELS = {
 };
 
 const GEO_LABELS = {
-  us: "🇺🇸 US", europe: "🇪🇺 Europe", asia: "🌏 Asia",
-  africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA",
-  global: "🌐 Global", oceania: "🌏 Oceania",
+  us: "US", europe: "Europe", asia: "Asia",
+  africa: "Africa", latam: "LatAm", mena: "MENA",
+  global: "Global", oceania: "Oceania",
 };
 
 export default function CompanyProfilePage() {
@@ -181,17 +181,17 @@ async function postUpdate(e) {
                 <div className="flex flex-wrap gap-2 mb-5">
                   {company.looking_to_raise && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                      💰 Raising
+                      Raising
                     </span>
                   )}
                   {company.is_hiring && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-                      🙋 Hiring
+                      Hiring
                     </span>
                   )}
                   {company.seeking_partnerships && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                      🤝 Partnerships
+                      Partnerships
                     </span>
                   )}
                 </div>

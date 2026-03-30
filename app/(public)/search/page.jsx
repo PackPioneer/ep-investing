@@ -109,17 +109,17 @@ function CompanyCard({ company }) {
         <div className="flex flex-wrap gap-1.5">
           {company.looking_to_raise && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
-              💰 Raising
+              Raising
             </span>
           )}
           {company.is_hiring && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200 flex items-center gap-1">
-              🙋 Hiring
+              Hiring
             </span>
           )}
           {company.seeking_partnerships && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
-              🤝 Partnerships
+              Partnerships
             </span>
           )}
         </div>
@@ -446,9 +446,9 @@ useEffect(() => {
                 <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Signals</p>
                 <div className="flex flex-wrap gap-1.5">
                   {[
-                    { key: "raising", label: "💰 Raising" },
-                    { key: "hiring", label: "🙋 Hiring" },
-                    { key: "partnerships", label: "🤝 Partnerships" },
+                    { key: "raising", label: "Raising" },
+                    { key: "hiring", label: "Hiring" },
+                    { key: "partnerships", label: "Partnerships" },
                   ].map(s => (
                     <FilterChip key={s.key} label={s.label}
                       active={signalFilter === s.key}

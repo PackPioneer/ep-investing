@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 const GEO_LABELS = {
-  us: "🇺🇸 US", europe: "🇪🇺 Europe", asia: "🌏 Asia",
+  us: "US", europe: "Europe", asia: "Asia",
   africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA",
   global: "🌐 Global", oceania: "🌏 Oceania",
 };

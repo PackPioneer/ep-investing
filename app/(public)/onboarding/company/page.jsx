@@ -315,9 +315,9 @@ export default function CompanyOnboarding() {
                   <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
                     <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">Signals</span>
                     <div className="flex flex-wrap gap-1.5">
-                      {form.looking_to_raise && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">💰 Raising</span>}
-                      {form.is_hiring && <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">🙋 Hiring</span>}
-                      {form.seeking_partnerships && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">🤝 Partnerships</span>}
+                      {form.looking_to_raise && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Raising</span>}
+                      {form.is_hiring && <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Hiring</span>}
+                      {form.seeking_partnerships && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Partnerships</span>}
                     </div>
                   </div>
                 )}

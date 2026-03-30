@@ -124,15 +124,15 @@ export default function CompanyDashboard() {
   );
 
   const navItems = [
-    { id: "overview", label: "Overview", icon: "⊞" },
-    { id: "profile", label: "Profile", icon: "◯" },
-    { id: "funding", label: "Funding Round", icon: "💰" },
-    { id: "jobs", label: "Jobs", icon: "💼" },
-    { id: "updates", label: "Updates", icon: "📄" },
+    { id: "overview", label: "Overview", icon: "-" },
+    { id: "profile", label: "Profile", icon: "-" },
+    { id: "funding", label: "Funding Round", icon: "-" },
+    { id: "jobs", label: "Jobs", icon: "-" },
+    { id: "updates", label: "Updates", icon: "-" },
   ];
 
   return (
-    <div className="flex min-h-screen" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <><div className="flex min-h-screen" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0">
         <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base mb-6 px-2">
           EP <span className="text-[#2d6a4f]">Investing</span>
@@ -140,12 +140,10 @@ export default function CompanyDashboard() {
         {navItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
             className={"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-colors " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
-            <span>{item.icon}</span> {item.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
+          </span>), { item,: .label })}
+      </button>
+      ))}
+    </div><div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
             {company?.name || "Company Dashboard"}
@@ -180,15 +178,15 @@ export default function CompanyDashboard() {
               <div className="flex gap-3 flex-wrap">
                 <button onClick={() => setActiveTab("jobs")}
                   className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-                  💼 Add job posting
+                  Add job posting
                 </button>
-                <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); }}
+                <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); } }
                   className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-                  📄 Post an update
+                  Post an update
                 </button>
                 <button onClick={() => setActiveTab("funding")}
                   className="flex items-center gap-2 text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
-                  📎 Upload pitch deck
+                  Upload pitch deck
                 </button>
               </div>
             </div>
@@ -294,7 +292,7 @@ export default function CompanyDashboard() {
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Signals</label>
                 <div className="flex flex-wrap gap-4">
-                  {[{ key: "looking_to_raise", label: "💰 Looking to Raise" }, { key: "is_hiring", label: "🙋 Hiring" }, { key: "seeking_partnerships", label: "🤝 Seeking Partnerships" }].map(({ key, label }) => (
+                  {[{ key: "looking_to_raise", label: "Looking to Raise" }, { key: "is_hiring", label: "Hiring" }, { key: "seeking_partnerships", label: "Seeking Partnerships" }].map(({ key, label }) => (
                     <label key={key} className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={form[key]} onChange={e => setForm(p => ({ ...p, [key]: e.target.checked }))} className="w-4 h-4 accent-[#2d6a4f]" />
                       <span className="text-sm text-[#0f1a14]">{label}</span>
@@ -479,7 +477,7 @@ export default function CompanyDashboard() {
             )}
           </div>
         )}
-      </div>
+      </div></>
     </div>
   );
 }
