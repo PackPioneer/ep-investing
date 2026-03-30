@@ -1,5 +1,4 @@
 "use client";
-cat > "app/(public)/jobs/page.jsx" << 'EOF'
 
 import { useState, useEffect } from "react";
 import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucide-react";
@@ -34,21 +33,12 @@ function JobCard({ job }) {
             )}
           </div>
           <div className="flex gap-2 mt-2 flex-wrap">
-            {job.type && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-                {job.type.replace(/_/g, " ")}
-              </span>
-            )}
-            {job.sector && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-                {job.sector.replace(/_/g, " ")}
-              </span>
-            )}
+            {job.type && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.type.replace(/_/g, " ")}</span>}
+            {job.sector && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.sector.replace(/_/g, " ")}</span>}
           </div>
         </div>
       </div>
-      <button
-        onClick={handleApply}
+      <button onClick={handleApply}
         className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold text-white bg-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#235a40] transition-all">
         Apply <ArrowRight size={11} />
       </button>
@@ -65,17 +55,10 @@ function PostJobForm({ onDone }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await fetch("/api/jobs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      await fetch("/api/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       onDone();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   return (
@@ -94,18 +77,10 @@ function PostJobForm({ onDone }) {
             { name: "contact_email", label: "Contact email", placeholder: "jobs@company.com", required: true, type: "email" },
           ].map(field => (
             <div key={field.name} className="flex flex-col gap-1.5">
-              <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">
-                {field.label} <span className="text-[#2d6a4f]">*</span>
-              </label>
-              <input
-                name={field.name}
-                type={field.type || "text"}
-                value={form[field.name]}
-                onChange={handleChange}
-                placeholder={field.placeholder}
-                required={field.required}
-                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
-              />
+              <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">{field.label} <span className="text-[#2d6a4f]">*</span></label>
+              <input name={field.name} type={field.type || "text"} value={form[field.name]} onChange={handleChange}
+                placeholder={field.placeholder} required={field.required}
+                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
             </div>
           ))}
           <div className="grid grid-cols-2 gap-4">
@@ -113,31 +88,24 @@ function PostJobForm({ onDone }) {
               <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Type</label>
               <select name="type" value={form.type} onChange={handleChange}
                 className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] outline-none focus:border-[#2d6a4f] transition-colors">
-                {["Full-time", "Part-time", "Contract", "Fractional", "Advisory"].map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
+                {["Full-time", "Part-time", "Contract", "Fractional", "Advisory"].map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Sector</label>
-              <input name="sector" value={form.sector} onChange={handleChange}
-                placeholder="e.g. green_hydrogen"
-                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
-              />
+              <input name="sector" value={form.sector} onChange={handleChange} placeholder="e.g. green_hydrogen"
+                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Job description</label>
             <textarea name="description" value={form.description} onChange={handleChange}
-              placeholder="Role responsibilities, requirements, what you're looking for…"
-              rows={4}
-              className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
-            />
+              placeholder="Role responsibilities, requirements..." rows={4}
+              className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none" />
           </div>
           <button type="submit" disabled={loading}
             className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
-            {loading ? "Posting…" : "Post job listing"}
-            {!loading && <ArrowRight size={14} />}
+            {loading ? "Posting…" : "Post job listing"} {!loading && <ArrowRight size={14} />}
           </button>
           <p className="text-xs text-[#718096] font-mono text-center">We review all listings before publishing</p>
         </form>
@@ -156,17 +124,12 @@ export default function JobsPage() {
   useEffect(() => {
     fetch("/api/jobs")
       .then(r => r.json())
-      .then(data => {
-        setJobs(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
+      .then(data => { setJobs(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   const filtered = jobs.filter(j => {
-    const matchSearch = !search ||
-      j.title?.toLowerCase().includes(search.toLowerCase()) ||
-      (j.company || j.company_name || "").toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || j.title?.toLowerCase().includes(search.toLowerCase()) || (j.company || j.company_name || "").toLowerCase().includes(search.toLowerCase());
     const matchSector = sector === "All" || j.sector === sector;
     return matchSearch && matchSector;
   });
@@ -200,35 +163,27 @@ export default function JobsPage() {
           </div>
           <button onClick={() => setView(view === "post" ? "board" : "post")}
             className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
-            {view === "post" ? "← Browse jobs" : <>Post a job <ArrowRight size={13} /></>}
+            {view === "post" ? "← Browse jobs" : <> Post a job <ArrowRight size={13} /></>}
           </button>
         </div>
 
-        {view === "post" ? (
-          <PostJobForm onDone={() => setView("done")} />
-        ) : (
+        {view === "post" ? <PostJobForm onDone={() => setView("done")} /> : (
           <>
             <div className="flex flex-col md:flex-row gap-3 mb-6">
               <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all">
                 <Search size={14} className="text-[#718096]" />
-                <input value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Search job titles or companies…"
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search job titles or companies…"
                   className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#718096] outline-none" />
               </div>
               <div className="flex gap-2 flex-wrap">
                 {SECTORS.slice(0, 5).map(s => (
                   <button key={s} onClick={() => setSector(s)}
-                    className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
-                      sector === s
-                        ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                        : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
-                    }`}>
+                    className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"}`}>
                     {s === "All" ? "All" : s.replace(/_/g, " ")}
                   </button>
                 ))}
               </div>
             </div>
-
             <div className="flex flex-col gap-3">
               {loading ? (
                 <div className="text-center py-20 text-[#718096] font-mono text-sm">Loading jobs…</div>
@@ -238,12 +193,10 @@ export default function JobsPage() {
                 <div className="text-center py-20 text-[#718096] font-mono text-sm">No jobs found</div>
               )}
             </div>
-
             <div className="mt-10 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">Hiring in climate?</h3>
               <p className="text-sm text-[#4a5568] mb-5 font-light">Post your role to reach thousands of climate professionals.</p>
-              <button onClick={() => setView("post")}
-                className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+              <button onClick={() => setView("post")} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
                 Post a job <ArrowRight size={13} />
               </button>
             </div>
@@ -253,4 +206,3 @@ export default function JobsPage() {
     </div>
   );
 }
-EOF
