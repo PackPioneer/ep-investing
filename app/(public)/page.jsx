@@ -8,10 +8,14 @@ import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase } from "lucide-re
 import posthog from "posthog-js";
 
 const quickTags = [
-  "direct_air_capture", "green_hydrogen", "nuclear_technologies",
-  "carbon_credits", "clean_cooking", "electric_aviation", "battery_storage"
+  { slug: "direct_air_capture", label: "Direct Air Capture" },
+  { slug: "green_hydrogen", label: "Green Hydrogen" },
+  { slug: "nuclear_technologies", label: "Nuclear Technologies" },
+  { slug: "carbon_credits", label: "Carbon Credits" },
+  { slug: "clean_cooking", label: "Clean Cooking" },
+  { slug: "electric_aviation", label: "Electric Aviation" },
+  { slug: "battery_storage", label: "Battery Storage" },
 ];
-
 const categories = [
   { icon: "null", name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
   { icon: "null", name: "Electric Aviation", count: 74, slug: "electric_aviation" },
@@ -164,9 +168,9 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[#718096] text-xs font-mono tracking-wider">Browse:</span>
             {quickTags.map(tag => (
-              <button key={tag} onClick={() => handleSearch(null, tag)}
+              <button key={tag.slug} onClick={() => handleSearch(null, tag.slug)}
                 className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[rgba(45,106,79,0.06)] transition-all">
-                {tag}
+                {tag.label}
               </button>
             ))}
           </div>
