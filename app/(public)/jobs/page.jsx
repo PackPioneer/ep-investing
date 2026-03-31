@@ -6,11 +6,11 @@ import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucid
 const SECTORS = ["All", "ev_charging", "green_hydrogen", "nuclear_technologies", "climate_finance", "battery_storage", "solar"];
 
 function JobCard({ job }) {
-  const handleApply = () => {
-    fetch(`/api/jobs/${job.id}/view`, { method: "POST" }).catch(() => {});
-    if (job.contact_email) window.location.href = `mailto:${job.contact_email}`;
-  };
-
+const handleApply = () => {
+  fetch(`/api/jobs/${job.id}/view`, { method: "POST" }).catch(() => {});
+  if (job.apply_url) window.open(job.apply_url, "_blank");
+  else if (job.contact_email) window.location.href = `mailto:${job.contact_email}`;
+};
   return (
     <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#2d6a4f] transition-all group">
       <div className="flex items-start gap-4">

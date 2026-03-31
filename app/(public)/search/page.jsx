@@ -6,6 +6,19 @@ import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calend
 import Link from "next/link";
 import posthog from "posthog-js";
 
+const getAvatarColor = (name) => {
+  const colors = [
+    "bg-emerald-100 text-emerald-700",
+    "bg-blue-100 text-blue-700",
+    "bg-violet-100 text-violet-700",
+    "bg-amber-100 text-amber-700",
+    "bg-rose-100 text-rose-700",
+    "bg-teal-100 text-teal-700",
+  ];
+  const i = (name?.charCodeAt(0) || 0) % colors.length;
+  return colors[i];
+};
+
 const INDUSTRY_FILTERS = [
   "nuclear_technologies", "electric_aviation", "battery_storage",
   "green_hydrogen", "wind_energy", "solar", "geothermal",
