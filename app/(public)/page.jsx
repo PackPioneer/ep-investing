@@ -185,9 +185,9 @@ export default function HomePage() {
             { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
             { num: "47", label: "Grants", sub: "with tracked deadlines" },
             { num: "14", label: "Categories", sub: "energy transition coverage" },
-            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
+            { num: "500+", label: "Jobs", sub: "across climate sectors" },
           ].map((stat, i) => (
-            <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < 3 ? "border-r border-[#e2e6ed]" : ""}`}>
+            <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < 4 ? "border-r border-[#e2e6ed]" : ""}`}>
               <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{stat.num}</div>
               <div>
                 <div className="text-sm font-medium text-[#0f1a14]">{stat.label}</div>
