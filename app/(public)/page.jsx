@@ -185,6 +185,7 @@ export default function HomePage() {
             { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
             { num: "47", label: "Grants", sub: "with tracked deadlines" },
             { num: "14", label: "Categories", sub: "energy transition coverage" },
+            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
           ].map((stat, i) => (
             <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < 3 ? "border-r border-[#e2e6ed]" : ""}`}>
               <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{stat.num}</div>
@@ -223,7 +224,7 @@ export default function HomePage() {
           <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Explore EP Investment</h2>
           <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">View all →</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
             { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
