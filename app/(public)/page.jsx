@@ -348,6 +348,7 @@ export default function HomePage() {
     </div>
   ))}
 </div>
+        </div>
       </section>
 
       <div className="border-t border-[#e2e6ed]" />
@@ -367,8 +368,9 @@ export default function HomePage() {
               <div className="text-xs text-[#718096] font-mono">{cat.count} companies</div>
             </button>
           ))}
-        </div>
-      </section>
+          </div>
+          </div>
+           </section>
 
       {/* EMAIL CAPTURE */}
       <div className="bg-[#ffffff] border-y border-[#e2e6ed]">
