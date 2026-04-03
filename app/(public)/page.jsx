@@ -227,8 +227,9 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
-            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
-            { num: "47", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
+          { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
+          { num: "47", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
+          { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
           ].map(card => (
             <Link key={card.title} href={card.href}
               className="relative bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
@@ -246,7 +247,7 @@ export default function HomePage() {
       {/* LIVE FEEDS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
 
           {/* Companies */}
           <div className="bg-[#ffffff] p-6">
