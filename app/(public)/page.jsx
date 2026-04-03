@@ -369,7 +369,6 @@ export default function HomePage() {
             </button>
           ))}
           </div>
-          </div>
            </section>
 
       {/* EMAIL CAPTURE */}
