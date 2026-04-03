@@ -325,7 +325,6 @@ export default function HomePage() {
                 <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
               </div>
             ))}
-          </div>
         </div>
         {/* Jobs — live from DB */}
 <div className="bg-[#ffffff] p-6">
