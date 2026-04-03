@@ -172,7 +172,7 @@ export async function POST(req) {
           'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'EP Investment <otto@epinvesting.com>',
+          from: 'EP Investing <otto@epinvesting.com>',
           to: 'otto@epinvesting.com',
           subject: `New company submitted: ${name}`,
           html: `

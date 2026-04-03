@@ -57,7 +57,7 @@ export async function POST(req) {
         <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
           <div style="border-left: 4px solid #2d6a4f; padding-left: 16px; margin-bottom: 24px;">
             <h2 style="margin: 0; font-size: 22px; color: #0f1a14;">New Investor Profile</h2>
-            <p style="margin: 4px 0 0; color: #718096; font-family: monospace; font-size: 12px;">EP Investment</p>
+            <p style="margin: 4px 0 0; color: #718096; font-family: monospace; font-size: 12px;">EP Investing</p>
           </div>
           <table style="width: 100%; border-collapse: collapse;">
             ${[
@@ -93,7 +93,7 @@ export async function POST(req) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: email,
-    subject: `Welcome to EP Investment${firm ? `, ${firm}` : ""}`,
+    subject: `Welcome to EP Investing${firm ? `, ${firm}` : ""}`,
     html: `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
         <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
@@ -113,7 +113,7 @@ export async function POST(req) {
             Questions? Reply to this email and we'll get back to you.
           </p>
           <hr style="border: none; border-top: 1px solid #e2e6ed; margin: 24px 0;" />
-          <p style="color: #a0aec0; font-size: 11px; font-family: monospace; margin: 0;">EP Investment · epinvesting.com</p>
+          <p style="color: #a0aec0; font-size: 11px; font-family: monospace; margin: 0;">EP Investing · epinvesting.com</p>
         </div>
       </div>
     `,

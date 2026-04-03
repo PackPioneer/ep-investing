@@ -182,7 +182,7 @@ const linkCompany = async (company) => {
           </div>
 
           <div className="flex gap-3 pt-2 border-t border-slate-100">
-            <a href={`mailto:${claim.contact_email}?subject=Your EP Investment company claim&body=Hi ${claim.contact_name},%0D%0A%0D%0AThank you for claiming ${claim.company_name} on EP Investment.`}
+            <a href={`mailto:${claim.contact_email}?subject=Your EP Investing company claim&body=Hi ${claim.contact_name},%0D%0A%0D%0AThank you for claiming ${claim.company_name} on EP Investing.`}
               className="flex items-center gap-1.5 text-xs font-medium text-white bg-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#235a40] transition-all">
               <MessageCircle size={12} /> Reply via email
             </a>

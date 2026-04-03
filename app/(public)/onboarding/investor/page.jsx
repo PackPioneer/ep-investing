@@ -150,7 +150,7 @@ export default function InvestorOnboarding() {
                 <input value={form.firm} onChange={e => set("firm", e.target.value)} placeholder="e.g. Breakthrough Energy Ventures" className={inputClass} />
               </div>
               <div>
-                <label className={labelClass}>How did you hear about EP Investment?</label>
+                <label className={labelClass}>How did you hear about EP Investing?</label>
                 <input value={form.how_heard} onChange={e => set("how_heard", e.target.value)} placeholder="LinkedIn, referral, Google…" className={inputClass} />
               </div>
               <button

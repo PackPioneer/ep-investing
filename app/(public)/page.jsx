@@ -221,7 +221,7 @@ export default function HomePage() {
       {/* DIRECTORY BLOCKS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Explore EP Investment</h2>
+          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Explore EP Investing</h2>
           <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">View all →</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -348,7 +348,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">
-              Get weekly <em className="text-[#2d6a4f] not-italic">EP Investment</em> updates
+              Get weekly <em className="text-[#2d6a4f] not-italic">EP Investing</em> updates
             </h2>
             <p className="text-[#4a5568] text-sm leading-relaxed font-light max-w-sm">
               New investors, grant deadlines, verified companies seeking capital — delivered every week.

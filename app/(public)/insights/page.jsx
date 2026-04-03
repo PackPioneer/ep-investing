@@ -100,7 +100,7 @@ export default function InsightsPage() {
         <div className="mb-14">
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
-            EP Investment Intelligence
+            EP Investing Intelligence
           </div>
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>
