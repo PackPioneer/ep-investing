@@ -3,10 +3,12 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    const { data: grants, error } = await supabase
-      .from('grants')
-      .select('*')
-      .order('deadline_date', { ascending: true, nullsLast: true });
+const today = new Date().toISOString().split('T')[0];
+const { data: grants, error } = await supabase
+  .from('grants')
+  .select('*')
+  .or(`deadline_date.gte.${today},deadline_date.is.null`)
+  .order('deadline_date', { ascending: true, nullsLast: true });
 
     if (error) throw error;
 
