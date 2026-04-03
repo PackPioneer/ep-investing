@@ -306,7 +306,7 @@ export default function HomePage() {
                 className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
                 <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{grant.title?.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())} || grant.name}</div>
+                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{(grant.title || '').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
                   {grant.deadline_date && (
                     <div className="text-xs font-mono mt-1 px-2 py-0.5 rounded-full bg-[rgba(255,150,80,0.1)] text-[#ff9650] border border-[rgba(255,150,80,0.2)] inline-block">
                       {new Date(grant.deadline_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
