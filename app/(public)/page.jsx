@@ -65,6 +65,7 @@ export default function HomePage() {
   const [recentCompanies, setRecentCompanies] = useState([]);
   const [recentInvestors, setRecentInvestors] = useState([]);
   const [recentGrants, setRecentGrants] = useState([]);
+  const [recentJobs, setRecentJobs] = useState([]);
   const [email, setEmail] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
   const router = useRouter();
@@ -85,6 +86,10 @@ export default function HomePage() {
       .then(data => { if (Array.isArray(data)) setRecentGrants(data.slice(0, 5)); })
       .catch(() => {});
   }, []);
+    fetch("/api/jobs?limit=5")
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setRecentJobs(data.slice(0, 5)); })
+      .catch(() => {});
 
   const handleSearch = (e, override) => {
     if (e) e.preventDefault();
@@ -322,6 +327,28 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+        {/* Jobs — live from DB */}
+<div className="bg-[#ffffff] p-6">
+  <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+    <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New Jobs</span>
+    <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+  </div>
+  {recentJobs.length > 0 ? recentJobs.map(job => (
+    <Link key={job.id} href="/jobs"
+      className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
+      <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+      <div>
+        <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{job.title}</div>
+        <div className="text-xs font-mono text-[#718096] mt-1">{job.company}</div>
+      </div>
+    </Link>
+  )) : [1,2,3,4,5].map(i => (
+    <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
+      <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
+      <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+    </div>
+  ))}
+</div>
       </section>
 
       <div className="border-t border-[#e2e6ed]" />
