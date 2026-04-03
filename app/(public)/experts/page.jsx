@@ -16,9 +16,9 @@ export default function ExpertsPage() {
         <p className="text-[#4a5568] text-sm leading-relaxed font-light mb-8">
           We're curating a vetted network of climate and energy specialists — available for consulting, advisory, and fractional roles. Join the waitlist to get early access.
         </p>
-        <Link href="/pricing"
+        <Link href="/onboarding/expert"
           className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
-          Join the waitlist <ArrowRight size={14} />
+          Apply to join <ArrowRight size={14} />
         </Link>
       </div>
     </div>
