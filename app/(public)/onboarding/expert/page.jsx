@@ -3,10 +3,18 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 const EXPERTISE_OPTIONS = [
+  // Technical / Engineering
   "Solar & Wind", "Battery Storage", "Green Hydrogen", "Nuclear",
-  "Carbon Markets", "Climate Finance", "Energy Efficiency", "EV & Mobility",
-  "SAF / Efuels", "Electric Aviation", "Policy & Regulation", "Project Development",
-  "M&A / Due Diligence", "Engineering", "Operations", "Other"
+  "Carbon Markets", "Energy Efficiency", "EV & Mobility", "SAF / Efuels",
+  "Electric Aviation", "Project Development", "Engineering",
+  // Finance & Strategy
+  "Climate Finance", "M&A / Due Diligence", "Project Finance",
+  "Policy & Regulation", "ESG & Sustainability", "Operations",
+  // Business & Growth
+  "Marketing & Communications", "Brand & Design", "Web Development",
+  "AI & Data Science", "Product Management", "Sales & BD",
+  // Advisory
+  "Executive Coaching", "Fundraising Advisory", "Legal & Compliance", "Other"
 ];
 
 const AVAILABILITY_OPTIONS = [
