@@ -30,12 +30,22 @@ export async function POST(req) {
       .eq("status", "approved")
       .single();
 
-    if (claim?.matched_company_id) {
-      await supabase
-        .from("companies")
-        .update({ clerk_user_id })
-        .eq("id", claim.matched_company_id);
+  if (claim) {
+    if (claim.matched_company_id) {
+     // Link to existing matched company
+     await supabase
+      .from("companies")
+      .update({ clerk_user_id })
+      .eq("id", claim.matched_company_id);
+    } else {
+     // Link to company created from this claim (matched by name)
+     await supabase
+      .from("companies")
+      .update({ clerk_user_id })
+      .eq("name", claim.company_name)
+      .is("clerk_user_id", null);
     }
+}
 
     // Check if email matches an approved investor request
     const { data: investor } = await supabase
