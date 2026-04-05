@@ -61,14 +61,35 @@ export async function PATCH(req) {
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
 
   // On approval — link user to company and send invitation email
-  if (!error && status === "approved") {
-  // Link clerk_user_id to company if we have it
-    if (data?.clerk_user_id) {
-      await supabase
-        .from("companies")
-        .update({ clerk_user_id: data.clerk_user_id })
-        .eq("id", matched_company_id);
-    }
+if (!error && status === "approved") {
+  let companyId = matched_company_id;
+
+  // If no existing company matched, create a new one
+  if (!companyId) {
+    const { data: newCompany } = await supabase
+      .from("companies")
+      .insert({
+        name: data.company_name,
+        url: data.company_url,
+        description: data.description,
+        clerk_user_id: data.clerk_user_id || null,
+      })
+      .select()
+      .single();
+    companyId = newCompany?.id;
+
+    // Update the claim with the new company id
+    await supabase
+      .from("claims")
+      .update({ matched_company_id: companyId })
+      .eq("id", id);
+  } else if (data?.clerk_user_id) {
+    // Link existing company to the clerk user
+    await supabase
+      .from("companies")
+      .update({ clerk_user_id: data.clerk_user_id })
+      .eq("id", companyId);
+  }
 
     // Send invitation email via Clerk + Resend
     if (data?.contact_email) {
@@ -81,7 +102,7 @@ export async function PATCH(req) {
           const invitation = await clerk.invitations.createInvitation({
             emailAddress: data.contact_email,
             redirectUrl: dashboardUrl,
-            publicMetadata: { role: "company", company_id: matched_company_id },
+            publicMetadata: { role: "company", company_id: companyId },
           });
           inviteUrl = invitation.url;
         } catch (inviteErr) {
