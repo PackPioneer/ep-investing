@@ -258,7 +258,8 @@ export default function CompanyDashboard() {
           </div>
         )}
 
-        {activeTab === "profile" && form && (
+        {activeTab === "profile" && form && 
+           form ? (
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Profile Settings</div>
             <div className="flex flex-col gap-5">
@@ -314,7 +315,15 @@ export default function CompanyDashboard() {
               {saved && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
             </div>
           </form>
-        )}
+        ) : (
+    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
+      <p className="text-[#718096] text-sm mb-4">Your company profile is being set up. This can take a few minutes after your account is created.</p>
+      <button onClick={() => window.location.reload()} className="text-sm bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40]">
+        Refresh
+      </button>
+    </div>
+  )
+)}
 
         {activeTab === "funding" && (
           <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
