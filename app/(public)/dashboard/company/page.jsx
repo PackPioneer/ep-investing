@@ -258,7 +258,7 @@ export default function CompanyDashboard() {
           </div>
         )}
 
-        {activeTab === "profile" && form && 
+        {activeTab === "profile" && ( 
            form ? (
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Profile Settings</div>
