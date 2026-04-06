@@ -4,7 +4,25 @@ import { supabase } from "@/lib/supabase";
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  
+export async function PATCH(req) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+  const body = await req.json();
+  const { name, firm, focus, stage, check_size, thesis, linkedin, website } = body;
+
+  const { data, error } = await supabase
+    .from("matched_requests")
+    .update({ name, firm, focus, stage, check_size, thesis, linkedin, website })
+    .eq("clerk_user_id", userId)
+    .eq("path", "investor")
+    .select()
+    .single();
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json(data);
+}
   const { data: profile } = await supabase
     .from("matched_requests")
     .select("*")
