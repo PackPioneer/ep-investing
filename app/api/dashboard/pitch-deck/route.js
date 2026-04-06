@@ -11,7 +11,7 @@ export async function POST(req) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data: company } = await supabase
+  const { data: company } = await supabaseAdmin
     .from("companies")
     .select("id")
     .eq("clerk_user_id", userId)

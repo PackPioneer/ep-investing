@@ -20,7 +20,7 @@ export default function Footer() {
               </div>
               <div>
                 <span style={{ fontFamily: "Georgia, serif" }} className="text-[#0f1a14] text-lg font-normal">EP</span>
-                <span className="font-mono text-[10px] text-[#4a5568] tracking-widest ml-1.5 uppercase">Investment</span>
+                <span className="font-mono text-[10px] text-[#4a5568] tracking-widest ml-1.5 uppercase">Investing</span>
               </div>
             </div>
             <p className="text-sm text-[#718096] leading-relaxed max-w-xs font-light">
@@ -31,11 +31,11 @@ export default function Footer() {
                 className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Mail size={15} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.linkedin.com/company/the-energy-pioneer" target="_blank" rel="noopener noreferrer"
                 className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Linkedin size={15} />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+              <a href="https://x.com/energypioneer" target="_blank" rel="noopener noreferrer"
                 className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Twitter size={15} />
               </a>
@@ -82,7 +82,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-[#e2e6ed] mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs font-mono text-[#a0aec0]">
-            © {new Date().getFullYear()} EP Investment. All rights reserved.
+           © {new Date().getFullYear()} EP Investing. All rights reserved.
           </p>
           <p className="text-xs font-mono text-[#a0aec0]">
             epinvesting.com
