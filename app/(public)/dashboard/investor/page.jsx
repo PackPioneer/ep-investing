@@ -216,6 +216,18 @@ export default function InvestorDashboard() {
                     <div className="text-sm text-[#0f1a14] leading-relaxed">{profile.thesis}</div>
                   </div>
                 )}
+                {!profile?.location && !profile?.thesis && !profile?.check_size && (
+                  <div className="bg-[#f8f9fb] border border-dashed border-[#d0d6e0] rounded-xl p-5 md:col-span-2 flex items-center justify-between">
+                   <div>
+                    <div className="text-sm font-medium text-[#0f1a14] mb-1">Complete your profile</div>
+                    <div className="text-xs text-[#718096]">Add your location, check size, thesis and more to get better matches.</div>
+                   </div>
+                   <button onClick={() => setEditingProfile(true)}
+                     className="text-xs font-semibold bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
+                     Add info
+                   </button>
+                 </div>
+               )}
                 {saved.length > 0 && (
                   <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 md:col-span-2">
                     <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3">Saved companies</div>
@@ -238,7 +250,13 @@ export default function InvestorDashboard() {
 
         {(activeTab === "feed" || activeTab === "saved") && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {activeTab === "saved" && (
+              <div className="bg-[#2d6a4f]/10 border border-[#2d6a4f]/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
+                <span className="text-lg">★</span>
+                <span className="text-sm text-[#2d6a4f] font-medium">Showing {saved.length} saved {saved.length === 1 ? "company" : "companies"}</span>
+             </div>
+             )}
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Companies Raising</div>
                 <div className="text-2xl font-semibold text-[#0f1a14]">{companies.filter(c => c.looking_to_raise).length}</div>
