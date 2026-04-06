@@ -8,6 +8,7 @@ const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", se
 const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
 const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace", mixed:"Mixed" };
 
+
 export default function CompanyDashboard() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function CompanyDashboard() {
   const [savedFunding, setSavedFunding] = useState(false);
   const [uploadingDeck, setUploadingDeck] = useState(false);
   const [deckUrl, setDeckUrl] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -133,9 +135,22 @@ export default function CompanyDashboard() {
 
   return (
     <div className="flex min-h-screen" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-      <div className="w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0">
-        <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base mb-6 px-2">
-          EP <span className="text-[#2d6a4f]">Investing</span>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+      
+      {/* Sidebar */}
+      <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+        <div className="flex items-center justify-between mb-6 px-2">
+          <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
+            EP <span className="text-[#2d6a4f]">Investing</span>
+          </div>
+          <button className="md:hidden text-[#9ca8a0]" onClick={() => setSidebarOpen(false)}>
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         </div>
         {navItems.map(item => (
           <button key={item.id} onClick={() => setActiveTab(item.id)}
@@ -145,8 +160,13 @@ export default function CompanyDashboard() {
         ))}
       </div>
 
-      <div className="flex-1 bg-[#f2f4f8] p-8 overflow-auto">
+      <div className="flex-1 bg-[#f2f4f8] p-4 md:p-8 overflow-auto">
         <div className="flex items-center justify-between mb-6">
+          <button className="md:hidden mr-3 text-[#0f1a14]" onClick={() => setSidebarOpen(true)}>
+            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
           <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
             {company?.name || "Company Dashboard"}
           </h1>
