@@ -40,6 +40,10 @@ export default function InvestorDashboard() {
           thesis: data.profile?.thesis || "",
           linkedin: data.profile?.linkedin || "",
           website: data.profile?.website || "",
+          location: data.profile?.location || "",
+          point_of_contact: data.profile?.point_of_contact || "",
+          previous_investments: data.profile?.previous_investments || "",
+          round_preference: data.profile?.round_preference || "",
         });
         setCompanies(data.companies || []);
         setLoading(false);
@@ -136,21 +140,18 @@ export default function InvestorDashboard() {
           </h1>
         </div>
 
-        {/* PROFILE TAB */}
         {activeTab === "profile" && profileForm && (
           <div className="flex flex-col gap-4">
-            {/* Avatar + name card */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6 flex items-center gap-5">
               <div className="w-16 h-16 rounded-full bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-2xl font-semibold text-[#2d6a4f] flex-shrink-0">
                 {profile?.name?.[0]?.toUpperCase() || "?"}
               </div>
               <div className="flex-1">
-                <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name}</div>
-                <div className="text-sm text-[#718096]">{profile?.firm}</div>
+                <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
+                <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
+                {profile?.location && <div className="text-xs text-[#718096] mt-0.5">{profile.location}</div>}
                 {profile?.linkedin && (
-                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2d6a4f] hover:underline mt-1 block">
-                    LinkedIn
-                  </a>
+                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2d6a4f] hover:underline mt-1 block">LinkedIn</a>
                 )}
               </div>
               <button onClick={() => setEditingProfile(v => !v)}
@@ -164,14 +165,23 @@ export default function InvestorDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div><label className={labelClass}>Name</label><input value={profileForm.name} onChange={e => setProfileForm(p => ({...p, name: e.target.value}))} className={inputClass} /></div>
                   <div><label className={labelClass}>Firm</label><input value={profileForm.firm} onChange={e => setProfileForm(p => ({...p, firm: e.target.value}))} className={inputClass} /></div>
+                  <div><label className={labelClass}>Location</label><input value={profileForm.location} onChange={e => setProfileForm(p => ({...p, location: e.target.value}))} placeholder="San Francisco, CA" className={inputClass} /></div>
+                  <div><label className={labelClass}>Point of contact</label><input value={profileForm.point_of_contact} onChange={e => setProfileForm(p => ({...p, point_of_contact: e.target.value}))} placeholder="jane@firm.com" className={inputClass} /></div>
                   <div><label className={labelClass}>Focus sectors</label><input value={profileForm.focus} onChange={e => setProfileForm(p => ({...p, focus: e.target.value}))} placeholder="solar, battery_storage..." className={inputClass} /></div>
-                  <div><label className={labelClass}>Stage</label><input value={profileForm.stage} onChange={e => setProfileForm(p => ({...p, stage: e.target.value}))} placeholder="Seed, Series A..." className={inputClass} /></div>
+                  <div><label className={labelClass}>Stage preference</label><input value={profileForm.stage} onChange={e => setProfileForm(p => ({...p, stage: e.target.value}))} placeholder="Seed, Series A..." className={inputClass} /></div>
+                  <div><label className={labelClass}>Round preference</label><input value={profileForm.round_preference} onChange={e => setProfileForm(p => ({...p, round_preference: e.target.value}))} placeholder="Lead, Follow, Co-invest..." className={inputClass} /></div>
                   <div><label className={labelClass}>Check size</label><input value={profileForm.check_size} onChange={e => setProfileForm(p => ({...p, check_size: e.target.value}))} placeholder="$250K–$2M" className={inputClass} /></div>
                   <div><label className={labelClass}>LinkedIn</label><input value={profileForm.linkedin} onChange={e => setProfileForm(p => ({...p, linkedin: e.target.value}))} placeholder="https://linkedin.com/in/..." className={inputClass} /></div>
+                  <div><label className={labelClass}>Website</label><input value={profileForm.website} onChange={e => setProfileForm(p => ({...p, website: e.target.value}))} placeholder="https://..." className={inputClass} /></div>
                 </div>
-                <div><label className={labelClass}>Investment thesis</label>
+                <div>
+                  <label className={labelClass}>Previous investments</label>
+                  <input value={profileForm.previous_investments} onChange={e => setProfileForm(p => ({...p, previous_investments: e.target.value}))} placeholder="Tesla, Form Energy, Redwood Materials..." className={inputClass} />
+                </div>
+                <div>
+                  <label className={labelClass}>Investment thesis</label>
                   <textarea rows={4} value={profileForm.thesis} onChange={e => setProfileForm(p => ({...p, thesis: e.target.value}))}
-                    placeholder="What are you looking for? What makes a company a fit for you?..."
+                    placeholder="What are you looking for? What makes a company a fit?"
                     className={inputClass + " resize-none"} />
                 </div>
                 <button onClick={saveProfile} disabled={savingProfile}
@@ -182,8 +192,11 @@ export default function InvestorDashboard() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  ["Focus", formatFocus(profile?.focus)],
-                  ["Stage", profile?.stage],
+                  ["Location", profile?.location],
+                  ["Point of contact", profile?.point_of_contact],
+                  ["Focus sectors", formatFocus(profile?.focus)],
+                  ["Stage preference", profile?.stage],
+                  ["Round preference", profile?.round_preference],
                   ["Check size", profile?.check_size],
                 ].filter(([,v]) => v).map(([k, v]) => (
                   <div key={k} className="bg-white border border-[#e2e6ed] rounded-xl p-5">
@@ -191,6 +204,12 @@ export default function InvestorDashboard() {
                     <div className="text-sm text-[#0f1a14]">{v}</div>
                   </div>
                 ))}
+                {profile?.previous_investments && (
+                  <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 md:col-span-2">
+                    <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2">Previous investments</div>
+                    <div className="text-sm text-[#0f1a14]">{profile.previous_investments}</div>
+                  </div>
+                )}
                 {profile?.thesis && (
                   <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 md:col-span-2">
                     <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2">Investment thesis</div>
@@ -217,7 +236,6 @@ export default function InvestorDashboard() {
           </div>
         )}
 
-        {/* DEAL FLOW + SAVED TABS */}
         {(activeTab === "feed" || activeTab === "saved") && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -235,7 +253,6 @@ export default function InvestorDashboard() {
               </div>
             </div>
 
-            {/* Compact filters */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4 mb-4">
               <input type="text" placeholder="Search companies..."
                 value={search} onChange={e => setSearch(e.target.value)}
@@ -262,7 +279,6 @@ export default function InvestorDashboard() {
               </div>
             </div>
 
-            {/* Company list */}
             <div className="flex flex-col gap-3">
               {filtered.length > 0 ? filtered.map(company => (
                 <div key={company.id} className="bg-white border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
