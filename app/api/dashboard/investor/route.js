@@ -16,9 +16,9 @@ export async function GET() {
 
   const { data: companies } = await supabase
     .from("companies")
-    .select("id, name, description, funding_stage, looking_to_raise, is_hiring, seeking_partnerships, industry_tags")
+    .select("id, name, description, funding_stage, looking_to_raise, is_hiring, seeking_partnerships, industry_tags, target_geographies, business_model")
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(1500);
 
   return Response.json({ profile, companies: companies || [] });
 }
