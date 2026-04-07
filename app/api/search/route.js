@@ -8,7 +8,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = 100;
+    const limit = 1500;
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
