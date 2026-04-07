@@ -135,6 +135,12 @@ async function postUpdate(e) {
                   ) : (
                     <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f]">
                       {(company.name || company.url || "?")[0].toUpperCase()}
+                      {company.show_contact && company.primary_contact_email && (
+                   <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">
+                   <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+                    Open to contact
+                    </span>
+                   )}
                     </div>
                   )}
                   <div>
@@ -529,6 +535,44 @@ async function postUpdate(e) {
               </Link>
             </div>
 
+{/* POINT OF CONTACT */}
+{company.show_contact && company.primary_contact_email && (
+  <div className="bg-white border border-[#2d6a4f]/20 rounded-2xl p-6">
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
+      <h3 className="text-xs font-mono font-semibold text-[#2d6a4f] tracking-widest uppercase">Open to contact</h3>
+    </div>
+    <p className="text-xs text-[#718096] leading-relaxed mb-4">
+      This company is open to investment inquiries, partnerships, and introductions.
+    </p>
+    <div className="flex flex-col gap-2 mb-4">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
+          {company.primary_contact_name?.[0]?.toUpperCase() || "?"}
+        </div>
+        <div>
+          <div className="text-sm font-medium text-[#0f1a14]">{company.primary_contact_name}</div>
+          <div className="text-xs text-[#718096]">Primary contact</div>
+        </div>
+      </div>
+      {company.secondary_contact_name && (
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
+            {company.secondary_contact_name?.[0]?.toUpperCase() || "?"}
+          </div>
+          <div>
+            <div className="text-sm font-medium text-[#0f1a14]">{company.secondary_contact_name}</div>
+            <div className="text-xs text-[#718096]">Secondary contact</div>
+          </div>
+        </div>
+      )}
+    </div>
+    <a href={`mailto:${company.primary_contact_email}?subject=Inquiry via EP Investing — ${company.name}`}
+      className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+      Get in touch
+    </a>
+  </div>
+)}
             {/* CLAIM CTA */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14] mb-2">Is this your company?</h3>

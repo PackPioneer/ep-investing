@@ -137,7 +137,12 @@ function CompanyCard({ company }) {
           )}
         </div>
       )}
-
+{company.show_contact && company.primary_contact_email && (
+  <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">
+    <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
+    Open to contact
+  </span>
+)}
       {/* Customer segments */}
       {segments.length > 0 && (
         <div className="flex items-center gap-1.5 flex-wrap">
