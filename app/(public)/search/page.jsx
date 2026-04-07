@@ -218,8 +218,8 @@ function InvestorCard({ investor }) {
 
 function GrantCard({ grant }) {
   return (
-    <Link href={`/grants/${grant.id}`}
-      className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+    <Link href={grant.application_url || grant.url || "/grants"} target="_blank" rel="noopener noreferrer"
+    className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors leading-snug">
           {grant.title || grant.name}
