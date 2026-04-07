@@ -535,7 +535,7 @@ export default function CompanyDashboard() {
                     {submittingUpdate ? "Posting..." : "Post update"}
                   </button>
                 </div>
-              </form
+              </form>
             )}
             {updates.length > 0 ? (
               <div className="flex flex-col gap-4">
