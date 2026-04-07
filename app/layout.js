@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "EP Investing — Climate & Energy Intelligence",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
   description: "Discover 1,300+ climate and energy companies, 350+ investors, and 59 grants across the energy transition.",
   metadataBase: new URL("https://epinvesting.com"),
   openGraph: {
@@ -33,7 +37,7 @@ export const metadata = {
     description: "Discover climate and energy companies, investors, and grants across the energy transition.",
     images: ["/og-image.png"],
   },
-};
+  }
 
 export default function RootLayout({ children }) {
   return (
