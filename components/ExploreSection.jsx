@@ -40,7 +40,7 @@ export default function ExploreSection() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 md:mb-16 gap-4">
           <div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
-              Explore EP Investment
+              Explore EP Investing
             </h2>
             <p className="mt-3 text-slate-600 max-w-2xl text-base md:text-lg">
               Structured intelligence across capital, companies, and

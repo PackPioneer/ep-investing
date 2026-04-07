@@ -46,7 +46,7 @@ export default function StartHere() {
           </h2>
           <p className="mt-3 text-slate-600 text-base md:text-lg max-w-2xl mx-auto px-2">
             Whether you deploy capital, build companies, provide expertise,
-            or seek opportunity — EP Investment connects you to climate action.
+            or seek opportunity — EP Investing connects you to climate action.
           </p>
         </motion.div>
 
