@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Search, Clock, DollarSign, FileText, ExternalLink } from "lucide-react";
 import posthog from "posthog-js";
 
-const CATEGORIES = ["All", "direct_air_capture", "green_hydrogen", "nuclear_technologies", "battery_storage", "solar", "wind_energy", "ev_charging", "industrial_decarb", "carbon_credits"];
+const CATEGORIES = ["All", "solar", "wind_energy", "battery_storage", "green_hydrogen", "nuclear_technologies", "ev_charging", "carbon_credits", "direct_air_capture", "saf_efuels", "electric_aviation", "geothermal_energy", "industrial_decarbonization", "energy_efficiency", "climate_tech"];
 
 function daysUntil(dateStr) {
   if (!dateStr) return null;
@@ -116,8 +116,8 @@ export default function GrantsPage() {
       (g.title || g.name || "").toLowerCase().includes(search.toLowerCase()) ||
       g.description?.toLowerCase().includes(search.toLowerCase()) ||
       g.funder?.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = category === "All" || g.category === category;
-    return matchSearch && matchCategory;
+      const matchCategory = category === "All" || (g.industry_tags || []).includes(category);
+      return matchSearch && matchCategory;
   });
 
   const urgentCount = grants.filter(g => {

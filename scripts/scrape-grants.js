@@ -19,121 +19,143 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const GRANT_SOURCES = [
-  { name: "DOE Office of Clean Energy Demonstrations", url: "https://www.energy.gov/oced/office-clean-energy-demonstrations", country: "US", tags: ["solar","wind_energy","battery_storage","green_hydrogen"] },
-  { name: "DOE Loan Programs Office", url: "https://www.energy.gov/lpo/loan-programs-office", country: "US", tags: ["clean_energy","battery_storage","nuclear_technologies"] },
-  { name: "ARPA-E", url: "https://arpa-e.energy.gov/technologies/programs", country: "US", tags: ["battery_storage","green_hydrogen","direct_air_capture"] },
-  { name: "NSF Clean Energy", url: "https://www.nsf.gov/funding/programs.jsp?org=ENG", country: "US", tags: ["solar","wind_energy","energy_efficiency"] },
-  { name: "EPA Climate Pollution Reduction Grants", url: "https://www.epa.gov/inflation-reduction-act/climate-pollution-reduction-grants", country: "US", tags: ["industrial_decarbonization","carbon_credits","climate_tech"] },
-  { name: "USDA Rural Energy for America", url: "https://www.rd.usda.gov/programs-services/energy-programs/rural-energy-america-program-renewable-energy-systems-energy-efficiency", country: "US", tags: ["solar","energy_efficiency","wind_energy"] },
-  { name: "EU Innovation Fund", url: "https://climate.ec.europa.eu/eu-action/eu-funding-climate-action/innovation-fund_en", country: "EU", tags: ["industrial_decarbonization","green_hydrogen","direct_air_capture"] },
-  { name: "EU Horizon Europe - Energy", url: "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en", country: "EU", tags: ["solar","wind_energy","battery_storage","green_hydrogen"] },
-  { name: "Breakthrough Energy Fellows", url: "https://breakthroughenergy.org/our-work/fellows", country: "Global", tags: ["direct_air_capture","green_hydrogen","nuclear_technologies","battery_storage"] },
-  { name: "DOE Vehicle Technologies Office", url: "https://www.energy.gov/eere/vehicles/vehicle-technologies-office", country: "US", tags: ["ev_charging","battery_storage"] },
-  { name: "DOE Hydrogen and Fuel Cell Technologies", url: "https://www.energy.gov/eere/fuelcells/hydrogen-and-fuel-cell-technologies-office", country: "US", tags: ["green_hydrogen"] },
-  { name: "DOE Solar Energy Technologies Office", url: "https://www.energy.gov/eere/solar/solar-energy-technologies-office", country: "US", tags: ["solar"] },
-  { name: "DOE Wind Energy Technologies Office", url: "https://www.energy.gov/eere/wind/wind-energy-technologies-office", country: "US", tags: ["wind_energy"] },
-  { name: "DOE Nuclear Energy", url: "https://www.energy.gov/ne/nuclear-energy", country: "US", tags: ["nuclear_technologies"] },
-  { name: "DOE Building Technologies Office", url: "https://www.energy.gov/eere/buildings/building-technologies-office", country: "US", tags: ["energy_efficiency"] },
-  { name: "Sustainable Aviation Fuel Grand Challenge", url: "https://www.energy.gov/eere/bioenergy/sustainable-aviation-fuel-grand-challenge", country: "US", tags: ["saf_efuels"] },
-  { name: "Carbon to Value Initiative", url: "https://www.energy.gov/fecm/carbon-capture-utilization-and-storage", country: "US", tags: ["carbon_credits","direct_air_capture"] },
-  { name: "UK Innovate UK Net Zero", url: "https://www.ukri.org/opportunity/?filter_council%5B%5D=innovate-uk", country: "UK", tags: ["solar","wind_energy","battery_storage","energy_efficiency"] },
-  { name: "UK Industrial Decarbonisation Challenge", url: "https://www.ukri.org/what-we-do/browse-our-areas-of-investment-and-support/industrial-decarbonisation", country: "UK", tags: ["industrial_decarbonization"] },
-  { name: "Canada SDTC", url: "https://www.nrcan.gc.ca/science-and-data/funding-partnerships/funding-opportunities", country: "Canada", tags: ["clean_energy","battery_storage","green_hydrogen"] },
+const CLIMATE_KEYWORDS = [
+  "clean energy", "renewable energy", "solar energy", "wind energy",
+  "hydrogen", "nuclear energy", "carbon capture", "electric vehicle",
+  "energy storage", "battery", "energy efficiency", "climate",
+  "decarbonization", "sustainable aviation fuel", "geothermal",
+  "direct air capture", "carbon removal", "offshore wind"
 ];
 
-async function generateGrantsWithClaude(source) {
-  const prompt = `Generate 3-5 realistic grant opportunities from "${source.name}" (${source.url}) for climate and energy companies.
+const TAG_MAP = {
+  solar: ["solar", "photovoltaic", "pv"],
+  wind_energy: ["wind", "offshore wind"],
+  battery_storage: ["battery", "energy storage", "grid storage"],
+  green_hydrogen: ["hydrogen", "electrolyzer", "fuel cell"],
+  nuclear_technologies: ["nuclear", "fusion", "fission", "advanced reactor"],
+  ev_charging: ["electric vehicle", "ev charging", "evse"],
+  carbon_credits: ["carbon market", "carbon offset", "carbon trading"],
+  direct_air_capture: ["direct air capture", "carbon removal", "dac"],
+  saf_efuels: ["sustainable aviation", "saf", "efuel", "aviation fuel"],
+  electric_aviation: ["electric aviation", "electric aircraft"],
+  geothermal_energy: ["geothermal"],
+  industrial_decarbonization: ["industrial decarbonization", "steel", "cement", "industrial"],
+  clean_cooking: ["clean cooking", "cookstove"],
+  energy_efficiency: ["energy efficiency", "building efficiency"],
+  climate_tech: ["climate", "decarbonization", "net zero", "clean energy"],
+};
 
-These should be real-sounding grants that this organization would offer in 2025-2026.
+function inferTags(title, description) {
+  const text = `${title} ${description}`.toLowerCase();
+  const tags = [];
+  for (const [tag, keywords] of Object.entries(TAG_MAP)) {
+    if (keywords.some(k => text.includes(k))) tags.push(tag);
+  }
+  return tags.length > 0 ? tags : ["climate_tech"];
+}
 
-Return ONLY a JSON array with objects containing:
-- title: specific grant program name
-- description: 2-3 sentence description of what it funds
-- funder_name: "${source.name}"
-- country: "${source.country}"
-- amount_min_usd: minimum grant amount as integer (or null)
-- amount_max_usd: maximum grant amount as integer (or null)  
-- deadline_date: deadline in YYYY-MM-DD format between 2026-04-15 and 2027-06-30 (or null if rolling)
-- application_url: "${source.url}"
-- industry_tags: array from: ${source.tags.join(', ')}
-- eligibility: one sentence on who can apply
-
-Return ONLY valid JSON array, nothing else.`;
-
+async function fetchSimplerGrants(keyword) {
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+    const res = await fetch("https://api.simpler.grants.gov/v1/opportunities/search", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "X-API-Key": process.env.SIMPLER_GRANTS_API_KEY,
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }],
+        query: keyword,
+        filters: { opportunity_status: { one_of: ["posted", "forecasted"] } },
+        pagination: { page_offset: 1, page_size: 25, sort_order: [{ order_by: "close_date", sort_direction: "ascending" }] }
       }),
+      signal: AbortSignal.timeout(15000),
     });
+
+    if (!res.ok) {
+      console.log(`  API returned ${res.status} for "${keyword}"`);
+      return [];
+    }
+
     const data = await res.json();
-    const text = data.content[0].text.trim();
-    const match = text.match(/\[[\s\S]*\]/);
-    if (!match) return [];
-    return JSON.parse(match[0]);
+    return data.data || [];
   } catch (e) {
-    console.log(`  Failed for ${source.name}: ${e.message}`);
+    console.log(`  Failed for "${keyword}": ${e.message}`);
     return [];
   }
 }
 
 async function main() {
-  console.log(`\nEP Investing — Grants Scraper\n`);
+  console.log(`\nEP Investing — Grants Scraper (Simpler Grants API)\n`);
 
-  const { data: existing } = await supabase.from('grants').select('title');
-  const existingTitles = new Set((existing || []).map(g => g.title?.toLowerCase()));
-  console.log(`${existingTitles.size} existing grants in DB\n`);
+  const { data: existing } = await supabase.from('grants').select('url, title');
+  const existingUrls = new Set((existing || []).map(g => g.url).filter(Boolean));
+  const existingTitles = new Set((existing || []).map(g => g.title?.toLowerCase()).filter(Boolean));
+  console.log(`${existingUrls.size} existing grants in DB\n`);
 
-  let total = 0;
+  const allOpportunities = new Map();
 
-  for (const source of GRANT_SOURCES) {
-    console.log(`Generating grants for ${source.name}...`);
-    const grants = await generateGrantsWithClaude(source);
-    console.log(`  Generated ${grants.length} grants`);
+  for (const keyword of CLIMATE_KEYWORDS) {
+    console.log(`Searching: "${keyword}"...`);
+    const results = await fetchSimplerGrants(keyword);
+    console.log(`  Found ${results.length} opportunities`);
 
-    const newGrants = grants.filter(g => !existingTitles.has(g.title?.toLowerCase()));
+    for (const opp of results) {
+      if (!allOpportunities.has(opp.opportunity_id)) {
+        allOpportunities.set(opp.opportunity_id, opp);
+      }
+    }
 
-    if (newGrants.length === 0) {
-      console.log(`  No new grants`);
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  console.log(`\nTotal unique opportunities found: ${allOpportunities.size}`);
+
+  let inserted = 0;
+  let skipped = 0;
+
+  for (const opp of allOpportunities.values()) {
+    const url = `https://simpler.grants.gov/opportunities/${opp.opportunity_id}`;
+    const title = opp.opportunity_title || opp.opportunity_number || "Untitled";
+
+    if (existingUrls.has(url) || existingTitles.has(title.toLowerCase())) {
+      skipped++;
       continue;
     }
 
-    const rows = newGrants.map((g, i) => ({
-      title: g.title,
-      description: g.description,
-      funder_name: g.funder_name || source.name,
-      country: g.country || source.country,
-      amount_min_usd: g.amount_min_usd || null,
-      amount_max_usd: g.amount_max_usd || null,
-      deadline_date: g.deadline_date || null,
-      application_url: g.application_url || source.url,
-      url: `${source.url}#${g.title?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').slice(0, 40) || i}`,
-      industry_tags: g.industry_tags || source.tags,
-      eligibility: g.eligibility || null,
-    }));
+    const summary = opp.summary || {};
+    const description = summary.summary_description || opp.opportunity_title || "";
+    const tags = inferTags(title, description);
+    const deadline = summary.close_date || summary.archive_date || null;
+    const openDate = summary.post_date || null;
+    const amountMin = summary.award_floor || null;
+    const amountMax = summary.award_ceiling || null;
+    const funderName = summary.agency_name || opp.agency || "US Federal Government";
 
-    const { error } = await supabase.from('grants').insert(rows);
+    const row = {
+      title,
+      description: description.slice(0, 1000),
+      funder_name: funderName,
+      country: "US",
+      amount_min_usd: amountMin,
+      amount_max_usd: amountMax,
+      deadline_date: deadline,
+      open_date: openDate,
+      application_url: url,
+      url,
+      industry_tags: tags,
+    };
+
+    const { error } = await supabase.from('grants').insert(row);
     if (error) {
-      console.log(`  Insert error: ${error.message}`);
+      console.log(`  Error inserting "${title.slice(0, 40)}": ${error.message}`);
     } else {
-      rows.forEach(r => existingTitles.add(r.title?.toLowerCase()));
-      total += rows.length;
-      console.log(`  Inserted ${rows.length} grants`);
+      existingUrls.add(url);
+      existingTitles.add(title.toLowerCase());
+      inserted++;
+      if (inserted % 10 === 0) console.log(`  Inserted ${inserted} so far...`);
     }
-
-    await new Promise(r => setTimeout(r, 1000));
   }
 
-  console.log(`\nDone. Total grants inserted: ${total}`);
+  console.log(`\nDone. Inserted: ${inserted}, Skipped: ${skipped}`);
 }
 
 main().catch(err => { console.error('Fatal:', err); process.exit(1); });
