@@ -49,6 +49,11 @@ export default function CompanyDashboard() {
           is_hiring: data.is_hiring || false,
           seeking_partnerships: data.seeking_partnerships || false,
           industry_tags: (data.industry_tags || []).join(", "),
+          show_contact: data.show_contact ?? true,
+          primary_contact_name: data.primary_contact_name || "",
+          primary_contact_email: data.primary_contact_email || "",
+          secondary_contact_name: data.secondary_contact_name || "",
+          secondary_contact_email: data.secondary_contact_email || "",
         });
         setFundingForm({
           raise_target: data.raise_target || "",
@@ -328,6 +333,44 @@ export default function CompanyDashboard() {
                 </div>
               </div>
             </div>
+            {/* Point of contact */}
+              <div className="border-t border-[#e2e6ed] pt-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide block mb-0.5">Point of contact</label>
+                    <p className="text-xs text-[#718096]">Let investors contact you directly from your profile</p>
+                  </div>
+                  <button type="button" onClick={() => setForm(p => ({ ...p, show_contact: !p.show_contact }))}
+                    className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${form.show_contact ? "bg-[#2d6a4f]" : "bg-[#d0d6e0]"}`}>
+                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${form.show_contact ? "left-6" : "left-1"}`} />
+                  </button>
+                </div>
+                {form.show_contact && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Primary contact name</label>
+                      <input value={form.primary_contact_name || ""} onChange={e => setForm(p => ({ ...p, primary_contact_name: e.target.value }))}
+                        placeholder="Your name" className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Primary contact email</label>
+                      <input type="email" value={form.primary_contact_email || ""} onChange={e => setForm(p => ({ ...p, primary_contact_email: e.target.value }))}
+                        placeholder="you@company.com" className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Secondary contact name (optional)</label>
+                      <input value={form.secondary_contact_name || ""} onChange={e => setForm(p => ({ ...p, secondary_contact_name: e.target.value }))}
+                        placeholder="Team member" className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Secondary contact email (optional)</label>
+                      <input type="email" value={form.secondary_contact_email || ""} onChange={e => setForm(p => ({ ...p, secondary_contact_email: e.target.value }))}
+                        placeholder="teammate@company.com" className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
             <div className="flex items-center gap-3 mt-6">
               <button type="submit" disabled={saving} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
                 {saving ? "Saving..." : "Save changes"}
@@ -492,7 +535,7 @@ export default function CompanyDashboard() {
                     {submittingUpdate ? "Posting..." : "Post update"}
                   </button>
                 </div>
-              </form>
+              </form
             )}
             {updates.length > 0 ? (
               <div className="flex flex-col gap-4">

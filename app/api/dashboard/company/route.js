@@ -23,11 +23,11 @@ export async function PATCH(req) {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags } = body;
-
+  const { description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags,
+  show_contact, primary_contact_name, primary_contact_email, secondary_contact_name, secondary_contact_email } = body;
   const { data, error } = await supabase
     .from("companies")
-    .update({ description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags })
+    .update({ description, funding_stage, business_model, looking_to_raise, is_hiring, seeking_partnerships, industry_tags,show_contact, primary_contact_name, primary_contact_email, secondary_contact_name, secondary_contact_email, })
     .eq("clerk_user_id", userId)
     .select()
     .single();
