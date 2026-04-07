@@ -6,6 +6,11 @@ import Link from "next/link";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
+const SECTORS = ["solar","wind_energy","battery_storage","green_hydrogen","nuclear_technologies","ev_charging","carbon_markets","direct_air_capture","saf_efuels","electric_aviation","geothermal","energy_efficiency","industrial_decarb","climate_tech"];
+const GEOS = ["us","europe","asia","africa","latam","mena","global","oceania"];
+const GEO_LABELS = { us:"United States", europe:"Europe", asia:"Asia", africa:"Africa", latam:"Latin America", mena:"MENA", global:"Global", oceania:"Oceania" };
+const BUSINESS_MODELS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
+const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace", mixed:"Mixed" };
 
 export default function InvestorDashboard() {
   const { user, isLoaded } = useUser();
@@ -16,6 +21,9 @@ export default function InvestorDashboard() {
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState(null);
   const [signalFilter, setSignalFilter] = useState(null);
+  const [sectorFilter, setSectorFilter] = useState(null);
+  const [geoFilter, setGeoFilter] = useState(null);
+  const [modelFilter, setModelFilter] = useState(null);
   const [saved, setSaved] = useState([]);
   const [activeTab, setActiveTab] = useState("feed");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -73,6 +81,13 @@ export default function InvestorDashboard() {
     setEditingProfile(false);
   };
 
+  const clearFilters = () => {
+    setSearch(""); setStageFilter(null); setSignalFilter(null);
+    setSectorFilter(null); setGeoFilter(null); setModelFilter(null);
+  };
+
+  const hasFilters = search || stageFilter || signalFilter || sectorFilter || geoFilter || modelFilter;
+
   const filtered = useMemo(() => {
     let list = activeTab === "saved" ? companies.filter(c => saved.includes(c.id)) : companies;
     return list.filter(c => {
@@ -81,14 +96,31 @@ export default function InvestorDashboard() {
       if (signalFilter === "raising" && !c.looking_to_raise) return false;
       if (signalFilter === "hiring" && !c.is_hiring) return false;
       if (signalFilter === "partnerships" && !c.seeking_partnerships) return false;
+      if (sectorFilter && !(c.industry_tags || []).includes(sectorFilter)) return false;
+      if (geoFilter && !(c.target_geographies || []).includes(geoFilter)) return false;
+      if (modelFilter && c.business_model !== modelFilter) return false;
       return true;
     });
-  }, [companies, search, stageFilter, signalFilter, saved, activeTab]);
+  }, [companies, search, stageFilter, signalFilter, sectorFilter, geoFilter, modelFilter, saved, activeTab]);
 
   const formatFocus = (focus) => focus?.split(",").map(f => f.trim().replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())).join(", ");
 
   const inputClass = "w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]";
   const labelClass = "text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block";
+
+  const FilterRow = ({ label, options, active, setActive, labelMap }) => (
+    <div className="mb-3">
+      <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5">{label}</div>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map(o => (
+          <button key={o} onClick={() => setActive(active === o ? null : o)}
+            className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${active === o ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"}`}>
+            {labelMap ? labelMap[o] : o.replace(/_/g, " ")}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   if (loading) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
@@ -102,6 +134,7 @@ export default function InvestorDashboard() {
         <div className="fixed inset-0 bg-black/50 z-20 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
+      {/* Sidebar */}
       <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center justify-between mb-6 px-2">
           <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
@@ -115,12 +148,15 @@ export default function InvestorDashboard() {
         </div>
         {[
           { id: "feed", label: "Deal Flow" },
-          { id: "saved", label: "Saved" },
+          { id: "saved", label: "Saved", badge: saved.length },
           { id: "profile", label: "Profile" },
         ].map(item => (
           <button key={item.id} onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
-            className={"flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
-            {item.label}
+            className={"flex items-center justify-between px-3 py-2 rounded-lg text-sm text-left transition-colors w-full " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
+            <span>{item.label}</span>
+            {item.badge > 0 && (
+              <span className="text-xs bg-[#2d6a4f] text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center">{item.badge}</span>
+            )}
           </button>
         ))}
         <Link href="/companies" className="flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full text-[#9ca8a0] hover:text-white">
@@ -128,6 +164,7 @@ export default function InvestorDashboard() {
         </Link>
       </div>
 
+      {/* Main */}
       <div className="flex-1 bg-[#f2f4f8] p-4 md:p-8 overflow-auto">
         <div className="flex items-center gap-3 mb-6">
           <button className="md:hidden text-[#0f1a14] flex-shrink-0" onClick={() => setSidebarOpen(true)}>
@@ -140,6 +177,7 @@ export default function InvestorDashboard() {
           </h1>
         </div>
 
+        {/* PROFILE TAB */}
         {activeTab === "profile" && profileForm && (
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6 flex items-center gap-5">
@@ -150,9 +188,7 @@ export default function InvestorDashboard() {
                 <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
                 <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
                 {profile?.location && <div className="text-xs text-[#718096] mt-0.5">{profile.location}</div>}
-                {profile?.linkedin && (
-                  <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2d6a4f] hover:underline mt-1 block">LinkedIn</a>
-                )}
+                {profile?.linkedin && <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2d6a4f] hover:underline mt-1 block">LinkedIn</a>}
               </div>
               <button onClick={() => setEditingProfile(v => !v)}
                 className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#eef1f6] transition-colors flex-shrink-0">
@@ -174,12 +210,8 @@ export default function InvestorDashboard() {
                   <div><label className={labelClass}>LinkedIn</label><input value={profileForm.linkedin} onChange={e => setProfileForm(p => ({...p, linkedin: e.target.value}))} placeholder="https://linkedin.com/in/..." className={inputClass} /></div>
                   <div><label className={labelClass}>Website</label><input value={profileForm.website} onChange={e => setProfileForm(p => ({...p, website: e.target.value}))} placeholder="https://..." className={inputClass} /></div>
                 </div>
-                <div>
-                  <label className={labelClass}>Previous investments</label>
-                  <input value={profileForm.previous_investments} onChange={e => setProfileForm(p => ({...p, previous_investments: e.target.value}))} placeholder="Tesla, Form Energy, Redwood Materials..." className={inputClass} />
-                </div>
-                <div>
-                  <label className={labelClass}>Investment thesis</label>
+                <div><label className={labelClass}>Previous investments</label><input value={profileForm.previous_investments} onChange={e => setProfileForm(p => ({...p, previous_investments: e.target.value}))} placeholder="Tesla, Form Energy..." className={inputClass} /></div>
+                <div><label className={labelClass}>Investment thesis</label>
                   <textarea rows={4} value={profileForm.thesis} onChange={e => setProfileForm(p => ({...p, thesis: e.target.value}))}
                     placeholder="What are you looking for? What makes a company a fit?"
                     className={inputClass + " resize-none"} />
@@ -191,6 +223,18 @@ export default function InvestorDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {!profile?.location && !profile?.thesis && !profile?.check_size && (
+                  <div className="bg-[#f8f9fb] border border-dashed border-[#d0d6e0] rounded-xl p-5 md:col-span-2 flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-medium text-[#0f1a14] mb-1">Complete your profile</div>
+                      <div className="text-xs text-[#718096]">Add your location, check size, thesis and more.</div>
+                    </div>
+                    <button onClick={() => setEditingProfile(true)}
+                      className="text-xs font-semibold bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
+                      Add info
+                    </button>
+                  </div>
+                )}
                 {[
                   ["Location", profile?.location],
                   ["Point of contact", profile?.point_of_contact],
@@ -216,18 +260,6 @@ export default function InvestorDashboard() {
                     <div className="text-sm text-[#0f1a14] leading-relaxed">{profile.thesis}</div>
                   </div>
                 )}
-                {!profile?.location && !profile?.thesis && !profile?.check_size && (
-                  <div className="bg-[#f8f9fb] border border-dashed border-[#d0d6e0] rounded-xl p-5 md:col-span-2 flex items-center justify-between">
-                   <div>
-                    <div className="text-sm font-medium text-[#0f1a14] mb-1">Complete your profile</div>
-                    <div className="text-xs text-[#718096]">Add your location, check size, thesis and more to get better matches.</div>
-                   </div>
-                   <button onClick={() => setEditingProfile(true)}
-                     className="text-xs font-semibold bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
-                     Add info
-                   </button>
-                 </div>
-               )}
                 {saved.length > 0 && (
                   <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 md:col-span-2">
                     <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3">Saved companies</div>
@@ -248,15 +280,17 @@ export default function InvestorDashboard() {
           </div>
         )}
 
+        {/* DEAL FLOW + SAVED TABS */}
         {(activeTab === "feed" || activeTab === "saved") && (
           <>
             {activeTab === "saved" && (
               <div className="bg-[#2d6a4f]/10 border border-[#2d6a4f]/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
                 <span className="text-lg">★</span>
                 <span className="text-sm text-[#2d6a4f] font-medium">Showing {saved.length} saved {saved.length === 1 ? "company" : "companies"}</span>
-             </div>
-             )}
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Companies Raising</div>
                 <div className="text-2xl font-semibold text-[#0f1a14]">{companies.filter(c => c.looking_to_raise).length}</div>
@@ -266,37 +300,32 @@ export default function InvestorDashboard() {
                 <div className="text-2xl font-semibold text-[#0f1a14]">{saved.length}</div>
               </div>
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
-                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Total Companies</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{companies.length}</div>
+                <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Showing</div>
+                <div className="text-2xl font-semibold text-[#0f1a14]">{filtered.length}</div>
               </div>
             </div>
 
+            {/* Filters */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4 mb-4">
               <input type="text" placeholder="Search companies..."
                 value={search} onChange={e => setSearch(e.target.value)}
-                className="w-full text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-[#f8f9fb] focus:outline-none focus:border-[#2d6a4f] mb-3" />
-              <div className="flex flex-wrap gap-2">
-                {STAGES.map(s => (
-                  <button key={s} onClick={() => setStageFilter(stageFilter === s ? null : s)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${stageFilter === s ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0]"}`}>
-                    {STAGE_LABELS[s]}
-                  </button>
-                ))}
-                {[["raising","Raising"],["hiring","Hiring"],["partnerships","Partnerships"]].map(([val, label]) => (
-                  <button key={val} onClick={() => setSignalFilter(signalFilter === val ? null : val)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${signalFilter === val ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0]"}`}>
-                    {label}
-                  </button>
-                ))}
-                {(search || stageFilter || signalFilter) && (
-                  <button onClick={() => { setSearch(""); setStageFilter(null); setSignalFilter(null); }}
-                    className="text-xs px-2.5 py-1 rounded-full border border-red-200 text-red-500 bg-white">
-                    Clear
-                  </button>
-                )}
-              </div>
+                className="w-full text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-[#f8f9fb] focus:outline-none focus:border-[#2d6a4f] mb-4" />
+
+              <FilterRow label="Stage" options={STAGES} active={stageFilter} setActive={setStageFilter} labelMap={STAGE_LABELS} />
+              <FilterRow label="Signals" options={["raising","hiring","partnerships"]} active={signalFilter} setActive={setSignalFilter} labelMap={{ raising:"Raising", hiring:"Hiring", partnerships:"Partnerships" }} />
+              <FilterRow label="Sector" options={SECTORS} active={sectorFilter} setActive={setSectorFilter} />
+              <FilterRow label="Geography" options={GEOS} active={geoFilter} setActive={setGeoFilter} labelMap={GEO_LABELS} />
+              <FilterRow label="Business model" options={BUSINESS_MODELS} active={modelFilter} setActive={setModelFilter} labelMap={MODEL_LABELS} />
+
+              {hasFilters && (
+                <button onClick={clearFilters}
+                  className="text-xs px-2.5 py-1 rounded-full border border-red-200 text-red-500 bg-white mt-1">
+                  Clear all filters
+                </button>
+              )}
             </div>
 
+            {/* Company list */}
             <div className="flex flex-col gap-3">
               {filtered.length > 0 ? filtered.map(company => (
                 <div key={company.id} className="bg-white border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
@@ -320,6 +349,9 @@ export default function InvestorDashboard() {
                         {company.looking_to_raise && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Raising</span>}
                         {company.is_hiring && <span className="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Hiring</span>}
                         {company.seeking_partnerships && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Partnerships</span>}
+                        {(company.industry_tags || []).slice(0,2).map(t => (
+                          <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{t.replace(/_/g, " ")}</span>
+                        ))}
                       </div>
                     </div>
                   </div>
