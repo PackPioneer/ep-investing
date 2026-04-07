@@ -349,7 +349,7 @@ useEffect(() => {
   });
 
   const tabs = [
-    { id: "companies", label: "Companies", count: companies.length, icon: Building2 },
+    { id: "companies", label: "Companies", count: companies.length >= 1000 ? "1,300+" : companies.length, icon: Building2 },
     { id: "investors", label: "Investors", count: investors.length, icon: Wallet },
     { id: "grants", label: "Grants", count: grants.length, icon: FileText },
   ];
@@ -478,7 +478,6 @@ useEffect(() => {
         <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
           {query ? <>Results for <em className="text-[#2d6a4f]">"{query}"</em></> : "Browse all"}
         </h1>
-        <span className="text-sm text-[#4a5568] font-mono">{companies.length + investors.length + grants.length} results</span>
       </div>
 
       <div className="flex gap-1 mb-6 bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-1 w-fit">
