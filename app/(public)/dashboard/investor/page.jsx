@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
-const SECTORS = ["solar","wind_energy","battery_storage","green_hydrogen","nuclear_technologies","ev_charging","carbon_markets","direct_air_capture","saf_efuels","electric_aviation","geothermal","energy_efficiency","industrial_decarb","climate_tech"];
+const SECTORS = ["solar","wind_energy","battery_storage","green_hydrogen","nuclear_technologies","ev_charging","carbon_credits","direct_air_capture","saf_efuels","electric_aviation","geothermal_energy","industrial_decarbonization","clean_cooking","grid_storage"];
 const GEOS = ["us","europe","asia","africa","latam","mena","global","oceania"];
 const GEO_LABELS = { us:"United States", europe:"Europe", asia:"Asia", africa:"Africa", latam:"Latin America", mena:"MENA", global:"Global", oceania:"Oceania" };
 const BUSINESS_MODELS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
