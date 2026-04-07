@@ -13,10 +13,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req) {
   const { userId } = await auth();
   const body = await req.json();
-  const {
-    company_name, company_url, contact_name,
-    contact_email, contact_role, description, plan
-  } = body;
+const {
+  company_name, company_url, contact_name, contact_email, contact_role, description, plan,
+  show_contact, primary_contact_name, primary_contact_email,
+  secondary_contact_name, secondary_contact_email
+} = body;
 
   if (!contact_name || !contact_email || !plan) {
     return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -73,6 +74,11 @@ if (!error && status === "approved") {
         url: data.company_url,
         description: data.description,
         clerk_user_id: data.clerk_user_id || null,
+        show_contact: show_contact ?? true,
+        primary_contact_name: primary_contact_name || contact_name,
+        primary_contact_email: primary_contact_email || contact_email,
+        secondary_contact_name: secondary_contact_name || null,
+        secondary_contact_email: secondary_contact_email || null,
       })
       .select()
       .single();

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, CheckCircle, Building2, TrendingUp, Users, Handshake } from "lucide-react";
@@ -10,31 +9,13 @@ const STAGES = ["Pre-revenue","Pilot","Early revenue","Growth","Profitable"];
 const FUNDING_ROUNDS = ["Pre-seed","Seed","Series A","Series B","Series C+","Grant-funded","Bootstrapped"];
 
 const SIGNALS = [
-  {
-    key: "looking_to_raise",
-    icon: TrendingUp,
-    label: "Looking to raise investment",
-    sublabel: "Surface your company to investors on the platform",
-    color: { ring: "ring-blue-500", bg: "bg-blue-50", icon: "text-blue-600", check: "bg-blue-600", border: "border-blue-200" },
-  },
-  {
-    key: "is_hiring",
-    icon: Users,
-    label: "Currently hiring",
-    sublabel: "Show a hiring badge on your company profile",
-    color: { ring: "ring-violet-500", bg: "bg-violet-50", icon: "text-violet-600", check: "bg-violet-600", border: "border-violet-200" },
-  },
-  {
-    key: "seeking_partnerships",
-    icon: Handshake,
-    label: "Open to partnerships & expansion",
-    sublabel: "Signal interest in new markets, channels, or strategic partners",
-    color: { ring: "ring-amber-500", bg: "bg-amber-50", icon: "text-amber-600", check: "bg-amber-600", border: "border-amber-200" },
-  },
+  { key: "looking_to_raise", icon: TrendingUp, label: "Looking to raise investment", sublabel: "Surface your company to investors on the platform", color: { ring: "ring-blue-500", bg: "bg-blue-50", icon: "text-blue-600", check: "bg-blue-600", border: "border-blue-200" } },
+  { key: "is_hiring", icon: Users, label: "Currently hiring", sublabel: "Show a hiring badge on your company profile", color: { ring: "ring-violet-500", bg: "bg-violet-50", icon: "text-violet-600", check: "bg-violet-600", border: "border-violet-200" } },
+  { key: "seeking_partnerships", icon: Handshake, label: "Open to partnerships & expansion", sublabel: "Signal interest in new markets, channels, or strategic partners", color: { ring: "ring-amber-500", bg: "bg-amber-50", icon: "text-amber-600", check: "bg-amber-600", border: "border-amber-200" } },
 ];
 
 function ProgressBar({ step }) {
-  const steps = ["Basics", "Details", "Confirm"];
+  const steps = ["Basics", "Details", "Contact", "Confirm"];
   return (
     <div className="flex items-center gap-0 mb-10">
       {steps.map((s, i) => (
@@ -68,7 +49,11 @@ export default function CompanyOnboarding() {
   const [form, setForm] = useState({
     company_name: "", website: "", contact_name: "", contact_email: "", contact_role: "",
     sector: "", stage: "", funding_round: "", location: "", description: "", funding_raised: "",
-    looking_to_raise: false, is_hiring: false, seeking_partnerships: false, other_signal: "", other_sector: "",
+    looking_to_raise: false, is_hiring: false, seeking_partnerships: false,
+    other_signal: "", other_sector: "",
+    show_contact: true,
+    primary_contact_name: "", primary_contact_email: "",
+    secondary_contact_name: "", secondary_contact_email: "",
   });
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -84,14 +69,8 @@ export default function CompanyOnboarding() {
       });
       posthog.identify(form.contact_email, { email: form.contact_email, name: form.contact_name, company: form.company_name });
       posthog.capture("company_onboarding_submitted", {
-        email: form.contact_email,
-        company_name: form.company_name,
-        sector: form.sector,
-        stage: form.stage,
-        funding_round: form.funding_round,
-        looking_to_raise: form.looking_to_raise,
-        is_hiring: form.is_hiring,
-        seeking_partnerships: form.seeking_partnerships,
+        email: form.contact_email, company_name: form.company_name,
+        sector: form.sector, stage: form.stage,
       });
       setDone(true);
     } catch (err) { console.error(err); }
@@ -121,7 +100,6 @@ export default function CompanyOnboarding() {
   return (
     <div className="min-h-screen bg-[#f2f4f8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-xl mx-auto px-6 py-16">
-
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
             <Building2 size={11} /> For Companies
@@ -134,7 +112,7 @@ export default function CompanyOnboarding() {
 
         <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
 
-          {/* STEP 1 */}
+          {/* STEP 1 — Basics */}
           {step === 1 && (
             <div className="flex flex-col gap-5">
               <h2 className="font-semibold text-[#0f1a14] mb-1">About you</h2>
@@ -160,8 +138,7 @@ export default function CompanyOnboarding() {
                 <label className={labelClass}>Email <span className="text-[#2d6a4f]">*</span></label>
                 <input type="email" value={form.contact_email} onChange={e => set("contact_email", e.target.value)} placeholder="otto@company.com" className={inputClass} />
               </div>
-              <button
-                onClick={() => setStep(2)}
+              <button onClick={() => setStep(2)}
                 disabled={!form.company_name || !form.website || !form.contact_name || !form.contact_email}
                 className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-40 mt-2">
                 Continue <ArrowRight size={14} />
@@ -169,41 +146,29 @@ export default function CompanyOnboarding() {
             </div>
           )}
 
-          {/* STEP 2 */}
+          {/* STEP 2 — Details */}
           {step === 2 && (
             <div className="flex flex-col gap-5">
               <h2 className="font-semibold text-[#0f1a14] mb-1">About your company</h2>
-
               <div>
                 <label className={labelClass}>Sector <span className="text-[#2d6a4f]">*</span></label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {SECTORS.map(s => (
                     <button key={s} type="button" onClick={() => set("sector", s)}
-                      className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
-                        form.sector === s
-                          ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                          : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
-                      }`}>{s.replace(/_/g, " ")}</button>
+                      className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
+                      {s.replace(/_/g, " ")}
+                    </button>
                   ))}
-                  <button key="other" type="button" onClick={() => set("sector", "other")}
-                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
-                      form.sector === "other"
-                        ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                        : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
-                    }`}>other</button>
+                  <button type="button" onClick={() => set("sector", "other")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === "other" ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
+                    other
+                  </button>
                 </div>
                 {form.sector === "other" && (
-                  <div className="mt-2">
-                    <input
-                      value={form.other_sector}
-                      onChange={e => set("other_sector", e.target.value)}
-                      placeholder="Please specify your sector…"
-                      className={inputClass}
-                    />
-                  </div>
+                  <input value={form.other_sector} onChange={e => set("other_sector", e.target.value)}
+                    placeholder="Please specify your sector…" className={`${inputClass} mt-2`} />
                 )}
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>Stage</label>
@@ -220,7 +185,6 @@ export default function CompanyOnboarding() {
                   </select>
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>Location</label>
@@ -231,23 +195,18 @@ export default function CompanyOnboarding() {
                   <input value={form.funding_raised} onChange={e => set("funding_raised", e.target.value)} placeholder="e.g. $4.2M" className={inputClass} />
                 </div>
               </div>
-
               <div>
                 <label className={labelClass}>Company description <span className="text-[#2d6a4f]">*</span></label>
                 <textarea value={form.description} onChange={e => set("description", e.target.value)}
                   placeholder="Describe your technology, what problem you solve, and your current traction…"
                   rows={4} className={`${inputClass} resize-none`} />
               </div>
-
-              {/* Signal toggles */}
               <div>
                 <label className={labelClass}>Company signals <span className="text-[#718096] normal-case font-normal tracking-normal">— select all that apply</span></label>
                 <div className="flex flex-col gap-2.5 mt-1">
                   {SIGNALS.map(({ key, icon: Icon, label, sublabel, color: c }) => (
                     <button key={key} type="button" onClick={() => toggle(key)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
-                        form[key] ? `${c.bg} ${c.border} ring-1 ${c.ring}` : "bg-slate-50 border-[#e2e6ed] hover:border-[#c8d8cc]"
-                      }`}>
+                      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${form[key] ? `${c.bg} ${c.border} ring-1 ${c.ring}` : "bg-slate-50 border-[#e2e6ed] hover:border-[#c8d8cc]"}`}>
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${form[key] ? c.bg : "bg-white border border-[#e2e6ed]"}`}>
                         <Icon size={16} className={form[key] ? c.icon : "text-[#a0aec0]"} />
                       </div>
@@ -255,27 +214,19 @@ export default function CompanyOnboarding() {
                         <p className={`text-sm font-medium ${form[key] ? "text-[#0f1a14]" : "text-[#4a5568]"}`}>{label}</p>
                         <p className="text-xs text-[#a0aec0] mt-0.5">{sublabel}</p>
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                        form[key] ? `${c.check} border-transparent` : "border-[#d0d6e0]"
-                      }`}>
-                        {form[key] && (
-                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                            <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${form[key] ? `${c.check} border-transparent` : "border-[#d0d6e0]"}`}>
+                        {form[key] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                       </div>
                     </button>
                   ))}
                 </div>
               </div>
-
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(1)}
                   className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
-                <button onClick={() => setStep(3)}
-                  disabled={!form.sector || !form.description}
+                <button onClick={() => setStep(3)} disabled={!form.sector || !form.description}
                   className="flex-1 flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all disabled:opacity-40">
                   Continue <ArrowRight size={14} />
                 </button>
@@ -283,11 +234,82 @@ export default function CompanyOnboarding() {
             </div>
           )}
 
-          {/* STEP 3 — CONFIRM */}
+          {/* STEP 3 — Contact */}
           {step === 3 && (
             <div className="flex flex-col gap-5">
-              <h2 className="font-semibold text-[#0f1a14] mb-1">Confirm your details</h2>
+              <div>
+                <h2 className="font-semibold text-[#0f1a14] mb-1">Make yourself discoverable</h2>
+                <p className="text-xs text-[#718096]">Let investors and partners contact you directly.</p>
+              </div>
 
+              <div className="flex items-center justify-between bg-[#f8f9fb] border border-[#e2e6ed] rounded-xl p-4">
+                <div>
+                  <div className="text-sm font-medium text-[#0f1a14]">Show as point of contact</div>
+                  <div className="text-xs text-[#718096] mt-0.5">Investors can see your contact info on your company profile</div>
+                </div>
+                <button onClick={() => set("show_contact", !form.show_contact)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${form.show_contact ? "bg-[#2d6a4f]" : "bg-[#d0d6e0]"}`}>
+                  <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${form.show_contact ? "left-6" : "left-1"}`} />
+                </button>
+              </div>
+
+              {form.show_contact && (
+                <div className="flex flex-col gap-4">
+                  <div className="border border-[#e2e6ed] rounded-xl p-4">
+                    <div className="text-xs font-mono text-[#2d6a4f] uppercase tracking-wide mb-3">Primary contact</div>
+                    <button onClick={() => { set("primary_contact_name", form.contact_name); set("primary_contact_email", form.contact_email); }}
+                      className="text-xs border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#eef1f6] mb-3">
+                      Use my details
+                    </button>
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className={labelClass}>Name</label>
+                        <input value={form.primary_contact_name} onChange={e => set("primary_contact_name", e.target.value)}
+                          placeholder={form.contact_name || "Contact name"} className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Email</label>
+                        <input type="email" value={form.primary_contact_email} onChange={e => set("primary_contact_email", e.target.value)}
+                          placeholder={form.contact_email || "contact@company.com"} className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border border-[#e2e6ed] rounded-xl p-4">
+                    <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3">Secondary contact (optional)</div>
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className={labelClass}>Name</label>
+                        <input value={form.secondary_contact_name} onChange={e => set("secondary_contact_name", e.target.value)}
+                          placeholder="Team member name" className={inputClass} />
+                      </div>
+                      <div>
+                        <label className={labelClass}>Email</label>
+                        <input type="email" value={form.secondary_contact_email} onChange={e => set("secondary_contact_email", e.target.value)}
+                          placeholder="teammate@company.com" className={inputClass} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 mt-2">
+                <button onClick={() => setStep(2)}
+                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  <ArrowLeft size={13} /> Back
+                </button>
+                <button onClick={() => setStep(4)}
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all">
+                  Continue <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4 — Confirm */}
+          {step === 4 && (
+            <div className="flex flex-col gap-5">
+              <h2 className="font-semibold text-[#0f1a14] mb-1">Confirm your details</h2>
               <div className="bg-[#f8f9fb] rounded-xl border border-[#e2e6ed] p-5 flex flex-col gap-3">
                 {[
                   { label: "Company", value: form.company_name },
@@ -299,21 +321,24 @@ export default function CompanyOnboarding() {
                   { label: "Round", value: form.funding_round },
                   { label: "Location", value: form.location },
                   { label: "Raised", value: form.funding_raised },
+                  { label: "Primary contact", value: form.primary_contact_name ? `${form.primary_contact_name} · ${form.primary_contact_email}` : null },
+                  { label: "Secondary", value: form.secondary_contact_name ? `${form.secondary_contact_name} · ${form.secondary_contact_email}` : null },
+                  { label: "Discoverable", value: form.show_contact ? "Yes — shown as point of contact" : "No — contact info hidden" },
                 ].filter(r => r.value).map(row => (
                   <div key={row.label} className="flex gap-3 text-sm">
-                    <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">{row.label}</span>
-                    <span className="text-[#0f1a14]">{row.value}</span>
+                    <span className="text-[#718096] font-mono text-xs w-24 flex-shrink-0 pt-0.5">{row.label}</span>
+                    <span className="text-[#0f1a14] text-xs">{row.value}</span>
                   </div>
                 ))}
                 {form.description && (
                   <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
-                    <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">About</span>
+                    <span className="text-[#718096] font-mono text-xs w-24 flex-shrink-0 pt-0.5">About</span>
                     <span className="text-[#4a5568] line-clamp-3 text-xs leading-relaxed">{form.description}</span>
                   </div>
                 )}
                 {(form.looking_to_raise || form.is_hiring || form.seeking_partnerships) && (
                   <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
-                    <span className="text-[#718096] font-mono text-xs w-20 flex-shrink-0 pt-0.5">Signals</span>
+                    <span className="text-[#718096] font-mono text-xs w-24 flex-shrink-0 pt-0.5">Signals</span>
                     <div className="flex flex-wrap gap-1.5">
                       {form.looking_to_raise && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Raising</span>}
                       {form.is_hiring && <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Hiring</span>}
@@ -322,13 +347,11 @@ export default function CompanyOnboarding() {
                   </div>
                 )}
               </div>
-
               <p className="text-xs text-[#718096] leading-relaxed">
                 By submitting you'll receive a confirmation at <strong>{form.contact_email}</strong>. We'll verify your company and be in touch within 1–2 business days.
               </p>
-
               <div className="flex gap-3 mt-2">
-                <button onClick={() => setStep(2)}
+                <button onClick={() => setStep(3)}
                   className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
