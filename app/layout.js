@@ -95,8 +95,13 @@ export default function RootLayout({ children }) {
       logoPlacement: "inside",
       showOptionalFields: false,
     },
-  }}
-></ClerkProvider>
-    
+ }}
+>
+      <PHProvider>
+        <Navbar />
+        {children}
+        <Toaster position="top-right" />
+      </PHProvider>
+    </ClerkProvider>
   );
 }
