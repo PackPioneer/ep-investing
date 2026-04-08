@@ -159,7 +159,7 @@ export default function InvestorDashboard() {
             )}
           </button>
         ))}
-        <Link href="/companies" className="flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full text-[#9ca8a0] hover:text-white">
+        <Link href="/search" className="flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full text-[#9ca8a0] hover:text-white">
           Browse All
         </Link>
       </div>
