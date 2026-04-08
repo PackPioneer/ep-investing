@@ -185,11 +185,11 @@ export default function HomePage() {
 
       {/* STATS BAR */}
       <div className="border-y border-[#e2e6ed] bg-[#ffffff] overflow-x-auto">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex gap-0">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex gap-0 justify-center">
           {[
             { num: "1,300+", label: "Companies", sub: "across 14 industries" },
             { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
-            { num: "47", label: "Grants", sub: "with tracked deadlines" },
+            { num: "185+", label: "Grants", sub: "with tracked deadlines" },
             { num: "14", label: "Categories", sub: "energy transition coverage" },
             { num: "500+", label: "Jobs", sub: "across climate sectors" },
           ].map((stat, i) => (
