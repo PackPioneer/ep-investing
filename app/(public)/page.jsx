@@ -53,10 +53,10 @@ const roleTiles = [
   },
   {
     icon: Briefcase,
-    title: "Job Seekers",
-    desc: "Browse roles from cleantech companies — engineering, finance, policy, and operations.",
+    title: "Researchers",
+    desc: "Browse roles and information from cleantech companies — engineering, finance, policy, and operations.",
     cta: "Browse jobs",
-    href: "/jobs",
+    href: "/researchers",
   },
 ];
 
@@ -161,6 +161,7 @@ export default function HomePage() {
             {[
               { label: "I'm an Investor", href: "/onboarding/investor" },
               { label: "I'm a Founder", href: "/onboarding/company" },
+              { label: "I'm a Researcher", href: "/onboarding/researcher" },
               { label: "Browse Directory", href: "/search" },
             ].map(btn => (
               <Link key={btn.label} href={btn.href}
