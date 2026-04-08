@@ -3,3 +3,14 @@
 .cl-userButtonPopoverFooter, .cl-footer{
   display: none !important;
 }body { background-color: #f2f4f8; color: #0f1a14; }
+@import "tailwindcss";
+
+.cl-userButtonPopoverFooter, .cl-footer{
+  display: none !important;
+}
+body { background-color: #f2f4f8; color: #0f1a14; }
+
+.font-mono {
+  font-family: var(--font-geist-sans), sans-serif !important;
+  letter-spacing: 0.02em;
+}
