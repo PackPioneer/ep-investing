@@ -14,7 +14,12 @@ export default function CompanyDashboard() {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("overview");fetch("/api/dashboard/matched-investors?company_id=" + data.id)
+  .then(r => r.json())
+  .then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
+fetch("/api/dashboard/matched-experts?company_id=" + data.id)
+  .then(r => r.json())
+  .then(d => setMatchedExperts(Array.isArray(d) ? d : []));
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -32,6 +37,8 @@ export default function CompanyDashboard() {
   const [uploadingDeck, setUploadingDeck] = useState(false);
   const [deckUrl, setDeckUrl] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [matchedInvestors, setMatchedInvestors] = useState([]);
+  const [matchedExperts, setMatchedExperts] = useState([]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -67,6 +74,13 @@ export default function CompanyDashboard() {
         fetch("/api/companies/" + data.id + "/updates").then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
       })
       .catch(() => setLoading(false));
+
+      fetch("/api/dashboard/matched-investors?company_id=" + data.id)
+       .then(r => r.json())
+       .then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
+      fetch("/api/dashboard/matched-experts?company_id=" + data.id)
+       .then(r => r.json())
+       .then(d => setMatchedExperts(Array.isArray(d) ? d : []));
   }, [isLoaded, user]);
 
   async function saveProfile(e) {
@@ -136,6 +150,13 @@ export default function CompanyDashboard() {
     { id: "funding", label: "Funding Round" },
     { id: "jobs", label: "Jobs" },
     { id: "updates", label: "Updates" },
+    { id: "overview", label: "Overview" },
+    { id: "profile", label: "Profile" },
+    { id: "funding", label: "Funding Round" },
+    { id: "jobs", label: "Jobs" },
+    { id: "updates", label: "Updates" },
+    { id: "investors", label: "Investors" },
+    { id: "experts", label: "Experts" }, 
   ];
 
   return (
@@ -555,6 +576,75 @@ export default function CompanyDashboard() {
             )}
           </div>
         )}
+        {activeTab === "investors" && (
+  <div className="flex flex-col gap-4">
+    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+      <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Matched Investors</div>
+      <p className="text-xs text-[#718096] mb-5">Investors on EP Investing whose focus matches your sector and stage.</p>
+      {matchedInvestors.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          {matchedInvestors.map(inv => (
+            <div key={inv.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
+              <div>
+                <div className="text-sm font-semibold text-[#0f1a14]">{inv.name}</div>
+                {inv.firm && <div className="text-xs text-[#718096] mt-0.5">{inv.firm}</div>}
+                {inv.focus && <div className="text-xs text-[#2d6a4f] mt-1">{inv.focus}</div>}
+                {inv.stage && <div className="text-xs text-[#718096] mt-0.5">Stage: {inv.stage}</div>}
+                {inv.check_size && <div className="text-xs text-[#718096] mt-0.5">Check: {inv.check_size}</div>}
+              </div>
+              {inv.show_contact && inv.primary_contact_email && (
+                <a href={`mailto:${inv.primary_contact_email}?subject=Introduction via EP Investing`}
+                  className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
+                  Contact
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#718096]">No matched investors yet. Make sure your sector and funding stage are filled in on your profile.</p>
+      )}
+    </div>
+  </div>
+)}
+
+{activeTab === "experts" && (
+  <div className="flex flex-col gap-4">
+    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+      <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Available Experts</div>
+      <p className="text-xs text-[#718096] mb-5">Climate and energy experts available for consulting, advisory, and fractional roles.</p>
+      {matchedExperts.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          {matchedExperts.map(exp => (
+            <div key={exp.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
+              <div>
+                <div className="text-sm font-semibold text-[#0f1a14]">{exp.name}</div>
+                {exp.location && <div className="text-xs text-[#718096] mt-0.5">{exp.location}</div>}
+                {exp.expertise_areas?.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {exp.expertise_areas.slice(0, 3).map(a => (
+                      <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{a}</span>
+                    ))}
+                  </div>
+                )}
+                {exp.hourly_rate && <div className="text-xs text-[#718096] mt-1">{exp.hourly_rate}</div>}
+                {exp.availability && <div className="text-xs text-[#2d6a4f] mt-0.5">{exp.availability}</div>}
+              </div>
+              {exp.email && (
+                <a href={`mailto:${exp.email}?subject=Expert inquiry via EP Investing`}
+                  className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
+                  Contact
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#718096]">No experts available yet. Check back after our April 15 launch.</p>
+      )}
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

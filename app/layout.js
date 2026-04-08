@@ -51,7 +51,52 @@ export default function RootLayout({ children }) {
         </body>
       </html>
     <PHProvider></PHProvider>
-    </ClerkProvider>
+    <ClerkProvider
+  appearance={{
+    variables: {
+      colorPrimary: "#2d6a4f",
+      colorBackground: "#f2f4f8",
+      colorInputBackground: "#ffffff",
+      colorInputText: "#0f1a14",
+      colorText: "#0f1a14",
+      colorTextSecondary: "#4a5568",
+      borderRadius: "0.75rem",
+      fontFamily: "var(--font-geist-sans), sans-serif",
+    },
+    elements: {
+      formButtonPrimary: {
+        backgroundColor: "#2d6a4f",
+        "&:hover": { backgroundColor: "#235a40" },
+      },
+      card: {
+        boxShadow: "none",
+        border: "1px solid #e2e6ed",
+      },
+      headerTitle: {
+        fontFamily: "Georgia, serif",
+        fontSize: "24px",
+        color: "#0f1a14",
+      },
+      headerSubtitle: {
+        color: "#4a5568",
+      },
+      socialButtonsBlockButton: {
+        border: "1px solid #e2e6ed",
+        color: "#0f1a14",
+      },
+      footerActionLink: {
+        color: "#2d6a4f",
+      },
+      identityPreviewEditButton: {
+        color: "#2d6a4f",
+      },
+    },
+    layout: {
+      logoPlacement: "inside",
+      showOptionalFields: false,
+    },
+  }}
+></ClerkProvider>
     
   );
 }
