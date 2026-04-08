@@ -52,14 +52,22 @@ export async function PATCH(req) {
   const body = await req.json();
   const { id, status, admin_notes, matched_company_id } = body;
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("claims")
     .update({ status, admin_notes, matched_company_id, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
+    .eq("id", id);
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
+
+  // Fetch full claim data
+  const { data } = await supabase
+    .from("claims")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  // On approval — link user to company and send invitation email
+  if (status === "approved") {
 
   // On approval — link user to company and send invitation email
 if (!error && status === "approved") {
