@@ -29,7 +29,7 @@ export async function POST(req) {
 
   if (email) {
     await resend.emails.send({
-      from: "EP Investing <otto@epinvesting.com>",
+      from: "EP Investing <noreply@send.epinvesting.com>",
       to: email,
       subject: "Welcome to EP Investing",
       html: `

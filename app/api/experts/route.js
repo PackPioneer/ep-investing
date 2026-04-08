@@ -22,7 +22,7 @@ export async function POST(req) {
 
     // Notify admin
     await resend.emails.send({
-      from: "EP Investing <otto@epinvesting.com>",
+      from: "EP Investing <noreply@send.epinvesting.com>",
       to: "otto@epinvesting.com",
       subject: `New expert application: ${name}`,
       html: `<p><strong>${name}</strong> (${email}) applied to join the expert network.</p><p>Expertise: ${expertise_areas?.join(", ")}</p><p>Location: ${location}</p><p>Rate: ${hourly_rate}</p>`,
@@ -30,7 +30,7 @@ export async function POST(req) {
 
     // Confirm to applicant
     await resend.emails.send({
-      from: "EP Investing <otto@epinvesting.com>",
+      from: "EP Investing <noreply@send.epinvesting.com>",
       to: email,
       subject: "You're on the EP Investing expert waitlist",
       html: `<p>Hi ${name},</p><p>Thanks for applying to join the EP Investing expert network. We'll review your application and reach out before our April 15 launch.</p><p>— The EP Investing Team</p>`,

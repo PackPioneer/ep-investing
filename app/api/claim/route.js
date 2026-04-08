@@ -110,7 +110,7 @@ export async function PATCH(req) {
 
         console.log("Sending approval email to:", data.contact_email);
         const emailResult = await resend.emails.send({
-          from: "EP Investing <otto@epinvesting.com>",
+          from: "EP Investing <noreply@send.epinvesting.com>",
           to: data.contact_email,
           subject: `Your ${data.company_name} profile is ready on EP Investing`,
           html: `
