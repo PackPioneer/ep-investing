@@ -16,7 +16,7 @@ export async function GET() {
 
   const { data: companies } = await supabase
     .from("companies")
-    .select("id, name, description, funding_stage, looking_to_raise, is_hiring, seeking_partnerships, industry_tags, target_geographies, business_model")
+    .select("id, name, description, funding_stage, looking_to_raise, is_hiring, seeking_partnerships, industry_tags, target_geographies, business_model, logo_url")
     .order("created_at", { ascending: false })
     .limit(1500);
 

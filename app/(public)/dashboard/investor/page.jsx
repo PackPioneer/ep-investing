@@ -330,9 +330,14 @@ export default function InvestorDashboard() {
               {filtered.length > 0 ? filtered.map(company => (
                 <div key={company.id} className="bg-white border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
                   <div className="flex gap-3 items-start flex-1 min-w-0">
-                    <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center text-sm font-semibold text-[#2d6a4f] flex-shrink-0">
-                      {company.name?.[0] || "?"}
-                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center text-sm font-semibold text-[#2d6a4f] flex-shrink-0 overflow-hidden">
+                      {company.logo_url
+                        ? <img src={company.logo_url} alt={company.name} className="w-full h-full object-contain p-1" onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                        : null}
+                     <span style={{display: company.logo_url ? 'none' : 'flex'}} className="w-full h-full items-center justify-center">
+                       {company.name?.[0] || "?"}
+                     </span>
+                   </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">
