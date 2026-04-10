@@ -149,32 +149,6 @@ function WaitlistForm({ tier, highlighted }) {
   );
 }
 
-  if (status === "done") return (
-    <div className="flex items-center gap-2 justify-center py-3 text-sm text-[#2d6a4f] font-medium">
-      <CheckCircle size={15} /> We'll remind you on April 15th
-    </div>
-  );
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        required
-        className="w-full px-3 py-2.5 rounded-lg border border-[#d0d6e0] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors bg-white"
-      />
-      <button
-        type="submit"
-        disabled={status === "loading" || !email.trim()}
-        className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all bg-[#2d6a4f] text-white hover:bg-[#235a40] disabled:opacity-50"
-      >
-        <Bell size={13} /> Notify me April 15th
-      </button>
-    </form>
-  );
-}
 
 export default function PricingPage() {
   return (
