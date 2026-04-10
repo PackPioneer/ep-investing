@@ -2,6 +2,8 @@
 
 
 import { useState } from "react";
+
+const ENABLE_STRIPE = false; // flip to true on April 14th
 import posthog from "posthog-js"
 import Link from "next/link";
 import { Check, ArrowRight, Search, Briefcase, Building2, TrendingUp, Zap, Star, Bell, CheckCircle } from "lucide-react";
@@ -78,11 +80,30 @@ const TIERS = [
   },
 ];
 
-function WaitlistForm({ tier }) {
+function WaitlistForm({ tier, highlighted }) {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | loading | done
+  const [status, setStatus] = useState("idle");
 
-  const handleSubmit = async (e) => {
+  // Stripe flow
+  const handleStripe = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/stripe/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), plan: tier }),
+      });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } catch {
+      setStatus("idle");
+    }
+  };
+
+  // Waitlist flow
+  const handleWaitlist = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
     setStatus("loading");
@@ -93,11 +114,40 @@ function WaitlistForm({ tier }) {
         body: JSON.stringify({ email: email.trim(), plan: tier }),
       });
       setStatus("done");
-      posthog.capture("waitlist_signup", { email: email.trim(), plan: tier });
     } catch {
-      setStatus("done"); // still show success
+      setStatus("done");
     }
   };
+
+  if (status === "done") return (
+    <div className="flex items-center gap-2 justify-center py-3 text-sm text-[#2d6a4f] font-medium">
+      <CheckCircle size={15} /> We'll remind you on April 15th
+    </div>
+  );
+
+  return (
+    <form onSubmit={ENABLE_STRIPE ? handleStripe : handleWaitlist} className="flex flex-col gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        required
+        className="w-full px-3 py-2.5 rounded-lg border border-[#d0d6e0] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors bg-white"
+      />
+      <button
+        type="submit"
+        disabled={status === "loading" || !email.trim()}
+        className="w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all bg-[#2d6a4f] text-white hover:bg-[#235a40] disabled:opacity-50"
+      >
+        {status === "loading" ? "Please wait…" : ENABLE_STRIPE ? <>Get started free <ArrowRight size={13} /></> : <><Bell size={13} /> Notify me April 15th</>}
+      </button>
+      {ENABLE_STRIPE && (
+        <p className="text-[10px] text-center font-mono text-[#a0aec0]">No charge until July 15, 2025</p>
+      )}
+    </form>
+  );
+}
 
   if (status === "done") return (
     <div className="flex items-center gap-2 justify-center py-3 text-sm text-[#2d6a4f] font-medium">
