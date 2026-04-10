@@ -175,18 +175,14 @@ export default function JobsPage() {
             <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14]">Jobs board</h1>
             <p className="text-[#4a5568] text-sm mt-2 font-light">Roles across the energy transition — from deep tech to climate finance.</p>
           </div>
-          <button onClick={() => setView(view === "post" ? "board" : "post")}
-            className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
-            {isLoaded && (
-  isApprovedCompany
-    {isLoaded && (
-  <button
-    onClick={() => isApprovedCompany ? setView(view === "post" ? "board" : "post") : router.push(user ? "/onboarding/company" : "/sign-in")}
-    className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
-    {view === "post" ? "← Browse jobs" : isApprovedCompany ? "Post a job" : "Apply to post"} <ArrowRight size={13} />
-  </button>
-)}
-        </div>
+         {isLoaded && (
+            <button
+              onClick={() => isApprovedCompany ? setView(view === "post" ? "board" : "post") : router.push(user ? "/onboarding/company" : "/sign-in")}
+              className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
+              {view === "post" ? "← Browse jobs" : isApprovedCompany ? "Post a job" : "Apply to post"} <ArrowRight size={13} />
+            </button>
+          )}
+        </div> 
 
         {view === "post" ? <PostJobForm onDone={() => setView("done")} /> : (
           <>
