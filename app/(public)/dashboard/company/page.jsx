@@ -14,12 +14,6 @@ export default function CompanyDashboard() {
   const router = useRouter();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");fetch("/api/dashboard/matched-investors?company_id=")
-  .then(r => r.json())
-  .then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
-fetch("/api/dashboard/matched-experts?company_id=")
-  .then(r => r.json())
-  .then(d => setMatchedExperts(Array.isArray(d) ? d : []));
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
