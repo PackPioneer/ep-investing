@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const SECTORS = ["All", "ev_charging", "green_hydrogen", "nuclear_technologies", "climate_finance", "battery_storage", "solar"];
 
@@ -163,7 +165,17 @@ export default function JobsPage() {
           </div>
           <button onClick={() => setView(view === "post" ? "board" : "post")}
             className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
-            {view === "post" ? "← Browse jobs" : <> Post a job <ArrowRight size={13} /></>}
+            {isLoaded && (
+  isApprovedCompany
+    ? <button onClick={() => setView(view === "post" ? "board" : "post")}
+        className="inline-flex items-center gap-2 border border-[#2d6a4f] text-[#2d6a4f] text-sm font-semibold rounded-lg px-4 py-2 hover:bg-[#eef1f6] transition-all">
+        {view === "post" ? "← Browse jobs" : <> Post a job <ArrowRight size={13} /></>}
+      </button>
+    : <button onClick={() => router.push(user ? "/onboarding/company" : "/sign-in")}
+        className="inline-flex items-center gap-2 border border-[#d0d6e0] text-[#718096] text-sm font-semibold rounded-lg px-4 py-2 hover:bg-[#f8f9fb] transition-all">
+        Post a job <ArrowRight size={13} />
+      </button>
+)}
           </button>
         </div>
 
@@ -197,7 +209,10 @@ export default function JobsPage() {
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">Hiring in climate?</h3>
               <p className="text-sm text-[#4a5568] mb-5 font-light">Post your role to reach thousands of climate professionals.</p>
               <button onClick={() => setView("post")} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
-                Post a job <ArrowRight size={13} />
+                <button onClick={() => isApprovedCompany ? setView("post") : router.push(user ? "/onboarding/company" : "/sign-in")}
+                  className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+                  {isApprovedCompany ? "Post a job" : "Apply to post a job"} <ArrowRight size={13} />
+              </button>
               </button>
             </div>
           </>
