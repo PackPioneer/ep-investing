@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, ExternalLink } from "lucide-react";
 
-const TYPES = ["All", "venture_capital", "private_equity", "family_office", "corporate_vc", "government", "philanthropy"];
+const FOCUSES = ["All", "solar", "wind", "hydrogen", "nuclear", "battery tech", "electric vehicles", "carbon capture", "decarbonization", "renewables", "climate", "water", "mobility", "circular economy", "food tech"];
 
 function InvestorCard({ investor }) {
   const website = investor.url || investor.website;
@@ -107,7 +107,7 @@ export default function InvestorsPage() {
       inv.name?.toLowerCase().includes(search.toLowerCase()) ||
       inv.description?.toLowerCase().includes(search.toLowerCase()) ||
       inv.climate_focus_areas?.some(f => f.toLowerCase().includes(search.toLowerCase()));
-    const matchType = type === "All" || inv.type === type;
+    const matchType = type === "All" || inv.climate_focus_areas?.some(f => f.toLowerCase().includes(type.toLowerCase()));
     return matchSearch && matchType;
   });
 
@@ -142,16 +142,16 @@ export default function InvestorsPage() {
               className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none" />
           </div>
           <div className="flex flex-wrap gap-2">
-            {TYPES.map(t => (
-              <button key={t} onClick={() => setType(t)}
-                className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
-                  type === t
-                    ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                    : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+            {FOCUSES.map(f => (
+             <button key={f} onClick={() => setType(f)}
+               className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
+                 type === f
+                   ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
+                   : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
                 }`}>
-                {t === "All" ? "All types" : t.replace(/_/g, " ")}
-              </button>
-            ))}
+                {f === "All" ? "All types" : f}
+               </button>
+             ))}
           </div>
         </div>
 
