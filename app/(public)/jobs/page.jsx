@@ -122,6 +122,18 @@ export default function JobsPage() {
   const [sector, setSector] = useState("All");
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isApprovedCompany, setIsApprovedCompany] = useState(false);
+
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoaded || !user) return;
+    fetch("/api/dashboard/company-status")
+      .then(r => r.json())
+      .then(d => setIsApprovedCompany(d.status === "approved"))
+      .catch(() => {});
+  }, [isLoaded, user]);
 
   useEffect(() => {
     fetch("/api/jobs")
@@ -167,16 +179,13 @@ export default function JobsPage() {
             className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
             {isLoaded && (
   isApprovedCompany
-    ? <button onClick={() => setView(view === "post" ? "board" : "post")}
-        className="inline-flex items-center gap-2 border border-[#2d6a4f] text-[#2d6a4f] text-sm font-semibold rounded-lg px-4 py-2 hover:bg-[#eef1f6] transition-all">
-        {view === "post" ? "← Browse jobs" : <> Post a job <ArrowRight size={13} /></>}
-      </button>
-    : <button onClick={() => router.push(user ? "/onboarding/company" : "/sign-in")}
-        className="inline-flex items-center gap-2 border border-[#d0d6e0] text-[#718096] text-sm font-semibold rounded-lg px-4 py-2 hover:bg-[#f8f9fb] transition-all">
-        Post a job <ArrowRight size={13} />
-      </button>
+    {isLoaded && (
+  <button
+    onClick={() => isApprovedCompany ? setView(view === "post" ? "board" : "post") : router.push(user ? "/onboarding/company" : "/sign-in")}
+    className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-all">
+    {view === "post" ? "← Browse jobs" : isApprovedCompany ? "Post a job" : "Apply to post"} <ArrowRight size={13} />
+  </button>
 )}
-          </button>
         </div>
 
         {view === "post" ? <PostJobForm onDone={() => setView("done")} /> : (
@@ -208,12 +217,11 @@ export default function JobsPage() {
             <div className="mt-10 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">Hiring in climate?</h3>
               <p className="text-sm text-[#4a5568] mb-5 font-light">Post your role to reach thousands of climate professionals.</p>
-              <button onClick={() => setView("post")} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
-                <button onClick={() => isApprovedCompany ? setView("post") : router.push(user ? "/onboarding/company" : "/sign-in")}
-                  className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
-                  {isApprovedCompany ? "Post a job" : "Apply to post a job"} <ArrowRight size={13} />
-              </button>
-              </button>
+              <button
+  onClick={() => isApprovedCompany ? setView("post") : router.push(user ? "/onboarding/company" : "/sign-in")}
+  className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+  {isApprovedCompany ? "Post a job" : "Apply to post a job"} <ArrowRight size={13} />
+</button>
             </div>
           </>
         )}
