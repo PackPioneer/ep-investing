@@ -66,15 +66,10 @@ export default function CompanyDashboard() {
         setLoading(false);
         fetch("/api/dashboard/jobs").then(r => r.json()).then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
         fetch("/api/companies/" + data.id + "/updates").then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
+        fetch("/api/dashboard/matched-investors?company_id=" + data.id).then(r => r.json()).then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
+        fetch("/api/dashboard/matched-experts?company_id=" + data.id).then(r => r.json()).then(d => setMatchedExperts(Array.isArray(d) ? d : []));
       })
       .catch(() => setLoading(false));
-
-      fetch("/api/dashboard/matched-investors?company_id=" + data.id)
-       .then(r => r.json())
-       .then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
-      fetch("/api/dashboard/matched-experts?company_id=" + data.id)
-       .then(r => r.json())
-       .then(d => setMatchedExperts(Array.isArray(d) ? d : []));
   }, [isLoaded, user]);
 
   async function saveProfile(e) {
