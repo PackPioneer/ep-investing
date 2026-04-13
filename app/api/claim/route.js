@@ -93,7 +93,8 @@ export async function PATCH(req) {
     if (data.contact_email) {
       try {
         const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
-        let inviteUrl = dashboardUrl;
+        const signUpUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?email=${encodeURIComponent(data.contact_email)}&redirect_url=${encodeURIComponent(dashboardUrl)}`;
+        let inviteUrl = signUpUrl;      
 
         try {
           const clerk = await clerkClient();
