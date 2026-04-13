@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { Resend } from "resend";
 
 const supabase = createClient(
@@ -105,25 +105,8 @@ export async function PATCH(req) {
 
     console.log("Sending approval email to:", claim.contact_email);
 
-    // Create Clerk invite
     const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
-    const signUpUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?email=${encodeURIComponent(claim.contact_email)}&redirect_url=${encodeURIComponent(dashboardUrl)}`;
-    let inviteUrl = signUpUrl;
-
-    try {
-      const clerk = await clerkClient();
-      const invitation = await clerk.invitations.createInvitation({
-        emailAddress: claim.contact_email,
-        redirectUrl: dashboardUrl,
-        publicMetadata: { role: "company", company_id: companyId },
-        notify: false,
-      });
-      if (invitation?.url) inviteUrl = invitation.url;
-    } catch (inviteErr) {
-      console.error("Clerk invite error:", inviteErr?.message || inviteErr);
-      // User may already exist in Clerk — use sign-in URL instead
-      inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-in?redirect_url=${encodeURIComponent(dashboardUrl)}`;
-    }
+    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-in?redirect_url=${encodeURIComponent(dashboardUrl)}`;
 
     try {
       const result = await getResend().emails.send({
