@@ -113,7 +113,7 @@ async function main() {
   let skipped = 0;
 
   for (const opp of allOpportunities.values()) {
-    const url = `https://www.grants.gov/search-results-detail/${opp.opportunity_id}`;
+    const url = `https://simpler.grants.gov/search?query=${encodeURIComponent(opp.opportunity_number || opp.opportunity_id)}`;
     const title = opp.opportunity_title || opp.opportunity_number || "Untitled";
 
     if (existingUrls.has(url) || existingTitles.has(title.toLowerCase())) {
