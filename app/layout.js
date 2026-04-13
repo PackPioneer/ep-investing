@@ -42,7 +42,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider
-      appearance={{
+    appearance={{
+    layout: {
+      logoImageUrl: "/favicon.svg",
+      logoLinkUrl: "/",
+      showOptionalFields: false,
+    },
         variables: {
           colorPrimary: "#2d6a4f",
           colorBackground: "#f2f4f8",
@@ -54,6 +59,11 @@ export default function RootLayout({ children }) {
           fontFamily: "var(--font-geist-sans), sans-serif",
         },
         elements: {
+          logoImage: {
+            height: "48px",
+            width: "auto",
+          },
+
           formButtonPrimary: {
             backgroundColor: "#2d6a4f",
           },
