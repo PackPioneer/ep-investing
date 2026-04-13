@@ -22,7 +22,7 @@ const supabase = createClient(
 
 const CAREERS_PAGES = [
   // Confirmed working
-  { company: "Octopus Energy", url: "https://api.lever.co/v0/postings/octoenergy?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Octopus Energy", url: "https://api.lever.co/v0/postings/octoenergy?mode=json", sector: "climate_tech", ats: "lever", limit: 20 },
   { company: "Encore Renewable Energy", url: "https://api.lever.co/v0/postings/encore-renewable-energy?mode=json", sector: "solar", ats: "lever" },
   { company: "E3", url: "https://api.lever.co/v0/postings/ethree?mode=json", sector: "climate_finance", ats: "lever" },
   { company: "Solar Landscape", url: "https://api.lever.co/v0/postings/solarlandscape?mode=json", sector: "solar", ats: "lever" },
@@ -54,6 +54,31 @@ const CAREERS_PAGES = [
   { company: "Xpansiv", url: "https://api.lever.co/v0/postings/xpansiv?mode=json", sector: "carbon_markets", ats: "lever" },
   { company: "Antora Energy", url: "https://api.lever.co/v0/postings/antora?mode=json", sector: "battery_storage", ats: "lever" },
   { company: "Palmetto", url: "https://api.lever.co/v0/postings/palmettocleantech?mode=json", sector: "solar", ats: "lever" },
+  { company: "Samsara", url: "https://api.lever.co/v0/postings/samsara?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Inari Agriculture", url: "https://api.lever.co/v0/postings/inari?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Pachama", url: "https://api.lever.co/v0/postings/pachama?mode=json", sector: "carbon_markets", ats: "lever" },
+  { company: "Arcadia Power", url: "https://api.lever.co/v0/postings/arcadiapower?mode=json", sector: "clean_energy", ats: "lever" },
+  { company: "Ampere Energy", url: "https://api.lever.co/v0/postings/ampere?mode=json", sector: "battery_storage", ats: "lever" },
+  { company: "Sunrun", url: "https://api.lever.co/v0/postings/sunrun?mode=json", sector: "solar", ats: "lever" },
+  { company: "Sunnova", url: "https://api.lever.co/v0/postings/sunnova?mode=json", sector: "solar", ats: "lever" },
+  { company: "Departure Energy", url: "https://api.lever.co/v0/postings/departure-energy?mode=json", sector: "clean_energy", ats: "lever" },
+  { company: "Terraformation", url: "https://api.lever.co/v0/postings/terraformation?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Rho Impact", url: "https://api.lever.co/v0/postings/rhoimpact?mode=json", sector: "climate_finance", ats: "lever" },
+  { company: "Invenergy", url: "https://api.lever.co/v0/postings/invenergy?mode=json", sector: "wind_energy", ats: "lever" },
+  { company: "Amp Robotics", url: "https://api.lever.co/v0/postings/amprobotics?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Brightcore Energy", url: "https://api.lever.co/v0/postings/brightcoreenergy?mode=json", sector: "solar", ats: "lever" },
+  { company: "Rewiring America", url: "https://api.lever.co/v0/postings/rewiringamerica?mode=json", sector: "energy_efficiency", ats: "lever" },
+  { company: "Rocky Mountain Institute", url: "https://api.lever.co/v0/postings/rmi?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Clean Energy Capital", url: "https://api.lever.co/v0/postings/cleanenergycapital?mode=json", sector: "climate_finance", ats: "lever" },
+  { company: "Posigen", url: "https://api.lever.co/v0/postings/posigen?mode=json", sector: "solar", ats: "lever" },
+  { company: "Ørsted", url: "https://api.lever.co/v0/postings/orsted?mode=json", sector: "wind_energy", ats: "lever" },
+  { company: "Avantus", url: "https://api.lever.co/v0/postings/avantus?mode=json", sector: "solar", ats: "lever" },
+  { company: "Canary Media", url: "https://api.lever.co/v0/postings/canarymedia?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Kraken Technologies", url: "https://api.lever.co/v0/postings/kraken123?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Granular Energy", url: "https://api.lever.co/v0/postings/Granular?mode=json", sector: "clean_energy", ats: "lever" },
+  { company: "Cascade Climate", url: "https://api.lever.co/v0/postings/cascade-climate?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Spark Climate Solutions", url: "https://api.lever.co/v0/postings/SparkClimateSolutions?mode=json", sector: "climate_tech", ats: "lever" },
+  { company: "Trio Energy", url: "https://api.lever.co/v0/postings/trio?mode=json", sector: "energy_efficiency", ats: "lever" },
 ];
 const CAREERS_PAGES_FULL = [
   { company: "IONITY", url: "https://www.ionity.eu/ionity/careers", sector: "ev_charging", ats: "web" },
@@ -198,7 +223,7 @@ async function main() {
   console.log(`Starting job scraper for ${CAREERS_PAGES.length} companies...\n`);
   let total = 0;
 
-  for (const { company, url, sector, ats } of CAREERS_PAGES) {
+ for (const { company, url, sector, ats, limit } of CAREERS_PAGES) {
     console.log(`Scraping ${company}...`);
     let jobs = [];
 
@@ -216,6 +241,7 @@ async function main() {
       console.log(`  Error scraping ${company}: ${e.message}`);
     }
 
+    if (limit) jobs = jobs.slice(0, limit);
     console.log(`  Found ${jobs.length} jobs`);
     const inserted = await insertJobs(jobs, company, sector);
     console.log(`  Inserted ${inserted} new jobs`);
