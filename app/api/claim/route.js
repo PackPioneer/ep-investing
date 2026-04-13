@@ -7,6 +7,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
@@ -47,6 +48,7 @@ export async function PATCH(req) {
   const body = await req.json();
   const { id, status, admin_notes, matched_company_id } = body;
 
+  // Update claim status
   const { error: updateError } = await supabase
     .from("claims")
     .update({ status, admin_notes, matched_company_id, updated_at: new Date().toISOString() })
@@ -54,25 +56,29 @@ export async function PATCH(req) {
 
   if (updateError) return NextResponse.json({ message: updateError.message }, { status: 500 });
 
-  // Fetch full claim data
-  const { data } = await supabase
+  // Fetch full claim
+  const { data: claim } = await supabase
     .from("claims")
     .select("*")
     .eq("id", id)
     .single();
 
-  if (status === "approved" && data) {
+  if (!claim) return NextResponse.json({ message: "Claim not found" }, { status: 404 });
+
+  if (status === "approved") {
+    console.log("Approval triggered for:", claim.contact_email);
+
+    // Find or create company
     let companyId = matched_company_id;
 
-    // If no existing company matched, create a new one
     if (!companyId) {
       const { data: newCompany } = await supabase
         .from("companies")
         .insert({
-          name: data.company_name,
-          url: data.company_url,
-          description: data.description,
-          clerk_user_id: data.clerk_user_id || null,
+          name: claim.company_name,
+          url: claim.company_url,
+          description: claim.description,
+          clerk_user_id: claim.clerk_user_id || null,
         })
         .select()
         .single();
@@ -82,39 +88,47 @@ export async function PATCH(req) {
         .from("claims")
         .update({ matched_company_id: companyId })
         .eq("id", id);
-    } else if (data.clerk_user_id) {
-      await supabase
-        .from("companies")
-        .update({ clerk_user_id: data.clerk_user_id })
-        .eq("id", companyId);
+    } else {
+      if (claim.clerk_user_id) {
+        await supabase
+          .from("companies")
+          .update({ clerk_user_id: claim.clerk_user_id })
+          .eq("id", companyId);
+      }
     }
 
-    // Send invitation email
-    if (data.contact_email) {
-      try {
-        const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
-        const signUpUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?email=${encodeURIComponent(data.contact_email)}&redirect_url=${encodeURIComponent(dashboardUrl)}`;
-        let inviteUrl = signUpUrl;      
+    // Send approval email
+    if (!claim.contact_email) {
+      console.error("No contact email on claim", id);
+      return NextResponse.json(claim);
+    }
 
-        try {
-          const clerk = await clerkClient();
-          const invitation = await clerk.invitations.createInvitation({
-            emailAddress: data.contact_email,
-            redirectUrl: dashboardUrl,
-            publicMetadata: { role: "company", company_id: companyId },
-            notify: false, // we send our own email, suppress Clerk's default
-         });
-          inviteUrl = invitation.url;
-        } catch (inviteErr) {
-          console.error("Clerk invitation error:", inviteErr?.message || inviteErr);
-        }
+    console.log("Sending approval email to:", claim.contact_email);
 
-        console.log("Sending approval email to:", data.contact_email);
-        const emailResult = await getResend().emails.send({
-          from: "EP Investing <noreply@send.epinvesting.com>",
-          to: data.contact_email,
-          subject: `Your ${data.company_name} profile is ready on EP Investing`,
-          html: `<!DOCTYPE html>
+    // Create Clerk invite
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
+    const signUpUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?email=${encodeURIComponent(claim.contact_email)}&redirect_url=${encodeURIComponent(dashboardUrl)}`;
+    let inviteUrl = signUpUrl;
+
+    try {
+      const clerk = await clerkClient();
+      const invitation = await clerk.invitations.createInvitation({
+        emailAddress: claim.contact_email,
+        redirectUrl: dashboardUrl,
+        publicMetadata: { role: "company", company_id: companyId },
+        notify: false,
+      });
+      if (invitation?.url) inviteUrl = invitation.url;
+    } catch (inviteErr) {
+      console.error("Clerk invite error:", inviteErr?.message || inviteErr);
+    }
+
+    try {
+      const result = await getResend().emails.send({
+        from: "EP Investing <noreply@send.epinvesting.com>",
+        to: claim.contact_email,
+        subject: `Your ${claim.company_name} profile is ready on EP Investing`,
+        html: `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
 <body style="margin:0;padding:0;background:#f2f4f8;">
@@ -128,9 +142,9 @@ export async function PATCH(req) {
         </tr>
         <tr>
           <td style="padding:32px;">
-            <h1 style="font-family:Georgia,serif;font-size:22px;color:#0f1a14;margin:0 0 16px;">Welcome, ${data.contact_name}!</h1>
+            <h1 style="font-family:Georgia,serif;font-size:22px;color:#0f1a14;margin:0 0 16px;">Welcome, ${claim.contact_name}!</h1>
             <p style="font-family:sans-serif;font-size:15px;color:#4a5568;line-height:1.6;margin:0 0 12px;">
-              Your company profile for <strong>${data.company_name}</strong> has been approved and is now live on EP Investing.
+              Your company profile for <strong>${claim.company_name}</strong> has been approved and is now live on EP Investing.
             </p>
             <p style="font-family:sans-serif;font-size:15px;color:#4a5568;line-height:1.6;margin:0 0 20px;">
               Click below to set up your account and access your dashboard:
@@ -168,14 +182,13 @@ export async function PATCH(req) {
   </table>
 </body>
 </html>`,
-          text: `Welcome to EP Investing, ${data.contact_name}!\n\nYour company profile for ${data.company_name} has been approved and is now live on EP Investing.\n\nAccess your dashboard here: ${inviteUrl}\n\nFrom your dashboard you can edit your company profile, post jobs, upload your pitch deck, and get matched with investors.\n\nQuestions? Reply to this email.\n\nEP Investing · epinvesting.com`,
-        });
-        console.log("Email result:", JSON.stringify(emailResult));
-      } catch (err) {
-        console.error("Email error:", err);
-      }
+        text: `Welcome to EP Investing, ${claim.contact_name}!\n\nYour company profile for ${claim.company_name} has been approved.\n\nAccess your dashboard here: ${inviteUrl}\n\nQuestions? Reply to this email.\n\nEP Investing · epinvesting.com`,
+      });
+      console.log("Email sent:", JSON.stringify(result));
+    } catch (emailErr) {
+      console.error("Email send error:", emailErr);
     }
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(claim);
 }
