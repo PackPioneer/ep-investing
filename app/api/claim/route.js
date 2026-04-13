@@ -72,7 +72,7 @@ export async function PATCH(req) {
     let companyId = matched_company_id;
 
     if (!companyId) {
-      const { data: newCompany } = await supabase
+      const { data: newCompany, error: insertError } = await supabase
         .from("companies")
         .insert({
           name: claim.company_name,
@@ -82,19 +82,27 @@ export async function PATCH(req) {
         })
         .select()
         .single();
-      companyId = newCompany?.id;
-
-      await supabase
-        .from("claims")
-        .update({ matched_company_id: companyId })
-        .eq("id", id);
-    } else {
-      if (claim.clerk_user_id) {
-        await supabase
+      
+      if (insertError) {
+        console.error("Company insert error:", insertError.message);
+        // Company may already exist - try to find it
+        const { data: existingCompany } = await supabase
           .from("companies")
-          .update({ clerk_user_id: claim.clerk_user_id })
-          .eq("id", companyId);
+          .select("id")
+          .ilike("name", claim.company_name)
+          .single();
+        companyId = existingCompany?.id || null;
+      } else {
+        companyId = newCompany?.id;
       }
+
+      if (companyId) {
+        await supabase
+          .from("claims")
+          .update({ matched_company_id: companyId })
+          .eq("id", id);
+      }
+    }
     }
 
     // Send approval email
