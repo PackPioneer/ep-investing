@@ -36,7 +36,38 @@ const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-3
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function JobSeekerOnboarding() {
+  const [userType, setUserType] = useState(null);
   const [step, setStep] = useState(1);
+  if (!userType) return (
+    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+      style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="max-w-lg w-full">
+        <div className="text-center mb-10">
+          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">What brings you to EP Investing?</h1>
+          <p className="text-[#4a5568] text-sm">We'll get you set up in the right place.</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          {[
+            { type: "company", label: "I'm a founder or operator", sub: "Raise, hire, and get matched with investors", href: "/onboarding/company" },
+            { type: "investor", label: "I'm an investor", sub: "Source deals and track the energy transition", href: "/onboarding/investor" },
+            { type: "researcher", label: "I'm a researcher or job seeker", sub: "Browse companies, jobs, and grants", href: null },
+          ].map(({ type, label, sub, href }) => (
+            <button key={type}
+              onClick={() => href ? window.location.href = href : setUserType("researcher")}
+              className="w-full text-left bg-white border border-[#e2e6ed] rounded-xl p-5 hover:border-[#2d6a4f] transition-all group">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors">{label}</p>
+                  <p className="text-xs text-[#718096] mt-0.5">{sub}</p>
+                </div>
+                <ArrowRight size={16} className="text-[#c8d8cc] group-hover:text-[#2d6a4f] transition-colors" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
