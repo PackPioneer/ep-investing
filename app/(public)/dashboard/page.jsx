@@ -38,5 +38,5 @@ export default async function DashboardPage() {
 
   if (investor) redirect('/dashboard/investor')
 
-  redirect('/')
+ redirect('/onboarding/researcher')
 }
