@@ -36,7 +36,12 @@ function ClaimRow({ claim, onUpdate }) {
     await fetch("/api/claim", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: claim.id, status, admin_notes: notes }),
+      body: JSON.stringify({ 
+        id: claim.id, 
+        status, 
+        admin_notes: notes,
+        matched_company_id: selectedCompany?.id || claim.matched_company_id || null,
+      }),
     });
     setSaving(false);
     onUpdate();
