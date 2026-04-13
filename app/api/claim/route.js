@@ -117,7 +117,7 @@ export async function PATCH(req) {
 
     try {
       const result = await getResend().emails.send({
-        from: "EP Investing <noreply@send.epinvesting.com>",
+        from: "EP Investing <noreply@epinvesting.com>",
         to: claim.contact_email,
         subject: `Your ${claim.company_name} profile is ready on EP Investing`,
         html: `<!DOCTYPE html>

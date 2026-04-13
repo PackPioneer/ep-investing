@@ -46,7 +46,7 @@ export async function PATCH(req) {
       }
 
       await getResend().emails.send({
-        from: "EP Investing <noreply@send.epinvesting.com>",
+        from: "EP Investing <noreply@epinvesting.com>",
         to: data.email,
         subject: "Your EP Investing investor access is ready",
         html: `
