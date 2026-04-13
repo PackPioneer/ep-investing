@@ -103,7 +103,6 @@ export async function PATCH(req) {
           .eq("id", id);
       }
     }
-    }
 
     // Send approval email
     if (!claim.contact_email) {
@@ -183,5 +182,4 @@ export async function PATCH(req) {
     }
   }
 
-  return NextResponse.json(claim);
-}
+  return NextResponse.json(claim);}
