@@ -42,6 +42,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider
+    signUpUrl="/onboarding/researcher"
+    signInUrl="/sign-in"
     appearance={{
     layout: {
       logoImageUrl: "/favicon.svg",
