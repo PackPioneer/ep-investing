@@ -9,7 +9,7 @@ export async function POST(req) {
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const getResend = () => new Resend(process.env.RESEND_API_KEY);
   const { email, plan } = await req.json();
   if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
@@ -20,7 +20,7 @@ export async function POST(req) {
   );
 
   // Send confirmation email
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "You're on the EP Investing waitlist",

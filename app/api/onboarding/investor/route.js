@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "otto@epinvesting.com";
 const FROM_EMAIL = process.env.FROM_EMAIL || "notifications@epinvesting.com";
 
@@ -56,7 +56,7 @@ export async function POST(req) {
     properties: { email, firm, sectors, stages, check_sizes, geographies, source: "server" },
   });
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: ADMIN_EMAIL,
     subject: `New investor: ${name}${firm ? ` · ${firm}` : ""}`,
@@ -89,7 +89,7 @@ export async function POST(req) {
     `,
   });
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: `Welcome to EP Investing${firm ? `, ${firm}` : ""}`,

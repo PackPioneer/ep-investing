@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
   const { data, error } = await supabase
@@ -45,7 +45,7 @@ export async function PATCH(req) {
         console.log("User exists, sending direct link");
       }
 
-      await resend.emails.send({
+      await getResend().emails.send({
         from: "EP Investing <noreply@send.epinvesting.com>",
         to: data.email,
         subject: "Your EP Investing investor access is ready",

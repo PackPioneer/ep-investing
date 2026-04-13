@@ -11,10 +11,10 @@ export async function POST(req) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
   // Notify admin
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: ADMIN_EMAIL,
     subject: `🤝 New intro request: ${investor_name}`,
@@ -45,7 +45,7 @@ export async function POST(req) {
   });
 
   // Confirm to requester
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: `Your intro request to ${investor_name}`,

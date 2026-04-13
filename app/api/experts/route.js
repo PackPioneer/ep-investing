@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
   try {
@@ -21,7 +21,7 @@ export async function POST(req) {
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
     // Notify admin
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "EP Investing <noreply@send.epinvesting.com>",
       to: "otto@epinvesting.com",
       subject: `New expert application: ${name}`,
@@ -29,7 +29,7 @@ export async function POST(req) {
     });
 
     // Confirm to applicant
-    await resend.emails.send({
+    await getResend().emails.send({
       from: "EP Investing <noreply@send.epinvesting.com>",
       to: email,
       subject: "You're on the EP Investing expert waitlist",

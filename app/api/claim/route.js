@@ -7,8 +7,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
   const { userId } = await auth();
@@ -110,7 +109,7 @@ export async function PATCH(req) {
         }
 
         console.log("Sending approval email to:", data.contact_email);
-        const emailResult = await resend.emails.send({
+        const emailResult = await getResend().emails.send({
           from: "EP Investing <noreply@send.epinvesting.com>",
           to: data.contact_email,
           subject: `Your ${data.company_name} profile is ready on EP Investing`,
