@@ -121,6 +121,8 @@ export async function PATCH(req) {
       if (invitation?.url) inviteUrl = invitation.url;
     } catch (inviteErr) {
       console.error("Clerk invite error:", inviteErr?.message || inviteErr);
+      // User may already exist in Clerk — use sign-in URL instead
+      inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-in?redirect_url=${encodeURIComponent(dashboardUrl)}`;
     }
 
     try {
