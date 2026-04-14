@@ -42,7 +42,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider
-    signUpUrl="/onboarding/researcher"
+    signUpUrl="/sign-up"
     signInUrl="/sign-in"
     appearance={{
     layout: {
