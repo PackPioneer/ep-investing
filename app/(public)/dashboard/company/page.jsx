@@ -153,11 +153,6 @@ export default function CompanyDashboard() {
     { id: "funding", label: "Funding Round" },
     { id: "jobs", label: "Jobs" },
     { id: "updates", label: "Updates" },
-    { id: "overview", label: "Overview" },
-    { id: "profile", label: "Profile" },
-    { id: "funding", label: "Funding Round" },
-    { id: "jobs", label: "Jobs" },
-    { id: "updates", label: "Updates" },
     { id: "investors", label: "Investors" },
     { id: "experts", label: "Experts" }, 
   ];
