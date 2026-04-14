@@ -23,7 +23,7 @@ export async function POST(req) {
     // Notify admin
     await getResend().emails.send({
       from: "EP Investing <noreply@epinvesting.com>",
-      to: "otto@epinvesting.com",
+      to: "info@epinvesting.com",
       subject: `New expert application: ${name}`,
       html: `<p><strong>${name}</strong> (${email}) applied to join the expert network.</p><p>Expertise: ${expertise_areas?.join(", ")}</p><p>Location: ${location}</p><p>Rate: ${hourly_rate}</p>`,
     });

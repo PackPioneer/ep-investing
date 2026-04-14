@@ -50,7 +50,7 @@ export default function AboutPage() {
         <div className="border-t border-[#e2e6ed] pt-10 mb-10">
           <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-4">The team</h2>
           <p className="text-[#4a5568] leading-relaxed">
-            EP Investing is built by <a href="https://theenergypioneer.com" target="_blank" rel="noopener noreferrer" className="text-[#2d6a4f] hover:underline">The Energy Pioneer</a> — a media and intelligence company covering the global energy transition. Questions? Reach us at <a href="mailto:otto@epinvesting.com" className="text-[#2d6a4f] hover:underline">otto@epinvesting.com</a>.
+            EP Investing is built by <a href="https://theenergypioneer.com" target="_blank" rel="noopener noreferrer" className="text-[#2d6a4f] hover:underline">The Energy Pioneer</a> — a media and intelligence company covering the global energy transition. Questions? Reach us at <a href="mailto:info@epinvesting.com" className="text-[#2d6a4f] hover:underline">info@epinvesting.com</a>.
           </p>
         </div>
 

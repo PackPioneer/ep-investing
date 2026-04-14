@@ -173,7 +173,7 @@ export async function POST(req) {
         },
         body: JSON.stringify({
           from: 'EP Investing <noreply@epinvesting.com>',
-          to: 'otto@epinvesting.com',
+          to: 'info@epinvesting.com',
           subject: `New company submitted: ${name}`,
           html: `
             <h2>New Company Submission</h2>

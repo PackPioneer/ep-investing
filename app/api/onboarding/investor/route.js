@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "otto@epinvesting.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "info@epinvesting.com";
 const FROM_EMAIL = process.env.FROM_EMAIL || "notifications@epinvesting.com";
 
 export async function POST(req) {
