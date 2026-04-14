@@ -27,6 +27,7 @@ export async function POST(req) {
     .from("matched_requests")
     .insert({
       path: "investor",
+      status: "pending",
       name, email, firm,
       focus: sectors?.join(", "),
       stage: stages?.join(", "),
