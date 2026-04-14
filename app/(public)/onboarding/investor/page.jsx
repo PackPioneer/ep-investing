@@ -131,7 +131,7 @@ export default function InvestorOnboarding() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>Your name <span className="text-[#2d6a4f]">*</span></label>
-                  <input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Otto Gunderson" className={inputClass} />
+                  <input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Alex Johnson" className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Your role</label>

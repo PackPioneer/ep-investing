@@ -198,8 +198,8 @@ export default function ClaimCompanyPage() {
                 {[
                   { name: "company_name", label: "Company name", placeholder: "e.g. Verdagy", required: true },
                   { name: "company_url", label: "Company website", placeholder: "https://verdagy.com", required: true },
-                  { name: "contact_name", label: "Your name", placeholder: "Otto Gunderson", required: true },
-                  { name: "contact_email", label: "Your email", placeholder: "otto@company.com", required: true, type: "email" },
+                  { name: "contact_name", label: "Your name", placeholder: "Alex Johnson", required: true },
+                  { name: "contact_email", label: "Your email", placeholder: "alex@company.com", required: true, type: "email" },
                   { name: "contact_role", label: "Your role", placeholder: "CEO, Founder, Marketing…", required: false },
                 ].map((field) => (
                   <div key={field.name} className="flex flex-col gap-1.5">

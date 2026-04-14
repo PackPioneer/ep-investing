@@ -127,7 +127,7 @@ export default function CompanyOnboarding() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClass}>Your name <span className="text-[#2d6a4f]">*</span></label>
-                  <input value={form.contact_name} onChange={e => set("contact_name", e.target.value)} placeholder="Otto Gunderson" className={inputClass} />
+                  <input value={form.contact_name} onChange={e => set("contact_name", e.target.value)} placeholder="Alex Johnson" className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Your role</label>
@@ -136,7 +136,7 @@ export default function CompanyOnboarding() {
               </div>
               <div>
                 <label className={labelClass}>Email <span className="text-[#2d6a4f]">*</span></label>
-                <input type="email" value={form.contact_email} onChange={e => set("contact_email", e.target.value)} placeholder="otto@company.com" className={inputClass} />
+                <input type="email" value={form.contact_email} onChange={e => set("contact_email", e.target.value)} placeholder="alex@company.com" className={inputClass} />
               </div>
               <button onClick={() => setStep(2)}
                 disabled={!form.company_name || !form.website || !form.contact_name || !form.contact_email}

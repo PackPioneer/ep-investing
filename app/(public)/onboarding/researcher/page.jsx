@@ -136,7 +136,7 @@ export default function JobSeekerOnboarding() {
               <h2 className="font-semibold text-[#0f1a14] mb-1">About you</h2>
               <div>
                 <label className={labelClass}>Your name</label>
-                <input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Otto Gunderson" className={inputClass} />
+                <input value={form.name} onChange={e => set("name", e.target.value)} placeholder="Alex Johnson" className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>Email <span className="text-[#2d6a4f]">*</span></label>
