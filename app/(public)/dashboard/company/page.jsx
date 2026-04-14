@@ -9,6 +9,32 @@ const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", se
 const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
 const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace", mixed:"Mixed" };
 
+function AutoRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const res = await fetch("/api/dashboard/company");
+      const data = await res.json();
+      if (data && !data.error) {
+        clearInterval(interval);
+        router.refresh();
+      }
+    }, 2000);
+    setTimeout(() => clearInterval(interval), 30000);
+    return () => clearInterval(interval);
+  }, [router]);
+
+  return (
+    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+      style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="max-w-md text-center">
+        <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
+        <p className="text-[#4a5568] text-sm">Your company profile is being linked to your account. This usually takes just a moment.</p>
+      </div>
+    </div>
+  );
+}
 
 export default function CompanyDashboard() {
   const { user, isLoaded } = useUser();
@@ -142,16 +168,7 @@ export default function CompanyDashboard() {
     </div>
   );
 
-  if (!loading && !company) return (
-  <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
-    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-    <div className="max-w-md text-center">
-      <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
-      <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
-      <p className="text-[#4a5568] text-sm">Your company profile is being linked to your account. This usually takes just a moment.</p>
-    </div>
-  </div>
-);
+  if (!loading && !company) return <AutoRedirect />;
 
   const navItems = [
     { id: "overview", label: "Overview" },
