@@ -30,6 +30,26 @@ export default async function DashboardPage() {
 
   if (company) redirect('/dashboard/company')
 
+  // Check by email in case clerk_user_id isn't linked yet
+  if (userEmail) {
+    const { data: claimMatch } = await supabase
+      .from('claims')
+      .select('matched_company_id')
+      .eq('contact_email', userEmail)
+      .eq('status', 'approved')
+      .single()
+
+    if (claimMatch?.matched_company_id) {
+      // Link the clerk_user_id to the company now
+      await supabase
+        .from('companies')
+        .update({ clerk_user_id: userId })
+        .eq('id', claimMatch.matched_company_id)
+
+      redirect('/dashboard/company')
+    }
+  }
+
   const { data: investor } = await supabase
     .from('matched_requests')
     .select('id')
