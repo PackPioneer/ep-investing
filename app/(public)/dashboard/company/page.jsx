@@ -33,6 +33,7 @@ export default function CompanyDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [matchedInvestors, setMatchedInvestors] = useState([]);
   const [matchedExperts, setMatchedExperts] = useState([]);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (!isLoaded) return;
