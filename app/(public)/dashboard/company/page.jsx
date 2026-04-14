@@ -133,6 +133,19 @@ export default function CompanyDashboard() {
     </div>
   );
 
+  if (!loading && !company) return (
+  <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="max-w-md text-center">
+      <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
+      <p className="text-[#4a5568] text-sm mb-6">Your company profile is being linked to your account. This usually takes a few minutes.</p>
+      <a href="/onboarding/company" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+        Complete your profile
+      </a>
+    </div>
+  </div>
+);
+
   const navItems = [
     { id: "overview", label: "Overview" },
     { id: "profile", label: "Profile" },
