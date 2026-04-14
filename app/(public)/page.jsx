@@ -16,47 +16,48 @@ const quickTags = [
   { slug: "electric_aviation", label: "Electric Aviation" },
   { slug: "battery_storage", label: "Battery Storage" },
 ];
+
 const categories = [
-  { icon: "null", name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
-  { icon: "null", name: "Electric Aviation", count: 74, slug: "electric_aviation" },
-  { icon: "null", name: "Battery Storage", count: 69, slug: "battery_storage" },
-  { icon: "null", name: "Green Hydrogen", count: 64, slug: "green_hydrogen" },
-  { icon: "null", name: "Wind Energy", count: 60, slug: "wind_energy" },
-  { icon: "null", name: "SAF / Efuels", count: 52, slug: "saf_efuels" },
-  { icon: "null", name: "Geothermal", count: 39, slug: "geothermal" },
-  { icon: "null", name: "Industrial Decarb", count: 37, slug: "industrial_decarb" },
-  { icon: "null", name: "Solar", count: 37, slug: "solar" },
-  { icon: "null", name: "EV Charging", count: 33, slug: "ev_charging" },
+  { name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
+  { name: "Electric Aviation", count: 74, slug: "electric_aviation" },
+  { name: "Battery Storage", count: 69, slug: "battery_storage" },
+  { name: "Green Hydrogen", count: 64, slug: "green_hydrogen" },
+  { name: "Wind Energy", count: 60, slug: "wind_energy" },
+  { name: "SAF / Efuels", count: 52, slug: "saf_efuels" },
+  { name: "Geothermal", count: 39, slug: "geothermal" },
+  { name: "Industrial Decarb", count: 37, slug: "industrial_decarb" },
+  { name: "Solar", count: 37, slug: "solar" },
+  { name: "EV Charging", count: 33, slug: "ev_charging" },
 ];
 
 const roleTiles = [
   {
     icon: TrendingUp,
     title: "Investors",
-    desc: "Find deal flow across climate categories — from seed to growth — with thesis-matched companies and grants.",
+    desc: "Source deals and track the energy transition across 14 sectors.",
     cta: "Get investor access",
     href: "/onboarding/investor",
   },
   {
     icon: Zap,
     title: "Founders",
-    desc: "Raise faster with structured investor discovery. Find aligned VCs, angels, and non-dilutive grants.",
-    cta: "Claim your company",
+    desc: "Get matched with investors and surface your company to the right people.",
+    cta: "Claim your profile",
     href: "/onboarding/company",
   },
   {
     icon: Users,
     title: "Experts",
-    desc: "Get hired for high-impact climate work — consulting, fractional roles, and advisory.",
-    cta: "Join as expert",
+    desc: "Get hired for high-impact climate roles and attract inbound deal flow.",
+    cta: "Join as an expert",
     href: "/experts",
   },
   {
     icon: Briefcase,
     title: "Researchers",
-    desc: "Browse roles and information from cleantech companies — engineering, finance, policy, and operations.",
-    cta: "Browse jobs",
-    href: "/researchers",
+    desc: "Browse companies, open roles, and grants across the energy transition.",
+    cta: "Browse directory",
+    href: "/search",
   },
 ];
 
@@ -75,21 +76,19 @@ export default function HomePage() {
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setRecentCompanies(data.slice(0, 5)); })
       .catch(() => {});
-
     fetch("/api/investors")
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setRecentInvestors(data.slice(0, 5)); })
       .catch(() => {});
-
     fetch("/api/grants")
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setRecentGrants(data.slice(0, 5)); })
       .catch(() => {});
-  }, []);
     fetch("/api/jobs?limit=5")
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setRecentJobs(data.slice(0, 5)); })
       .catch(() => {});
+  }, []);
 
   const handleSearch = (e, override) => {
     if (e) e.preventDefault();
@@ -121,7 +120,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
 
       {/* HERO */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-20">
+      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-16">
         <div className="absolute inset-0 opacity-[0.025] pointer-events-none" style={{
           backgroundImage: "linear-gradient(rgba(45,106,79,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(45,106,79,0.4) 1px, transparent 1px)",
           backgroundSize: "60px 60px"
@@ -142,7 +141,7 @@ export default function HomePage() {
             Search companies, investors, grants, and jobs across climate and energy — curated, structured, and updated regularly.
           </p>
 
-          <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden mb-8 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
+          <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden mb-6 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
             <div className="flex items-center flex-1 px-4 gap-3">
               <Search size={16} className="text-[#718096] flex-shrink-0" />
               <input
@@ -157,27 +156,30 @@ export default function HomePage() {
             </button>
           </form>
 
-          <div className="flex flex-wrap gap-3 mb-8">
-            {[
-              { label: "I'm an Investor", href: "/onboarding/investor" },
-              { label: "I'm a Founder", href: "/onboarding/company" },
-              { label: "I'm a Researcher", href: "/onboarding/researcher" },
-              { label: "Browse Directory", href: "/search" },
-            ].map(btn => (
-              <Link key={btn.label} href={btn.href}
-                className="flex items-center gap-2 px-4 py-2 text-sm border border-[#d0d6e0] bg-[#ffffff] rounded-lg text-[#0f1a14] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[#f8f9fb] transition-all">
-                {btn.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-12">
             <span className="text-[#718096] text-xs font-mono tracking-wider">Browse:</span>
             {quickTags.map(tag => (
               <button key={tag.slug} onClick={() => handleSearch(null, tag.slug)}
                 className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[rgba(45,106,79,0.06)] transition-all">
                 {tag.label}
               </button>
+            ))}
+          </div>
+
+          {/* ROLE CARDS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {roleTiles.map(tile => (
+              <Link key={tile.title} href={tile.href}
+                className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
+                <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center">
+                  <tile.icon size={18} className="text-[#2d6a4f]" />
+                </div>
+                <div style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14]">{tile.title}</div>
+                <div className="text-xs text-[#4a5568] leading-relaxed font-light flex-1">{tile.desc}</div>
+                <div className="text-xs text-[#2d6a4f] font-mono flex items-center gap-1 group-hover:gap-2 transition-all mt-1">
+                  {tile.cta} <ArrowRight size={11} />
+                </div>
+              </Link>
             ))}
           </div>
         </motion.div>
@@ -204,26 +206,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ROLE TILES */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-8">Start here</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
-          {roleTiles.map(tile => (
-            <Link key={tile.title} href={tile.href}
-              className="bg-[#ffffff] p-7 flex flex-col gap-3 hover:bg-[#f8f9fb] transition-colors group">
-              <tile.icon size={22} className="text-[#2d6a4f]" />
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14]">{tile.title}</div>
-              <div className="text-sm text-[#4a5568] leading-relaxed font-light">{tile.desc}</div>
-              <div className="text-xs text-[#2d6a4f] font-mono mt-auto pt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
-                {tile.cta} <ArrowRight size={12} />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <div className="border-t border-[#e2e6ed]" />
-
       {/* DIRECTORY BLOCKS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
@@ -233,9 +215,9 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
-          { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
-          { num: "47", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
-          { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
+            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
+            { num: "185+", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
+            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
           ].map(card => (
             <Link key={card.title} href={card.href}
               className="relative bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
@@ -255,7 +237,6 @@ export default function HomePage() {
         <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
 
-          {/* Companies */}
           <div className="bg-[#ffffff] p-6">
             <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New companies</span>
@@ -278,7 +259,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Investors — live from DB */}
           <div className="bg-[#ffffff] p-6">
             <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Investors</span>
@@ -301,7 +281,6 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Grants — live from DB */}
           <div className="bg-[#ffffff] p-6">
             <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Grants closing soon</span>
@@ -312,8 +291,8 @@ export default function HomePage() {
                 className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
                 <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{(grant.title || '').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</div>
-                    {grant.deadline_date && (
+                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{(grant.title || "").toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</div>
+                  {grant.deadline_date && (
                     <div className="text-xs font-mono mt-1 px-2 py-0.5 rounded-full bg-[rgba(255,150,80,0.1)] text-[#ff9650] border border-[rgba(255,150,80,0.2)] inline-block">
                       {new Date(grant.deadline_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </div>
@@ -326,29 +305,29 @@ export default function HomePage() {
                 <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
               </div>
             ))}
-        </div>
-        {/* Jobs — live from DB */}
-<div className="bg-[#ffffff] p-6">
-  <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
-    <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New Jobs</span>
-    <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-  </div>
-  {recentJobs.length > 0 ? recentJobs.map(job => (
-    <Link key={job.id} href="/jobs"
-      className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
-      <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
-      <div>
-        <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{job.title}</div>
-        <div className="text-xs font-mono text-[#718096] mt-1">{job.company}</div>
-      </div>
-    </Link>
-  )) : [1,2,3,4,5].map(i => (
-    <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
-      <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
-      <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
-    </div>
-  ))}
-</div>
+          </div>
+
+          <div className="bg-[#ffffff] p-6">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+              <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New jobs</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+            </div>
+            {recentJobs.length > 0 ? recentJobs.map(job => (
+              <Link key={job.id} href="/jobs"
+                className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+                <div>
+                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{job.title}</div>
+                  <div className="text-xs font-mono text-[#718096] mt-1">{job.company}</div>
+                </div>
+              </Link>
+            )) : [1,2,3,4,5].map(i => (
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
+                <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -364,13 +343,12 @@ export default function HomePage() {
           {categories.map(cat => (
             <button key={cat.name} onClick={() => handleSearch(null, cat.slug)}
               className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-2 text-left hover:border-[#2d6a4f] hover:bg-[#f8f9fb] hover:-translate-y-0.5 transition-all">
-              {cat.icon && cat.icon !== "null" && <div className="text-2xl">{cat.icon}</div>}
               <div className="text-sm font-medium text-[#0f1a14] leading-snug">{cat.name}</div>
               <div className="text-xs text-[#718096] font-mono">{cat.count} companies</div>
             </button>
           ))}
-          </div>
-           </section>
+        </div>
+      </section>
 
       {/* EMAIL CAPTURE */}
       <div className="bg-[#ffffff] border-y border-[#e2e6ed]">
