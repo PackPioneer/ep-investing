@@ -95,12 +95,12 @@ export default function InvestorOnboarding() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">You're in</h2>
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Application received</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-2">
-          Thanks {form.name} — we've received your investor profile{form.firm ? ` from ${form.firm}` : ""}.
+          Thanks {form.name} — we've received your investor profile{form.firm ? ` from ${form.firm}` : ""} and are reviewing it now.
         </p>
         <p className="text-[#718096] text-sm mb-8">
-          Check your inbox at {form.email} for a confirmation. We'll match you to relevant deal flow shortly.
+          Check your inbox at {form.email} for a confirmation. You'll hear back within 1 business day once your access is approved.
         </p>
         <Link href="/search" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
           Browse companies <ArrowRight size={14} />

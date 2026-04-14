@@ -97,10 +97,10 @@ export async function POST(req) {
     html: `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
         <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
-          <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">You're in, ${name}.</h2>
+          <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">Application received, ${name}.</h2>
           <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
-            We've received your investor profile and will start matching you to relevant climate and energy companies.
-            ${sectors?.length ? `You'll see deal flow across <strong>${sectors.slice(0, 2).map(s => s.replace(/_/g, " ")).join(" and ")}</strong>${sectors.length > 2 ? ` and ${sectors.length - 2} more sectors` : ""}.` : ""}
+            We've received your investor profile and are reviewing it now. You'll hear back from us within 1 business day once your access is approved.
+            ${sectors?.length ? `Your focus areas — <strong>${sectors.slice(0, 2).map(s => s.replace(/_/g, " ")).join(" and ")}</strong>${sectors.length > 2 ? ` and ${sectors.length - 2} more` : ""} — have been noted.` : ""}
           </p>
           <div style="background: #f8f9fb; border-radius: 12px; padding: 20px; border: 1px solid #e2e6ed; margin-bottom: 24px;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/search" style="color: #2d6a4f; font-size: 14px; font-weight: 600; text-decoration: none;">Browse 1,300+ climate companies →</a>
