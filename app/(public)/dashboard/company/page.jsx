@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { usePaywall } from "@/components/PaywallModal";
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public","unknown"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public", unknown:"Unknown" };
@@ -34,6 +35,7 @@ export default function CompanyDashboard() {
   const [matchedInvestors, setMatchedInvestors] = useState([]);
   const [matchedExperts, setMatchedExperts] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
+  const { triggerPaywall, hasPayment } = usePaywall();
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -74,6 +76,8 @@ export default function CompanyDashboard() {
   }, [isLoaded, user]);
 
   async function saveProfile(e) {
+    triggerPaywall();
+    if (!hasPayment) return;
     e.preventDefault();
     setSaving(true);
     const payload = { ...form, industry_tags: form.industry_tags.split(",").map(t => t.trim()).filter(Boolean) };
@@ -83,6 +87,8 @@ export default function CompanyDashboard() {
 
   async function submitJob(e) {
     e.preventDefault();
+    triggerPaywall();
+    if (!hasPayment) return;
     setSubmittingJob(true);
     const res = await fetch("/api/dashboard/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(jobForm) });
     if (res.ok) { const j = await res.json(); setJobs(prev => [j, ...prev]); setJobForm({ title: "", location: "", type: "", contact_email: "", description: "" }); setShowJobForm(false); }
@@ -103,6 +109,8 @@ export default function CompanyDashboard() {
   }
 
   async function saveFunding(e) {
+    triggerPaywall();
+    if (!hasPayment) return;
     e.preventDefault();
     setSavingFunding(true);
     await fetch("/api/dashboard/company", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(fundingForm) });

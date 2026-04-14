@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import { PHProvider } from "./providers";
+import { PaywallProvider } from "@/components/PaywallModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,9 +91,11 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable}`}>
           <PHProvider>
-            <Navbar />
-            {children}
-            <Toaster position="top-right" />
+            <PaywallProvider>
+              <Navbar />
+              {children}
+              <Toaster position="top-right" />
+            </PaywallProvider>
           </PHProvider>
         </body>
       </html>
