@@ -31,19 +31,7 @@ export async function PATCH(req) {
   if (!error && status === "approved" && data?.email) {
     try {
       const dashboardUrl = process.env.NEXT_PUBLIC_SITE_URL + "/dashboard/investor";
-      let inviteUrl = dashboardUrl;
-
-      try {
-        const clerk = await clerkClient();
-        const invitation = await clerk.invitations.createInvitation({
-          emailAddress: data.email,
-          redirectUrl: dashboardUrl,
-          publicMetadata: { role: "investor" },
-        });
-        inviteUrl = invitation.url;
-      } catch {
-        console.log("User exists, sending direct link");
-      }
+      const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?redirect_url=${encodeURIComponent(dashboardUrl)}`;
 
       await getResend().emails.send({
         from: "EP Investing <noreply@epinvesting.com>",

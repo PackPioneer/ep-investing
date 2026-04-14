@@ -113,7 +113,7 @@ export async function PATCH(req) {
     console.log("Sending approval email to:", claim.contact_email);
 
     const dashboardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/company`;
-    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-in?redirect_url=${encodeURIComponent(dashboardUrl)}`;
+    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/sign-up?redirect_url=${encodeURIComponent(dashboardUrl)}`;
 
     try {
       const result = await getResend().emails.send({
