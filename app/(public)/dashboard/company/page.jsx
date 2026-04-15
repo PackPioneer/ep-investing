@@ -426,6 +426,17 @@ export default function CompanyDashboard() {
                 )}
               </div>
 
+            <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
+              <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Company Logo</label>
+              {logoUrl && (
+                <img src={logoUrl} alt="Company logo" className="w-16 h-16 object-contain rounded-lg border border-[#e2e6ed] mb-3" />
+              )}
+              <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
+                <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
+              </label>
+              <p className="text-xs text-[#718096] mt-2">PNG, JPG, or SVG. Shown on your public profile.</p>
+            </div>
             <div className="flex items-center gap-3 mt-6">
               <button type="submit" disabled={saving} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
                 {saving ? "Saving..." : "Save changes"}
@@ -433,17 +444,6 @@ export default function CompanyDashboard() {
               {saved && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
             </div>
           </form>
-          <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
-            <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Company Logo</label>
-            {logoUrl && (
-              <img src={logoUrl} alt="Company logo" className="w-16 h-16 object-contain rounded-lg border border-[#e2e6ed] mb-3" />
-            )}
-            <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
-              {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
-              <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
-            </label>
-            <p className="text-xs text-[#718096] mt-2">PNG, JPG, or SVG. Shown on your public profile.</p>
-          </div>
           </>
         ) : (
     <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
