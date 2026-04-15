@@ -8,7 +8,7 @@ export default function PublicLayout({ children }) {
         <p className="text-xs text-[#a0b8a8] font-mono">
           EP Investing is now open —{" "}
           <Link href="/pricing" className="text-white font-semibold hover:text-[#2d6a4f] transition-colors">
-            free through July 15, 2025
+            free through July 15, 2026
           </Link>
         </p>
       </div>
