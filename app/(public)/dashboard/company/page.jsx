@@ -127,6 +127,20 @@ export default function CompanyDashboard() {
     await fetch("/api/dashboard/jobs", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     setJobs(prev => prev.filter(j => j.id !== id));
   }
+  async function deleteUpdate(id) {
+    await fetch(`/api/companies/${company.id}/updates/${id}`, { method: "DELETE" });
+    setUpdates(prev => prev.filter(u => u.id !== id));
+ }
+
+async function deleteLogo() {
+  await fetch("/api/dashboard/logo", { method: "DELETE" });
+  setLogoUrl(null);
+}
+
+async function deleteDeck() {
+  await fetch("/api/dashboard/pitch-deck", { method: "DELETE" });
+  setDeckUrl(null);
+}
 
   async function submitUpdate(e) {
     e.preventDefault();
@@ -429,8 +443,11 @@ export default function CompanyDashboard() {
             <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Company Logo</label>
               {logoUrl && (
-                <img src={logoUrl} alt="Company logo" className="w-16 h-16 object-contain rounded-lg border border-[#e2e6ed] mb-3" />
-              )}
+  <div className="flex items-center gap-3 mb-3">
+    <img src={logoUrl} alt="Company logo" className="w-16 h-16 object-contain rounded-lg border border-[#e2e6ed]" />
+    <button onClick={deleteLogo} className="text-xs text-red-500 hover:text-red-700 font-mono">Remove</button>
+  </div>
+)}
               <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
                 <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
@@ -498,10 +515,13 @@ export default function CompanyDashboard() {
             <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Pitch Deck (PDF)</label>
               {deckUrl && (
-                <a href={deckUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-[#2d6a4f] hover:underline block mb-3">
-                  View current pitch deck
-                </a>
-              )}
+  <div className="flex items-center gap-3 mb-3">
+    <a href={deckUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-[#2d6a4f] hover:underline">
+      View current pitch deck
+    </a>
+    <button onClick={deleteDeck} className="text-xs text-red-500 hover:text-red-700 font-mono">Remove</button>
+  </div>
+)}
               <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 {uploadingDeck ? "Uploading..." : deckUrl ? "Replace pitch deck" : "Upload pitch deck"}
                 <input type="file" accept=".pdf" onChange={uploadDeck} className="hidden" disabled={uploadingDeck} />
@@ -614,6 +634,7 @@ export default function CompanyDashboard() {
                     </div>
                     <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
                     {u.body && <p className="text-xs text-[#4a5568] mt-1">{u.body}</p>}
+                    <button onClick={() => deleteUpdate(u.id)} className="text-xs text-red-500 hover:text-red-700 font-mono mt-2">Delete</button>
                   </div>
                 ))}
               </div>

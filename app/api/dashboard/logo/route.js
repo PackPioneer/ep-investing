@@ -44,3 +44,18 @@ export async function POST(req) {
 
   return Response.json({ url: urlData.publicUrl });
 }
+export async function DELETE(req) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { data: company } = await supabaseAdmin
+    .from("companies")
+    .select("id")
+    .eq("clerk_user_id", userId)
+    .single();
+
+  if (!company) return Response.json({ error: "No company found" }, { status: 404 });
+
+  await supabaseAdmin.from("companies").update({ logo_url: null }).eq("id", company.id);
+  return Response.json({ ok: true });
+}
