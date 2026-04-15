@@ -102,9 +102,8 @@ export default function CompanyDashboard() {
   }, [isLoaded, user]);
 
   async function saveProfile(e) {
-    triggerPaywall();
-    if (!hasPayment) return;
     e.preventDefault();
+    triggerPaywall(); // shows nudge but doesn't block
     setSaving(true);
     const payload = { ...form, industry_tags: form.industry_tags.split(",").map(t => t.trim()).filter(Boolean) };
     await fetch("/api/dashboard/company", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
