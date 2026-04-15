@@ -62,6 +62,8 @@ export default function CompanyDashboard() {
   const [matchedExperts, setMatchedExperts] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
   const { triggerPaywall, hasPayment } = usePaywall();
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(null);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -92,6 +94,7 @@ export default function CompanyDashboard() {
           min_check_size: data.min_check_size || "",
         });
         setDeckUrl(data.pitch_deck_url || null);
+        setLogoUrl(data.logo_url || null);
         setLoading(false);
         fetch("/api/dashboard/jobs").then(r => r.json()).then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
         fetch("/api/companies/" + data.id + "/updates").then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
@@ -152,6 +155,17 @@ export default function CompanyDashboard() {
     if (res.ok) { const { url } = await res.json(); setDeckUrl(url); }
     setUploadingDeck(false);
   }
+
+  async function uploadLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  setUploadingLogo(true);
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch("/api/dashboard/logo", { method: "POST", body: formData });
+  if (res.ok) { const { url } = await res.json(); setLogoUrl(url); }
+  setUploadingLogo(false);
+}
 
   const profileChecks = form ? [
     { label: "Description added", done: !!form.description },
@@ -482,6 +496,10 @@ export default function CompanyDashboard() {
               </label>
               <p className="text-xs text-[#718096] mt-2">PDF only. Only visible to verified investors.</p>
             </div>
+            <label className="flex items-center gap-2 cursor-pointer bg-white border border-[#e2e6ed] rounded-lg px-4 py-2.5 hover:border-[#2d6a4f] transition-all text-sm text-[#0f1a14]">
+  {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
+  <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
+</label>
           </div>
         )}
 
