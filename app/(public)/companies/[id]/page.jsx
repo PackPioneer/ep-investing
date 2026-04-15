@@ -110,8 +110,8 @@ async function postUpdate(e) {
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-10">
 
-        <Link href="/search" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
-          <ArrowLeft size={14} /> Back to search
+        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
+          <ArrowLeft size={14} /> Back to dashboard
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -135,12 +135,6 @@ async function postUpdate(e) {
                   ) : (
                     <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f]">
                       {(company.name || company.url || "?")[0].toUpperCase()}
-                      {company.show_contact && company.primary_contact_email && (
-                   <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">
-                   <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-                    Open to contact
-                    </span>
-                   )}
                     </div>
                   )}
                   <div>
@@ -162,6 +156,24 @@ async function postUpdate(e) {
                   </div>
                 )}
               </div>
+                <div>
+                    <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] leading-tight">
+                      {company.name || company.url}
+                    </h1>
+                    {company.url && (
+                      <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
+                        <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
+                      </a>
+                    )}
+                    {company.show_contact && company.primary_contact_email && (
+                      <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f] mt-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+                        Open to contact
+                      </span>
+                    )}
+                  </div>
 
               {/* Tags + stage + model */}
               <div className="flex flex-wrap gap-2 mb-4">
