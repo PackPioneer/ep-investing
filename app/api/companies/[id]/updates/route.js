@@ -41,3 +41,19 @@ export async function POST(req, { params }) {
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json(data);
 }
+export async function DELETE(req, { params }) {
+  const { userId } = await auth();
+  const { searchParams } = new URL(req.url);
+  const updateId = searchParams.get("update_id");
+
+  if (!updateId) return Response.json({ error: "Missing update_id" }, { status: 400 });
+
+  const { error } = await supabase
+    .from("company_updates")
+    .delete()
+    .eq("id", updateId)
+    .eq("clerk_user_id", userId);
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json({ success: true });
+}
