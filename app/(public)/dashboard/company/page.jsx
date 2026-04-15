@@ -643,74 +643,96 @@ async function deleteDeck() {
           </div>
         )}
         {activeTab === "investors" && (
-  <div className="flex flex-col gap-4">
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-      <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Matched Investors</div>
-      <p className="text-xs text-[#718096] mb-5">Investors on EP Investing whose focus matches your sector and stage.</p>
-      {matchedInvestors.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {matchedInvestors.map(inv => (
-            <div key={inv.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
-              <div>
-                <div className="text-sm font-semibold text-[#0f1a14]">{inv.name}</div>
-                {inv.firm && <div className="text-xs text-[#718096] mt-0.5">{inv.firm}</div>}
-                {inv.focus && <div className="text-xs text-[#2d6a4f] mt-1">{inv.focus}</div>}
-                {inv.stage && <div className="text-xs text-[#718096] mt-0.5">Stage: {inv.stage}</div>}
-                {inv.check_size && <div className="text-xs text-[#718096] mt-0.5">Check: {inv.check_size}</div>}
+          <div className="flex flex-col gap-4">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investor Discovery</div>
+                <a href="/investors" target="_blank" className="text-xs text-[#2d6a4f] font-mono hover:underline">Browse all →</a>
               </div>
-              {inv.show_contact && inv.primary_contact_email && (
-                <a href={`mailto:${inv.primary_contact_email}?subject=Introduction via EP Investing`}
-                  className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
-                  Contact
-                </a>
+              <p className="text-xs text-[#718096] mb-5">Investors matched to your sector and stage. Update your profile tags to improve matches.</p>
+              {matchedInvestors.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {matchedInvestors.map(inv => (
+                    <div key={inv.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{inv.name}</div>
+                        {inv.firm && <div className="text-xs text-[#718096] mt-0.5">{inv.firm}</div>}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {inv.focus && <span className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">{inv.focus}</span>}
+                          {inv.stage && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f8] border border-[#e2e6ed] text-[#718096]">{inv.stage}</span>}
+                          {inv.check_size && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f8] border border-[#e2e6ed] text-[#718096]">{inv.check_size}</span>}
+                        </div>
+                      </div>
+                      {inv.show_contact && inv.primary_contact_email && (
+                        <a href={`mailto:${inv.primary_contact_email}?subject=Introduction via EP Investing`}
+                          className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4 transition-colors">
+                          Contact
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 border border-dashed border-[#e2e6ed] rounded-xl">
+                  <p className="text-sm text-[#718096] mb-3">No matched investors yet.</p>
+                  <p className="text-xs text-[#a0aec0] max-w-xs mx-auto">Fill in your industry tags and funding stage on your Profile tab to get matched with relevant investors.</p>
+                  <button onClick={() => setActiveTab("profile")} className="mt-4 text-xs text-[#2d6a4f] font-semibold hover:underline">
+                    Update your profile →
+                  </button>
+                </div>
               )}
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-[#718096]">No matched investors yet. Make sure your sector and funding stage are filled in on your profile.</p>
-      )}
-    </div>
-  </div>
-)}
+          </div>
+        )}
 
 {activeTab === "experts" && (
-  <div className="flex flex-col gap-4">
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-      <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Available Experts</div>
-      <p className="text-xs text-[#718096] mb-5">Climate and energy experts available for consulting, advisory, and fractional roles.</p>
-      {matchedExperts.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          {matchedExperts.map(exp => (
-            <div key={exp.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
-              <div>
-                <div className="text-sm font-semibold text-[#0f1a14]">{exp.name}</div>
-                {exp.location && <div className="text-xs text-[#718096] mt-0.5">{exp.location}</div>}
-                {exp.expertise_areas?.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {exp.expertise_areas.slice(0, 3).map(a => (
-                      <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{a}</span>
-                    ))}
-                  </div>
-                )}
-                {exp.hourly_rate && <div className="text-xs text-[#718096] mt-1">{exp.hourly_rate}</div>}
-                {exp.availability && <div className="text-xs text-[#2d6a4f] mt-0.5">{exp.availability}</div>}
+          <div className="flex flex-col gap-4">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Available Experts</div>
+                <a href="/experts" target="_blank" className="text-xs text-[#2d6a4f] font-mono hover:underline">Browse all →</a>
               </div>
-              {exp.email && (
-                <a href={`mailto:${exp.email}?subject=Expert inquiry via EP Investing`}
-                  className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
-                  Contact
-                </a>
+              <p className="text-xs text-[#718096] mb-5">Climate and energy experts available for consulting, advisory, and fractional roles.</p>
+              {matchedExperts.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {matchedExperts.map(exp => (
+                    <div key={exp.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{exp.name}</div>
+                        {exp.location && <div className="text-xs text-[#718096] mt-0.5">{exp.location}</div>}
+                        {exp.expertise_areas?.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {exp.expertise_areas.slice(0, 3).map(a => (
+                              <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">{a}</span>
+                            ))}
+                          </div>
+                        )}
+                        <div className="flex gap-3 mt-2">
+                          {exp.hourly_rate && <span className="text-xs text-[#718096]">{exp.hourly_rate}</span>}
+                          {exp.availability && <span className="text-xs text-[#2d6a4f] font-medium">{exp.availability}</span>}
+                        </div>
+                      </div>
+                      {exp.email && (
+                        <a href={`mailto:${exp.email}?subject=Expert inquiry via EP Investing`}
+                          className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4 transition-colors">
+                          Contact
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 border border-dashed border-[#e2e6ed] rounded-xl">
+                  <p className="text-sm text-[#718096] mb-2">No experts available yet.</p>
+                  <p className="text-xs text-[#a0aec0] max-w-xs mx-auto">We're building our expert network. Check back soon or browse all experts.</p>
+                  <a href="/experts" className="mt-4 inline-block text-xs text-[#2d6a4f] font-semibold hover:underline">
+                    Browse experts →
+                  </a>
+                </div>
               )}
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-[#718096]">No experts available yet. Check back after our April 15 launch.</p>
-      )}
-    </div>
-  </div>
-)}
+          </div>
+        )}
       </div>
     </div>
   );
