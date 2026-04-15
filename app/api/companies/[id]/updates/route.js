@@ -2,10 +2,13 @@ import { auth } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(req, { params }) {
+  const id = (await params).id;
+  if (!id || id === "undefined") return Response.json([]);
+  
   const { data, error } = await supabase
     .from("company_updates")
     .select("*")
-    .eq("company_id", params.id)
+    .eq("company_id", id)
     .order("created_at", { ascending: false })
     .limit(20);
   if (error) return Response.json({ error: error.message }, { status: 500 });
@@ -14,11 +17,11 @@ export async function GET(req, { params }) {
 
 export async function POST(req, { params }) {
   const { userId } = await auth();
-  
-  let companyId = params.id;
-  
-  // If company_id is "undefined" or missing, look it up by clerk_user_id
-  if (!companyId || companyId === "undefined") {
+  const id = (await params).id;
+
+  let companyId = (!id || id === "undefined") ? null : id;
+
+  if (!companyId) {
     const { data: company } = await supabase
       .from("companies")
       .select("id")
