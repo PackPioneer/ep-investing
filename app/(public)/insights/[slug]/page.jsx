@@ -124,11 +124,11 @@ export default function ReportPage() {
                   Full reports available April 15
                 </h2>
                 <p className="text-sm text-[#4a5568] font-light max-w-md mb-6">
-                  EP Investing launches April 15. Join the waitlist for early access to key findings, investment data, and full sector analysis.
+                  EP Investing is now open and free through July 15, 2025.
                 </p>
                 <Link href="/pricing"
                   className="flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
-                  Join the waitlist
+                  Get started free
                 </Link>
               </div>
 
@@ -203,14 +203,14 @@ export default function ReportPage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" /> Launching April 15
               </div>
               <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-white mb-2">
-                Get early access
+                Get started free
               </h3>
               <p className="text-xs text-[#a0b8a8] leading-relaxed mb-4 font-light">
-                Join the waitlist for full report access, investor matching, and company signals.
+                Get full access to reports, investor matching, and company signals.
               </p>
               <Link href="/pricing"
                 className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
-                Join the waitlist
+                Get started free
               </Link>
             </div>
 
