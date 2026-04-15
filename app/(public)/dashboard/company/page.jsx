@@ -494,12 +494,19 @@ export default function CompanyDashboard() {
                 {uploadingDeck ? "Uploading..." : deckUrl ? "Replace pitch deck" : "Upload pitch deck"}
                 <input type="file" accept=".pdf" onChange={uploadDeck} className="hidden" disabled={uploadingDeck} />
               </label>
-              <p className="text-xs text-[#718096] mt-2">PDF only. Only visible to verified investors.</p>
+        <p className="text-xs text-[#718096] mt-2">PDF only. Only visible to verified investors.</p>
             </div>
-            <label className="flex items-center gap-2 cursor-pointer bg-white border border-[#e2e6ed] rounded-lg px-4 py-2.5 hover:border-[#2d6a4f] transition-all text-sm text-[#0f1a14]">
-  {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
-  <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
-</label>
+            <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
+              <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Company Logo</label>
+              {logoUrl && (
+                <img src={logoUrl} alt="Company logo" className="w-16 h-16 object-contain rounded-lg border border-[#e2e6ed] mb-3" />
+              )}
+              <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                {uploadingLogo ? "Uploading..." : logoUrl ? "Replace logo" : "Upload logo"}
+                <input type="file" accept="image/*" onChange={uploadLogo} className="hidden" disabled={uploadingLogo} />
+              </label>
+              <p className="text-xs text-[#718096] mt-2">PNG, JPG, or SVG. Shown on your public profile.</p>
+            </div>
           </div>
         )}
 
