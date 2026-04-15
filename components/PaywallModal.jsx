@@ -2,12 +2,13 @@
 
 import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { ArrowRight, X, CreditCard } from "lucide-react";
-
+import { useUser } from "@clerk/nextjs";
 const PaywallContext = createContext(null);
 
 const HARD_BLOCK_DATE = new Date("2026-06-01");
 
 export function PaywallProvider({ children }) {
+  const { user } = useUser();
   const [hasPayment, setHasPayment] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,20 @@ export function PaywallProvider({ children }) {
   }, [hasPayment]);
 
   const isHardBlock = new Date() >= HARD_BLOCK_DATE;
-
+const handleStripe = async () => {
+  try {
+    const email = user?.emailAddresses?.[0]?.emailAddress || "";
+    const res = await fetch("/api/stripe/setup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, plan: "company" }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+  } catch {
+    window.location.href = "/pricing";
+  }
+};
   return (
     <PaywallContext.Provider value={{ hasPayment, triggerPaywall, loading }}>
       {children}
@@ -50,10 +64,11 @@ export function PaywallProvider({ children }) {
                 : "Add your card now to keep access after July 15, 2025 — no charge until then. Cancel anytime before July 15th."}
             </p>
             <div className="flex flex-col gap-3">
-              <a href="/pricing"
-                className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all">
-                Add payment method <ArrowRight size={14} />
-              </a>
+              <button
+              onClick={handleStripe}
+              className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all">
+              Add payment method <ArrowRight size={14} />
+              </button>
               {!isHardBlock && (
                 <button onClick={() => setShowModal(false)}
                   className="w-full text-center text-xs text-[#718096] font-mono py-2 hover:text-[#0f1a14] transition-colors">
