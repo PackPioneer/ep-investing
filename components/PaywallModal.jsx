@@ -5,7 +5,7 @@ import { ArrowRight, X, CreditCard } from "lucide-react";
 
 const PaywallContext = createContext(null);
 
-const HARD_BLOCK_DATE = new Date("2025-06-01");
+const HARD_BLOCK_DATE = new Date("2026-06-01");
 
 export function PaywallProvider({ children }) {
   const [hasPayment, setHasPayment] = useState(null);
