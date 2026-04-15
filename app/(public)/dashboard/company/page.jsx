@@ -151,9 +151,8 @@ async function deleteDeck() {
   }
 
   async function saveFunding(e) {
-    triggerPaywall();
-    if (!hasPayment) return;
     e.preventDefault();
+    triggerPaywall();
     setSavingFunding(true);
     await fetch("/api/dashboard/company", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(fundingForm) });
     setSavingFunding(false); setSavedFunding(true); setTimeout(() => setSavedFunding(false), 3000);
