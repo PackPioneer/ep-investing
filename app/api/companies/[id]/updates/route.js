@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(req, { params }) {
@@ -12,10 +13,11 @@ export async function GET(req, { params }) {
 }
 
 export async function POST(req, { params }) {
+  const { userId } = await auth();
   const body = await req.json();
   const { data, error } = await supabase
     .from("company_updates")
-    .insert([{ company_id: params.id, ...body }])
+    .insert([{ company_id: params.id, clerk_user_id: userId || null, ...body }])
     .select()
     .single();
   if (error) return Response.json({ error: error.message }, { status: 500 });
