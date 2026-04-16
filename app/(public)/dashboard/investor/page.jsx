@@ -119,7 +119,7 @@ async function uploadInvestorLogo(e) {
   setUploadingInvestorLogo(true);
   const formData = new FormData();
   formData.append("file", file);
-  const res = await fetch("/api/dashboard/logo", { method: "POST", body: formData });
+  const res = await fetch("/api/dashboard/investor-logo", { method: "POST", body: formData });
   if (res.ok) { const { url } = await res.json(); setInvestorLogoUrl(url); }
   setUploadingInvestorLogo(false);
 }

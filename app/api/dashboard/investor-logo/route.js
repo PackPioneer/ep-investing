@@ -1,0 +1,44 @@
+import { auth } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+export async function POST(req) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { data: investor } = await supabaseAdmin
+    .from("matched_requests")
+    .select("id")
+    .eq("clerk_user_id", userId)
+    .single();
+
+  if (!investor) return Response.json({ error: "No investor found" }, { status: 404 });
+
+  const formData = await req.formData();
+  const file = formData.get("file");
+  if (!file) return Response.json({ error: "No file" }, { status: 400 });
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  const ext = file.name.split(".").pop();
+  const filename = `investor-${investor.id}-logo.${ext}`;
+
+  const { error: uploadError } = await supabaseAdmin.storage
+    .from("logos")
+    .upload(filename, buffer, { contentType: file.type, upsert: true });
+
+  if (uploadError) return Response.json({ error: uploadError.message }, { status: 500 });
+
+  const { data: urlData } = supabaseAdmin.storage.from("logos").getPublicUrl(filename);
+
+  await supabaseAdmin
+    .from("matched_requests")
+    .update({ logo_url: urlData.publicUrl })
+    .eq("id", investor.id);
+
+  return Response.json({ url: urlData.publicUrl });
+}
