@@ -247,18 +247,19 @@ async function uploadInvestorLogo(e) {
         </div>
 
         {/* OVERVIEW TAB */}
-        {activeTab === "overview" && (
+    {activeTab === "overview" && (
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Companies raising", value: companies.filter(c => c.looking_to_raise).length },
-                { label: "Saved companies", value: saved.length },
-                { label: "Total companies", value: companies.length },
-                { label: "Grants tracked", value: grants.length },
+                { label: "Total companies", value: companies.length, sub: "in directory" },
+                { label: "Hiring now", value: companies.filter(c => c.is_hiring).length, sub: "open roles" },
+                { label: "Seeking partnerships", value: companies.filter(c => c.seeking_partnerships).length, sub: "companies" },
+                { label: "Grants tracked", value: grants.length, sub: "opportunities" },
               ].map(stat => (
                 <div key={stat.label} className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                   <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">{stat.label}</div>
                   <div className="text-2xl font-semibold text-[#0f1a14]">{stat.value}</div>
+                  <div className="text-xs text-[#a0aec0] font-mono mt-0.5">{stat.sub}</div>
                 </div>
               ))}
             </div>
@@ -276,38 +277,78 @@ async function uploadInvestorLogo(e) {
               </div>
             )}
 
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Companies raising now</div>
-                <button onClick={() => setActiveTab("feed")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
-              </div>
-              <div className="flex flex-col gap-3">
-                {companies.filter(c => c.looking_to_raise).slice(0, 5).map(c => (
-                  <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#f2f4f8] last:border-0">
-                    <div>
-                      <Link href={`/companies/${c.id}`} className="text-sm font-medium text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link>
-                      {c.funding_stage && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{STAGE_LABELS[c.funding_stage] || c.funding_stage}</span>}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recently active companies</div>
+                  <button onClick={() => setActiveTab("feed")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {companies.slice(0, 6).map(c => (
+                    <div key={c.id} className="flex items-center justify-between py-1.5 border-b border-[#f2f4f8] last:border-0">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f] flex-shrink-0">
+                          {c.name?.[0] || "?"}
+                        </div>
+                        <Link href={`/companies/${c.id}`} className="text-sm text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {c.looking_to_raise && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Raising</span>}
+                        {c.is_hiring && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Hiring</span>}
+                        <button onClick={() => toggleSave(c.id)} className={`text-base ${saved.includes(c.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
+                          {saved.includes(c.id) ? "★" : "☆"}
+                        </button>
+                      </div>
                     </div>
-                    <button onClick={() => toggleSave(c.id)} className={`text-lg ${saved.includes(c.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
-                      {saved.includes(c.id) ? "★" : "☆"}
-                    </button>
-                  </div>
-                ))}
-                {companies.filter(c => c.looking_to_raise).length === 0 && (
-                  <p className="text-sm text-[#718096]">No companies currently raising.</p>
-                )}
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Grants closing soon</div>
+                  <button onClick={() => setActiveTab("grants")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {grants.slice(0, 5).map(g => (
+                    <div key={g.id} className="py-1.5 border-b border-[#f2f4f8] last:border-0">
+                      <div className="text-xs font-medium text-[#0f1a14] mb-1 leading-snug">{g.title}</div>
+                      <div className="flex items-center gap-2">
+                        {g.deadline_date && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+                            {new Date(g.deadline_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </span>
+                        )}
+                        {g.amount_max_usd && (
+                          <span className="text-[10px] text-[#718096] font-mono">Up to ${Number(g.amount_max_usd).toLocaleString()}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {grants.length === 0 && <p className="text-sm text-[#718096]">No grants available.</p>}
+                </div>
               </div>
             </div>
 
             {saved.length > 0 && (
               <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Saved companies</div>
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Your pipeline</div>
                   <button onClick={() => setActiveTab("saved")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
                 </div>
-                <div className="flex flex-col gap-2">
-                  {companies.filter(c => saved.includes(c.id)).slice(0, 5).map(c => (
-                    <Link key={c.id} href={`/companies/${c.id}`} className="text-sm text-[#2d6a4f] hover:underline">{c.name}</Link>
+                <div className="flex gap-4">
+                  {[
+                    { label: "Watching", key: "watching", color: "#2d6a4f" },
+                    { label: "Contacted", key: "contacted", color: "#378ADD" },
+                    { label: "In diligence", key: "diligence", color: "#EF9F27" },
+                    { label: "Passed", key: "passed", color: "#E24B4A" },
+                  ].map(col => (
+                    <div key={col.key} className="flex-1 text-center">
+                      <div className="text-xl font-semibold text-[#0f1a14]">
+                        {companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key).length}
+                      </div>
+                      <div className="text-[10px] font-mono mt-0.5" style={{ color: col.color }}>{col.label}</div>
+                    </div>
                   ))}
                 </div>
               </div>
