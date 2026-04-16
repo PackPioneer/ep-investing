@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight } from "lucide-react";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -17,6 +18,7 @@ export default function InvestorDashboard() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
   const [companies, setCompanies] = useState([]);
+  const [grants, setGrants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState(null);
@@ -25,7 +27,7 @@ export default function InvestorDashboard() {
   const [geoFilter, setGeoFilter] = useState(null);
   const [modelFilter, setModelFilter] = useState(null);
   const [saved, setSaved] = useState([]);
-  const [activeTab, setActiveTab] = useState("feed");
+  const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState(null);
@@ -57,6 +59,10 @@ export default function InvestorDashboard() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+    fetch("/api/grants?limit=20")
+      .then(r => r.json())
+      .then(data => setGrants(Array.isArray(data) ? data : []))
+      .catch(() => {});
     const s = JSON.parse(localStorage.getItem("ep_saved") || "[]");
     setSaved(s);
   }, [isLoaded, user]);
@@ -104,9 +110,16 @@ export default function InvestorDashboard() {
   }, [companies, search, stageFilter, signalFilter, sectorFilter, geoFilter, modelFilter, saved, activeTab]);
 
   const formatFocus = (focus) => focus?.split(",").map(f => f.trim().replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())).join(", ");
-
   const inputClass = "w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]";
   const labelClass = "text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block";
+
+  const NAV = [
+    { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "feed", label: "Deal Flow", icon: TrendingUp },
+    { id: "saved", label: "Saved", icon: Bookmark, badge: saved.length },
+    { id: "grants", label: "Grants", icon: FileText },
+    { id: "profile", label: "Profile", icon: User },
+  ];
 
   const FilterRow = ({ label, options, active, setActive, labelMap }) => (
     <div className="mb-3">
@@ -136,7 +149,7 @@ export default function InvestorDashboard() {
 
       {/* Sidebar */}
       <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
-        <div className="flex items-center justify-between mb-6 px-2">
+        <div className="flex items-center justify-between mb-8 px-2">
           <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
             EP <span className="text-[#2d6a4f]">Investing</span>
           </div>
@@ -146,21 +159,40 @@ export default function InvestorDashboard() {
             </svg>
           </button>
         </div>
-        {[
-          { id: "feed", label: "Deal Flow" },
-          { id: "saved", label: "Saved", badge: saved.length },
-          { id: "profile", label: "Profile" },
-        ].map(item => (
-          <button key={item.id} onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
-            className={"flex items-center justify-between px-3 py-2 rounded-lg text-sm text-left transition-colors w-full " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
-            <span>{item.label}</span>
-            {item.badge > 0 && (
-              <span className="text-xs bg-[#2d6a4f] text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center">{item.badge}</span>
-            )}
-          </button>
-        ))}
-        <Link href="/search" className="flex items-center px-3 py-2 rounded-lg text-sm text-left transition-colors w-full text-[#9ca8a0] hover:text-white">
-          Browse All
+
+        <div className="px-2 mb-4">
+          <div className="text-xs font-mono text-[#4a6a54] uppercase tracking-widest mb-1">Investor</div>
+          <div className="text-sm font-semibold text-white truncate">{profile?.name || user?.firstName || "Your account"}</div>
+          {profile?.firm && <div className="text-xs text-[#9ca8a0] truncate">{profile.firm}</div>}
+        </div>
+
+        <div className="h-px bg-[#1a2e20] mx-2 mb-4" />
+
+        {NAV.map(item => {
+          const Icon = item.icon;
+          return (
+            <button key={item.id} onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
+              className={"flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-left transition-colors w-full " + (activeTab === item.id ? "bg-[#1a2e20] text-white" : "text-[#9ca8a0] hover:text-white")}>
+              <div className="flex items-center gap-2.5">
+                <Icon size={15} />
+                <span>{item.label}</span>
+              </div>
+              {item.badge > 0 && (
+                <span className="text-xs bg-[#2d6a4f] text-white rounded-full px-1.5 py-0.5 min-w-[18px] text-center">{item.badge}</span>
+              )}
+            </button>
+          );
+        })}
+
+        <div className="h-px bg-[#1a2e20] mx-2 my-3" />
+
+        <Link href="/search" className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-[#9ca8a0] hover:text-white transition-colors">
+          <Search size={15} />
+          <span>Browse directory</span>
+        </Link>
+        <Link href="/investors" className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-[#9ca8a0] hover:text-white transition-colors">
+          <TrendingUp size={15} />
+          <span>All investors</span>
         </Link>
       </div>
 
@@ -173,9 +205,78 @@ export default function InvestorDashboard() {
             </svg>
           </button>
           <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
-            {activeTab === "saved" ? "Saved Companies" : activeTab === "profile" ? "Your Profile" : "Deal Flow"}
+            {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
           </h1>
         </div>
+
+        {/* OVERVIEW TAB */}
+        {activeTab === "overview" && (
+          <div className="flex flex-col gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: "Companies raising", value: companies.filter(c => c.looking_to_raise).length },
+                { label: "Saved companies", value: saved.length },
+                { label: "Total companies", value: companies.length },
+                { label: "Grants tracked", value: grants.length },
+              ].map(stat => (
+                <div key={stat.label} className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                  <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">{stat.label}</div>
+                  <div className="text-2xl font-semibold text-[#0f1a14]">{stat.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {!profile?.thesis && !profile?.check_size && (
+              <div className="bg-white border border-dashed border-[#c8d8cc] rounded-2xl p-6 flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-semibold text-[#0f1a14] mb-1">Complete your investor profile</div>
+                  <div className="text-xs text-[#718096]">Add your thesis, check size, and focus areas to get better matches.</div>
+                </div>
+                <button onClick={() => setActiveTab("profile")}
+                  className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
+                  Complete profile
+                </button>
+              </div>
+            )}
+
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Companies raising now</div>
+                <button onClick={() => setActiveTab("feed")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+              </div>
+              <div className="flex flex-col gap-3">
+                {companies.filter(c => c.looking_to_raise).slice(0, 5).map(c => (
+                  <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#f2f4f8] last:border-0">
+                    <div>
+                      <Link href={`/companies/${c.id}`} className="text-sm font-medium text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link>
+                      {c.funding_stage && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{STAGE_LABELS[c.funding_stage] || c.funding_stage}</span>}
+                    </div>
+                    <button onClick={() => toggleSave(c.id)} className={`text-lg ${saved.includes(c.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
+                      {saved.includes(c.id) ? "★" : "☆"}
+                    </button>
+                  </div>
+                ))}
+                {companies.filter(c => c.looking_to_raise).length === 0 && (
+                  <p className="text-sm text-[#718096]">No companies currently raising.</p>
+                )}
+              </div>
+            </div>
+
+            {saved.length > 0 && (
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Saved companies</div>
+                  <button onClick={() => setActiveTab("saved")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all →</button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {companies.filter(c => saved.includes(c.id)).slice(0, 5).map(c => (
+                    <Link key={c.id} href={`/companies/${c.id}`} className="text-sm text-[#2d6a4f] hover:underline">{c.name}</Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* PROFILE TAB */}
         {activeTab === "profile" && profileForm && (
@@ -188,11 +289,10 @@ export default function InvestorDashboard() {
                 <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
                 <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
                 {profile?.location && <div className="text-xs text-[#718096] mt-0.5">{profile.location}</div>}
-                {profile?.linkedin && <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-xs text-[#2d6a4f] hover:underline mt-1 block">LinkedIn</a>}
               </div>
               <button onClick={() => setEditingProfile(v => !v)}
                 className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#eef1f6] transition-colors flex-shrink-0">
-                {editingProfile ? "Cancel" : "Edit"}
+                {editingProfile ? "Cancel" : "Edit profile"}
               </button>
             </div>
 
@@ -223,18 +323,6 @@ export default function InvestorDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {!profile?.location && !profile?.thesis && !profile?.check_size && (
-                  <div className="bg-[#f8f9fb] border border-dashed border-[#d0d6e0] rounded-xl p-5 md:col-span-2 flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-[#0f1a14] mb-1">Complete your profile</div>
-                      <div className="text-xs text-[#718096]">Add your location, check size, thesis and more.</div>
-                    </div>
-                    <button onClick={() => setEditingProfile(true)}
-                      className="text-xs font-semibold bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 ml-4">
-                      Add info
-                    </button>
-                  </div>
-                )}
                 {[
                   ["Location", profile?.location],
                   ["Point of contact", profile?.point_of_contact],
@@ -260,30 +348,59 @@ export default function InvestorDashboard() {
                     <div className="text-sm text-[#0f1a14] leading-relaxed">{profile.thesis}</div>
                   </div>
                 )}
-                {saved.length > 0 && (
-                  <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 md:col-span-2">
-                    <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3">Saved companies</div>
-                    <div className="flex flex-col gap-2">
-                      {companies.filter(c => saved.includes(c.id)).slice(0, 5).map(c => (
-                        <Link key={c.id} href={`/companies/${c.id}`} className="text-sm text-[#2d6a4f] hover:underline">{c.name}</Link>
-                      ))}
-                    </div>
-                    {saved.length > 5 && (
-                      <button onClick={() => setActiveTab("saved")} className="text-xs text-[#718096] mt-2 hover:underline">
-                        View all {saved.length} saved
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* GRANTS TAB */}
+        {activeTab === "grants" && (
+          <div className="flex flex-col gap-4">
+            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-1">Non-dilutive funding</div>
+              <p className="text-xs text-[#718096] mb-5">Government grants and funding opportunities relevant to climate and energy companies in your portfolio.</p>
+              {grants.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {grants.map(grant => (
+                    <div key={grant.id} className="border border-[#e2e6ed] rounded-xl p-4 hover:border-[#2d6a4f] transition-colors">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-[#0f1a14] mb-1">{grant.title}</div>
+                          {grant.funder_name && <div className="text-xs text-[#718096] mb-2">{grant.funder_name}</div>}
+                          <div className="flex flex-wrap gap-2">
+                            {grant.deadline_date && (
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100">
+                                Closes {new Date(grant.deadline_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              </span>
+                            )}
+                            {grant.amount_max_usd && (
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">
+                                Up to ${Number(grant.amount_max_usd).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {grant.url && (
+                          <a href={grant.url} target="_blank" rel="noopener noreferrer"
+                            className="text-xs bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg hover:bg-[#235a40] flex-shrink-0 flex items-center gap-1">
+                            View <ArrowRight size={10} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#718096]">No grants available right now.</p>
+              )}
+            </div>
           </div>
         )}
 
         {/* DEAL FLOW + SAVED TABS */}
         {(activeTab === "feed" || activeTab === "saved") && (
           <>
-            {activeTab === "saved" && (
+            {activeTab === "saved" && saved.length > 0 && (
               <div className="bg-[#2d6a4f]/10 border border-[#2d6a4f]/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
                 <span className="text-lg">★</span>
                 <span className="text-sm text-[#2d6a4f] font-medium">Showing {saved.length} saved {saved.length === 1 ? "company" : "companies"}</span>
@@ -305,39 +422,31 @@ export default function InvestorDashboard() {
               </div>
             </div>
 
-            {/* Filters */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4 mb-4">
               <input type="text" placeholder="Search companies..."
                 value={search} onChange={e => setSearch(e.target.value)}
                 className="w-full text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-[#f8f9fb] focus:outline-none focus:border-[#2d6a4f] mb-4" />
-
               <FilterRow label="Stage" options={STAGES} active={stageFilter} setActive={setStageFilter} labelMap={STAGE_LABELS} />
               <FilterRow label="Signals" options={["raising","hiring","partnerships"]} active={signalFilter} setActive={setSignalFilter} labelMap={{ raising:"Raising", hiring:"Hiring", partnerships:"Partnerships" }} />
               <FilterRow label="Sector" options={SECTORS} active={sectorFilter} setActive={setSectorFilter} />
               <FilterRow label="Geography" options={GEOS} active={geoFilter} setActive={setGeoFilter} labelMap={GEO_LABELS} />
               <FilterRow label="Business model" options={BUSINESS_MODELS} active={modelFilter} setActive={setModelFilter} labelMap={MODEL_LABELS} />
-
               {hasFilters && (
-                <button onClick={clearFilters}
-                  className="text-xs px-2.5 py-1 rounded-full border border-red-200 text-red-500 bg-white mt-1">
+                <button onClick={clearFilters} className="text-xs px-2.5 py-1 rounded-full border border-red-200 text-red-500 bg-white mt-1">
                   Clear all filters
                 </button>
               )}
             </div>
 
-            {/* Company list */}
             <div className="flex flex-col gap-3">
               {filtered.length > 0 ? filtered.map(company => (
                 <div key={company.id} className="bg-white border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
                   <div className="flex gap-3 items-start flex-1 min-w-0">
                     <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center text-sm font-semibold text-[#2d6a4f] flex-shrink-0 overflow-hidden">
                       {company.logo_url
-                        ? <img src={company.logo_url} alt={company.name} className="w-full h-full object-contain p-1" onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
-                        : null}
-                     <span style={{display: company.logo_url ? 'none' : 'flex'}} className="w-full h-full items-center justify-center">
-                       {company.name?.[0] || "?"}
-                     </span>
-                   </div>
+                        ? <img src={company.logo_url} alt={company.name} className="w-full h-full object-contain p-1" onError={e => { e.target.style.display='none'; }} />
+                        : company.name?.[0] || "?"}
+                    </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">
