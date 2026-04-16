@@ -32,6 +32,8 @@ export default function InvestorDashboard() {
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState(null);
   const [savingProfile, setSavingProfile] = useState(false);
+const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
+const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -56,6 +58,7 @@ export default function InvestorDashboard() {
           round_preference: data.profile?.round_preference || "",
         });
         setCompanies(data.companies || []);
+        setInvestorLogoUrl(data.profile?.logo_url || null);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -86,6 +89,16 @@ export default function InvestorDashboard() {
     setSavingProfile(false);
     setEditingProfile(false);
   };
+async function uploadInvestorLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  setUploadingInvestorLogo(true);
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch("/api/dashboard/logo", { method: "POST", body: formData });
+  if (res.ok) { const { url } = await res.json(); setInvestorLogoUrl(url); }
+  setUploadingInvestorLogo(false);
+}
 
   const clearFilters = () => {
     setSearch(""); setStageFilter(null); setSignalFilter(null);
@@ -282,9 +295,15 @@ export default function InvestorDashboard() {
         {activeTab === "profile" && profileForm && (
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6 flex items-center gap-5">
-              <div className="w-16 h-16 rounded-full bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-2xl font-semibold text-[#2d6a4f] flex-shrink-0">
-                {profile?.name?.[0]?.toUpperCase() || "?"}
-              </div>
+              <div className="relative flex-shrink-0">
+  {investorLogoUrl ? (
+    <img src={investorLogoUrl} alt="Logo" className="w-16 h-16 rounded-full object-cover border border-[#e2e6ed]" />
+  ) : (
+    <div className="w-16 h-16 rounded-full bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-2xl font-semibold text-[#2d6a4f]">
+      {profile?.name?.[0]?.toUpperCase() || "?"}
+    </div>
+  )}
+</div>
               <div className="flex-1">
                 <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
                 <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
@@ -316,6 +335,16 @@ export default function InvestorDashboard() {
                     placeholder="What are you looking for? What makes a company a fit?"
                     className={inputClass + " resize-none"} />
                 </div>
+                <div>
+  <label className={labelClass}>Logo / Profile photo</label>
+  {investorLogoUrl && (
+    <img src={investorLogoUrl} alt="Logo" className="w-14 h-14 rounded-full object-cover border border-[#e2e6ed] mb-2" />
+  )}
+  <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+    {uploadingInvestorLogo ? "Uploading..." : investorLogoUrl ? "Replace photo" : "Upload photo"}
+    <input type="file" accept="image/*" onChange={uploadInvestorLogo} className="hidden" disabled={uploadingInvestorLogo} />
+  </label>
+</div>
                 <button onClick={saveProfile} disabled={savingProfile}
                   className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 w-fit">
                   {savingProfile ? "Saving..." : "Save changes"}
