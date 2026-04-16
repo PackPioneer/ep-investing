@@ -34,7 +34,8 @@ export default function InvestorDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
 const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
 const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
-
+const [pipeline, setPipeline] = useState({});
+const [changingStage, setChangingStage] = useState(null);
   useEffect(() => {
     if (!isLoaded) return;
     if (!user) { router.push("/"); return; }
@@ -68,6 +69,8 @@ const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
       .catch(() => {});
     const s = JSON.parse(localStorage.getItem("ep_saved") || "[]");
     setSaved(s);
+    const p = JSON.parse(localStorage.getItem("ep_pipeline") || "{}");
+setPipeline(p);
   }, [isLoaded, user]);
 
   const toggleSave = (id) => {
@@ -77,7 +80,28 @@ const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
       return next;
     });
   };
+const setStage = (id, stage) => {
+  setPipeline(prev => {
+    const next = { ...prev, [id]: stage };
+    localStorage.setItem("ep_pipeline", JSON.stringify(next));
+    return next;
+  });
+  setChangingStage(null);
+};
 
+const getStageColor = (stage) => {
+  if (stage === "contacted") return "#378ADD";
+  if (stage === "diligence") return "#EF9F27";
+  if (stage === "passed") return "#E24B4A";
+  return "#2d6a4f";
+};
+
+const getStageLabel = (stage) => {
+  if (stage === "contacted") return "Contacted";
+  if (stage === "diligence") return "In diligence";
+  if (stage === "passed") return "Passed";
+  return "Watching";
+};
   const saveProfile = async () => {
     setSavingProfile(true);
     await fetch("/api/dashboard/investor", {
@@ -426,16 +450,92 @@ async function uploadInvestorLogo(e) {
           </div>
         )}
 
-        {/* DEAL FLOW + SAVED TABS */}
-        {(activeTab === "feed" || activeTab === "saved") && (
-          <>
-            {activeTab === "saved" && saved.length > 0 && (
-              <div className="bg-[#2d6a4f]/10 border border-[#2d6a4f]/20 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
-                <span className="text-lg">★</span>
-                <span className="text-sm text-[#2d6a4f] font-medium">Showing {saved.length} saved {saved.length === 1 ? "company" : "companies"}</span>
+        {/* SAVED / PIPELINE TAB */}
+        {activeTab === "saved" && (
+          <div className="flex flex-col gap-4">
+            {saved.length === 0 ? (
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 text-center">
+                <p className="text-sm text-[#718096] mb-2">No saved companies yet.</p>
+                <p className="text-xs text-[#a0aec0]">Star companies in Deal Flow to track them here.</p>
               </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2">
+                  {[
+                    { label: "Watching", key: "watching", color: "#2d6a4f" },
+                    { label: "Contacted", key: "contacted", color: "#378ADD" },
+                    { label: "In diligence", key: "diligence", color: "#EF9F27" },
+                    { label: "Passed", key: "passed", color: "#E24B4A" },
+                  ].map(col => (
+                    <div key={col.key} className="bg-white border border-[#e2e6ed] rounded-xl p-4" style={{ borderTop: `2px solid ${col.color}` }}>
+                      <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">{col.label}</div>
+                      <div className="text-2xl font-semibold text-[#0f1a14]">
+                        {companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key).length}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  {[
+                    { label: "Watching", key: "watching", color: "#2d6a4f" },
+                    { label: "Contacted", key: "contacted", color: "#378ADD" },
+                    { label: "In diligence", key: "diligence", color: "#EF9F27" },
+                    { label: "Passed", key: "passed", color: "#E24B4A" },
+                  ].map(col => {
+                    const colCompanies = companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key);
+                    return (
+                      <div key={col.key} className="bg-white border border-[#e2e6ed] rounded-xl overflow-hidden" style={{ borderTop: `2px solid ${col.color}` }}>
+                        <div className="flex items-center justify-between px-3 py-2 border-b border-[#e2e6ed]">
+                          <span className="text-xs font-mono font-semibold uppercase tracking-wide" style={{ color: col.color }}>{col.label}</span>
+                          <span className="text-xs font-mono text-[#718096]">{colCompanies.length}</span>
+                        </div>
+                        <div className="p-2 flex flex-col gap-2 min-h-[80px]">
+                          {colCompanies.length === 0 ? (
+                            <p className="text-xs text-[#a0aec0] font-mono text-center py-4">Empty</p>
+                          ) : colCompanies.map(c => (
+                            <div key={c.id} className="border border-[#e2e6ed] rounded-lg p-2 bg-[#fafbfc]">
+                              <div className="flex items-center justify-between mb-1">
+                                <Link href={`/companies/${c.id}`} className="text-xs font-semibold text-[#0f1a14] hover:text-[#2d6a4f] leading-tight">{c.name}</Link>
+                                <span className="text-[10px] font-mono text-[#2d6a4f] cursor-pointer ml-1 whitespace-nowrap" onClick={() => window.open(`/companies/${c.id}`, '_blank')}>View →</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                                {c.funding_stage && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{STAGE_LABELS[c.funding_stage] || c.funding_stage}</span>}
+                                {(c.industry_tags || []).slice(0,1).map(t => <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">{t.replace(/_/g, " ")}</span>)}
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: col.color }} />
+                                  <span className="text-[10px] font-mono text-[#718096]">{col.label}</span>
+                                </div>
+                                {changingStage === c.id ? (
+                                  <div className="flex gap-1 flex-wrap">
+                                    {["watching","contacted","diligence","passed"].filter(s => s !== col.key).map(s => (
+                                      <button key={s} onClick={() => setStage(c.id, s)}
+                                        className="text-[9px] font-mono px-1.5 py-0.5 rounded border border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]">
+                                        {getStageLabel(s)}
+                                      </button>
+                                    ))}
+                                    <button onClick={() => setChangingStage(null)} className="text-[9px] font-mono text-[#a0aec0] px-1">✕</button>
+                                  </div>
+                                ) : (
+                                  <button onClick={() => setChangingStage(c.id)} className="text-[9px] font-mono text-[#a0aec0] hover:text-[#2d6a4f]">change stage →</button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
+          </div>
+        )}
 
+        {/* DEAL FLOW TAB */}
+        {activeTab === "feed" && (
+          <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Companies Raising</div>
@@ -450,7 +550,6 @@ async function uploadInvestorLogo(e) {
                 <div className="text-2xl font-semibold text-[#0f1a14]">{filtered.length}</div>
               </div>
             </div>
-
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4 mb-4">
               <input type="text" placeholder="Search companies..."
                 value={search} onChange={e => setSearch(e.target.value)}
@@ -466,7 +565,6 @@ async function uploadInvestorLogo(e) {
                 </button>
               )}
             </div>
-
             <div className="flex flex-col gap-3">
               {filtered.length > 0 ? filtered.map(company => (
                 <div key={company.id} className="bg-white border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors">
@@ -478,9 +576,7 @@ async function uploadInvestorLogo(e) {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">
-                          {company.name}
-                        </Link>
+                        <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">{company.name}</Link>
                         {company.funding_stage && (
                           <span className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">
                             {STAGE_LABELS[company.funding_stage] || company.funding_stage.replace(/_/g, " ")}
@@ -508,9 +604,7 @@ async function uploadInvestorLogo(e) {
                 </div>
               )) : (
                 <div className="bg-white border border-[#e2e6ed] rounded-xl p-8 text-center">
-                  <p className="text-sm text-[#718096]">
-                    {activeTab === "saved" ? "No saved companies yet. Star companies to save them." : "No companies match your filters."}
-                  </p>
+                  <p className="text-sm text-[#718096]">No companies match your filters.</p>
                 </div>
               )}
             </div>
