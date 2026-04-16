@@ -121,7 +121,7 @@ export default function AdminCompanies() {
 
   // EDIT
   const handleEdit = (c) => {
-    setEditingId(c._id);
+    setEditingId(c.id);
 
     setForm({
       name: c.name,
@@ -299,7 +299,7 @@ export default function AdminCompanies() {
 
           <tbody>
             {paginated.map((c) => (
-              <tr key={c._id} className="border-t">
+              <tr key={c.id} className="border-t">
 
                 <td className="p-4">
                   {c.logo && (
@@ -321,7 +321,7 @@ export default function AdminCompanies() {
                   </button>
 
                   <button
-                    onClick={() => handleDelete(c._id)}
+                  onClick={() => handleDelete(c.id)}
                     className="text-red-600"
                   >
                     <Trash2 size={16} />
