@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight } from "lucide-react";
+import { usePaywall } from "@/components/PaywallModal";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -36,6 +37,7 @@ const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
 const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
 const [pipeline, setPipeline] = useState({});
 const [changingStage, setChangingStage] = useState(null);
+const { triggerPaywall } = usePaywall();
   useEffect(() => {
     if (!isLoaded) return;
     if (!user) { router.push("/"); return; }
@@ -74,6 +76,7 @@ setPipeline(p);
   }, [isLoaded, user]);
 
   const toggleSave = (id) => {
+    triggerPaywall();
     setSaved(prev => {
       const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
       localStorage.setItem("ep_saved", JSON.stringify(next));
@@ -81,7 +84,8 @@ setPipeline(p);
     });
   };
 const setStage = (id, stage) => {
-  setPipeline(prev => {
+    triggerPaywall();
+    setPipeline(prev => {
     const next = { ...prev, [id]: stage };
     localStorage.setItem("ep_pipeline", JSON.stringify(next));
     return next;
