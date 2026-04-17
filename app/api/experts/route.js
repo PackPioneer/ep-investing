@@ -1,10 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { Resend } from "resend";
-
+import { auth } from "@clerk/nextjs/server";
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
   try {
+    const { userId } = await auth();
     const body = await req.json();
     const { name, email, bio, expertise_areas, hourly_rate, availability, linkedin_url, website_url, location } = body;
 
@@ -14,7 +15,7 @@ export async function POST(req) {
 
     const { data, error } = await supabase
       .from("experts")
-      .insert({ name, email, bio, expertise_areas, hourly_rate, availability, linkedin_url, website_url, location, status: "pending" })
+      .insert({ name, email, bio, expertise_areas, hourly_rate, availability, linkedin_url, website_url, location, status: "pending", clerk_user_id: userId || null })
       .select()
       .single();
 
