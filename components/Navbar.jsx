@@ -74,19 +74,19 @@ export default function Navbar() {
                       <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-[#e2e6ed] rounded-xl shadow-lg z-50">
                         <Link href="/onboarding/company" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-t-xl transition-colors">
-                          <span className="text-sm font-semibold text-[#0f1a14]">🏢 I'm a Company</span>
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm a Company</span>
                           <span className="text-xs text-[#718096] mt-0.5">Claim your profile</span>
                         </Link>
                         <div className="border-t border-[#e2e6ed]" />
                         <Link href="/onboarding/investor" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
-                          <span className="text-sm font-semibold text-[#0f1a14]">📈 I'm an Investor</span>
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an Investor</span>
                           <span className="text-xs text-[#718096] mt-0.5">Get deal flow access</span>
                         </Link>
                         <div className="border-t border-[#e2e6ed]" />
                         <Link href="/onboarding/expert" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
-                          <span className="text-sm font-semibold text-[#0f1a14]">🧠 I'm an Expert</span>
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an Expert</span>
                           <span className="text-xs text-[#718096] mt-0.5">Join the expert network</span>
                         </Link>
                       </div>
