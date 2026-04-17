@@ -26,17 +26,23 @@ export function PaywallProvider({ children }) {
 
   const isHardBlock = new Date() >= HARD_BLOCK_DATE;
 const handleStripe = async () => {
+  const email = user?.emailAddresses?.[0]?.emailAddress;
+  if (!email) {
+    window.location.href = "/sign-in";
+    return;
+  }
   try {
-    const email = user?.emailAddresses?.[0]?.emailAddress || "";
     const res = await fetch("/api/stripe/setup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, plan: "company" }),
     });
-    const { url } = await res.json();
-    if (url) window.location.href = url;
-  } catch {
-    window.location.href = "/pricing";
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else throw new Error(data.message);
+  } catch (err) {
+    console.error("Stripe error:", err);
+    alert("Something went wrong. Please try again.");
   }
 };
   return (
