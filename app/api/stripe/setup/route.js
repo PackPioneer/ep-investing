@@ -26,8 +26,8 @@ export async function POST(req) {
     customer: customer.id,
     currency: "usd",
     metadata: { plan, email },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing/success?plan=${plan}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing/success?plan=${plan}`,
+cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
   });
 
   return NextResponse.json({ url: session.url });
