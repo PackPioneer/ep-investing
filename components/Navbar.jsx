@@ -79,9 +79,15 @@ export default function Navbar() {
                         </Link>
                         <div className="border-t border-[#e2e6ed]" />
                         <Link href="/onboarding/investor" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">📈 I'm an Investor</span>
                           <span className="text-xs text-[#718096] mt-0.5">Get deal flow access</span>
+                        </Link>
+                        <div className="border-t border-[#e2e6ed]" />
+                        <Link href="/onboarding/expert" onClick={() => setJoinOpen(false)}
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
+                          <span className="text-sm font-semibold text-[#0f1a14]">🧠 I'm an Expert</span>
+                          <span className="text-xs text-[#718096] mt-0.5">Join the expert network</span>
                         </Link>
                       </div>
                     </>
