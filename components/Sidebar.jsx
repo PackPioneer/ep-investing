@@ -22,6 +22,7 @@ const menu = [
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
   { name: "Expert Applications", href: "/admin/expert-applications", icon: Users },
+  { name: "Researchers", href: "/admin/researchers", icon: Users },
   { name: "Grants", href: "/admin/grants", icon: Landmark },
   { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
 ];
