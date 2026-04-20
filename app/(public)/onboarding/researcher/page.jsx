@@ -37,9 +37,9 @@ const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-3
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function JobSeekerOnboarding() {
-  const [userType, setUserType] = useState(null);
-  const [step, setStep] = useState(1);
-  if (!userType) return (
+  const [userType, setUserType] = useState("researcher");
+const [step, setStep] = useState(1);
+if (!userType) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-lg w-full">
