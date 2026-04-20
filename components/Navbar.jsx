@@ -92,7 +92,7 @@ export default function Navbar() {
 <div className="border-t border-[#e2e6ed]" />
 <Link href="/onboarding/researcher" onClick={() => setJoinOpen(false)}
   className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
-  <span className="text-sm font-semibold text-[#0f1a14]">🔍 I'm a Researcher</span>
+  <span className="text-sm font-semibold text-[#0f1a14]">I'm a Researcher</span>
   <span className="text-xs text-[#718096] mt-0.5">Browse companies, jobs & grants</span>
 </Link>
                       </div>
