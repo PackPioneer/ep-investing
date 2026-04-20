@@ -56,8 +56,8 @@ const roleTiles = [
     icon: Briefcase,
     title: "Researchers",
     desc: "Browse companies, open roles, and grants across the energy transition.",
-    cta: "Browse directory",
-    href: "/search",
+    cta: "Get started free",
+    href: "/onboarding/researcher",
   },
 ];
 
