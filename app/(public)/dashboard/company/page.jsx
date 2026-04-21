@@ -74,6 +74,7 @@ export default function CompanyDashboard() {
         if (!data || data.error) { setLoading(false); return; }
         setCompany(data);
         setForm({
+          url: data.url || "",
           description: data.description || "",
           funding_stage: data.funding_stage || "unknown",
           business_model: data.business_model || "",
@@ -358,6 +359,12 @@ async function deleteDeck() {
             <div className="flex flex-col gap-5">
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Description</label>
+                <div>
+  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Website URL</label>
+  <input type="url" value={form.url || ""} onChange={e => setForm(p => ({ ...p, url: e.target.value }))}
+    placeholder="https://www.yourcompany.com"
+    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+</div>
                 <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                   className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none"
                   placeholder="Describe your company..." />
