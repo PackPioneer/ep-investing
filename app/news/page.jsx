@@ -34,7 +34,7 @@ async function loadArticles({ limit, offset, sourceSlug, region }) {
   let query = supabase
     .from('news_articles')
     .select(`
-      id, title, url, excerpt, published_at, image_url,
+      id, title, url, excerpt, summary_factual, published_at, image_url,
       is_secondary_source, primary_source_attribution,
       source:news_sources ( id, slug, name, homepage_url, attribution_label, region, credibility_tier )
     `)
@@ -127,9 +127,9 @@ function ArticleCard({ article }) {
             </Link>
           </h2>
 
-          {article.excerpt && (
-            <p className="mt-1.5 text-sm text-neutral-600 line-clamp-2">
-              {article.excerpt}
+          {(article.summary_factual || article.excerpt) && (
+            <p className="mt-1.5 text-sm text-neutral-600 line-clamp-3">
+              {article.summary_factual || article.excerpt}
             </p>
           )}
         </div>
@@ -209,7 +209,7 @@ export default async function NewsPage({ searchParams }) {
         </p>
       </header>
 
-      <div className={`grid grid-cols-1 gap-8 ${fullAccess ? 'lg:grid-cols-[16rem_1fr]' : ''}`}>
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[16rem_1fr]">
         {/* Filter sidebar — only for authenticated users with full access */}
         {fullAccess && (
           <aside className="lg:sticky lg:top-6 lg:self-start">
