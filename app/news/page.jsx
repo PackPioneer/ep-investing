@@ -209,7 +209,7 @@ export default async function NewsPage({ searchParams }) {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[16rem_1fr]">
+      <div className={`grid grid-cols-1 gap-8 ${fullAccess ? 'lg:grid-cols-[16rem_1fr]' : ''}`}>
         {/* Filter sidebar — only for authenticated users with full access */}
         {fullAccess && (
           <aside className="lg:sticky lg:top-6 lg:self-start">
