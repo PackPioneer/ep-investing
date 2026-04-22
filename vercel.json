@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/auto-discover",
       "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/ingest-news",
+      "schedule": "0 * * * *"
     }
   ]
 }
