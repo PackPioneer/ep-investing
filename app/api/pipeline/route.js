@@ -103,10 +103,10 @@ export async function POST(request) {
 
   const sb = supabase();
 
-  const userType = await resolveUserType(sb, userId);
-  if (!userType) {
-    return NextResponse.json({ error: 'User profile not found' }, { status: 404 });
-  }
+ // Try to resolve user type for correct metadata tagging. If we can't find
+// them in any profile table, default to 'investor' rather than blocking
+// the save — this table can be used by any authenticated user.
+const userType = (await resolveUserType(sb, userId)) ?? 'investor';
 
   // Upsert so re-saving an already-saved company doesn't 409. If it exists,
   // just update stage/notes and bump updated_at.
