@@ -73,9 +73,9 @@ export async function GET() {
   // can render pipeline cards without a second roundtrip.
   const { data, error } = await sb
     .from('user_saved_companies')
-    .select(`
+   .select(`
       id, stage, notes, saved_at, updated_at,
-      company:companies ( id, name, logo_url, funding_stage, industry_tags, short_description )
+      company:companies ( id, name, logo_url, funding_stage, industry_tags, description )
     `)
     .eq('clerk_user_id', userId)
     .order('updated_at', { ascending: false });
