@@ -13,7 +13,7 @@
  *   /news?region=us                 → Latest, US regions only
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -57,7 +57,7 @@ function Paywall() {
   );
 }
 
-export default function NewsPage() {
+function NewsPageContent() {
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const params = useSearchParams();
@@ -199,5 +199,12 @@ export default function NewsPage() {
       {/* Paywall for unauthenticated users */}
       {!loading && !isSignedIn && !authed && <Paywall />}
     </div>
+  );
+}
+export default function NewsPage() {
+  return (
+    <Suspense fallback={<div className="py-12 text-center text-sm text-[#718096]">Loading…</div>}>
+      <NewsPageContent />
+    </Suspense>
   );
 }
