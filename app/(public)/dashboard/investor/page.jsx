@@ -3,9 +3,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight } from "lucide-react";
+import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight, Sparkles } from "lucide-react";
 import { usePaywall } from "@/components/PaywallModal";
 import { usePipeline } from "@/components/pipeline/usePipeline";
+import ForYouFeed from "@/components/news/ForYouFeed";
+import ComingSoonWidgets from "@/components/news/ComingSoonWidgets";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -181,6 +183,7 @@ export default function InvestorDashboard() {
 
   const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "for-you", label: "For You", icon: Sparkles },
     { id: "feed", label: "Deal Flow", icon: TrendingUp },
     { id: "saved", label: "Saved", icon: Bookmark, badge: savedIds.size },
     { id: "grants", label: "Grants", icon: FileText },
@@ -382,6 +385,14 @@ export default function InvestorDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* FOR YOU TAB */}
+        {activeTab === "for-you" && (
+          <div className="flex flex-col gap-5">
+            <ForYouFeed userType="investor" limit={5} />
+            <ComingSoonWidgets />
           </div>
         )}
 

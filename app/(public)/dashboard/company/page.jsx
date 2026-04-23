@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { usePaywall } from "@/components/PaywallModal";
+import ForYouFeed from "@/components/news/ForYouFeed";
+import ComingSoonWidgets from "@/components/news/ComingSoonWidgets";
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public","unknown"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public", unknown:"Unknown" };
@@ -199,6 +201,7 @@ async function deleteDeck() {
 
   const navItems = [
     { id: "overview", label: "Overview" },
+    { id: "for-you", label: "For You" },
     { id: "profile", label: "Profile" },
     { id: "funding", label: "Funding Round" },
     { id: "jobs", label: "Jobs" },
@@ -351,7 +354,12 @@ async function deleteDeck() {
             </div>
           </div>
         )}
-
+{activeTab === "for-you" && (
+          <div className="flex flex-col gap-4">
+            <ForYouFeed userType="company" limit={5} />
+            <ComingSoonWidgets />
+          </div>
+        )}
         {activeTab === "profile" && ( 
            form ? (<>
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
