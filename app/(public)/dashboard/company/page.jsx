@@ -25,7 +25,7 @@ function AutoRedirect() {
     }, 2000);
     setTimeout(() => clearInterval(interval), 30000);
     return () => clearInterval(interval);
-    [router]);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
