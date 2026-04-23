@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePaywall } from "@/components/PaywallModal";
 import ForYouFeed from "@/components/news/ForYouFeed";
 import ComingSoonWidgets from "@/components/news/ComingSoonWidgets";
+import PolicyDigestWidget from "@/components/policies/PolicyDigestWidget";
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public","unknown"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public", unknown:"Unknown" };
@@ -24,7 +25,7 @@ function AutoRedirect() {
     }, 2000);
     setTimeout(() => clearInterval(interval), 30000);
     return () => clearInterval(interval);
-  }, [router]);
+    [router]);
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
@@ -357,6 +358,7 @@ async function deleteDeck() {
 {activeTab === "for-you" && (
           <div className="flex flex-col gap-4">
             <ForYouFeed userType="company" limit={5} />
+            <PolicyDigestWidget userType="company" limit={3} />
             <ComingSoonWidgets />
           </div>
         )}

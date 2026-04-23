@@ -1,15 +1,16 @@
 /**
  * app/api/cron/ingest-news/route.js
  *
- * Phase 3B update: after ingestion + enrichment, also refreshes user
- * embeddings that are older than 24h. Keeps everything in one cron to
- * stay within Vercel Hobby's 2-cron limit.
- *
+ * Phase 4A update: the daily cron now ALSO ingests and enriches policies.
  * Execution order:
- *   1. Ingest from all active sources → new rows in news_articles
- *   2. Enrich up to ENRICH_PER_RUN pending articles → summaries, tags,
- *      entities, embeddings
- *   3. Refresh user embeddings whose embedding_updated_at is null or >24h
+ *   1. News ingestion from RSS sources
+ *   2. News enrichment (Haiku + Sonnet + embeddings)
+ *   3. Policy ingestion from Federal Register API + RSS
+ *   4. Policy enrichment (Haiku + Sonnet)
+ *   5. User embedding refresh
+ *
+ * All of this fits in one cron job to stay within Vercel Hobby's 2-cron
+ * limit. Total duration is typically under 3 minutes.
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -17,13 +18,17 @@ import { NextResponse } from 'next/server';
 import { ingestAllSources } from '@/lib/news/ingestion';
 import { enrichPending } from '@/lib/news/enrichment';
 import { refreshAllUserEmbeddings } from '@/lib/news/user-embeddings';
+import { ingestAllPolicySources } from '@/lib/policies/ingestion';
+import { enrichPendingPolicies } from '@/lib/policies/enrichment';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
-const ENRICH_PER_RUN = 30;
-const ENRICH_CONCURRENCY = 5;
+const NEWS_ENRICH_PER_RUN = 30;
+const NEWS_ENRICH_CONCURRENCY = 5;
+const POLICY_ENRICH_PER_RUN = 15;
+const POLICY_ENRICH_CONCURRENCY = 3;
 
 export async function GET(request) {
   const authHeader = request.headers.get('authorization');
@@ -32,7 +37,6 @@ export async function GET(request) {
   if (!cronSecret) {
     return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 500 });
   }
-
   if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -44,28 +48,42 @@ export async function GET(request) {
   );
 
   const response = {
-    ingestion: null,
-    enrichment: null,
+    news_ingestion: null,
+    news_enrichment: null,
+    policy_ingestion: null,
+    policy_enrichment: null,
     user_embeddings: null,
     started_at: new Date().toISOString(),
     completed_at: null,
   };
 
   try {
-    response.ingestion = await ingestAllSources(supabase);
-
-    response.enrichment = await enrichPending(supabase, {
-      limit: ENRICH_PER_RUN,
-      concurrency: ENRICH_CONCURRENCY,
+    // 1. News
+    response.news_ingestion = await ingestAllSources(supabase);
+    response.news_enrichment = await enrichPending(supabase, {
+      limit: NEWS_ENRICH_PER_RUN,
+      concurrency: NEWS_ENRICH_CONCURRENCY,
     });
 
-    // Refresh user embeddings. Don't let a failure here fail the whole cron —
-    // ingestion + enrichment are more important. Errors are collected in
-    // the response for debugging.
+    // 2. Policies (new in Phase 4A)
     try {
-      response.user_embeddings = await refreshAllUserEmbeddings(supabase, {
-        maxAgeHours: 24,
+      response.policy_ingestion = await ingestAllPolicySources(supabase, { sinceDays: 1 });
+    } catch (err) {
+      response.policy_ingestion = { error: err.message };
+    }
+
+    try {
+      response.policy_enrichment = await enrichPendingPolicies(supabase, {
+        limit: POLICY_ENRICH_PER_RUN,
+        concurrency: POLICY_ENRICH_CONCURRENCY,
       });
+    } catch (err) {
+      response.policy_enrichment = { error: err.message };
+    }
+
+    // 3. User embeddings (don't block cron on failure)
+    try {
+      response.user_embeddings = await refreshAllUserEmbeddings(supabase, { maxAgeHours: 24 });
     } catch (err) {
       response.user_embeddings = { error: err.message };
     }
@@ -75,9 +93,6 @@ export async function GET(request) {
   } catch (err) {
     console.error('Cron run failed:', err);
     response.completed_at = new Date().toISOString();
-    return NextResponse.json(
-      { ok: false, error: err.message, ...response },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err.message, ...response }, { status: 500 });
   }
 }

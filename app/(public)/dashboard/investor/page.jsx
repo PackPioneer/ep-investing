@@ -8,6 +8,7 @@ import { usePaywall } from "@/components/PaywallModal";
 import { usePipeline } from "@/components/pipeline/usePipeline";
 import ForYouFeed from "@/components/news/ForYouFeed";
 import ComingSoonWidgets from "@/components/news/ComingSoonWidgets";
+import PolicyDigestWidget from "@/components/policies/PolicyDigestWidget";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -388,10 +389,10 @@ export default function InvestorDashboard() {
           </div>
         )}
 
-        {/* FOR YOU TAB */}
         {activeTab === "for-you" && (
           <div className="flex flex-col gap-5">
             <ForYouFeed userType="investor" limit={5} />
+            <PolicyDigestWidget userType="investor" limit={3} />
             <ComingSoonWidgets />
           </div>
         )}

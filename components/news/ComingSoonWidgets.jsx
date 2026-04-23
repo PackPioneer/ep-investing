@@ -18,10 +18,6 @@ const PLACEHOLDERS = [
     body: "Recent acquisitions, mergers, and strategic partnerships in your sector.",
   },
   {
-    title: "Policy digest",
-    body: "Federal, state, and international policy changes affecting your markets.",
-  },
-  {
     title: "Market movements",
     body: "Stock price moves, commodity prices, and sector index changes.",
   },
