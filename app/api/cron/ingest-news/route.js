@@ -34,7 +34,13 @@ export async function GET(request) {
   }
 
   if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({
+      error: 'Unauthorized',
+      sent_prefix: (authHeader || '').slice(7, 11),
+      sent_len: Math.max(0, (authHeader || '').length - 7),
+      expected_prefix: cronSecret.slice(0, 4),
+      expected_len: cronSecret.length,
+    }, { status: 401 });
   }
 
   const supabase = createClient(
