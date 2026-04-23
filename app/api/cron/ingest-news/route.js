@@ -1,33 +1,27 @@
 /**
  * app/api/cron/ingest-news/route.js
  *
- * Phase 2 update: after ingestion, enrich pending articles in the same cron
- * invocation. This keeps everything in one cron slot (important on Vercel
- * Hobby, which limits us to 2 daily crons).
+ * Phase 3B update: after ingestion + enrichment, also refreshes user
+ * embeddings that are older than 24h. Keeps everything in one cron to
+ * stay within Vercel Hobby's 2-cron limit.
  *
  * Execution order:
  *   1. Ingest from all active sources → new rows in news_articles
- *   2. Enrich up to ENRICH_PER_RUN pending articles → fills summary,
- *      classification, tags, entities
- *
- * If enrichment can't finish the backlog in one run, the leftover pending
- * articles get picked up on the next daily run. For first-time backfill,
- * use scripts/enrich-backfill.js from your terminal instead of relying on
- * the cron to chip through 200+ articles over a week.
+ *   2. Enrich up to ENRICH_PER_RUN pending articles → summaries, tags,
+ *      entities, embeddings
+ *   3. Refresh user embeddings whose embedding_updated_at is null or >24h
  */
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { ingestAllSources } from '@/lib/news/ingestion';
 import { enrichPending } from '@/lib/news/enrichment';
+import { refreshAllUserEmbeddings } from '@/lib/news/user-embeddings';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
-// How many articles to enrich per cron run. At ~3-5s per article and
-// concurrency=5, 30 articles finishes in ~30-60s. Adjust up if you're on
-// Vercel Pro (300s timeout) and want the queue to drain faster.
 const ENRICH_PER_RUN = 30;
 const ENRICH_CONCURRENCY = 5;
 
@@ -36,10 +30,7 @@ export async function GET(request) {
   const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret) {
-    return NextResponse.json(
-      { error: 'CRON_SECRET not configured' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'CRON_SECRET not configured' }, { status: 500 });
   }
 
   if (authHeader !== `Bearer ${cronSecret}`) {
@@ -55,20 +46,29 @@ export async function GET(request) {
   const response = {
     ingestion: null,
     enrichment: null,
+    user_embeddings: null,
     started_at: new Date().toISOString(),
     completed_at: null,
   };
 
   try {
-    // 1. Ingest new articles from all sources
     response.ingestion = await ingestAllSources(supabase);
 
-    // 2. Enrich pending articles (newly-inserted + any leftovers from
-    //    previous runs that failed or were skipped)
     response.enrichment = await enrichPending(supabase, {
       limit: ENRICH_PER_RUN,
       concurrency: ENRICH_CONCURRENCY,
     });
+
+    // Refresh user embeddings. Don't let a failure here fail the whole cron —
+    // ingestion + enrichment are more important. Errors are collected in
+    // the response for debugging.
+    try {
+      response.user_embeddings = await refreshAllUserEmbeddings(supabase, {
+        maxAgeHours: 24,
+      });
+    } catch (err) {
+      response.user_embeddings = { error: err.message };
+    }
 
     response.completed_at = new Date().toISOString();
     return NextResponse.json({ ok: true, ...response }, { status: 200 });
