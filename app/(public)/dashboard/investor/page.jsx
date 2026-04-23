@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight } from "lucide-react";
 import { usePaywall } from "@/components/PaywallModal";
+import { usePipeline } from "@/components/pipeline/usePipeline";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -27,17 +28,35 @@ export default function InvestorDashboard() {
   const [sectorFilter, setSectorFilter] = useState(null);
   const [geoFilter, setGeoFilter] = useState(null);
   const [modelFilter, setModelFilter] = useState(null);
-  const [saved, setSaved] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState(null);
   const [savingProfile, setSavingProfile] = useState(false);
-const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
-const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
-const [pipeline, setPipeline] = useState({});
-const [changingStage, setChangingStage] = useState(null);
-const { triggerPaywall } = usePaywall();
+  const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
+  const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
+  const [changingStage, setChangingStage] = useState(null);
+  const { triggerPaywall } = usePaywall();
+
+  // Phase 3A: pipeline state comes from Supabase via usePipeline hook.
+  // Handles localStorage → DB migration on first mount automatically.
+  const { pipeline: pipelineEntries, isSaved, save, unsave, setStage: setStageHook } = usePipeline();
+
+  // Derive a Set of saved IDs for fast lookup, and a map id → stage for
+  // the existing UI code that reads pipeline[id].
+  const savedIds = useMemo(
+    () => new Set(pipelineEntries.map(e => e.company?.id ?? e.company_id)),
+    [pipelineEntries]
+  );
+  const pipeline = useMemo(() => {
+    const map = {};
+    for (const e of pipelineEntries) {
+      const cid = e.company?.id ?? e.company_id;
+      map[cid] = e.stage || "watching";
+    }
+    return map;
+  }, [pipelineEntries]);
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!user) { router.push("/"); return; }
@@ -69,43 +88,48 @@ const { triggerPaywall } = usePaywall();
       .then(r => r.json())
       .then(data => setGrants(Array.isArray(data) ? data : []))
       .catch(() => {});
-    const s = JSON.parse(localStorage.getItem("ep_saved") || "[]");
-    setSaved(s);
-    const p = JSON.parse(localStorage.getItem("ep_pipeline") || "{}");
-setPipeline(p);
   }, [isLoaded, user]);
 
-  const toggleSave = (id) => {
+  // Toggle a company in/out of the pipeline. Keeps the paywall nudge from
+  // Phase 1 and delegates persistence to the usePipeline hook.
+  const toggleSave = async (id) => {
     triggerPaywall();
-    setSaved(prev => {
-      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
-      localStorage.setItem("ep_saved", JSON.stringify(next));
-      return next;
-    });
+    try {
+      if (isSaved(id)) {
+        await unsave(id);
+      } else {
+        await save(id, "watching");
+      }
+    } catch (err) {
+      console.error("Pipeline toggle failed:", err);
+    }
   };
-const setStage = (id, stage) => {
+
+  // Change the stage of an already-saved company.
+  const setStage = async (id, stage) => {
     triggerPaywall();
-    setPipeline(prev => {
-    const next = { ...prev, [id]: stage };
-    localStorage.setItem("ep_pipeline", JSON.stringify(next));
-    return next;
-  });
-  setChangingStage(null);
-};
+    try {
+      await setStageHook(id, stage);
+    } catch (err) {
+      console.error("Stage change failed:", err);
+    }
+    setChangingStage(null);
+  };
 
-const getStageColor = (stage) => {
-  if (stage === "contacted") return "#378ADD";
-  if (stage === "diligence") return "#EF9F27";
-  if (stage === "passed") return "#E24B4A";
-  return "#2d6a4f";
-};
+  const getStageColor = (stage) => {
+    if (stage === "contacted") return "#378ADD";
+    if (stage === "diligence") return "#EF9F27";
+    if (stage === "passed") return "#E24B4A";
+    return "#2d6a4f";
+  };
 
-const getStageLabel = (stage) => {
-  if (stage === "contacted") return "Contacted";
-  if (stage === "diligence") return "In diligence";
-  if (stage === "passed") return "Passed";
-  return "Watching";
-};
+  const getStageLabel = (stage) => {
+    if (stage === "contacted") return "Contacted";
+    if (stage === "diligence") return "In diligence";
+    if (stage === "passed") return "Passed";
+    return "Watching";
+  };
+
   const saveProfile = async () => {
     setSavingProfile(true);
     await fetch("/api/dashboard/investor", {
@@ -117,16 +141,17 @@ const getStageLabel = (stage) => {
     setSavingProfile(false);
     setEditingProfile(false);
   };
-async function uploadInvestorLogo(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  setUploadingInvestorLogo(true);
-  const formData = new FormData();
-  formData.append("file", file);
-  const res = await fetch("/api/dashboard/investor-logo", { method: "POST", body: formData });
-  if (res.ok) { const { url } = await res.json(); setInvestorLogoUrl(url); }
-  setUploadingInvestorLogo(false);
-}
+
+  async function uploadInvestorLogo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingInvestorLogo(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/dashboard/investor-logo", { method: "POST", body: formData });
+    if (res.ok) { const { url } = await res.json(); setInvestorLogoUrl(url); }
+    setUploadingInvestorLogo(false);
+  }
 
   const clearFilters = () => {
     setSearch(""); setStageFilter(null); setSignalFilter(null);
@@ -136,7 +161,7 @@ async function uploadInvestorLogo(e) {
   const hasFilters = search || stageFilter || signalFilter || sectorFilter || geoFilter || modelFilter;
 
   const filtered = useMemo(() => {
-    let list = activeTab === "saved" ? companies.filter(c => saved.includes(c.id)) : companies;
+    let list = activeTab === "saved" ? companies.filter(c => savedIds.has(c.id)) : companies;
     return list.filter(c => {
       if (search && !c.name?.toLowerCase().includes(search.toLowerCase())) return false;
       if (stageFilter && c.funding_stage !== stageFilter) return false;
@@ -148,7 +173,7 @@ async function uploadInvestorLogo(e) {
       if (modelFilter && c.business_model !== modelFilter) return false;
       return true;
     });
-  }, [companies, search, stageFilter, signalFilter, sectorFilter, geoFilter, modelFilter, saved, activeTab]);
+  }, [companies, search, stageFilter, signalFilter, sectorFilter, geoFilter, modelFilter, savedIds, activeTab]);
 
   const formatFocus = (focus) => focus?.split(",").map(f => f.trim().replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())).join(", ");
   const inputClass = "w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]";
@@ -157,7 +182,7 @@ async function uploadInvestorLogo(e) {
   const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "feed", label: "Deal Flow", icon: TrendingUp },
-    { id: "saved", label: "Saved", icon: Bookmark, badge: saved.length },
+    { id: "saved", label: "Saved", icon: Bookmark, badge: savedIds.size },
     { id: "grants", label: "Grants", icon: FileText },
     { id: "profile", label: "Profile", icon: User },
   ];
@@ -251,7 +276,7 @@ async function uploadInvestorLogo(e) {
         </div>
 
         {/* OVERVIEW TAB */}
-    {activeTab === "overview" && (
+        {activeTab === "overview" && (
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
@@ -299,8 +324,8 @@ async function uploadInvestorLogo(e) {
                       <div className="flex items-center gap-1.5">
                         {c.looking_to_raise && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Raising</span>}
                         {c.is_hiring && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Hiring</span>}
-                        <button onClick={() => toggleSave(c.id)} className={`text-base ${saved.includes(c.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
-                          {saved.includes(c.id) ? "★" : "☆"}
+                        <button onClick={() => toggleSave(c.id)} className={`text-base ${isSaved(c.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
+                          {isSaved(c.id) ? "★" : "☆"}
                         </button>
                       </div>
                     </div>
@@ -334,7 +359,7 @@ async function uploadInvestorLogo(e) {
               </div>
             </div>
 
-            {saved.length > 0 && (
+            {savedIds.size > 0 && (
               <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Your pipeline</div>
@@ -349,7 +374,7 @@ async function uploadInvestorLogo(e) {
                   ].map(col => (
                     <div key={col.key} className="flex-1 text-center">
                       <div className="text-xl font-semibold text-[#0f1a14]">
-                        {companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key).length}
+                        {companies.filter(c => savedIds.has(c.id) && (pipeline[c.id] || "watching") === col.key).length}
                       </div>
                       <div className="text-[10px] font-mono mt-0.5" style={{ color: col.color }}>{col.label}</div>
                     </div>
@@ -365,14 +390,14 @@ async function uploadInvestorLogo(e) {
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6 flex items-center gap-5">
               <div className="relative flex-shrink-0">
-  {investorLogoUrl ? (
-    <img src={investorLogoUrl} alt="Logo" className="w-16 h-16 rounded-full object-cover border border-[#e2e6ed]" />
-  ) : (
-    <div className="w-16 h-16 rounded-full bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-2xl font-semibold text-[#2d6a4f]">
-      {profile?.name?.[0]?.toUpperCase() || "?"}
-    </div>
-  )}
-</div>
+                {investorLogoUrl ? (
+                  <img src={investorLogoUrl} alt="Logo" className="w-16 h-16 rounded-full object-cover border border-[#e2e6ed]" />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-2xl font-semibold text-[#2d6a4f]">
+                    {profile?.name?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
+              </div>
               <div className="flex-1">
                 <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
                 <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
@@ -405,15 +430,15 @@ async function uploadInvestorLogo(e) {
                     className={inputClass + " resize-none"} />
                 </div>
                 <div>
-  <label className={labelClass}>Logo / Profile photo</label>
-  {investorLogoUrl && (
-    <img src={investorLogoUrl} alt="Logo" className="w-14 h-14 rounded-full object-cover border border-[#e2e6ed] mb-2" />
-  )}
-  <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
-    {uploadingInvestorLogo ? "Uploading..." : investorLogoUrl ? "Replace photo" : "Upload photo"}
-    <input type="file" accept="image/*" onChange={uploadInvestorLogo} className="hidden" disabled={uploadingInvestorLogo} />
-  </label>
-</div>
+                  <label className={labelClass}>Logo / Profile photo</label>
+                  {investorLogoUrl && (
+                    <img src={investorLogoUrl} alt="Logo" className="w-14 h-14 rounded-full object-cover border border-[#e2e6ed] mb-2" />
+                  )}
+                  <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                    {uploadingInvestorLogo ? "Uploading..." : investorLogoUrl ? "Replace photo" : "Upload photo"}
+                    <input type="file" accept="image/*" onChange={uploadInvestorLogo} className="hidden" disabled={uploadingInvestorLogo} />
+                  </label>
+                </div>
                 <button onClick={saveProfile} disabled={savingProfile}
                   className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 w-fit">
                   {savingProfile ? "Saving..." : "Save changes"}
@@ -498,7 +523,7 @@ async function uploadInvestorLogo(e) {
         {/* SAVED / PIPELINE TAB */}
         {activeTab === "saved" && (
           <div className="flex flex-col gap-4">
-            {saved.length === 0 ? (
+            {savedIds.size === 0 ? (
               <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 text-center">
                 <p className="text-sm text-[#718096] mb-2">No saved companies yet.</p>
                 <p className="text-xs text-[#a0aec0]">Star companies in Deal Flow to track them here.</p>
@@ -515,7 +540,7 @@ async function uploadInvestorLogo(e) {
                     <div key={col.key} className="bg-white border border-[#e2e6ed] rounded-xl p-4" style={{ borderTop: `2px solid ${col.color}` }}>
                       <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">{col.label}</div>
                       <div className="text-2xl font-semibold text-[#0f1a14]">
-                        {companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key).length}
+                        {companies.filter(c => savedIds.has(c.id) && (pipeline[c.id] || "watching") === col.key).length}
                       </div>
                     </div>
                   ))}
@@ -527,7 +552,7 @@ async function uploadInvestorLogo(e) {
                     { label: "In diligence", key: "diligence", color: "#EF9F27" },
                     { label: "Passed", key: "passed", color: "#E24B4A" },
                   ].map(col => {
-                    const colCompanies = companies.filter(c => saved.includes(c.id) && (pipeline[c.id] || "watching") === col.key);
+                    const colCompanies = companies.filter(c => savedIds.has(c.id) && (pipeline[c.id] || "watching") === col.key);
                     return (
                       <div key={col.key} className="bg-white border border-[#e2e6ed] rounded-xl overflow-hidden" style={{ borderTop: `2px solid ${col.color}` }}>
                         <div className="flex items-center justify-between px-3 py-2 border-b border-[#e2e6ed]">
@@ -588,7 +613,7 @@ async function uploadInvestorLogo(e) {
               </div>
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Saved</div>
-                <div className="text-2xl font-semibold text-[#0f1a14]">{saved.length}</div>
+                <div className="text-2xl font-semibold text-[#0f1a14]">{savedIds.size}</div>
               </div>
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Showing</div>
@@ -641,8 +666,8 @@ async function uploadInvestorLogo(e) {
                   </div>
                   <div className="flex flex-col items-end gap-2 ml-3 flex-shrink-0">
                     <button onClick={() => toggleSave(company.id)}
-                      className={`text-lg ${saved.includes(company.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
-                      {saved.includes(company.id) ? "★" : "☆"}
+                      className={`text-lg ${isSaved(company.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
+                      {isSaved(company.id) ? "★" : "☆"}
                     </button>
                     <Link href={`/companies/${company.id}`} className="text-xs text-[#2d6a4f] font-mono">View</Link>
                   </div>
