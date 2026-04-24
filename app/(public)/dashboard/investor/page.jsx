@@ -7,8 +7,9 @@ import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRig
 import { usePaywall } from "@/components/PaywallModal";
 import { usePipeline } from "@/components/pipeline/usePipeline";
 import ForYouFeed from "@/components/news/ForYouFeed";
-import ComingSoonWidgets from "@/components/news/ComingSoonWidgets";
 import PolicyDigestWidget from "@/components/policies/PolicyDigestWidget";
+import MAPulseWidget from "@/components/widgets/MAPulseWidget";
+import SignalWidget from "@/components/widgets/SignalWidget";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -393,7 +394,43 @@ export default function InvestorDashboard() {
           <div className="flex flex-col gap-5">
             <ForYouFeed userType="investor" limit={5} />
             <PolicyDigestWidget userType="investor" limit={3} />
-            <ComingSoonWidgets />
+            <MAPulseWidget limit={5} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <SignalWidget
+                classification="ipo"
+                title="IPO tracker"
+                subtitle="Offerings, listings, SPAC mergers."
+                emptyTitle="No recent IPOs"
+                emptyBody="Climate-sector IPOs will appear here."
+                showDealSize
+                limit={4}
+              />
+              <SignalWidget
+                classification="fund_close"
+                title="Fund closes"
+                subtitle="New climate VC & PE fund closes."
+                emptyTitle="No recent fund closes"
+                emptyBody="Fund announcements will appear here."
+                showDealSize
+                limit={4}
+              />
+              <SignalWidget
+                classification="leadership_change"
+                title="Major hires"
+                subtitle="Exec moves and board changes."
+                emptyTitle="No recent leadership news"
+                emptyBody="Executive moves will appear here."
+                limit={4}
+              />
+              <SignalWidget
+                classification="earnings"
+                title="Earnings & guidance"
+                subtitle="Public company results and guidance."
+                emptyTitle="No recent earnings"
+                emptyBody="Earnings coverage will appear here."
+                limit={4}
+              />
+            </div>
           </div>
         )}
 
