@@ -2,8 +2,10 @@
 /**
  * components/widgets/SignalWidget.jsx
  *
- * Phase 7: uses CollapsibleCard (dense mode) so cards scan fast.
- * Layout optimized for 2x2 grid — narrower cards, smaller text.
+ * Phase 8: supports fallback content when the primary classification
+ * returns zero articles. Shows "Related activity" label so users know
+ * they're seeing adjacent content rather than assuming it's the
+ * primary category.
  */
 
 import { useState, useEffect } from "react";
@@ -37,6 +39,7 @@ export default function SignalWidget({
   limit = 4,
 }) {
   const [articles, setArticles] = useState([]);
+  const [isFallback, setIsFallback] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,11 +47,14 @@ export default function SignalWidget({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/news/by-classification/${classification}?limit=${limit}`);
+        const res = await fetch(
+          `/api/news/by-classification/${classification}?limit=${limit}&fallback=true`
+        );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (cancelled) return;
         setArticles(data.articles ?? []);
+        setIsFallback(Boolean(data.fallback));
       } catch (err) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -61,7 +67,7 @@ export default function SignalWidget({
   return (
     <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4">
       <div className="flex items-center justify-between mb-2">
-        <div>
+        <div className="min-w-0">
           <div className="text-[11px] font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">
             {title}
           </div>
@@ -75,6 +81,12 @@ export default function SignalWidget({
       </div>
       {subtitle && (
         <p className="text-[11px] text-[#718096] mb-3">{subtitle}</p>
+      )}
+
+      {isFallback && articles.length > 0 && (
+        <div className="mb-2 px-2 py-1 bg-[#f7f3ed] border border-[#e8dfd0] rounded text-[10px] text-[#8b6f3a]">
+          No recent {title.toLowerCase()} — showing related activity
+        </div>
       )}
 
       {loading ? (
