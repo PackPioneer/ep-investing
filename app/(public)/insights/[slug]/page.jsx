@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Globe, TrendingUp, FileText } from "lucide-react";
+import { useUser, SignUpButton } from "@clerk/nextjs";
+import { ArrowLeft, Globe, TrendingUp, Lock, FileText } from "lucide-react";
 
 function SimpleBarChart({ data }) {
   if (!data || data.length === 0) return null;
@@ -26,6 +27,7 @@ function SimpleBarChart({ data }) {
 
 export default function ReportPage() {
   const { slug } = useParams();
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +39,7 @@ export default function ReportPage() {
       .catch(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return (
+  if (loading || !userLoaded) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
@@ -51,6 +53,7 @@ export default function ReportPage() {
 
   const keyFindings = report.key_findings || [];
   const chartData = report.chart_data || [];
+  const showFull = isSignedIn;
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
@@ -112,28 +115,9 @@ export default function ReportPage() {
               <p className="text-sm text-[#4a5568] leading-relaxed font-light">{report.summary}</p>
             </div>
 
-            {/* PAYWALLED CONTENT */}
-            <div className="relative">
-
-              {/* Overlay */}
-              <div className="absolute inset-0 z-10 backdrop-blur-sm bg-[#f2f4f8]/80 rounded-2xl flex flex-col items-center justify-center text-center px-6 py-16">
-                <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-4">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" /> Early Access
-                </div>
-                <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">
-                  Full reports available April 15
-                </h2>
-                <p className="text-sm text-[#4a5568] font-light max-w-md mb-6">
-                  EP Investing is now open and free through July 15, 2025.
-                </p>
-                <Link href="/pricing"
-                  className="flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
-                  Get started free
-                </Link>
-              </div>
-
-              {/* Blurred preview */}
-              <div className="pointer-events-none select-none flex flex-col gap-7">
+            {/* FULL REPORT — visible if signed in */}
+            {showFull ? (
+              <>
                 {chartData.length > 0 && (
                   <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                     <div className="flex items-center gap-2 mb-6">
@@ -143,29 +127,111 @@ export default function ReportPage() {
                     <SimpleBarChart data={chartData} />
                   </div>
                 )}
+
                 {keyFindings.length > 0 && (
                   <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
                     <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Key Findings</h2>
                     <div className="flex flex-col gap-5">
-                      {keyFindings.slice(0, 2).map((finding, i) => (
-                        <div key={i} className="flex gap-4 pb-5 border-b border-[#e2e6ed] last:border-0 last:pb-0">
-                          <div className="w-6 h-6 rounded-full bg-[#eef1f6] border border-[#c8d8cc] flex items-center justify-center text-[10px] font-mono text-[#2d6a4f] flex-shrink-0 mt-0.5">
-                            {i + 1}
+                      {keyFindings.map((finding, i) => {
+                        // key_findings can be either an array of strings OR array of {heading, body} objects
+                        const isString = typeof finding === 'string';
+                        const heading = isString ? null : finding.heading;
+                        const body = isString ? finding : finding.body;
+                        return (
+                          <div key={i} className="flex gap-4 pb-5 border-b border-[#e2e6ed] last:border-0 last:pb-0">
+                            <div className="w-6 h-6 rounded-full bg-[#eef1f6] border border-[#c8d8cc] flex items-center justify-center text-[10px] font-mono text-[#2d6a4f] flex-shrink-0 mt-0.5">
+                              {i + 1}
+                            </div>
+                            <div>
+                              {heading && <div className="text-sm font-semibold text-[#0f1a14] mb-1">{heading}</div>}
+                              <div className="text-sm text-[#4a5568] leading-relaxed font-light">{body}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="text-sm font-semibold text-[#0f1a14] mb-1">{finding.heading}</div>
-                            <div className="text-sm text-[#4a5568] leading-relaxed font-light">{finding.body}</div>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
-                {/* Placeholder cards to add height */}
-                <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 h-40" />
-                <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 h-32" />
+
+                {report.pdf_url && (
+                  <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#eef1f6] border border-[#c8d8cc] flex items-center justify-center">
+                          <FileText size={18} className="text-[#2d6a4f]" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-[#0f1a14]">Full PDF Report</div>
+                          <div className="text-xs text-[#718096]">Download the complete analysis</div>
+                        </div>
+                      </div>
+                      <a href={report.pdf_url} target="_blank" rel="noopener noreferrer"
+                        className="bg-[#2d6a4f] text-white text-sm font-semibold rounded-lg px-5 py-2.5 hover:bg-[#235a40] transition-colors">
+                        Download PDF
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              /* GATED PREVIEW — when not signed in */
+              <div className="relative">
+                {/* Overlay */}
+                <div className="absolute inset-0 z-10 backdrop-blur-sm bg-[#f2f4f8]/80 rounded-2xl flex flex-col items-center justify-center text-center px-6 py-16">
+                  <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
+                    <Lock size={10} /> Full report
+                  </div>
+                  <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">
+                    Sign up free to read the full report
+                  </h2>
+                  <p className="text-sm text-[#4a5568] font-light max-w-md mb-6">
+                    Free until July 15, 2026 — get the full analysis, key findings, charts, and PDF download.
+                  </p>
+                  <SignUpButton mode="modal" forceRedirectUrl={`/insights/${slug}`} signInForceRedirectUrl={`/insights/${slug}`}>
+                    <button className="flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
+                      Get started free
+                    </button>
+                  </SignUpButton>
+                </div>
+
+                {/* Blurred preview */}
+                <div className="pointer-events-none select-none flex flex-col gap-7">
+                  {chartData.length > 0 && (
+                    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+                      <div className="flex items-center gap-2 mb-6">
+                        <TrendingUp size={16} className="text-[#2d6a4f]" />
+                        <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investment Flow ($B)</h2>
+                      </div>
+                      <SimpleBarChart data={chartData} />
+                    </div>
+                  )}
+                  {keyFindings.length > 0 && (
+                    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+                      <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-6">Key Findings</h2>
+                      <div className="flex flex-col gap-5">
+                        {keyFindings.slice(0, 2).map((finding, i) => {
+                          const isString = typeof finding === 'string';
+                          const heading = isString ? null : finding.heading;
+                          const body = isString ? finding : finding.body;
+                          return (
+                            <div key={i} className="flex gap-4 pb-5 border-b border-[#e2e6ed] last:border-0 last:pb-0">
+                              <div className="w-6 h-6 rounded-full bg-[#eef1f6] border border-[#c8d8cc] flex items-center justify-center text-[10px] font-mono text-[#2d6a4f] flex-shrink-0 mt-0.5">
+                                {i + 1}
+                              </div>
+                              <div>
+                                {heading && <div className="text-sm font-semibold text-[#0f1a14] mb-1">{heading}</div>}
+                                <div className="text-sm text-[#4a5568] leading-relaxed font-light">{body}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 h-40" />
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
 
@@ -197,22 +263,25 @@ export default function ReportPage() {
               </div>
             </div>
 
-            {/* Waitlist CTA */}
-            <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-              <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" /> Launching April 15
+            {/* CTA — only show if not signed in */}
+            {!isSignedIn && (
+              <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
+                <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase mb-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now open
+                </div>
+                <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-white mb-2">
+                  Get started free
+                </h3>
+                <p className="text-xs text-[#a0b8a8] leading-relaxed mb-4 font-light">
+                  Read every report in full, plus access company signals, investor matching, and personalized news.
+                </p>
+                <SignUpButton mode="modal" forceRedirectUrl={`/insights/${slug}`} signInForceRedirectUrl={`/insights/${slug}`}>
+                  <button className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                    Get started free
+                  </button>
+                </SignUpButton>
               </div>
-              <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-white mb-2">
-                Get started free
-              </h3>
-              <p className="text-xs text-[#a0b8a8] leading-relaxed mb-4 font-light">
-                Get full access to reports, investor matching, and company signals.
-              </p>
-              <Link href="/pricing"
-                className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
-                Get started free
-              </Link>
-            </div>
+            )}
 
             {/* Browse more */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
