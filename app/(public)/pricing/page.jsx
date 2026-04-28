@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Check, ArrowRight, Search, Briefcase, Building2, TrendingUp, Star } from "lucide-react";
 
@@ -8,29 +7,34 @@ const TIERS = [
   {
     id: "researcher",
     name: "Researcher",
-    price: 9,
-    description: "For analysts, students, and curious minds tracking the energy transition.",
+    price: 0,
+    priceLabel: "Free",
+    afterLabel: "Always free",
+    description: "For analysts, students, and anyone tracking the energy transition.",
     icon: Search,
     highlighted: false,
     href: "/onboarding/researcher",
     features: [
       "Browse 1,300+ climate companies",
-      "View open job listings",
-      "Search & filter by sector",
-      "Company profiles & descriptions",
-      "Access to industry reports",
+      "Save companies, investors, and grants to lists",
+      "Weekly digest email",
+      "Filter by sector, geography, and stage",
+      "Track grant deadlines",
     ],
   },
   {
     id: "expert",
     name: "Expert",
     price: 49,
+    priceLabel: "Free",
+    afterLabel: "$49/mo after July 15",
     description: "For consultants and advisors who want visibility and inbound deal flow.",
     icon: Briefcase,
     highlighted: false,
     href: "/onboarding/researcher",
     features: [
       "Everything in Researcher",
+      "Personalized For You intelligence feed",
       "Expert directory listing",
       "Inbound enquiry notifications",
       "Verified expert badge",
@@ -41,6 +45,8 @@ const TIERS = [
     id: "company",
     name: "Company",
     price: 99,
+    priceLabel: "Free",
+    afterLabel: "$99/mo after July 15",
     description: "For climate companies raising, hiring, or seeking strategic partners.",
     icon: Building2,
     highlighted: true,
@@ -48,27 +54,31 @@ const TIERS = [
     href: "/onboarding/company",
     features: [
       "Everything in Researcher",
+      "Personalized For You intelligence feed",
       "Verified company profile",
       "Raising / Hiring / Partnership signals",
       "Surfaced to relevant investors",
       "Priority placement in search",
-      "Admin dashboard access",
+      "Industry insights & reports",
     ],
   },
   {
     id: "investor",
     name: "Investor",
     price: 149,
+    priceLabel: "Free",
+    afterLabel: "$149/mo after July 15",
     description: "For VCs, family offices, and angels sourcing the next generation of climate deals.",
     icon: TrendingUp,
     highlighted: false,
     href: "/onboarding/investor",
     features: [
       "Everything in Researcher",
-      "Full company signal feed",
+      "Personalized For You intelligence feed",
       "Filter companies raising by stage",
       "Direct contact with verified founders",
       "Weekly curated deal digest",
+      "Industry insights & reports",
       "Investor profile & visibility",
     ],
   },
@@ -81,27 +91,27 @@ export default function PricingPage() {
       {/* Header */}
       <div className="max-w-5xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" /> Now live
+          <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now open
         </div>
         <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
           The intelligence layer<br />for the energy transition
         </h1>
         <p className="text-[#4a5568] text-lg max-w-xl mx-auto leading-relaxed mb-8">
-          Purpose-built for the green transition.
+          Purpose-built for climate professionals.
         </p>
         <div className="inline-flex items-center bg-[#0f1a14] text-white px-8 py-4 rounded-2xl mb-3">
           <span style={{ fontFamily: "Georgia, serif" }} className="text-2xl md:text-3xl font-normal">
-            Free until July 15, 2025
+            Free until July 15, 2026
           </span>
         </div>
-        <p className="text-xs font-mono text-[#718096]">No credit card required to start · Cancel anytime before July 15th</p>
+        <p className="text-xs font-mono text-[#718096]">All paid features unlocked · No credit card required · Researcher tier always free</p>
       </div>
 
       {/* Pricing cards */}
-      <div className="max-w-6xl mx-auto px-6 pb-24">
+      <div className="max-w-6xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {TIERS.map((tier) => {
-            const Icon = tier.icon;
+            const isFree = tier.price === 0;
             return (
               <div
                 key={tier.id}
@@ -128,13 +138,18 @@ export default function PricingPage() {
                 <div className="mb-4">
                   <div className="flex items-end gap-1">
                     <span className={`text-4xl font-bold tracking-tight ${tier.highlighted ? "text-white" : "text-[#0f1a14]"}`}>
-                      ${tier.price}
+                      {tier.priceLabel}
                     </span>
-                    <span className={`text-sm pb-1.5 font-mono ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
-                      /month after July 15
-                    </span>
+                    {!isFree && (
+                      <span className={`text-sm pb-1.5 font-mono ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
+                        until July 15
+                      </span>
+                    )}
                   </div>
-                  <p className={`text-xs leading-relaxed mt-2 ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
+                  <p className={`text-[11px] font-mono mt-1 ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
+                    {tier.afterLabel}
+                  </p>
+                  <p className={`text-xs leading-relaxed mt-3 ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
                     {tier.description}
                   </p>
                 </div>
@@ -171,8 +186,37 @@ export default function PricingPage() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-[#718096] font-mono">
-            Free until July 15, 2025 · All plans billed monthly · Cancel anytime · No hidden fees
+            Free until July 15, 2026 · All plans billed monthly · Cancel anytime · No hidden fees
           </p>
+          <p className="text-xs text-[#a0aec0] font-mono mt-2">
+            Annual billing available at 20% discount when paid plans launch · <a href="mailto:otto@epinvesting.com" className="underline hover:text-[#2d6a4f]">contact us</a>
+          </p>
+        </div>
+      </div>
+
+      {/* Comparison footer */}
+      <div className="max-w-3xl mx-auto px-6 pb-24 text-center">
+        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-4">
+          Why EP Investing?
+        </h2>
+        <p className="text-[#4a5568] leading-relaxed">
+          Generalist platforms charge $99+/month for broad market data. EP Investing offers
+          climate-specific intelligence — curated, enriched, and built for energy professionals — with
+          a free tier that beats most paid alternatives.
+        </p>
+        <div className="grid grid-cols-3 gap-4 mt-10">
+          <div>
+            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">1,300+</div>
+            <div className="text-xs font-mono text-[#718096] mt-1">Climate companies</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">350+</div>
+            <div className="text-xs font-mono text-[#718096] mt-1">Active investors</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">185+</div>
+            <div className="text-xs font-mono text-[#718096] mt-1">Grants tracked</div>
+          </div>
         </div>
       </div>
     </div>
