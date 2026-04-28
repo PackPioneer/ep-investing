@@ -66,7 +66,7 @@ export default function ExpertOnboardingPage() {
         </div>
         <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Application received</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
-          Thanks for applying to the EP Investing expert network. We'll review your application and reach out before our April 15 launch.
+          Thanks for applying to the EP Investing expert network. We'll review your application and follow up within a few business days.
         </p>
       </div>
     </div>
