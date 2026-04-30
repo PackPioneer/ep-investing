@@ -11,6 +11,7 @@ const navItems = [
   { name: "Investors", href: "/investors" },
   { name: "Grants", href: "/grants" },
   { name: "Experts", href: "/experts" },
+  { name: "NGOs", href: "/ngos" },
   { name: "Jobs", href: "/jobs" },
   { name: "Insights", href: "/insights" },
   { name: "Pricing", href: "/pricing" },
@@ -71,9 +72,9 @@ export default function Navbar() {
                   {joinOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setJoinOpen(false)} />
-                      <div className="absolute right-0 top-full mt-1 w-52 bg-white border border-[#e2e6ed] rounded-xl shadow-lg z-50">
+                      <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-[#e2e6ed] rounded-xl shadow-lg z-50 overflow-hidden">
                         <Link href="/onboarding/company" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-t-xl transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm a Company</span>
                           <span className="text-xs text-[#718096] mt-0.5">Claim your profile</span>
                         </Link>
@@ -85,16 +86,22 @@ export default function Navbar() {
                         </Link>
                         <div className="border-t border-[#e2e6ed]" />
                         <Link href="/onboarding/expert" onClick={() => setJoinOpen(false)}
-  className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
-  <span className="text-sm font-semibold text-[#0f1a14]">I'm an Expert</span>
-  <span className="text-xs text-[#718096] mt-0.5">Join the expert network</span>
-</Link>
-<div className="border-t border-[#e2e6ed]" />
-<Link href="/onboarding/researcher" onClick={() => setJoinOpen(false)}
-  className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] rounded-b-xl transition-colors">
-  <span className="text-sm font-semibold text-[#0f1a14]">I'm a Researcher</span>
-  <span className="text-xs text-[#718096] mt-0.5">Browse companies, jobs & grants</span>
-</Link>
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an Expert</span>
+                          <span className="text-xs text-[#718096] mt-0.5">Join the expert network</span>
+                        </Link>
+                        <div className="border-t border-[#e2e6ed]" />
+                        <Link href="/onboarding/ngo" onClick={() => setJoinOpen(false)}
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an NGO</span>
+                          <span className="text-xs text-[#718096] mt-0.5">List your organization</span>
+                        </Link>
+                        <div className="border-t border-[#e2e6ed]" />
+                        <Link href="/onboarding/researcher" onClick={() => setJoinOpen(false)}
+                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm a Researcher</span>
+                          <span className="text-xs text-[#718096] mt-0.5">Browse companies, jobs & grants</span>
+                        </Link>
                       </div>
                     </>
                   )}
@@ -111,7 +118,7 @@ export default function Navbar() {
       </nav>
 
       {isOpen && (
-        <div className="fixed inset-0 top-14 z-40 bg-[#f2f4f8] border-t border-[#e2e6ed] md:hidden">
+        <div className="fixed inset-0 top-14 z-40 bg-[#f2f4f8] border-t border-[#e2e6ed] md:hidden overflow-y-auto">
           <div className="flex flex-col p-6 gap-2">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
@@ -145,11 +152,15 @@ export default function Navbar() {
                   </a>
                   <Link href="/onboarding/company"
                     className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
-                    🏢 Join as Company
+                    Join as Company
                   </Link>
                   <Link href="/onboarding/investor"
                     className="text-center py-3 rounded-lg text-sm border border-[#2d6a4f] text-[#2d6a4f] font-semibold hover:bg-[#f0f7f4] transition-all">
-                    📈 Join as Investor
+                    Join as Investor
+                  </Link>
+                  <Link href="/onboarding/ngo"
+                    className="text-center py-3 rounded-lg text-sm border border-[#2d6a4f] text-[#2d6a4f] font-semibold hover:bg-[#f0f7f4] transition-all">
+                    Join as NGO
                   </Link>
                 </>
               )}

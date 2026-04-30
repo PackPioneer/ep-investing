@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase } from "lucide-react";
+import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase, Heart } from "lucide-react";
 import posthog from "posthog-js";
 
 const quickTags = [
@@ -51,6 +51,13 @@ const roleTiles = [
     desc: "Get hired for high-impact climate roles and attract inbound deal flow.",
     cta: "Join as an expert",
     href: "/experts",
+  },
+  {
+    icon: Heart,
+    title: "NGOs",
+    desc: "List grants and jobs, find partners, and discover funded climate companies.",
+    cta: "List your organization",
+    href: "/ngos",
   },
   {
     icon: Briefcase,
@@ -166,8 +173,8 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* ROLE CARDS */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* ROLE CARDS — now 5 across on lg screens, 2-3 wrap on smaller */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {roleTiles.map(tile => (
               <Link key={tile.title} href={tile.href}
                 className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
@@ -191,11 +198,11 @@ export default function HomePage() {
           {[
             { num: "1,300+", label: "Companies", sub: "across 14 industries" },
             { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
+            { num: "55+", label: "NGOs", sub: "foundations, IGOs & research" },
             { num: "185+", label: "Grants", sub: "with tracked deadlines" },
-            { num: "14", label: "Categories", sub: "energy transition coverage" },
             { num: "500+", label: "Jobs", sub: "across climate sectors" },
-          ].map((stat, i) => (
-            <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < 4 ? "border-r border-[#e2e6ed]" : ""}`}>
+          ].map((stat, i, arr) => (
+            <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < arr.length - 1 ? "border-r border-[#e2e6ed]" : ""}`}>
               <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{stat.num}</div>
               <div>
                 <div className="text-sm font-medium text-[#0f1a14]">{stat.label}</div>
@@ -212,12 +219,13 @@ export default function HomePage() {
           <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Explore EP Investing</h2>
           <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">View all →</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
             { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
-            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital across the energy transition.", href: "/investors" },
-            { num: "185+", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by upcoming deadlines.", href: "/grants" },
-            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — from deep tech to climate finance.", href: "/jobs" },
+            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital.", href: "/investors" },
+            { num: "55+", title: "NGOs", desc: "Foundations, IGOs, research nonprofits, and implementation orgs.", href: "/ngos/directory" },
+            { num: "185+", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by deadline.", href: "/grants" },
+            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — deep tech to climate finance.", href: "/jobs" },
           ].map(card => (
             <Link key={card.title} href={card.href}
               className="relative bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">

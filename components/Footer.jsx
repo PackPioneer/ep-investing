@@ -24,7 +24,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-[#718096] leading-relaxed max-w-xs font-light">
-              Climate & energy intelligence. Connecting founders, investors, and experts across the energy transition.
+              Climate & energy intelligence. Connecting founders, investors, NGOs, and experts across the energy transition.
             </p>
             <div className="flex gap-3 mt-6">
               <a href="mailto:otto@epinvesting.com"
@@ -46,12 +46,13 @@ export default function Footer() {
           <div>
             <h4 className="text-xs font-mono text-[#0f1a14] uppercase tracking-widest mb-4">Discover</h4>
             <ul className="space-y-3 text-sm flex flex-col">
-              <Link href="/search" className="hover:text-[#2d6a4f] transition-colors">Search</Link>
+              <Link href="/search" className="hover:text-[#2d6a4f] transition-colors">Companies</Link>
               <Link href="/investors" className="hover:text-[#2d6a4f] transition-colors">Investors</Link>
               <Link href="/grants" className="hover:text-[#2d6a4f] transition-colors">Grants</Link>
-              <Link href="/insights" className="hover:text-[#2d6a4f] transition-colors">Insights</Link>
-              <Link href="/jobs" className="hover:text-[#2d6a4f] transition-colors">Jobs</Link>
               <Link href="/experts" className="hover:text-[#2d6a4f] transition-colors">Experts</Link>
+              <Link href="/ngos" className="hover:text-[#2d6a4f] transition-colors">NGOs</Link>
+              <Link href="/jobs" className="hover:text-[#2d6a4f] transition-colors">Jobs</Link>
+              <Link href="/insights" className="hover:text-[#2d6a4f] transition-colors">Insights</Link>
             </ul>
           </div>
 
@@ -61,9 +62,10 @@ export default function Footer() {
             <ul className="space-y-3 text-sm flex flex-col">
               <Link href="/onboarding/company" className="hover:text-[#2d6a4f] transition-colors">Claim your company</Link>
               <Link href="/onboarding/investor" className="hover:text-[#2d6a4f] transition-colors">Investor access</Link>
+              <Link href="/onboarding/expert" className="hover:text-[#2d6a4f] transition-colors">Join as expert</Link>
+              <Link href="/onboarding/ngo" className="hover:text-[#2d6a4f] transition-colors">List your NGO</Link>
               <Link href="/get-matched" className="hover:text-[#2d6a4f] transition-colors">Get matched</Link>
               <Link href="/jobs" className="hover:text-[#2d6a4f] transition-colors">Post a job</Link>
-              <Link href="/experts" className="hover:text-[#2d6a4f] transition-colors">Join as expert</Link>
             </ul>
           </div>
 
@@ -73,6 +75,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm flex flex-col">
               <Link href="/about" className="hover:text-[#2d6a4f] transition-colors">About</Link>
               <a href="mailto:otto@epinvesting.com" className="hover:text-[#2d6a4f] transition-colors">Contact</a>
+              <Link href="/pricing" className="hover:text-[#2d6a4f] transition-colors">Pricing</Link>
               <Link href="/privacy-policy" className="hover:text-[#2d6a4f] transition-colors">Privacy Policy</Link>
               <Link href="/terms-and-conditions" className="hover:text-[#2d6a4f] transition-colors">Terms of Service</Link>
               <Link href="/disclaimer" className="hover:text-[#2d6a4f] transition-colors">Disclaimer</Link>
