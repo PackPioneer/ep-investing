@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, CheckCircle } from "lucide-react";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Fellowship", "Volunteer"];
 const SECTORS = [
@@ -18,11 +18,12 @@ const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wi
 
 export default function EditJob() {
   const { id } = useParams();
-  const router = useRouter();
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
+  const topRef = useRef(null);
 
   useEffect(() => {
     fetch(`/api/ngos/me/jobs/${id}`)
@@ -36,6 +37,7 @@ export default function EditJob() {
   async function handleSave() {
     setSaving(true);
     setError(null);
+    setSaved(false);
     try {
       const res = await fetch(`/api/ngos/me/jobs/${id}`, {
         method: "PATCH",
@@ -44,9 +46,12 @@ export default function EditJob() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
-      router.push("/dashboard/ngo/jobs");
+      setSaved(true);
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => setSaved(false), 4000);
     } catch (e) {
       setError(e.message);
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } finally {
       setSaving(false);
     }
@@ -58,12 +63,28 @@ export default function EditJob() {
   const valid = form.title && form.apply_url;
 
   return (
-    <div>
+    <div ref={topRef}>
       <Link href="/dashboard/ngo/jobs" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] mb-6">
         <ArrowLeft size={14} /> All jobs
       </Link>
 
       <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+
+        {saved && (
+          <div className="mb-5 p-3 bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] rounded-lg flex items-center justify-between gap-2.5 text-[#2d6a4f] text-sm">
+            <span className="flex items-center gap-2 font-semibold">
+              <CheckCircle size={16} /> Job changes saved
+            </span>
+            <Link href="/dashboard/ngo/jobs" className="text-xs font-mono hover:underline">
+              View all jobs →
+            </Link>
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+        )}
+
         <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-6">Edit job</h2>
 
         <div className="flex flex-col gap-5">
@@ -110,8 +131,6 @@ export default function EditJob() {
               <option value="inactive">Inactive</option>
             </select>
           </div>
-
-          {error && <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>}
 
           <div className="flex justify-end pt-3 border-t border-[#e2e6ed]">
             <button onClick={handleSave} disabled={!valid || saving}

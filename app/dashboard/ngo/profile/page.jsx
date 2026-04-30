@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Save, CheckCircle } from "lucide-react";
 
 const SECTORS = [
@@ -24,6 +24,7 @@ export default function NGOProfileEditor() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
+  const topRef = useRef(null);
 
   useEffect(() => {
     fetch("/api/ngos/me")
@@ -73,9 +74,12 @@ export default function NGOProfileEditor() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      // Scroll to top so the success banner is visible
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => setSaved(false), 4000);
     } catch (e) {
       setError(e.message);
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } finally {
       setSaving(false);
     }
@@ -85,14 +89,25 @@ export default function NGOProfileEditor() {
   if (!form) return <div className="text-sm text-[#718096]">No profile found.</div>;
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+    <div ref={topRef} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+
+      {/* Saved banner */}
+      {saved && (
+        <div className="mb-5 p-3 bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] rounded-lg flex items-center gap-2.5 text-[#2d6a4f] text-sm font-semibold">
+          <CheckCircle size={16} />
+          Profile changes saved
+        </div>
+      )}
+
+      {/* Error banner */}
+      {error && (
+        <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">Edit profile</h2>
-        {saved && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-mono text-[#2d6a4f]">
-            <CheckCircle size={13} /> Saved
-          </span>
-        )}
       </div>
 
       <div className="flex flex-col gap-5">
@@ -198,10 +213,6 @@ export default function NGOProfileEditor() {
           <label className={labelClass}>Contact email (visible to signed-in users only)</label>
           <input type="email" className={inputClass} value={form.contact_email ?? ""} onChange={e => set("contact_email", e.target.value)} />
         </div>
-
-        {error && (
-          <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</div>
-        )}
 
         <div className="flex justify-end pt-3 border-t border-[#e2e6ed]">
           <button onClick={handleSave} disabled={saving}
