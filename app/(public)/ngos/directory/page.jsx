@@ -73,19 +73,17 @@ export default function NGOsDirectory() {
   const [ngos, setNgos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [orgType, setOrgType] = useState("all");
-  const [partnership, setPartnership] = useState(false);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams();
     if (orgType !== "all") params.set("org_type", orgType);
-    if (partnership) params.set("partnership", "true");
 
     fetch(`/api/ngos?${params}`)
       .then(r => r.json())
       .then(data => { setNgos(data.ngos ?? []); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [orgType, partnership]);
+  }, [orgType]);
 
   const filtered = ngos.filter(n =>
     !search || n.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -124,7 +122,7 @@ export default function NGOsDirectory() {
             className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#718096] outline-none" />
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-10">
           {ORG_TYPES.map(t => (
             <button key={t.value} onClick={() => setOrgType(t.value)}
               className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
@@ -135,17 +133,6 @@ export default function NGOsDirectory() {
               {t.label}
             </button>
           ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-10">
-          <button onClick={() => setPartnership(!partnership)}
-            className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 ${
-              partnership
-                ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
-            }`}>
-            <Handshake size={11} /> Open to partnerships
-          </button>
         </div>
 
         {loading ? (
