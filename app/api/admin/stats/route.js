@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { requireAdmin } from "@/lib/admin";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -7,6 +8,9 @@ const supabase = createClient(
 );
 
 export async function GET() {
+  const userId = await requireAdmin();
+  if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   const [investors, companies, grants, subscribers] = await Promise.all([
     supabase.from("vc_firms").select("id", { count: "exact", head: true }),
     supabase.from("companies").select("id", { count: "exact", head: true }),

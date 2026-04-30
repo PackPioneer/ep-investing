@@ -1,17 +1,9 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/admin";
 
 export async function GET(req) {
-  const { userId } = await auth();
-  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await currentUser();
-  const userEmail = user?.emailAddresses?.[0]?.emailAddress;
-  const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
-
-  if (!adminEmails.includes(userEmail)) {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") || "";

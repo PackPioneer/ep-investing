@@ -1,25 +1,21 @@
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin";
 
-export async function GET(req) {
+export async function POST(req, { params }) {
   const userId = await requireAdmin();
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status") ?? "pending";
+    const { id } = await params;
 
-    let query = supabase
+    const { error } = await supabase
       .from("ngos")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .update({ status: "rejected" })
+      .eq("id", id);
 
-    if (status !== "all") query = query.eq("status", status);
-
-    const { data, error } = await query;
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
-    return Response.json({ ngos: data ?? [] });
+    return Response.json({ success: true });
   } catch (e) {
     return Response.json({ error: e.message }, { status: 500 });
   }

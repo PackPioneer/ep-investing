@@ -1,10 +1,13 @@
 import { supabase } from "@/lib/supabase";
-import { clerkClient } from "@clerk/nextjs/server";
 import { Resend } from "resend";
+import { requireAdmin } from "@/lib/admin";
 
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+
   const { data, error } = await supabase
     .from("matched_requests")
     .select("*")
@@ -16,6 +19,9 @@ export async function GET() {
 }
 
 export async function PATCH(req) {
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+
   const body = await req.json();
   const { id, status, admin_notes } = body;
 

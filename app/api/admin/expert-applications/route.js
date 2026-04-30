@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { requireAdmin } from "@/lib/admin";
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -9,6 +10,9 @@ const supabaseAdmin = createClient(
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+
   const { data, error } = await supabaseAdmin
     .from("experts")
     .select("*")
@@ -18,6 +22,9 @@ export async function GET() {
 }
 
 export async function PATCH(req) {
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+
   const { id, status } = await req.json();
 
   const { data: expert, error } = await supabaseAdmin
