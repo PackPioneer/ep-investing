@@ -3,9 +3,12 @@
 import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { ArrowRight, X, CreditCard } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+
 const PaywallContext = createContext(null);
 
-const HARD_BLOCK_DATE = new Date("2026-06-01");
+// Hard block kicks in AFTER the free period ends, not before.
+// Set to July 16, 2026 — one day after the free period ends.
+const HARD_BLOCK_DATE = new Date("2026-07-16");
 
 export function PaywallProvider({ children }) {
   const { user } = useUser();
@@ -25,26 +28,28 @@ export function PaywallProvider({ children }) {
   }, [hasPayment]);
 
   const isHardBlock = new Date() >= HARD_BLOCK_DATE;
-const handleStripe = async () => {
-  const email = user?.emailAddresses?.[0]?.emailAddress;
-  if (!email) {
-    window.location.href = "/sign-in";
-    return;
-  }
-  try {
-    const res = await fetch("/api/stripe/setup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, plan: "company" }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else throw new Error(data.message);
-  } catch (err) {
-    console.error("Stripe error:", err);
-    alert("Something went wrong. Please try again.");
-  }
-};
+
+  const handleStripe = async () => {
+    const email = user?.emailAddresses?.[0]?.emailAddress;
+    if (!email) {
+      window.location.href = "/sign-in";
+      return;
+    }
+    try {
+      const res = await fetch("/api/stripe/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, plan: "company" }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else throw new Error(data.message);
+    } catch (err) {
+      console.error("Stripe error:", err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <PaywallContext.Provider value={{ hasPayment, triggerPaywall, loading }}>
       {children}
@@ -67,13 +72,13 @@ const handleStripe = async () => {
             <p className="text-[#4a5568] text-sm leading-relaxed mb-6">
               {isHardBlock
                 ? "Your free access period has ended. Add a payment method to continue using EP Investing."
-                : "Add your card now to keep access after July 15, 2025 — no charge until then. Cancel anytime before July 15th."}
+                : "Add your card now to keep access after July 15, 2026 — no charge until then. Cancel anytime before July 15th."}
             </p>
             <div className="flex flex-col gap-3">
               <button
-              onClick={handleStripe}
-              className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all">
-              Add payment method <ArrowRight size={14} />
+                onClick={handleStripe}
+                className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all">
+                Add payment method <ArrowRight size={14} />
               </button>
               {!isHardBlock && (
                 <button onClick={() => setShowModal(false)}
@@ -84,7 +89,7 @@ const handleStripe = async () => {
             </div>
             {!isHardBlock && (
               <p className="text-xs text-[#a0aec0] font-mono text-center mt-4">
-                Free until July 15, 2025 · No charge today
+                Free until July 15, 2026 · No charge today
               </p>
             )}
           </div>
@@ -95,5 +100,7 @@ const handleStripe = async () => {
 }
 
 export function usePaywall() {
-  return useContext(PaywallContext);
+  const ctx = useContext(PaywallContext);
+  if (!ctx) throw new Error("usePaywall must be used within PaywallProvider");
+  return ctx;
 }

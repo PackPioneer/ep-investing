@@ -120,7 +120,6 @@ export default function CompanyDashboard() {
   async function submitJob(e) {
     e.preventDefault();
     triggerPaywall();
-    if (!hasPayment) return;
     setSubmittingJob(true);
     const res = await fetch("/api/dashboard/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(jobForm) });
     if (res.ok) { const j = await res.json(); setJobs(prev => [j, ...prev]); setJobForm({ title: "", location: "", type: "", contact_email: "", description: "" }); setShowJobForm(false); }
