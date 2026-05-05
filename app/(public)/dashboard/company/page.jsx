@@ -202,12 +202,12 @@ async function deleteDeck() {
   const navItems = [
     { id: "overview", label: "Overview" },
     { id: "for-you", label: "For You" },
-    { id: "profile", label: "Profile" },
-    { id: "funding", label: "Funding Round" },
-    { id: "jobs", label: "Jobs" },
-    { id: "updates", label: "Updates" },
-    { id: "investors", label: "Investors" },
-    { id: "experts", label: "Experts" }, 
+    { id: "profile", label: "Edit profile" },
+    { id: "funding", label: "Raise capital" },
+    { id: "jobs", label: "Post a job" },
+    { id: "updates", label: "Share an update" },
+    { id: "investors", label: "Find investors" },
+    { id: "experts", label: "Hire experts" }, 
   ];
 
   return (
