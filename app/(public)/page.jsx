@@ -134,19 +134,134 @@ export default function HomePage() {
         }} />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            Climate Finance Intelligence
+          {/* HERO TOP — pitch + dashboard mockup, two columns on desktop */}
+<div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-10 items-center mb-12">
+
+  {/* LEFT: pitch */}
+  <div>
+    <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+      Free until July 15, 2026
+    </div>
+
+    <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl leading-[1.05] tracking-tight text-[#0f1a14] mb-5">
+      Built for the people building{" "}
+      <em className="text-[#2d6a4f] not-italic">the energy transition.</em>
+    </h1>
+
+    <p className="text-[#4a5568] text-base leading-relaxed mb-6 font-light">
+      News intelligence, investor matching, grant tracking, and hiring — all in one platform.
+    </p>
+
+    <Link href="/sign-up" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all mb-3">
+      Start free <ArrowRight size={14} />
+    </Link>
+    <div className="text-xs text-[#718096] font-mono">
+      No credit card · Cancel anytime
+    </div>
+  </div>
+
+  {/* RIGHT: dashboard mockup */}
+  <div className="bg-white rounded-xl border border-[#e2e6ed] overflow-hidden grid grid-cols-[140px_1fr] min-h-[420px]">
+
+    {/* Sidebar */}
+    <div className="bg-[#0f1a14] p-3">
+      <div className="mb-4 px-1.5">
+        <span style={{ fontFamily: "Georgia, serif" }} className="text-white text-sm">EP </span>
+        <span style={{ fontFamily: "Georgia, serif", fontStyle: "italic" }} className="text-[#2d6a4f] text-sm">Investing</span>
+      </div>
+      <div className="flex flex-col gap-0.5">
+        {[
+          { label: "Overview", active: false },
+          { label: "For You", active: true },
+          { label: "Edit profile", active: false },
+          { label: "Raise capital", active: false },
+          { label: "Post a job", active: false },
+          { label: "Share an update", active: false },
+          { label: "Find investors", active: false },
+          { label: "Hire experts", active: false },
+        ].map(item => (
+          <div key={item.label}
+            className={`px-2 py-1.5 text-[11px] rounded ${
+              item.active
+                ? "bg-[rgba(45,106,79,0.4)] text-white font-medium"
+                : "text-white/50"
+            }`}>
+            {item.label}
           </div>
+        ))}
+      </div>
+    </div>
 
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl md:text-7xl leading-[1.05] tracking-tight text-[#0f1a14] max-w-4xl mb-6">
-            Capital discovery for{" "}
-            <em className="text-[#2d6a4f] not-italic">the energy transition.</em>
-          </h1>
+    {/* Feed pane */}
+    <div className="p-3.5 bg-[#f8f9fb]">
+      <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">
+        Activity in your sector
+      </div>
 
-          <p className="text-[#4a5568] text-lg max-w-xl leading-relaxed mb-10 font-light">
-            Search companies, investors, grants, and jobs across climate and energy — curated, structured, and updated regularly.
-          </p>
+      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e1f5ee] text-[#0f6e56] font-medium">IPO</div>
+          <div className="text-[8px] text-[#718096] font-mono">Climate Capital Weekly</div>
+          <div className="text-[8px] text-[#718096] ml-auto">2h</div>
+        </div>
+        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
+          Battery storage firm surges 23% on first trading day
+        </div>
+      </div>
+
+      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#eef1f6] text-[#2d6a4f] font-medium">Funding</div>
+          <div className="text-[8px] text-[#718096] font-mono">Energy Intelligence</div>
+          <div className="text-[8px] text-[#718096] ml-auto">8h</div>
+        </div>
+        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
+          Green hydrogen startup closes $80M Series B
+        </div>
+      </div>
+
+      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-3">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faece7] text-[#993c1d] font-medium">Activity</div>
+          <div className="text-[8px] text-[#718096] font-mono">Solar Futures</div>
+          <div className="text-[8px] text-[#718096] ml-auto">1d</div>
+        </div>
+        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
+          Free market and storage reshape Brazilian solar sector
+        </div>
+      </div>
+
+      <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">
+        Policy &amp; deadlines
+      </div>
+
+      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e6f1fb] text-[#185fa5] font-medium">Policy</div>
+          <div className="text-[8px] text-[#718096] font-mono">Nuclear Business</div>
+          <div className="text-[8px] text-[#718096] ml-auto">May 3</div>
+        </div>
+        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
+          Virginia coal combustion residuals approval proposed
+        </div>
+      </div>
+
+      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faeeda] text-[#854f0b] font-medium">Grant</div>
+          <div className="text-[8px] text-[#718096] font-mono">DOE</div>
+          <div className="text-[8px] text-[#718096] ml-auto">5 days left</div>
+        </div>
+        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
+          H2 Bridge Demonstration · $14M deadline approaching
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 
           <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden mb-6 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
             <div className="flex items-center flex-1 px-4 gap-3">
