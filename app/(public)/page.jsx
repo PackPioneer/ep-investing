@@ -307,27 +307,6 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* STATS BAR */}
-      <div className="border-y border-[#e2e6ed] bg-[#ffffff] overflow-x-auto">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex gap-0 justify-center">
-          {[
-            { num: "1,300+", label: "Companies", sub: "across 14 industries" },
-            { num: "350", label: "Investors", sub: "VC, Angel & Philanthropy" },
-            { num: "55+", label: "NGOs", sub: "foundations, IGOs & research" },
-            { num: "185+", label: "Grants", sub: "with tracked deadlines" },
-            { num: "500+", label: "Jobs", sub: "across climate sectors" },
-          ].map((stat, i, arr) => (
-            <div key={i} className={`flex items-center gap-4 pr-8 mr-8 flex-shrink-0 ${i < arr.length - 1 ? "border-r border-[#e2e6ed]" : ""}`}>
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{stat.num}</div>
-              <div>
-                <div className="text-sm font-medium text-[#0f1a14]">{stat.label}</div>
-                <div className="text-xs text-[#4a5568]">{stat.sub}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* DIRECTORY BLOCKS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
