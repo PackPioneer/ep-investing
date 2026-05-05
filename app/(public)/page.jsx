@@ -153,9 +153,9 @@ export default function HomePage() {
       News intelligence, investor matching, grant tracking, and hiring — all in one platform.
     </p>
 
-    <Link href="/sign-up" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all mb-3">
-      Start free <ArrowRight size={14} />
-    </Link>
+    <a href="#get-started" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all mb-3 scroll-smooth">
+  Start free <ArrowRight size={14} />
+</a>
     <div className="text-xs text-[#718096] font-mono">
       No credit card · Cancel anytime
     </div>
@@ -289,7 +289,7 @@ export default function HomePage() {
           </div>
 
           {/* ROLE CARDS — now 5 across on lg screens, 2-3 wrap on smaller */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div id="get-started" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 scroll-mt-24">
             {roleTiles.map(tile => (
               <Link key={tile.title} href={tile.href}
                 className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
