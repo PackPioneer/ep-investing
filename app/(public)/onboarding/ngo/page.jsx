@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle, Building2 } from "lucide-react";
+import posthog from "posthog-js";
 
 const ORG_TYPES = [
   { value: "international_ngo", label: "International NGO", desc: "Conservation, advocacy, or service org operating across borders (e.g. WWF, EDF)" },
@@ -89,6 +90,11 @@ export default function NGOOnboarding() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed");
+      posthog.identify(form.contact_email, { email: form.contact_email, name: form.contact_name, organization: form.name });
+      posthog.capture("ngo_onboarding_submitted", {
+        org_type: form.org_type,
+        country: form.headquarters_country,
+      });
       setDone(true);
     } catch (e) {
       setError(e.message);

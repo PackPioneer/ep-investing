@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
-
+import posthog from "posthog-js";
 const EXPERTISE_OPTIONS = [
   // Technical / Engineering
   "Solar & Wind", "Battery Storage", "Green Hydrogen", "Nuclear",
@@ -49,7 +49,13 @@ export default function ExpertOnboardingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (res.ok) setDone(true);
+      if (res.ok) {
+        posthog.identify(form.email, { email: form.email, name: form.name });
+        posthog.capture("expert_onboarding_submitted", {
+          specialty: form.specialty || form.expertise || "unknown",
+        });
+        setDone(true);
+      }
     } finally {
       setLoading(false);
     }

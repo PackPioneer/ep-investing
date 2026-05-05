@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, CheckCircle, Briefcase } from "lucide-react";
+import posthog from "posthog-js";
 
 const SECTORS = ["solar","wind_energy","battery_storage","green_hydrogen","nuclear_technologies","ev_charging","carbon_markets","direct_air_capture","saf_efuels","electric_aviation","geothermal","industrial_decarbonization","energy_efficiency","climate_tech"];
 const JOB_TYPES = ["Engineering", "Finance & Investment", "Policy & Regulation", "Operations", "Sales & BD", "Product & Design", "Marketing", "Legal", "Research & Science", "Other"];
@@ -89,6 +90,8 @@ if (!userType) return (
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      posthog.identify(form.email, { email: form.email, name: form.name });
+      posthog.capture("researcher_onboarding_submitted", {});
       setDone(true);
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
