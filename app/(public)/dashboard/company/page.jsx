@@ -49,7 +49,7 @@ export default function CompanyDashboard() {
   const [saved, setSaved] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [showJobForm, setShowJobForm] = useState(false);
-  const [jobForm, setJobForm] = useState({ title: "", location: "", type: "", contact_email: "", description: "" });
+  const [jobForm, setJobForm] = useState({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null });
   const [submittingJob, setSubmittingJob] = useState(false);
   const [updates, setUpdates] = useState([]);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -122,7 +122,7 @@ export default function CompanyDashboard() {
     triggerPaywall();
     setSubmittingJob(true);
     const res = await fetch("/api/dashboard/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(jobForm) });
-    if (res.ok) { const j = await res.json(); setJobs(prev => [j, ...prev]); setJobForm({ title: "", location: "", type: "", contact_email: "", description: "" }); setShowJobForm(false); }
+    if (res.ok) { const j = await res.json(); setJobs(prev => [j, ...prev]); setJobForm({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null }); setShowJobForm(false); }
     setSubmittingJob(false);
   }
 
@@ -592,25 +592,111 @@ async function deleteDeck() {
             </div>
             {showJobForm && (
               <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+
+                {/* SECTION 1 — REQUIRED (always visible) */}
+                <div className="text-xs font-mono uppercase tracking-wide text-[#2d6a4f] pb-1">Required info</div>
                 <input required placeholder="Job title *" value={jobForm.title} onChange={e => setJobForm(p => ({ ...p, title: e.target.value }))}
                   className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
-                <div className="grid grid-cols-2 gap-3">
-                  <input placeholder="Location" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
-                  <select value={jobForm.type} onChange={e => setJobForm(p => ({ ...p, type: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
-                    <option value="">Type...</option>
-                    <option value="full_time">Full Time</option>
-                    <option value="part_time">Part Time</option>
-                    <option value="contract">Contract</option>
-                    <option value="internship">Internship</option>
-                  </select>
-                </div>
-                <input placeholder="Contact email *" value={jobForm.contact_email} onChange={e => setJobForm(p => ({ ...p, contact_email: e.target.value }))}
+                <input required placeholder="Location * (e.g., San Francisco, CA, or Remote)" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
                   className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
-                <textarea placeholder="Job description" rows={3} value={jobForm.description} onChange={e => setJobForm(p => ({ ...p, description: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
-                <div className="flex gap-2 justify-end">
+                <input required type="email" placeholder="Contact email *" value={jobForm.contact_email} onChange={e => setJobForm(p => ({ ...p, contact_email: e.target.value }))}
+                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+
+                {/* SECTION 2 — JOB DETAILS */}
+                <details className="border-t border-[#e2e6ed] pt-3">
+                  <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Job details</summary>
+                  <div className="grid grid-cols-3 gap-2 mt-3">
+                    <select value={jobForm.work_mode || ""} onChange={e => setJobForm(p => ({ ...p, work_mode: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      <option value="">Work mode</option>
+                      <option value="remote">Remote</option>
+                      <option value="hybrid">Hybrid</option>
+                      <option value="onsite">Onsite</option>
+                    </select>
+                    <select value={jobForm.type || ""} onChange={e => setJobForm(p => ({ ...p, type: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      <option value="">Employment type</option>
+                      <option value="full_time">Full-time</option>
+                      <option value="part_time">Part-time</option>
+                      <option value="contract">Contract</option>
+                      <option value="internship">Internship</option>
+                    </select>
+                    <select value={jobForm.experience_level || ""} onChange={e => setJobForm(p => ({ ...p, experience_level: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      <option value="">Experience level</option>
+                      <option value="entry">Entry</option>
+                      <option value="mid">Mid</option>
+                      <option value="senior">Senior</option>
+                      <option value="lead">Lead</option>
+                      <option value="executive">Executive</option>
+                    </select>
+                  </div>
+                </details>
+
+                {/* SECTION 3 — COMPENSATION */}
+                <details className="border-t border-[#e2e6ed] pt-3">
+                  <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Compensation</summary>
+                  <div className="flex flex-col gap-2 mt-3">
+                    <div className="grid grid-cols-3 gap-2">
+                      <input type="number" placeholder="Min salary" value={jobForm.salary_min || ""} onChange={e => setJobForm(p => ({ ...p, salary_min: e.target.value ? parseInt(e.target.value) : null }))}
+                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      <input type="number" placeholder="Max salary" value={jobForm.salary_max || ""} onChange={e => setJobForm(p => ({ ...p, salary_max: e.target.value ? parseInt(e.target.value) : null }))}
+                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      <select value={jobForm.salary_currency || "USD"} onChange={e => setJobForm(p => ({ ...p, salary_currency: e.target.value }))}
+                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="CAD">CAD</option>
+                      </select>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm text-[#4a5568]">
+                      <input type="checkbox" checked={jobForm.equity_offered || false} onChange={e => setJobForm(p => ({ ...p, equity_offered: e.target.checked }))}
+                        className="w-4 h-4 accent-[#2d6a4f]" />
+                      Equity offered
+                    </label>
+                  </div>
+                </details>
+
+                {/* SECTION 4 — ABOUT THE ROLE */}
+                <details className="border-t border-[#e2e6ed] pt-3">
+                  <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">About the role</summary>
+                  <div className="flex flex-col gap-2 mt-3">
+                    <textarea placeholder="Role overview" rows={2} value={jobForm.role_overview || ""} onChange={e => setJobForm(p => ({ ...p, role_overview: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                    <textarea placeholder="Responsibilities" rows={4} value={jobForm.responsibilities || ""} onChange={e => setJobForm(p => ({ ...p, responsibilities: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                    <textarea placeholder="Requirements" rows={4} value={jobForm.requirements || ""} onChange={e => setJobForm(p => ({ ...p, requirements: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                    <textarea placeholder="Nice-to-haves (optional)" rows={3} value={jobForm.nice_to_haves || ""} onChange={e => setJobForm(p => ({ ...p, nice_to_haves: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                  </div>
+                </details>
+
+                {/* SECTION 5 — SECTOR & MISSION */}
+                <details className="border-t border-[#e2e6ed] pt-3">
+                  <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Sector & mission</summary>
+                  <div className="flex flex-col gap-2 mt-3">
+                    <input placeholder="Sector tags (comma-separated)" value={Array.isArray(jobForm.sector_tags) ? jobForm.sector_tags.join(", ") : (jobForm.sector_tags || "")}
+                      onChange={e => setJobForm(p => ({ ...p, sector_tags: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    <textarea placeholder="Mission/impact statement" rows={2} value={jobForm.mission_statement || ""} onChange={e => setJobForm(p => ({ ...p, mission_statement: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                  </div>
+                </details>
+
+                {/* SECTION 6 — HOW TO APPLY */}
+                <details className="border-t border-[#e2e6ed] pt-3">
+                  <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">How to apply</summary>
+                  <div className="flex flex-col gap-2 mt-3">
+                    <input type="url" placeholder="Application URL (optional)" value={jobForm.apply_url || ""} onChange={e => setJobForm(p => ({ ...p, apply_url: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    <input type="date" value={jobForm.application_deadline || ""} onChange={e => setJobForm(p => ({ ...p, application_deadline: e.target.value || null }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
+                </details>
+
+                <div className="flex gap-2 justify-end pt-2">
                   <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
                   <button type="submit" disabled={submittingJob} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                     {submittingJob ? "Posting..." : "Post job"}
