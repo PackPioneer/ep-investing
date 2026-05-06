@@ -748,22 +748,7 @@ async function deleteDeck() {
                 {savedFunding && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
               </div>
             </form>
-            <div className="mt-6 pt-6 border-t border-[#e2e6ed]">
-              <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3 block">Pitch Deck (PDF)</label>
-              {deckUrl && (
-  <div className="flex items-center gap-3 mb-3">
-    <a href={deckUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-[#2d6a4f] hover:underline">
-      View current pitch deck
-    </a>
-    <button onClick={deleteDeck} className="text-xs text-red-500 hover:text-red-700 font-mono">Remove</button>
-  </div>
-)}
-              <label className="cursor-pointer inline-flex items-center gap-2 border border-[#d0d6e0] text-sm text-[#4a5568] px-4 py-2.5 rounded-lg hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
-                {uploadingDeck ? "Uploading..." : deckUrl ? "Replace pitch deck" : "Upload pitch deck"}
-                <input type="file" accept=".pdf" onChange={uploadDeck} className="hidden" disabled={uploadingDeck} />
-              </label>
-        <p className="text-xs text-[#718096] mt-2">PDF only. Only visible to verified investors.</p>
-            </div>
+
           </div>
         )}
 
