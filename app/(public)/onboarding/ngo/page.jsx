@@ -56,6 +56,7 @@ function ProgressBar({ step }) {
 
 export default function NGOOnboarding() {
   const [step, setStep] = useState(1);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState(null);
@@ -86,7 +87,7 @@ export default function NGOOnboarding() {
       const res = await fetch("/api/onboarding/ngo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, geography_focus }),
+        body: JSON.stringify({ ...form, geography_focus, terms_agreed_at: new Date().toISOString() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed");
@@ -315,7 +316,7 @@ export default function NGOOnboarding() {
                 <button onClick={() => setStep(2)} className="text-sm text-[#4a5568] hover:text-[#0f1a14] px-3 py-2">
                   Back
                 </button>
-                <button onClick={handleSubmit} disabled={!step3Valid || loading}
+                <button onClick={handleSubmit} disabled={!step3Valid || loading || !agreedToTerms}
                   className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#235a40] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
                   {loading ? "Submitting..." : "Submit profile"} <ArrowRight size={14} />
                 </button>

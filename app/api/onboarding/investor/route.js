@@ -18,6 +18,7 @@ export async function POST(req) {
     show_contact, primary_contact_name, primary_contact_email,
     secondary_contact_name, secondary_contact_email
   } = body;
+  const terms_agreed_at = body.terms_agreed_at || null;
 
   if (!name || !email) {
     return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -28,6 +29,7 @@ export async function POST(req) {
     .insert({
       path: "investor",
       status: "pending",
+      terms_agreed_at,
       name, email, firm,
       focus: sectors?.join(", "),
       stage: stages?.join(", "),

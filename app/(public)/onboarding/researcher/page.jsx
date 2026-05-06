@@ -39,6 +39,7 @@ const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wi
 
 export default function JobSeekerOnboarding() {
   const [userType, setUserType] = useState("researcher");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 const [step, setStep] = useState(1);
 if (!userType) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
@@ -88,7 +89,7 @@ if (!userType) return (
       await fetch("/api/onboarding/researcher", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, terms_agreed_at: new Date().toISOString() }),
       });
       posthog.identify(form.email, { email: form.email, name: form.name });
       posthog.capture("researcher_onboarding_submitted", {});
@@ -207,12 +208,17 @@ if (!userType) return (
                 </button>
               </div>
 
+              <label className="flex items-start gap-2.5 mt-2 mb-2 text-xs text-[#4a5568] leading-relaxed">
+                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 accent-[#2d6a4f] flex-shrink-0" />
+                <span>I agree to the <a href="/terms-and-conditions" target="_blank" className="text-[#2d6a4f] underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" className="text-[#2d6a4f] underline">Privacy Policy</a>.</span>
+              </label>
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(1)}
                   className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
-                <button onClick={handleSubmit} disabled={loading}
+                <button onClick={handleSubmit} disabled={loading || !agreedToTerms}
                   className="flex-1 flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all disabled:opacity-60">
                   {loading ? "Saving..." : "Browse jobs"}
                   {!loading && <ArrowRight size={14} />}

@@ -20,6 +20,7 @@ export async function POST(req) {
     location, description, funding_raised,
     looking_to_raise, is_hiring, seeking_partnerships,
   } = body;
+  const terms_agreed_at = body.terms_agreed_at || null;
 
   if (!company_name || !contact_name || !contact_email) {
     return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -39,6 +40,7 @@ export async function POST(req) {
       contact_email, contact_role, description,
       plan: `${stage || "unknown"} · ${sector || "unknown"}`,
       status: "pending",
+      terms_agreed_at,
       admin_notes: [
         `Funding: ${funding_raised || "n/a"}`,
         `Round: ${funding_round || "n/a"}`,

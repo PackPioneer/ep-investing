@@ -23,6 +23,7 @@ const AVAILABILITY_OPTIONS = [
 
 export default function ExpertOnboardingPage() {
   const [step, setStep] = useState(1);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
@@ -47,7 +48,7 @@ export default function ExpertOnboardingPage() {
       const res = await fetch("/api/experts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, terms_agreed_at: new Date().toISOString() }),
       });
       if (res.ok) {
         posthog.identify(form.email, { email: form.email, name: form.name });
@@ -197,9 +198,14 @@ export default function ExpertOnboardingPage() {
                 </div>
               </div>
 
+              <label className="flex items-start gap-2.5 mt-2 mb-2 text-xs text-[#4a5568] leading-relaxed">
+                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 accent-[#2d6a4f] flex-shrink-0" />
+                <span>I agree to the <a href="/terms-and-conditions" target="_blank" className="text-[#2d6a4f] underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" className="text-[#2d6a4f] underline">Privacy Policy</a>.</span>
+              </label>
               <div className="flex gap-3">
                 <button onClick={() => setStep(2)} className="text-sm text-[#718096] px-4 py-2 rounded-lg hover:bg-[#e2e6ed] transition-colors">Back</button>
-                <button onClick={submit} disabled={loading}
+                <button onClick={submit} disabled={loading || !agreedToTerms}
                   className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors flex items-center gap-2">
                   {loading ? "Submitting..." : "Submit application"} <ArrowRight size={14} />
                 </button>

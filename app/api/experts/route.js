@@ -15,7 +15,7 @@ export async function POST(req) {
 
     const { data, error } = await supabase
       .from("experts")
-      .insert({ name, email, bio, expertise_areas, hourly_rate, availability, linkedin_url, website_url, location, status: "pending", clerk_user_id: userId || null })
+      .insert({ name, email, bio, expertise_areas, hourly_rate, availability, linkedin_url, website_url, location, terms_agreed_at: body.terms_agreed_at || null, status: "pending", clerk_user_id: userId || null })
       .select()
       .single();
 

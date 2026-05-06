@@ -39,6 +39,7 @@ export async function POST(req) {
       open_to_partnerships, partnership_description,
       contact_email,
     } = body;
+  const terms_agreed_at = body.terms_agreed_at || null;
 
     if (!name || !org_type || !website_url || !contact_email) {
       return Response.json({ error: "Name, org type, website, and contact email are required" }, { status: 400 });
@@ -73,6 +74,7 @@ export async function POST(req) {
         contact_email,
         clerk_user_id: userId || null,
         verified,
+        terms_agreed_at,
         status: "pending",
         claimable: false,
       })

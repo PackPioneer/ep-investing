@@ -44,6 +44,7 @@ const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wi
 
 export default function CompanyOnboarding() {
   const [step, setStep] = useState(1);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
@@ -65,7 +66,7 @@ export default function CompanyOnboarding() {
       await fetch("/api/onboarding/company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, terms_agreed_at: new Date().toISOString() }),
       });
       posthog.identify(form.contact_email, { email: form.contact_email, name: form.contact_name, company: form.company_name });
       posthog.capture("company_onboarding_submitted", {
@@ -350,12 +351,17 @@ export default function CompanyOnboarding() {
               <p className="text-xs text-[#718096] leading-relaxed">
                 By submitting you'll receive a confirmation at <strong>{form.contact_email}</strong>. We'll verify your company and be in touch within 1–2 business days.
               </p>
+              <label className="flex items-start gap-2.5 mt-2 mb-2 text-xs text-[#4a5568] leading-relaxed">
+                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 accent-[#2d6a4f] flex-shrink-0" />
+                <span>I agree to the <a href="/terms-and-conditions" target="_blank" className="text-[#2d6a4f] underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" className="text-[#2d6a4f] underline">Privacy Policy</a>.</span>
+              </label>
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(3)}
                   className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
-                <button onClick={handleSubmit} disabled={loading}
+                <button onClick={handleSubmit} disabled={loading || !agreedToTerms}
                   className="flex-1 flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all disabled:opacity-60">
                   {loading ? "Submitting…" : "Submit claim"}
                   {!loading && <ArrowRight size={14} />}

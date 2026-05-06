@@ -11,11 +11,13 @@ const getResend = () => new Resend(process.env.RESEND_API_KEY);
 export async function POST(req) {
   const body = await req.json();
   const { name, email, location, experience, job_types, sectors, open_to_remote } = body;
+  const terms_agreed_at = body.terms_agreed_at || null;
 
   if (!email) return NextResponse.json({ message: "Email required" }, { status: 400 });
 
   await supabase.from("matched_requests").insert({
     path: "researcher",
+    terms_agreed_at,
     name, email,
     notes: [
       location && `Location: ${location}`,
