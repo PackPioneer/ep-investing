@@ -63,7 +63,7 @@ export default function InvestorOnboardingPage() {
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
     name: "", email: "", firm: "",
-    investor_type: "",
+    investor_type: "", investor_type_other: "",
     sectors: [], sub_sectors: [],
     stages: [],
     investment_instruments: [],
@@ -172,6 +172,17 @@ export default function InvestorOnboardingPage() {
                     </button>
                   ))}
                 </div>
+                {form.investor_type === "other" && (
+                  <div className="mt-3">
+                    <input
+                      type="text"
+                      placeholder="e.g. impact fund, syndicate"
+                      value={form.investor_type_other}
+                      onChange={e => set("investor_type_other", e.target.value)}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -180,7 +191,7 @@ export default function InvestorOnboardingPage() {
                   className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
 
-              <button onClick={() => setStep(2)} disabled={!form.name || !form.email || !form.investor_type}
+              <button onClick={() => setStep(2)} disabled={!form.name || !form.email || !form.investor_type || (form.investor_type === "other" && !form.investor_type_other)}
                 className="bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 Continue <ArrowRight size={14} />
               </button>

@@ -17,7 +17,7 @@ export async function POST(req) {
     name, email, firm, role, sectors, stages, check_sizes, geographies, thesis, how_heard,
     show_contact, primary_contact_name, primary_contact_email,
     secondary_contact_name, secondary_contact_email,
-    investor_type, investment_instruments, accredited_investor, sub_sectors
+    investor_type, investor_type_other, investment_instruments, accredited_investor, sub_sectors
   } = body;
   const terms_agreed_at = body.terms_agreed_at || null;
 
@@ -36,6 +36,7 @@ export async function POST(req) {
       stage: stages?.join(", "),
       check_size: check_sizes?.join(", ") || null,
       investor_type: investor_type || null,
+      investor_type_other: investor_type_other || null,
       investment_instruments: investment_instruments?.join(", ") || null,
       accredited_investor: accredited_investor || null,
       sub_sectors: sub_sectors?.join(", ") || null,
