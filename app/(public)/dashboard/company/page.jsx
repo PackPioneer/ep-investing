@@ -55,7 +55,7 @@ export default function CompanyDashboard() {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
   const [submittingUpdate, setSubmittingUpdate] = useState(false);
-  const [fundingForm, setFundingForm] = useState({ raise_target: "", raise_current: "", raise_close_date: "", min_check_size: "" });
+  const [fundingForm, setFundingForm] = useState({ raise_target: "", raise_current: "", raise_close_date: "", min_check_size: "", raise_round_type: "", raise_instrument: "", raise_valuation: "", raise_lead_investor: "", raise_use_of_proceeds: "", raise_revenue_status: "", raise_data_room_url: "", raise_intro_call_url: "" });
   const [savingFunding, setSavingFunding] = useState(false);
   const [savedFunding, setSavedFunding] = useState(false);
   const [uploadingDeck, setUploadingDeck] = useState(false);
@@ -528,35 +528,122 @@ async function deleteDeck() {
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-2">Funding Round</div>
             <p className="text-xs text-[#718096] mb-6">Only visible to verified investors.</p>
             <form onSubmit={saveFunding} className="flex flex-col gap-4">
+
+              {/* SECTION 1 — ROUND BASICS (always visible) */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Type</label>
+                  <select value={fundingForm.raise_round_type || ""}
+                    onChange={e => setFundingForm(p => ({ ...p, raise_round_type: e.target.value }))}
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    <option value="">Select round type</option>
+                    <option value="pre_seed">Pre-seed</option>
+                    <option value="seed">Seed</option>
+                    <option value="series_a">Series A</option>
+                    <option value="series_b">Series B</option>
+                    <option value="series_c">Series C+</option>
+                    <option value="bridge">Bridge</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Close Date</label>
+                  <input type="date" value={fundingForm.raise_close_date || ""}
+                    onChange={e => setFundingForm(p => ({ ...p, raise_close_date: e.target.value }))}
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Target Raise</label>
-                  <input type="text" placeholder="e.g. 2000000" value={fundingForm.raise_target}
+                  <input type="text" placeholder="e.g. 2000000" value={fundingForm.raise_target || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_target: e.target.value }))}
                     className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Raised So Far</label>
-                  <input type="text" placeholder="e.g. 500000" value={fundingForm.raise_current}
+                  <input type="text" placeholder="e.g. 500000" value={fundingForm.raise_current || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_current: e.target.value }))}
                     className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Close Date</label>
-                  <input type="date" value={fundingForm.raise_close_date}
-                    onChange={e => setFundingForm(p => ({ ...p, raise_close_date: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+
+              {/* SECTION 2 — TERMS (collapsible) */}
+              <details className="border-t border-[#e2e6ed] pt-4">
+                <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Round terms</summary>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Instrument</label>
+                    <select value={fundingForm.raise_instrument || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_instrument: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      <option value="">Select instrument</option>
+                      <option value="safe">SAFE</option>
+                      <option value="priced_equity">Priced equity</option>
+                      <option value="convertible_note">Convertible note</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Valuation / Cap</label>
+                    <input type="text" placeholder='e.g. "$8M post" or "TBD"' value={fundingForm.raise_valuation || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_valuation: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Min Check Size</label>
+                    <input type="text" placeholder="e.g. 25000" value={fundingForm.min_check_size || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, min_check_size: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Lead Investor</label>
+                    <input type="text" placeholder='e.g. "Breakthrough Energy" or "Looking for lead"' value={fundingForm.raise_lead_investor || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_lead_investor: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
                 </div>
-                <div>
-                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Min Check Size</label>
-                  <input type="text" placeholder="e.g. 25000" value={fundingForm.min_check_size}
-                    onChange={e => setFundingForm(p => ({ ...p, min_check_size: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              </details>
+
+              {/* SECTION 3 — USE & TRACTION (collapsible) */}
+              <details className="border-t border-[#e2e6ed] pt-4">
+                <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Use of funds & traction</summary>
+                <div className="flex flex-col gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Use of Proceeds</label>
+                    <textarea rows={3} placeholder="e.g. 30% R&D, 40% commercialization, 30% team" value={fundingForm.raise_use_of_proceeds || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_use_of_proceeds: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Revenue / ARR</label>
+                    <input type="text" placeholder='e.g. "$50k MRR", "$1.2M ARR", or "Pre-revenue"' value={fundingForm.raise_revenue_status || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_revenue_status: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
+              </details>
+
+              {/* SECTION 4 — MATERIALS & ACCESS (collapsible) */}
+              <details className="border-t border-[#e2e6ed] pt-4">
+                <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Materials & investor access</summary>
+                <div className="flex flex-col gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Data Room URL</label>
+                    <input type="url" placeholder="https://docsend.com/view/..." value={fundingForm.raise_data_room_url || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_data_room_url: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Intro Call Booking Link</label>
+                    <input type="url" placeholder="https://calendly.com/..." value={fundingForm.raise_intro_call_url || ""}
+                      onChange={e => setFundingForm(p => ({ ...p, raise_intro_call_url: e.target.value }))}
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </div>
+                </div>
+              </details>
+
+              <div className="flex items-center gap-3 pt-2">
                 <button type="submit" disabled={savingFunding} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
                   {savingFunding ? "Saving..." : "Save funding details"}
                 </button>
