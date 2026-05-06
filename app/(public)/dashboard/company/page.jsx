@@ -604,10 +604,10 @@ async function deleteDeck() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button type="submit" disabled={savingProfile} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
-                {savingProfile ? "Saving..." : "Save profile"}
+              <button type="submit" disabled={saving} className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
+                {saving ? "Saving..." : "Save profile"}
               </button>
-              {savedProfile && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
+              {saved && <span className="text-sm text-[#2d6a4f] font-medium">Saved</span>}
             </div>
           </form>
           </>
