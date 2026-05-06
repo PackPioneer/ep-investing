@@ -96,6 +96,14 @@ export default function CompanyDashboard() {
           raise_current: data.raise_current || "",
           raise_close_date: data.raise_close_date || "",
           min_check_size: data.min_check_size || "",
+          raise_round_type: data.raise_round_type || "",
+          raise_instrument: data.raise_instrument || "",
+          raise_valuation: data.raise_valuation || "",
+          raise_lead_investor: data.raise_lead_investor || "",
+          raise_use_of_proceeds: data.raise_use_of_proceeds || "",
+          raise_revenue_status: data.raise_revenue_status || "",
+          raise_data_room_url: data.raise_data_room_url || "",
+          raise_intro_call_url: data.raise_intro_call_url || "",
         });
         setDeckUrl(data.pitch_deck_url || null);
         setLogoUrl(data.logo_url || null);
