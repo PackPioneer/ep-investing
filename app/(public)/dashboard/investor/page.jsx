@@ -460,12 +460,7 @@ export default function InvestorDashboard() {
                   )}
                 </div>
                 <div className="flex flex-col gap-2 flex-shrink-0">
-                  {profile?.id && (
-                    <a href={`/investors/${profile.id}`} target="_blank" rel="noopener noreferrer"
-                      className="text-xs font-medium border border-[#d0d6e0] text-[#4a5568] px-3 py-1.5 rounded-lg hover:bg-[#f8f9fb] transition-colors text-center">
-                      View public profile →
-                    </a>
-                  )}
+                  {/* View public profile button removed - separate public page for self-onboarded investors not built yet */}
                   <button onClick={() => setEditingProfile(v => !v)}
                     className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#eef1f6] transition-colors">
                     {editingProfile ? "Cancel" : "Edit profile"}
