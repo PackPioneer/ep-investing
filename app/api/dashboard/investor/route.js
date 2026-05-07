@@ -28,11 +28,11 @@ export async function PATCH(req) {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { name, firm, focus, stage, check_size, thesis, linkedin, website } = body;
+  const { name, firm, focus, stage, check_size, thesis, linkedin, website, location, point_of_contact, previous_investments, round_preference, tagline, twitter_url } = body;
 
   const { data, error } = await supabase
     .from("matched_requests")
-    .update({ name, firm, focus, stage, check_size, thesis, linkedin, website })
+    .update({ name, firm, focus, stage, check_size, thesis, linkedin, website, location, point_of_contact, previous_investments, round_preference, tagline, twitter_url })
     .eq("clerk_user_id", userId)
     .eq("path", "investor")
     .select()
