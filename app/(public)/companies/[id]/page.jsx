@@ -167,51 +167,58 @@ async function postUpdate(e) {
                         <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
                       </a>
                     )}
+                  </div>
+
+              {/* Stage section */}
+              {company.funding_stage && company.funding_stage !== 'unknown' && (
+                <div className="pt-3 mt-3 border-t border-[#e2e6ed]">
+                  <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Stage</div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STAGE_COLORS[company.funding_stage] || STAGE_COLORS.unknown}`}>
+                    {STAGE_LABELS[company.funding_stage] || company.funding_stage}
+                  </span>
+                </div>
+              )}
+
+              {/* Focus areas section */}
+              {tags.length > 0 && (
+                <div className="pt-3 mt-3 border-t border-[#e2e6ed]">
+                  <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Focus areas</div>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#e2e8f0] bg-[#f1f5f9] text-[#475569]">
+                        {tag.replace(/_/g, " ")}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Signals section */}
+              {(hasSignals || (company.show_contact && company.primary_contact_email)) && (
+                <div className="pt-3 mt-3 mb-5 border-t border-[#e2e6ed]">
+                  <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Signals</div>
+                  <div className="flex flex-wrap gap-2">
+                    {company.looking_to_raise && (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                        Raising
+                      </span>
+                    )}
+                    {company.is_hiring && (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                        Hiring
+                      </span>
+                    )}
+                    {company.seeking_partnerships && (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                        Partnerships
+                      </span>
+                    )}
                     {company.show_contact && company.primary_contact_email && (
-                      <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f] mt-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                         Open to contact
                       </span>
                     )}
                   </div>
-
-              {/* Tags + stage + model */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {company.funding_stage && company.funding_stage !== 'unknown' && (
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STAGE_COLORS[company.funding_stage] || STAGE_COLORS.unknown}`}>
-                    {STAGE_LABELS[company.funding_stage] || company.funding_stage}
-                  </span>
-                )}
-                {company.business_model && (
-                  <span className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-white text-[#2d6a4f]">
-                    {MODEL_LABELS[company.business_model] || company.business_model}
-                  </span>
-                )}
-                {tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-                    {tag.replace(/_/g, " ")}
-                  </span>
-                ))}
-              </div>
-
-              {/* Signal badges */}
-              {hasSignals && (
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {company.looking_to_raise && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                      Raising
-                    </span>
-                  )}
-                  {company.is_hiring && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-                      Hiring
-                    </span>
-                  )}
-                  {company.seeking_partnerships && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                      Partnerships
-                    </span>
-                  )}
                 </div>
               )}
 
