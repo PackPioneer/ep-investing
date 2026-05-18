@@ -89,13 +89,26 @@ const linkCompany = async (company) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-slate-900 text-sm">{claim.company_name || "No company name"}</span>
+            {claim.source === "profile_claim" ? (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-medium">Profile Claim</span>
+            ) : (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-50 text-slate-600 border border-slate-200 font-medium">Onboarding</span>
+            )}
             {claim.company_url && (
               <a href={claim.company_url} target="_blank" rel="noopener noreferrer"
                 onClick={e => e.stopPropagation()}
                 className="text-slate-400 hover:text-slate-600 transition-colors">
                 <ExternalLink size={12} />
+              </a>
+            )}
+            {claim.source === "profile_claim" && claim.target_id && (
+              <a href={claim.profile_type === "company" ? `/companies/${claim.target_id}` : `/investors/${claim.target_id}`}
+                target="_blank" rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="text-[11px] text-blue-600 hover:text-blue-800 underline">
+                View profile
               </a>
             )}
           </div>
