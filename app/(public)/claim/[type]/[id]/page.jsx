@@ -19,7 +19,7 @@ export default function ClaimProfilePage() {
     claimant_name: "",
     claimant_email: "",
     claimant_role: "",
-    claimant_message: "",
+    claimant_linkedin_url: "",
     terms_agreed: false,
   });
 
@@ -56,7 +56,7 @@ export default function ClaimProfilePage() {
           claimant_name: form.claimant_name,
           claimant_email: form.claimant_email,
           claimant_role: form.claimant_role,
-          claimant_message: form.claimant_message,
+          claimant_linkedin_url: form.claimant_linkedin_url,
         }),
       });
       if (res.ok) {
@@ -193,9 +193,10 @@ export default function ClaimProfilePage() {
             </div>
 
             <div>
-              <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Anything else? (optional)</label>
-              <textarea rows={3} placeholder="Anything that helps us verify you represent this organization." value={form.claimant_message} onChange={e => setForm(p => ({ ...p, claimant_message: e.target.value }))}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+              <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your LinkedIn URL *</label>
+              <input type="url" placeholder="https://linkedin.com/in/yourname" value={form.claimant_linkedin_url} onChange={e => setForm(p => ({ ...p, claimant_linkedin_url: e.target.value }))}
+                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+              <p className="text-[11px] text-[#718096] mt-1.5">Helps us confirm you're with this organization.</p>
             </div>
 
             <label className="flex items-start gap-2.5 mt-2 text-xs text-[#4a5568] leading-relaxed">
@@ -205,7 +206,7 @@ export default function ClaimProfilePage() {
             </label>
 
             <button onClick={handleSubmit}
-              disabled={submitting || !form.claimant_name || !form.claimant_email || !form.claimant_role || !form.terms_agreed}
+              disabled={submitting || !form.claimant_name || !form.claimant_email || !form.claimant_role || !form.claimant_linkedin_url || !form.terms_agreed}
               className="mt-2 w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               {submitting ? "Submitting..." : "Submit claim request"}
               {!submitting && <ArrowRight size={14} />}

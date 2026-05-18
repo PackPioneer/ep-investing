@@ -19,7 +19,7 @@ export async function POST(req) {
     const body = await req.json();
     const {
       profile_type, target_id, target_name,
-      claimant_name, claimant_email, claimant_role, claimant_message,
+      claimant_name, claimant_email, claimant_role, claimant_message, claimant_linkedin_url,
     } = body;
 
     if (!profile_type || !target_id || !claimant_name || !claimant_email || !claimant_role) {
@@ -40,6 +40,7 @@ export async function POST(req) {
         claimant_email,
         claimant_role,
         claimant_message: claimant_message || null,
+        claimant_linkedin_url: claimant_linkedin_url || null,
         status: "pending",
       })
       .select()
@@ -66,6 +67,7 @@ export async function POST(req) {
             <li><strong>Profile:</strong> ${target_name || target_id} (<a href="${profileUrl}">view</a>)</li>
             <li><strong>Type:</strong> ${profile_type}</li>
             <li><strong>Role at organization:</strong> ${claimant_role}</li>
+            ${claimant_linkedin_url ? `<li><strong>LinkedIn:</strong> <a href="${claimant_linkedin_url}">${claimant_linkedin_url}</a></li>` : ""}
             ${claimant_message ? `<li><strong>Message:</strong> ${claimant_message}</li>` : ""}
           </ul>
           <p>Review in admin: <a href="https://www.epinvesting.com/admin/claims">/admin/claims</a></p>
