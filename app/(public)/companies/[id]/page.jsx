@@ -532,6 +532,18 @@ async function postUpdate(e) {
               )}
             </div>
 
+            {/* CLAIM PROFILE — only shown if unclaimed */}
+            {!company.claimed_by_clerk_user_id && (
+              <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
+                <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your company?</h3>
+                <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to manage it yourself, edit details, post jobs, and connect directly with investors.</p>
+                <a href={`/claim/company/${company.id}`}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#2d6a4f] text-white text-sm font-semibold rounded-lg py-2.5 hover:bg-[#235a40] transition-all">
+                  Claim this profile →
+                </a>
+              </div>
+            )}
+
             {/* RELEVANT GRANTS */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-4">Relevant Grants</h3>
