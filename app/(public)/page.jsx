@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatSector } from "@/lib/sectors";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -350,7 +351,7 @@ export default function HomePage() {
                 <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{co.name || co.url}</div>
-                  {co.industry_tags?.[0] && <div className="text-xs font-mono text-[#718096] mt-1">{co.industry_tags[0].replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}</div>}
+                  {co.industry_tags?.[0] && <div className="text-xs font-mono text-[#718096] mt-1">{formatSector(co.industry_tags[0])}</div>}
                 </div>
               </Link>
             )) : [1,2,3,4,5].map(i => (

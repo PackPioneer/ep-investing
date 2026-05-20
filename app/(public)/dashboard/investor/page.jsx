@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
+import { formatSector } from "@/lib/sectors";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -759,7 +760,7 @@ export default function InvestorDashboard() {
                               </div>
                               <div className="flex items-center gap-1.5 flex-wrap mb-1">
                                 {c.funding_stage && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{STAGE_LABELS[c.funding_stage] || c.funding_stage}</span>}
-                                {(c.industry_tags || []).slice(0,1).map(t => <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">{t.replace(/_/g, " ")}</span>)}
+                                {(c.industry_tags || []).slice(0,1).map(t => <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">{formatSector(t)}</span>)}
                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1">
@@ -848,7 +849,7 @@ export default function InvestorDashboard() {
                         {company.is_hiring && <span className="text-xs px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-100">Hiring</span>}
                         {company.seeking_partnerships && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Partnerships</span>}
                         {(company.industry_tags || []).slice(0,2).map(t => (
-                          <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{t.replace(/_/g, " ")}</span>
+                          <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{formatSector(t)}</span>
                         ))}
                       </div>
                     </div>

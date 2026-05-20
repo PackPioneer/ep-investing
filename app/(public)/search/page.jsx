@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
+import { formatSector } from "@/lib/sectors";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
@@ -105,7 +106,7 @@ function CompanyCard({ company }) {
         )}
         {tags.slice(0, 2).map(tag => (
           <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
-            {tag.replace(/_/g, " ")}
+            {formatSector(tag)}
           </span>
         ))}
       </div>
@@ -407,7 +408,7 @@ useEffect(() => {
               <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Industry</p>
               <div className="flex flex-wrap gap-1.5">
                 {INDUSTRY_FILTERS.map(tag => (
-                  <FilterChip key={tag} label={tag.replace(/_/g, " ")}
+                  <FilterChip key={tag} label={formatSector(tag)}
                     active={industryFilter === tag}
                     onClick={() => {
                       const next = industryFilter === tag ? null : tag;

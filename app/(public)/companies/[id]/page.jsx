@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { formatSector } from "@/lib/sectors";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
@@ -186,7 +187,7 @@ async function postUpdate(e) {
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
                       <span key={tag} className="px-3 py-1 rounded-full text-xs font-mono border border-[#e2e8f0] bg-[#f1f5f9] text-[#475569]">
-                        {tag.replace(/_/g, " ")}
+                        {formatSector(tag)}
                       </span>
                     ))}
                   </div>
