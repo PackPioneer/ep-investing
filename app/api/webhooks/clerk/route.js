@@ -62,6 +62,57 @@ export async function POST(req) {
         .update({ clerk_user_id })
         .eq("id", investor.id);
     }
+
+    // NEW: Check the profile-claim flow (claim_requests table)
+    // Company claims -> link companies.clerk_user_id + claimed_by_clerk_user_id
+    const { data: companyClaim } = await supabase
+      .from("claim_requests")
+      .select("target_id")
+      .eq("claimant_email", email)
+      .eq("profile_type", "company")
+      .eq("status", "approved")
+      .order("reviewed_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (companyClaim?.target_id) {
+      await supabase
+        .from("companies")
+        .update({ clerk_user_id, claimed_by_clerk_user_id: clerk_user_id })
+        .eq("id", companyClaim.target_id);
+
+      await supabase
+        .from("claim_requests")
+        .update({ status: "completed" })
+        .eq("claimant_email", email)
+        .eq("target_id", companyClaim.target_id)
+        .eq("profile_type", "company");
+    }
+
+    // Investor claims -> link matched_requests.clerk_user_id
+    const { data: investorClaim } = await supabase
+      .from("claim_requests")
+      .select("target_id")
+      .eq("claimant_email", email)
+      .eq("profile_type", "investor")
+      .eq("status", "approved")
+      .order("reviewed_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (investorClaim?.target_id) {
+      await supabase
+        .from("vc_firms")
+        .update({ claimed_by_clerk_user_id: clerk_user_id })
+        .eq("id", investorClaim.target_id);
+
+      await supabase
+        .from("claim_requests")
+        .update({ status: "completed" })
+        .eq("claimant_email", email)
+        .eq("target_id", investorClaim.target_id)
+        .eq("profile_type", "investor");
+    }
   }
 
   return Response.json({ ok: true });
