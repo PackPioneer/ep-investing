@@ -73,7 +73,7 @@ export async function POST(req) {
       .eq("status", "approved")
       .order("reviewed_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (companyClaim?.target_id) {
       await supabase
@@ -98,7 +98,7 @@ export async function POST(req) {
       .eq("status", "approved")
       .order("reviewed_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (investorClaim?.target_id) {
       await supabase
