@@ -141,7 +141,7 @@ export default function InvestorProfilePage() {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] leading-tight mb-1">
+                  <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight mb-1">
                     {investor.name}
                   </h1>
                   {investor.type && (
@@ -302,7 +302,7 @@ export default function InvestorProfilePage() {
 
             {/* REQUEST INTRO */}
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-              <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14] mb-1">
+              <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-1">
                 Request an introduction
               </h3>
               <p className="text-xs text-[#718096] leading-relaxed mb-4">

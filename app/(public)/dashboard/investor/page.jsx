@@ -223,7 +223,7 @@ export default function InvestorDashboard() {
       {/* Sidebar */}
       <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center justify-between mb-8 px-2">
-          <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
+          <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-white text-base">
             EP <span className="text-[#2d6a4f]">Investing</span>
           </div>
           <button className="md:hidden text-[#9ca8a0]" onClick={() => setSidebarOpen(false)}>
@@ -277,7 +277,7 @@ export default function InvestorDashboard() {
               <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </button>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">
             {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
           </h1>
         </div>

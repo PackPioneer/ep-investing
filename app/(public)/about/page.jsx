@@ -14,7 +14,7 @@ export default function AboutPage() {
           <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" /> About
         </div>
 
-        <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl text-[#0f1a14] mb-6 leading-tight">
+        <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-5xl text-[#0f1a14] mb-6 leading-tight">
           Built for the energy transition.
         </h1>
 
@@ -23,7 +23,7 @@ export default function AboutPage() {
         </p>
 
         <div className="border-t border-[#e2e6ed] pt-10 mb-10">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-4">Why we built this</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-4">Why we built this</h2>
           <p className="text-[#4a5568] leading-relaxed mb-4">
             The climate and energy space moves fast. Founders spend weeks finding the right investors. Investors struggle to discover early-stage companies outside their immediate network. Grants go unclaimed because no one knows they exist.
           </p>
@@ -33,7 +33,7 @@ export default function AboutPage() {
         </div>
 
         <div className="border-t border-[#e2e6ed] pt-10 mb-10">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-6">What we cover</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-6">What we cover</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {[
               "Solar & Wind", "Battery Storage", "Green Hydrogen", "Nuclear Technologies",
@@ -48,7 +48,7 @@ export default function AboutPage() {
         </div>
 
         <div className="border-t border-[#e2e6ed] pt-10 mb-10">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-4">The team</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-4">The team</h2>
           <p className="text-[#4a5568] leading-relaxed">
             EP Investing is built by <a href="https://theenergypioneer.com" target="_blank" rel="noopener noreferrer" className="text-[#2d6a4f] hover:underline">The Energy Pioneer</a> — a media and intelligence company covering the global energy transition. Questions? Reach us at <a href="mailto:info@epinvesting.com" className="text-[#2d6a4f] hover:underline">info@epinvesting.com</a>.
           </p>

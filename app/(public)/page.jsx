@@ -141,10 +141,10 @@ export default function HomePage() {
   <div>
     <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
       <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-      Free until July 15, 2026
+      Free until January 1, 2027
     </div>
 
-    <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl leading-[1.05] tracking-tight text-[#0f1a14] mb-5">
+    <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl leading-[1.05] tracking-tight text-[#0f1a14] mb-5">
       Built for the people building{" "}
       <em className="text-[#2d6a4f] not-italic">the energy transition.</em>
     </h1>
@@ -167,8 +167,8 @@ export default function HomePage() {
     {/* Sidebar */}
     <div className="bg-[#0f1a14] p-3">
       <div className="mb-4 px-1.5">
-        <span style={{ fontFamily: "Georgia, serif" }} className="text-white text-sm">EP </span>
-        <span style={{ fontFamily: "Georgia, serif", fontStyle: "italic" }} className="text-[#2d6a4f] text-sm">Investing</span>
+        <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-white text-sm">EP </span>
+        <span style={{ fontFamily: 'var(--font-display), sans-serif', fontStyle: "italic" }} className="text-[#2d6a4f] text-sm">Investing</span>
       </div>
       <div className="flex flex-col gap-0.5">
         {[
@@ -296,7 +296,7 @@ export default function HomePage() {
                 <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center">
                   <tile.icon size={18} className="text-[#2d6a4f]" />
                 </div>
-                <div style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14]">{tile.title}</div>
+                <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14]">{tile.title}</div>
                 <div className="text-xs text-[#4a5568] leading-relaxed font-light flex-1">{tile.desc}</div>
                 <div className="text-xs text-[#2d6a4f] font-mono flex items-center gap-1 group-hover:gap-2 transition-all mt-1">
                   {tile.cta} <ArrowRight size={11} />
@@ -310,7 +310,7 @@ export default function HomePage() {
       {/* DIRECTORY BLOCKS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Explore EP Investing</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">Explore EP Investing</h2>
           <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">View all →</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -323,7 +323,7 @@ export default function HomePage() {
           ].map(card => (
             <Link key={card.title} href={card.href}
               className="relative bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#2d6a4f]">{card.num}</div>
+              <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{card.num}</div>
               <div className="text-base font-semibold text-[#0f1a14]">{card.title}</div>
               <div className="text-sm text-[#4a5568] leading-relaxed font-light">{card.desc}</div>
               <span className="absolute right-6 top-7 text-[#718096] group-hover:text-[#2d6a4f] group-hover:translate-x-1 transition-all text-lg">→</span>
@@ -336,7 +336,7 @@ export default function HomePage() {
 
       {/* LIVE FEEDS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
 
           <div className="bg-[#ffffff] p-6">
@@ -438,7 +438,7 @@ export default function HomePage() {
       {/* CATEGORIES */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">Browse by category</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">Browse by category</h2>
           <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">All categories →</Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -456,7 +456,7 @@ export default function HomePage() {
       <div className="bg-[#ffffff] border-y border-[#e2e6ed]">
         <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">
+            <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">
               Get weekly <em className="text-[#2d6a4f] not-italic">EP Investing</em> updates
             </h2>
             <p className="text-[#4a5568] text-sm leading-relaxed font-light max-w-sm">

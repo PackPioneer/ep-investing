@@ -136,7 +136,7 @@ export default function GrantsPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
               Non-dilutive funding
             </div>
-            <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl text-[#0f1a14] mb-2">
+            <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-5xl text-[#0f1a14] mb-2">
               Grants & Awards
             </h1>
             <p className="text-[#4a5568] text-base font-light max-w-xl">
@@ -145,12 +145,12 @@ export default function GrantsPage() {
           </div>
           <div className="flex gap-6 text-right">
             <div>
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#2d6a4f]">{grants.length}</div>
+              <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{grants.length}</div>
               <div className="text-xs font-mono text-[#718096]">grants tracked</div>
             </div>
             {urgentCount > 0 && (
               <div>
-                <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-orange-500">{urgentCount}</div>
+                <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-orange-500">{urgentCount}</div>
                 <div className="text-xs font-mono text-[#718096]">closing soon</div>
               </div>
             )}
@@ -217,7 +217,7 @@ export default function GrantsPage() {
         {/* CTA */}
         <div className="mt-14 bg-white border border-[#e2e6ed] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-1">
+            <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-1">
               Looking for non-dilutive funding?
             </h3>
             <p className="text-sm text-[#4a5568] font-light">

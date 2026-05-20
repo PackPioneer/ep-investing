@@ -84,7 +84,7 @@ export default function ClaimCompanyPage() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">You're on the list</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">You're on the list</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           We'll verify your company and reach out to {form.contact_email} within 1–2 business days to complete your listing.
         </p>
@@ -105,7 +105,7 @@ export default function ClaimCompanyPage() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             For Companies
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
             Claim your company profile
           </h1>
           <p className="text-[#4a5568] text-base max-w-lg mx-auto leading-relaxed font-light">
@@ -145,7 +145,7 @@ export default function ClaimCompanyPage() {
                       <p className="text-sm text-[#4a5568] font-light">{plan.desc}</p>
                     </div>
                     <div className="text-right flex-shrink-0 ml-4">
-                      <span style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{plan.price}</span>
+                      <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#2d6a4f]">{plan.price}</span>
                       <span className="text-xs text-[#718096] font-mono">{plan.period}</span>
                     </div>
                   </div>

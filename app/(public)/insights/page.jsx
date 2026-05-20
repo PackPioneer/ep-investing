@@ -32,7 +32,7 @@ function ReportCard({ report }) {
       </div>
 
       <div>
-        <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] leading-snug group-hover:text-[#2d6a4f] transition-colors mb-1">
+        <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] leading-snug group-hover:text-[#2d6a4f] transition-colors mb-1">
           {report.title}
         </h3>
         {report.subtitle && (
@@ -104,7 +104,7 @@ export default function InsightsPage() {
           </div>
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>
-              <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl text-[#0f1a14] mb-3">
+              <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-5xl text-[#0f1a14] mb-3">
                 Industry Reports
               </h1>
               <p className="text-[#4a5568] text-base max-w-xl leading-relaxed font-light">
@@ -112,7 +112,7 @@ export default function InsightsPage() {
               </p>
             </div>
             <div className="text-right">
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#2d6a4f]">{reports.length}</div>
+              <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{reports.length}</div>
               <div className="text-xs font-mono text-[#718096]">reports published</div>
             </div>
           </div>

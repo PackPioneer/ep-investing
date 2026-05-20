@@ -110,7 +110,7 @@ export default function InvestorOnboardingPage() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">You're in</h1>
+        <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">You're in</h1>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-6">
           Thanks for joining as an investor. We'll review your profile and start matching you to relevant deal flow within 1–2 business days.
         </p>
@@ -133,7 +133,7 @@ export default function InvestorOnboardingPage() {
 
         <div className="mb-6 text-center">
           <div className="text-xs font-mono uppercase tracking-widest text-[#2d6a4f] mb-2">Step {step} of 4</div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">
             {step === 1 && "Tell us about you"}
             {step === 2 && "Your investment focus"}
             {step === 3 && "Geography & verification"}

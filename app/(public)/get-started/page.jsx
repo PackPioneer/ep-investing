@@ -80,7 +80,7 @@ function RoleCard({ role }) {
         <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center flex-shrink-0">
           <Icon size={16} className="text-[#2d6a4f]" />
         </div>
-        <div style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14]">
+        <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14]">
           {role.title}
         </div>
       </div>
@@ -105,9 +105,9 @@ export default function GetStartedPage() {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            Free until July 15, 2026
+            Free until January 1, 2027
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-3 leading-[1.05]">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-3 leading-[1.05]">
             Get started
           </h1>
           <p className="text-[#4a5568] text-base max-w-md mx-auto leading-relaxed font-light">
@@ -143,7 +143,7 @@ export default function GetStartedPage() {
             <RESEARCHER.icon size={16} className="text-[#2d6a4f]" />
           </div>
           <div className="flex-1">
-            <div style={{ fontFamily: "Georgia, serif" }} className="text-lg text-[#0f1a14] mb-2">
+            <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">
               {RESEARCHER.title}
             </div>
             <div className="text-sm text-[#4a5568] leading-relaxed">

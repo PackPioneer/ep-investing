@@ -32,7 +32,7 @@ function AutoRedirect() {
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
         <p className="text-[#4a5568] text-sm">Your company profile is being linked to your account. This usually takes just a moment.</p>
       </div>
     </div>
@@ -235,7 +235,7 @@ async function deleteDeck() {
       {/* Sidebar */}
       <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center justify-between mb-6 px-2">
-          <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
+          <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-white text-base">
             EP <span className="text-[#2d6a4f]">Investing</span>
           </div>
           <button className="md:hidden text-[#9ca8a0]" onClick={() => setSidebarOpen(false)}>
@@ -259,7 +259,7 @@ async function deleteDeck() {
               <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </button>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">
             {company?.name || "Company Dashboard"}
           </h1>
           {company?.id && (

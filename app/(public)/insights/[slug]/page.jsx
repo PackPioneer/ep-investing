@@ -88,7 +88,7 @@ export default function ReportPage() {
                 )}
               </div>
 
-              <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14] leading-tight mb-2">
+              <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14] leading-tight mb-2">
                 {report.title}
               </h1>
               {report.subtitle && (
@@ -100,13 +100,13 @@ export default function ReportPage() {
                   {report.market_value && (
                     <div>
                       <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-1">Market Size</div>
-                      <div style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#2d6a4f]">{report.market_value}</div>
+                      <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#2d6a4f]">{report.market_value}</div>
                     </div>
                   )}
                   {report.expected_growth && (
                     <div className="border-l border-[#e2e6ed] pl-6">
                       <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-1">Expected Growth</div>
-                      <div style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">{report.expected_growth}</div>
+                      <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">{report.expected_growth}</div>
                     </div>
                   )}
                 </div>
@@ -181,11 +181,11 @@ export default function ReportPage() {
                   <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
                     <Lock size={10} /> Full report
                   </div>
-                  <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">
+                  <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">
                     Sign up free to read the full report
                   </h2>
                   <p className="text-sm text-[#4a5568] font-light max-w-md mb-6">
-                    Free until July 15, 2026 — get the full analysis, key findings, charts, and PDF download.
+                    Free until January 1, 2027 — get the full analysis, key findings, charts, and PDF download.
                   </p>
                   <SignUpButton mode="modal" forceRedirectUrl={`/insights/${slug}`} signInForceRedirectUrl={`/insights/${slug}`}>
                     <button className="flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
@@ -269,7 +269,7 @@ export default function ReportPage() {
                 <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase mb-3">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now open
                 </div>
-                <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-white mb-2">
+                <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-white mb-2">
                   Get started free
                 </h3>
                 <p className="text-xs text-[#a0b8a8] leading-relaxed mb-4 font-light">

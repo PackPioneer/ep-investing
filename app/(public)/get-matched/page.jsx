@@ -99,7 +99,7 @@ export default function GetMatchedPage() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Request received</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">Request received</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           Thanks — we'll review your submission and follow up at {form.email} within 2–3 business days with your matched results.
         </p>
@@ -120,7 +120,7 @@ export default function GetMatchedPage() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             Matching Service
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4">
             Get matched
           </h1>
           <p className="text-[#4a5568] text-base max-w-md mx-auto leading-relaxed font-light">
@@ -136,7 +136,7 @@ export default function GetMatchedPage() {
                 className="text-left bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
                 <p.icon size={24} className={p.color} />
                 <div>
-                  <h3 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">{p.title}</h3>
+                  <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">{p.title}</h3>
                   <p className="text-sm text-[#4a5568] leading-relaxed font-light">{p.desc}</p>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-[#2d6a4f] font-mono mt-auto pt-2 group-hover:gap-2 transition-all">

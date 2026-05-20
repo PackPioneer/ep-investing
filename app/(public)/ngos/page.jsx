@@ -12,7 +12,7 @@ export default function NGOsLanding() {
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now accepting NGO profiles
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
             For NGOs, IGOs, and foundations
           </h1>
           <p className="text-[#4a5568] text-lg leading-relaxed max-w-xl mx-auto mb-8">
@@ -92,8 +92,8 @@ export default function NGOsLanding() {
         <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 mb-16 text-center">
           <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2">Pricing</div>
           <div className="flex items-end justify-center gap-1 mb-2">
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14]">Free</span>
-            <span className="text-sm text-[#718096] pb-1.5 font-mono">until July 15, 2026</span>
+            <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14]">Free</span>
+            <span className="text-sm text-[#718096] pb-1.5 font-mono">until January 1, 2027</span>
           </div>
           <p className="text-sm text-[#4a5568]">
             Then $19.99/month. Cancel anytime. No credit card required to start.
@@ -102,7 +102,7 @@ export default function NGOsLanding() {
 
         {/* CTA */}
         <div className="bg-[#0f1a14] rounded-2xl p-10 text-center">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-white mb-3">Ready to list your organization?</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-white mb-3">Ready to list your organization?</h2>
           <p className="text-[#9ca8a0] text-sm mb-6 max-w-sm mx-auto">
             Submission takes under 5 minutes. We review every profile and approve verified organizations within a few business days.
           </p>

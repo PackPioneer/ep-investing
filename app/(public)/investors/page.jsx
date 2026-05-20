@@ -121,7 +121,7 @@ export default function InvestorsPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
               Investors
             </div>
-            <h1 style={{ fontFamily: "Georgia, serif" }} className="text-5xl text-[#0f1a14] mb-2">
+            <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-5xl text-[#0f1a14] mb-2">
               Climate Investors
             </h1>
             <p className="text-[#4a5568] text-base font-light max-w-xl">
@@ -129,7 +129,7 @@ export default function InvestorsPage() {
             </p>
           </div>
           <div className="text-right">
-            <div style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#2d6a4f]">{investors.length}</div>
+            <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{investors.length}</div>
             <div className="text-xs font-mono text-[#718096]">investors tracked</div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function InvestorsPage() {
 
         <div className="mt-14 bg-white border border-[#e2e6ed] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-1">
+            <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-1">
               Investing in climate?
             </h3>
             <p className="text-sm text-[#4a5568] font-light">

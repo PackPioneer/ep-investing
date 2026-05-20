@@ -12,7 +12,7 @@ export default function ExpertsPage() {
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now accepting applications
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
             The climate expert network
           </h1>
           <p className="text-[#4a5568] text-lg leading-relaxed max-w-xl mx-auto mb-8">
@@ -74,7 +74,7 @@ export default function ExpertsPage() {
 
         {/* CTA */}
         <div className="bg-[#0f1a14] rounded-2xl p-10 text-center">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-white mb-3">Ready to join?</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-white mb-3">Ready to join?</h2>
           <p className="text-[#9ca8a0] text-sm mb-6 max-w-sm mx-auto">Applications take under 2 minutes. We review all submissions and reach out within 48 hours.</p>
           <Link href="/onboarding/expert"
             className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#3d8a69] transition-colors">

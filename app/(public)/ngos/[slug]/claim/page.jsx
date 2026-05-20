@@ -81,7 +81,7 @@ export default function ClaimNGO() {
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <AlertCircle size={32} className="text-amber-500 mx-auto mb-4" />
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-2">Already claimed</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-2">Already claimed</h2>
         <p className="text-sm text-[#4a5568] mb-6">
           This profile has already been claimed. If you believe this is in error, please contact us.
         </p>
@@ -97,7 +97,7 @@ export default function ClaimNGO() {
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <Lock size={32} className="text-[#2d6a4f] mx-auto mb-4" />
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-2">Sign in to claim</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-2">Sign in to claim</h2>
         <p className="text-sm text-[#4a5568] mb-6">
           To claim <strong>{ngo.name}</strong>, sign in with your work email at the organization's domain.
         </p>
@@ -117,7 +117,7 @@ export default function ClaimNGO() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Claim submitted</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">Claim submitted</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           Your claim for <strong>{ngo.name}</strong> is under review. We'll follow up within a few business days.
         </p>
@@ -136,7 +136,7 @@ export default function ClaimNGO() {
           <ArrowLeft size={14} /> Back to {ngo.name}
         </Link>
 
-        <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-2">
+        <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-2">
           Claim {ngo.name}
         </h1>
         <p className="text-sm text-[#4a5568] mb-8">

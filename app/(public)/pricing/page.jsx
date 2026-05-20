@@ -8,7 +8,7 @@ const PAID_TIERS = [
     id: "expert",
     name: "Expert",
     price: 49,
-    afterLabel: "$49/mo after July 15",
+    afterLabel: "$49/mo after Jan 1, 2027",
     description: "For consultants and advisors who want visibility and inbound deal flow.",
     icon: Briefcase,
     highlighted: false,
@@ -26,7 +26,7 @@ const PAID_TIERS = [
     id: "ngo",
     name: "NGO",
     price: 19.99,
-    afterLabel: "$19.99/mo after July 15",
+    afterLabel: "$19.99/mo after Jan 1, 2027",
     description: "For non-profits, NGOs, IGOs, and foundations working on the energy transition.",
     icon: Heart,
     highlighted: false,
@@ -44,7 +44,7 @@ const PAID_TIERS = [
     id: "company",
     name: "Company",
     price: 99,
-    afterLabel: "$99/mo after July 15",
+    afterLabel: "$99/mo after Jan 1, 2027",
     description: "For climate companies raising, hiring, or seeking strategic partners.",
     icon: Building2,
     highlighted: true,
@@ -64,7 +64,7 @@ const PAID_TIERS = [
     id: "investor",
     name: "Investor",
     price: 149,
-    afterLabel: "$149/mo after July 15",
+    afterLabel: "$149/mo after Jan 1, 2027",
     description: "For VCs, family offices, and angels sourcing the next generation of climate deals.",
     icon: TrendingUp,
     highlighted: false,
@@ -90,15 +90,15 @@ export default function PricingPage() {
         <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" /> Now open
         </div>
-        <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
+        <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
           The intelligence layer<br />for the energy transition
         </h1>
         <p className="text-[#4a5568] text-lg max-w-xl mx-auto leading-relaxed mb-8">
           Purpose-built for climate professionals.
         </p>
         <div className="inline-flex items-center bg-[#0f1a14] text-white px-8 py-4 rounded-2xl mb-3">
-          <span style={{ fontFamily: "Georgia, serif" }} className="text-2xl md:text-3xl font-normal">
-            Free until July 15, 2026
+          <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl md:text-3xl font-normal">
+            Free until January 1, 2027
           </span>
         </div>
         <p className="text-xs font-mono text-[#718096]">All paid features unlocked · No credit card required · Researcher tier always free</p>
@@ -162,7 +162,7 @@ export default function PricingPage() {
                     Free
                   </span>
                   <span className={`text-sm pb-1.5 font-mono ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
-                    until July 15
+                    until Jan 1, 2027
                   </span>
                 </div>
                 <p className={`text-[11px] font-mono mt-1 ${tier.highlighted ? "text-[#a0b8a8]" : "text-[#718096]"}`}>
@@ -204,7 +204,7 @@ export default function PricingPage() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-[#718096] font-mono">
-            Free until July 15, 2026 · All plans billed monthly · Cancel anytime · No hidden fees
+            Free until January 1, 2027 · All plans billed monthly · Cancel anytime · No hidden fees
           </p>
           <p className="text-xs text-[#a0aec0] font-mono mt-2">
             Annual billing available at 20% discount when paid plans launch · <a href="mailto:otto@epinvesting.com" className="underline hover:text-[#2d6a4f]">contact us</a>
@@ -214,7 +214,7 @@ export default function PricingPage() {
 
       {/* Comparison footer */}
       <div className="max-w-3xl mx-auto px-6 pb-24 text-center">
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-4">
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-4">
           Why EP Investing?
         </h2>
         <p className="text-[#4a5568] leading-relaxed">
@@ -224,15 +224,15 @@ export default function PricingPage() {
         </p>
         <div className="grid grid-cols-3 gap-4 mt-10">
           <div>
-            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">1,300+</div>
+            <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">1,300+</div>
             <div className="text-xs font-mono text-[#718096] mt-1">Climate companies</div>
           </div>
           <div>
-            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">350+</div>
+            <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">350+</div>
             <div className="text-xs font-mono text-[#718096] mt-1">Active investors</div>
           </div>
           <div>
-            <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14]">185+</div>
+            <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">185+</div>
             <div className="text-xs font-mono text-[#718096] mt-1">Grants tracked</div>
           </div>
         </div>

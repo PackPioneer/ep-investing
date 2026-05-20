@@ -33,7 +33,7 @@ export default function DashboardPending() {
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-12 h-12 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-3">
           Setting up your dashboard
         </h2>
         <p className="text-[#4a5568] text-sm leading-relaxed">

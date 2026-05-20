@@ -92,7 +92,7 @@ export default function NGOProfile() {
             )}
           </div>
 
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14] leading-tight mb-3">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14] leading-tight mb-3">
             {ngo.name}
           </h1>
 
@@ -258,7 +258,7 @@ export default function NGOProfile() {
 
             {ngo.claimable && (
               <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-                <h3 style={{ fontFamily: "Georgia, serif" }} className="text-lg text-white mb-2">Is this your organization?</h3>
+                <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-white mb-2">Is this your organization?</h3>
                 <p className="text-xs text-[#a0b8a8] leading-relaxed mb-4 font-light">
                   Claim this profile to edit details, post grant programs, and add job openings.
                 </p>

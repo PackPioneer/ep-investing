@@ -87,7 +87,7 @@ export default function ClaimProfilePage() {
           <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-6">
             <AlertCircle size={32} className="text-amber-600" />
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">Can't claim this</h1>
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-3">Can't claim this</h1>
           <p className="text-[#4a5568] text-sm leading-relaxed mb-6">{error}</p>
           <Link href="/" className="text-sm text-[#2d6a4f] underline">Back to home</Link>
         </div>
@@ -103,7 +103,7 @@ export default function ClaimProfilePage() {
           <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
             <CheckCircle size={32} className="text-[#2d6a4f]" />
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Claim submitted</h1>
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">Claim submitted</h1>
           <p className="text-[#4a5568] text-sm leading-relaxed mb-6">
             Thanks. We'll review your claim for <strong>{profile.name}</strong> within 24 hours and email you at <strong>{form.claimant_email}</strong>.
           </p>
@@ -126,7 +126,7 @@ export default function ClaimProfilePage() {
         </Link>
 
         <div className="mb-6">
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-2">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-2">
             Claim {profile.name}
           </h1>
           <p className="text-sm text-[#4a5568] leading-relaxed">

@@ -480,7 +480,7 @@ useEffect(() => {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
+        <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">
           {query ? <>Results for <em className="text-[#2d6a4f]">"{query}"</em></> : "Browse all"}
         </h1>
       </div>

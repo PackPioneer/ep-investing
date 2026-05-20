@@ -115,7 +115,7 @@ export default function NGOOnboarding() {
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
         </div>
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-3">Profile under review</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">Profile under review</h2>
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           Thanks for submitting <strong>{form.name}</strong>. We review every NGO profile and will follow up within a few business days. Once approved, you'll be able to log in, edit your profile, and post grants and jobs.
         </p>
@@ -133,7 +133,7 @@ export default function NGOOnboarding() {
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
             <Building2 size={11} /> NGO Profile
           </div>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#0f1a14] mb-2">List your organization</h1>
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-2">List your organization</h1>
           <p className="text-sm text-[#4a5568] max-w-md mx-auto">
             Get discovered by climate companies, post grants and jobs, and connect with peer organizations.
           </p>

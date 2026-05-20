@@ -93,7 +93,7 @@ export default function ExpertDashboard() {
   if (!expert) return (
     <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
       <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 max-w-md text-center">
-        <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-3">No expert profile found</h2>
+        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-3">No expert profile found</h2>
         <p className="text-sm text-[#718096] mb-6">Apply to join the EP Investing expert network.</p>
         <Link href="/onboarding/expert" className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#235a40]">
           Apply as an expert
@@ -109,7 +109,7 @@ export default function ExpertDashboard() {
       {/* Sidebar */}
       <div className={`fixed md:relative z-30 w-56 bg-[#0f1a14] flex flex-col gap-1 px-3 py-6 flex-shrink-0 h-full min-h-screen transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <div className="flex items-center justify-between mb-8 px-2">
-          <div style={{ fontFamily: "Georgia, serif" }} className="text-white text-base">
+          <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-white text-base">
             EP <span className="text-[#2d6a4f]">Investing</span>
           </div>
           <button className="md:hidden text-[#9ca8a0]" onClick={() => setSidebarOpen(false)}>
@@ -148,7 +148,7 @@ export default function ExpertDashboard() {
           <button className="md:hidden text-[#0f1a14]" onClick={() => setSidebarOpen(true)}>
             <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
+          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14]">
             {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
           </h1>
         </div>

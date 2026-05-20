@@ -100,7 +100,7 @@ export default function NGOsDirectory() {
           </div>
           <div className="flex items-end justify-between gap-6 flex-wrap">
             <div>
-              <h1 style={{ fontFamily: "Georgia, serif" }} className="text-4xl text-[#0f1a14] mb-3">
+              <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14] mb-3">
                 NGOs, IGOs & Foundations
               </h1>
               <p className="text-[#4a5568] text-base max-w-xl leading-relaxed font-light">
@@ -108,7 +108,7 @@ export default function NGOsDirectory() {
               </p>
             </div>
             <div className="text-right">
-              <div style={{ fontFamily: "Georgia, serif" }} className="text-3xl text-[#2d6a4f]">{ngos.length}</div>
+              <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#2d6a4f]">{ngos.length}</div>
               <div className="text-xs font-mono text-[#718096]">organizations</div>
             </div>
           </div>
@@ -154,9 +154,9 @@ export default function NGOsDirectory() {
         )}
 
         <div className="mt-16 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
-          <h2 style={{ fontFamily: "Georgia, serif" }} className="text-xl text-[#0f1a14] mb-2">Don't see your organization?</h2>
+          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">Don't see your organization?</h2>
           <p className="text-sm text-[#4a5568] mb-5 max-w-md mx-auto">
-            Add your NGO, IGO, or foundation to the directory. Free until July 15, 2026.
+            Add your NGO, IGO, or foundation to the directory. Free until January 1, 2027.
           </p>
           <Link href="/onboarding/ngo"
             className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
