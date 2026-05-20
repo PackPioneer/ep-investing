@@ -185,6 +185,24 @@ export async function PATCH(req) {
       return NextResponse.json({ message: "Update failed" }, { status: 500 });
     }
 
+    // If a NEW claim was just approved, send a Clerk invitation so the
+    // founder can sign up. The webhook links clerk_user_id on signup.
+    if (isNewClaim && status === "approved" && data?.claimant_email) {
+      try {
+        const { clerkClient } = await import("@clerk/nextjs/server");
+        const client = await clerkClient();
+        await client.invitations.createInvitation({
+          emailAddress: data.claimant_email,
+          redirectUrl: "https://www.epinvesting.com/dashboard",
+          publicMetadata: { company_id: data.target_id, claim_id: rawId },
+          ignoreExisting: true,
+        });
+      } catch (inviteErr) {
+        console.error("Clerk invitation failed (claim still approved):", inviteErr);
+        // Non-fatal: approval succeeds; founder can still sign up manually.
+      }
+    }
+
     return NextResponse.json({ ok: true, data });
   } catch (err) {
     console.error("Claim PATCH error:", err);
