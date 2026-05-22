@@ -43,5 +43,16 @@ export async function GET() {
     return NextResponse.json({ type: 'investor' })
   }
 
+  // Check if NGO
+  const { data: ngo } = await supabase
+    .from('ngos')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single()
+
+  if (ngo) {
+    return NextResponse.json({ type: 'ngo' })
+  }
+
   return NextResponse.json({ type: null })
 }

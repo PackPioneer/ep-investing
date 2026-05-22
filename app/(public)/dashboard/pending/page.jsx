@@ -20,6 +20,9 @@ export default function DashboardPending() {
       } else if (data.type === "investor") {
         clearInterval(interval);
         router.push("/dashboard/investor");
+      } else if (data.type === "ngo") {
+        clearInterval(interval);
+        router.push("/dashboard/ngo");
       }
     }, 2000);
 
