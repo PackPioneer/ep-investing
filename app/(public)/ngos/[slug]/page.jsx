@@ -92,15 +92,32 @@ export default function NGOProfile() {
             )}
           </div>
 
-          <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14] leading-tight mb-3">
-            {ngo.name}
-          </h1>
-
-          {ngo.short_description && (
-            <p className="text-[#4a5568] text-base font-light leading-relaxed mb-5">
-              {ngo.short_description}
-            </p>
-          )}
+          <div className="flex items-start gap-5 mb-3">
+            {ngo.logo_url ? (
+              <>
+                <img src={ngo.logo_url} alt={ngo.name}
+                  className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e2e6ed] flex-shrink-0"
+                  onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
+                <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e2e6ed] items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+                  {(ngo.name||"?")[0].toUpperCase()}
+                </div>
+              </>
+            ) : (
+              <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+                {(ngo.name||"?")[0].toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14] leading-tight">
+                {ngo.name}
+              </h1>
+              {ngo.short_description && (
+                <p className="text-[#4a5568] text-base font-light leading-relaxed mt-3">
+                  {ngo.short_description}
+                </p>
+              )}
+            </div>
+          </div>
 
           <div className="flex items-center gap-3 flex-wrap">
             {ngo.website_url && (
