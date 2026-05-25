@@ -141,7 +141,7 @@ export default function NGOProfile() {
               )
             )}
             {ngo.claimable && (
-              <Link href={`/ngos/${slug}/claim`}
+              <Link href={`/claim/ngo/${slug}`}
                 className="text-sm text-[#4a5568] hover:text-[#2d6a4f] underline">
                 Claim this profile
               </Link>
@@ -277,7 +277,7 @@ export default function NGOProfile() {
               <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your organization?</h3>
                 <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to edit details, post grant programs, and add job openings.</p>
-                <Link href={`/ngos/${slug}/claim`}
+                <Link href={`/claim/ngo/${slug}`}
                   className="w-full inline-flex items-center justify-center gap-2 bg-[#2d6a4f] text-white text-sm font-semibold rounded-lg py-2.5 hover:bg-[#235a40] transition-all">
                   Claim this profile →
                 </Link>

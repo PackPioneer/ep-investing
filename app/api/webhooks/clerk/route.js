@@ -113,6 +113,31 @@ export async function POST(req) {
         .eq("target_id", investorClaim.target_id)
         .eq("profile_type", "investor");
     }
+
+    // NGO claims -> link ngos.clerk_user_id + mark not claimable
+    const { data: ngoClaim } = await supabase
+      .from("claim_requests")
+      .select("target_id")
+      .eq("claimant_email", email)
+      .eq("profile_type", "ngo")
+      .eq("status", "approved")
+      .order("reviewed_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (ngoClaim?.target_id) {
+      await supabase
+        .from("ngos")
+        .update({ clerk_user_id, claimable: false })
+        .eq("id", ngoClaim.target_id);
+
+      await supabase
+        .from("claim_requests")
+        .update({ status: "completed" })
+        .eq("claimant_email", email)
+        .eq("target_id", ngoClaim.target_id)
+        .eq("profile_type", "ngo");
+    }
   }
 
   return Response.json({ ok: true });

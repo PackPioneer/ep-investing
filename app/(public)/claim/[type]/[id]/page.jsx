@@ -24,16 +24,35 @@ export default function ClaimProfilePage() {
   });
 
   useEffect(() => {
-    const endpoint = type === "company" ? `/api/companies/${id}` : `/api/investors/${id}`;
+    const endpoint =
+      type === "company" ? `/api/companies/${id}`
+      : type === "ngo" ? `/api/ngos/${id}`
+      : `/api/investors/${id}`;
     fetch(endpoint)
       .then(r => r.json())
       .then(data => {
-        if (!data || data.message === "Company not found" || data.message === "Investor not found") {
+        // NGO API returns { ngo, grants, jobs } with different field names.
+        // Normalize to the shape the preview + submit expect.
+        let p = data;
+        if (type === "ngo") {
+          const n = data?.ngo;
+          if (!n || data.error) { setError("Profile not found."); setLoading(false); return; }
+          p = {
+            id: n.id,
+            name: n.name,
+            url: n.website_url,
+            description: n.short_description,
+            logo_url: n.logo_url,
+            claimed_by_clerk_user_id: n.clerk_user_id,
+            claimable: n.claimable,
+          };
+        }
+        if (!p || p.message === "Company not found" || p.message === "Investor not found" || p.error) {
           setError("Profile not found.");
-        } else if (data.claimed_by_clerk_user_id) {
+        } else if (p.claimed_by_clerk_user_id || (type === "ngo" && !p.claimable)) {
           setError("This profile has already been claimed.");
         } else {
-          setProfile(data);
+          setProfile(p);
         }
         setLoading(false);
       })
@@ -51,7 +70,7 @@ export default function ClaimProfilePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           profile_type: type,
-          target_id: id,
+          target_id: type === "ngo" ? profile?.id : id,
           target_name: profile?.name,
           claimant_name: form.claimant_name,
           claimant_email: form.claimant_email,
@@ -113,8 +132,8 @@ export default function ClaimProfilePage() {
     );
   }
 
-  const profileUrl = type === "company" ? `/companies/${id}` : `/investors/${id}`;
-  const profileLabel = type === "company" ? "company" : "investment firm";
+  const profileUrl = type === "company" ? `/companies/${id}` : type === "ngo" ? `/ngos/${id}` : `/investors/${id}`;
+  const profileLabel = type === "company" ? "company" : type === "ngo" ? "organization" : "investment firm";
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] py-12 px-6"
@@ -188,7 +207,7 @@ export default function ClaimProfilePage() {
 
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your role *</label>
-              <input placeholder={type === "company" ? "e.g. CEO, Head of Marketing, Founder" : "e.g. Partner, Principal, Analyst"} value={form.claimant_role} onChange={e => setForm(p => ({ ...p, claimant_role: e.target.value }))}
+              <input placeholder={type === "company" ? "e.g. CEO, Head of Marketing, Founder" : type === "ngo" ? "e.g. Executive Director, Communications Lead" : "e.g. Partner, Principal, Analyst"} value={form.claimant_role} onChange={e => setForm(p => ({ ...p, claimant_role: e.target.value }))}
                 className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
             </div>
 

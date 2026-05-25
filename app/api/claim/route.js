@@ -26,7 +26,7 @@ export async function POST(req) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
-    if (!["company", "investor"].includes(profile_type)) {
+    if (!["company", "investor", "ngo"].includes(profile_type)) {
       return NextResponse.json({ message: "Invalid profile type" }, { status: 400 });
     }
 
@@ -54,6 +54,8 @@ export async function POST(req) {
     try {
       const profileUrl = profile_type === "company"
         ? `https://www.epinvesting.com/companies/${target_id}`
+        : profile_type === "ngo"
+        ? `https://www.epinvesting.com/admin/claims`
         : `https://www.epinvesting.com/investors/${target_id}`;
 
       await getResend().emails.send({
@@ -115,13 +117,13 @@ export async function GET() {
       profile_type: c.profile_type,
       target_id: c.target_id,
       // Map new field names to admin's expected names
-      company_name: c.target_name || `${c.profile_type === "company" ? "Company" : "Investor"} #${c.target_id}`,
+      company_name: c.target_name || `${c.profile_type === "company" ? "Company" : c.profile_type === "ngo" ? "NGO" : "Investor"} #${c.target_id}`,
       company_url: null, // not collected in new flow (could enrich from target if needed)
       contact_name: c.claimant_name,
       contact_email: c.claimant_email,
       contact_role: c.claimant_role,
       description: c.claimant_message,
-      plan: c.profile_type === "company" ? "Profile claim (company)" : "Profile claim (investor)",
+      plan: c.profile_type === "company" ? "Profile claim (company)" : c.profile_type === "ngo" ? "Profile claim (NGO)" : "Profile claim (investor)",
       status: c.status,
       admin_notes: c.admin_notes,
       created_at: c.created_at,
