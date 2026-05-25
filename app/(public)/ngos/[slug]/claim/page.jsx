@@ -21,6 +21,7 @@ export default function ClaimNGO() {
     claimant_name: "",
     claimant_email: "",
     claimant_role: "",
+    claimant_linkedin: "",
     message: "",
   });
 
@@ -166,6 +167,16 @@ export default function ClaimNGO() {
             <input className={inputClass} value={form.claimant_role}
               onChange={e => setForm({...form, claimant_role: e.target.value})}
               placeholder="e.g. Communications Director" />
+          </div>
+
+          <div>
+            <label className={labelClass}>LinkedIn profile</label>
+            <input className={inputClass} value={form.claimant_linkedin}
+              onChange={e => setForm({...form, claimant_linkedin: e.target.value})}
+              placeholder="https://linkedin.com/in/..." />
+            <p className="text-[10px] text-[#a0aec0] mt-1">
+              Helps us verify you work at the organization.
+            </p>
           </div>
 
           <div>

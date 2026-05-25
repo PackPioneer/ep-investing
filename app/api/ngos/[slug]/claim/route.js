@@ -25,7 +25,7 @@ export async function POST(req, { params }) {
 
     const { slug } = await params;
     const body = await req.json();
-    const { claimant_name, claimant_email, claimant_role, message } = body;
+    const { claimant_name, claimant_email, claimant_role, claimant_linkedin, message } = body;
 
     if (!claimant_name || !claimant_email) {
       return Response.json({ error: "Name and email required" }, { status: 400 });
@@ -60,6 +60,7 @@ export async function POST(req, { params }) {
         claimant_name,
         claimant_email,
         claimant_role: claimant_role || null,
+        claimant_linkedin: claimant_linkedin || null,
         message: message || null,
         email_domain_match,
         status: "pending",
@@ -84,6 +85,7 @@ export async function POST(req, { params }) {
         html: `
           <p><strong>${claimant_name}</strong> (${claimant_email}) is requesting to claim <strong>${ngo.name}</strong>.</p>
           <p>Role: ${claimant_role || "—"}</p>
+          <p>LinkedIn: ${claimant_linkedin ? `<a href="${claimant_linkedin}">${claimant_linkedin}</a>` : "—"}</p>
           <p>Domain match: ${email_domain_match ? "✓ verified" : "⚠ no match"}</p>
           ${message ? `<p>Message:<br>${message}</p>` : ""}
           <p><a href="https://www.epinvesting.com/admin/ngo-claims">Review in admin</a></p>
