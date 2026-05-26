@@ -65,7 +65,7 @@ export default function NGOProfile() {
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto px-6 py-10">
 
-        <Link href="/ngos/directory" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
+        <Link href="/ngos" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
           <ArrowLeft size={14} /> Back to directory
         </Link>
 
@@ -286,7 +286,7 @@ export default function NGOProfile() {
 
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-3">Browse</h3>
-              <Link href="/ngos/directory" className="text-xs text-[#2d6a4f] font-mono hover:underline flex items-center gap-1">
+              <Link href="/ngos" className="text-xs text-[#2d6a4f] font-mono hover:underline flex items-center gap-1">
                 All organizations →
               </Link>
             </div>
