@@ -93,6 +93,14 @@ export default function RootLayout({ children }) {
           },
         },
       }}
+      localization={{
+        signUp: {
+          start: {
+            title: "Create your account",
+            subtitle: "Join EP Investing to manage your profile",
+          },
+        },
+      }}
     >
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} ${robotoCondensed.variable}`}>
