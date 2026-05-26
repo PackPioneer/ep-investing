@@ -311,20 +311,36 @@ export default function InvestorProfilePage() {
               <IntroForm investor={investor} />
             </div>
 
-            {/* ONBOARDING CTA */}
-            <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Zap size={14} className="text-[#2d6a4f]" />
-                <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Are you an investor?</span>
+            {/* CLAIM / ONBOARDING CTA */}
+            {!investor.claimed_by_clerk_user_id ? (
+              <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap size={14} className="text-[#2d6a4f]" />
+                  <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Is this your firm?</span>
+                </div>
+                <p className="text-sm text-[#d0e4d8] leading-relaxed mb-4">
+                  Claim this profile to manage it, update your details, and connect directly with founders.
+                </p>
+                <Link href={`/claim/investor/${investor.id}`}
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  Claim this profile <ChevronRight size={13} />
+                </Link>
               </div>
-              <p className="text-sm text-[#d0e4d8] leading-relaxed mb-4">
-                Join EP Investing to access deal flow, company signals, and curated climate opportunities.
-              </p>
-              <Link href="/onboarding/investor"
-                className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
-                Join as investor <ChevronRight size={13} />
-              </Link>
-            </div>
+            ) : (
+              <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap size={14} className="text-[#2d6a4f]" />
+                  <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Are you an investor?</span>
+                </div>
+                <p className="text-sm text-[#d0e4d8] leading-relaxed mb-4">
+                  Join EP Investing to access deal flow, company signals, and curated climate opportunities.
+                </p>
+                <Link href="/onboarding/investor"
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  Join as investor <ChevronRight size={13} />
+                </Link>
+              </div>
+            )}
 
           </div>
         </div>
