@@ -57,6 +57,7 @@ function NGOCard({ ngo }) {
             Unclaimed
           </span>
         )}
+        </div>
       </div>
 
       <div>
