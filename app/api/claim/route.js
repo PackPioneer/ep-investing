@@ -103,6 +103,14 @@ export async function GET() {
     const oldClaims = oldRes.data || [];
     const newClaims = newRes.data || [];
 
+    // For NGO claims, fetch slugs (claims only store numeric target_id).
+    const ngoIds = [...new Set(newClaims.filter(c => c.profile_type === "ngo").map(c => c.target_id))];
+    let ngoSlugMap = {};
+    if (ngoIds.length > 0) {
+      const { data: ngoRows } = await supabase.from("ngos").select("id, slug").in("id", ngoIds);
+      ngoSlugMap = Object.fromEntries((ngoRows || []).map(n => [n.id, n.slug]));
+    }
+
     // Normalize old claims (already in admin's expected shape)
     const normalizedOld = oldClaims.map(c => ({
       ...c,
@@ -116,6 +124,7 @@ export async function GET() {
       source: "profile_claim",
       profile_type: c.profile_type,
       target_id: c.target_id,
+      target_slug: c.profile_type === "ngo" ? (ngoSlugMap[c.target_id] || null) : null,
       // Map new field names to admin's expected names
       company_name: c.target_name || `${c.profile_type === "company" ? "Company" : c.profile_type === "ngo" ? "NGO" : "Investor"} #${c.target_id}`,
       company_url: null, // not collected in new flow (could enrich from target if needed)

@@ -5,7 +5,7 @@ import { formatSector } from "@/lib/sectors";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase, Heart } from "lucide-react";
+import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase, Heart, Play, X } from "lucide-react";
 import posthog from "posthog-js";
 
 const quickTags = [
@@ -76,6 +76,7 @@ export default function HomePage() {
   const [recentGrants, setRecentGrants] = useState([]);
   const [recentJobs, setRecentJobs] = useState([]);
   const [email, setEmail] = useState("");
+  const [showDemo, setShowDemo] = useState(false);
   const [emailStatus, setEmailStatus] = useState("");
   const router = useRouter();
 
@@ -154,9 +155,14 @@ export default function HomePage() {
       News intelligence, investor matching, grant tracking, and hiring — all in one platform.
     </p>
 
-    <Link href="/get-started" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all mb-3">
-  Start free <ArrowRight size={14} />
-</Link>
+    <div className="flex flex-wrap items-center gap-3 mb-3">
+      <Link href="/get-started" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all">
+        Start free <ArrowRight size={14} />
+      </Link>
+      <button onClick={() => setShowDemo(true)} className="inline-flex items-center gap-1.5 border border-[#d0d6e0] text-[#0f1a14] font-semibold text-sm rounded-lg px-5 py-3 hover:border-[#2d6a4f] transition-all">
+        <Play size={14} /> Watch demo
+      </button>
+    </div>
     <div className="text-xs text-[#718096] font-mono">
       No credit card · Cancel anytime
     </div>
@@ -496,6 +502,26 @@ export default function HomePage() {
         </div>
       </div>
 
+    
+      {showDemo && (
+        <div onClick={() => setShowDemo(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div onClick={e => e.stopPropagation()}
+            className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden border border-[#2d6a4f]">
+            <button onClick={() => setShowDemo(false)}
+              className="absolute top-3 right-3 z-10 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition-colors">
+              <X size={18} />
+            </button>
+            <video
+              src="https://vfcfdoaxlbkfqpfzhzvu.supabase.co/storage/v1/object/public/Demo%20Video/EP%20Investing%20Dashboard%20Overview.mp4"
+              controls
+              autoPlay
+              preload="none"
+              className="w-full h-auto block"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

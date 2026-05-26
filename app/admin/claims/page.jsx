@@ -104,7 +104,7 @@ const linkCompany = async (company) => {
               </a>
             )}
             {claim.source === "profile_claim" && claim.target_id && (
-              <a href={claim.profile_type === "company" ? `/companies/${claim.target_id}` : `/investors/${claim.target_id}`}
+              <a href={claim.profile_type === "company" ? `/companies/${claim.target_id}` : claim.profile_type === "ngo" ? `/ngos/${claim.target_slug}` : `/investors/${claim.target_id}`}
                 target="_blank" rel="noopener noreferrer"
                 onClick={e => e.stopPropagation()}
                 className="text-[11px] text-blue-600 hover:text-blue-800 underline">
@@ -152,7 +152,7 @@ const linkCompany = async (company) => {
               {saving ? "Saving…" : "Save notes"}
             </button>
           </div>
-<div>
+{claim.profile_type === "company" && <div>
   <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Link to existing company</div>
   {selectedCompany && (
     <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-2">
@@ -181,7 +181,7 @@ const linkCompany = async (company) => {
       </div>
     )}
   </div>
-</div>
+</div>}
 
           <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Update status</div>
@@ -247,7 +247,7 @@ export default function AdminClaimsPage() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Company Claims</h1>
+            <h1 className="text-2xl font-semibold text-slate-900">Claims</h1>
             <p className="text-sm text-slate-500 mt-1">Manage incoming claim requests</p>
           </div>
           <div className="flex items-center gap-3">
