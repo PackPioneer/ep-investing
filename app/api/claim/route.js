@@ -48,7 +48,7 @@ export async function POST(req) {
 
     if (error) {
       console.error("Claim insert error:", error);
-      return NextResponse.json({ message: "Database error" }, { status: 500 });
+      return NextResponse.json({ message: "Database error", detail: error.message, code: error.code }, { status: 500 });
     }
 
     try {
