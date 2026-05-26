@@ -195,7 +195,7 @@ export async function PATCH(req) {
         const client = await clerkClient();
         await client.invitations.createInvitation({
           emailAddress: data.claimant_email,
-          redirectUrl: "https://www.epinvesting.com/dashboard",
+          redirectUrl: "https://www.epinvesting.com/sign-up",
           publicMetadata: { company_id: data.target_id, claim_id: rawId },
           ignoreExisting: true,
         });
