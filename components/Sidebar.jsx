@@ -12,12 +12,14 @@ import {
   ChevronLeft,
   Menu,
   X,
+  Plus,
 } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 const menu = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
+  { name: "Add company", href: "/admin/add-company", icon: Plus },
   { name: "Claims", href: "/admin/claims", icon: Building2 },
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
