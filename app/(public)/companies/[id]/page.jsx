@@ -157,18 +157,6 @@ async function postUpdate(e) {
                   </div>
                 )}
               </div>
-                <div>
-                    <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight">
-                      {company.name || company.url}
-                    </h1>
-                    {company.url && (
-                      <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
-                        <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
-                      </a>
-                    )}
-                  </div>
 
               {/* Stage section */}
               {company.funding_stage && company.funding_stage !== 'unknown' && (
