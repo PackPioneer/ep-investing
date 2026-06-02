@@ -138,6 +138,23 @@ export async function POST(req) {
         .eq("target_id", ngoClaim.target_id)
         .eq("profile_type", "ngo");
     }
+
+    // Approved experts -> link experts.clerk_user_id by matching email
+    const { data: expert } = await supabase
+      .from("experts")
+      .select("id")
+      .eq("email", email)
+      .eq("status", "approved")
+      .is("clerk_user_id", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (expert?.id) {
+      await supabase
+        .from("experts")
+        .update({ clerk_user_id })
+        .eq("id", expert.id);
+    }
   }
 
   return Response.json({ ok: true });

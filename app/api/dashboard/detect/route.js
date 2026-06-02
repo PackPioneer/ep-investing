@@ -54,5 +54,17 @@ export async function GET() {
     return NextResponse.json({ type: 'ngo' })
   }
 
+  // Check if expert
+  const { data: expert } = await supabase
+    .from('experts')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .eq('status', 'approved')
+    .single()
+
+  if (expert) {
+    return NextResponse.json({ type: 'expert' })
+  }
+
   return NextResponse.json({ type: null })
 }
