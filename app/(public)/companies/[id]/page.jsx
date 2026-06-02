@@ -109,6 +109,25 @@ async function postUpdate(e) {
 
   return (
     <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      {/* Structured data for search engines (schema.org Organization) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: company.name,
+            url: company.url || undefined,
+            logo: company.logo_url || undefined,
+            description: company.description || undefined,
+            foundingDate: company.founding_year ? String(company.founding_year) : undefined,
+            address: (company.location || company.headquarters_location) ? {
+              "@type": "PostalAddress",
+              addressLocality: company.location || company.headquarters_location,
+            } : undefined,
+          }, (k, v) => v === undefined ? undefined : v),
+        }}
+      />
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
