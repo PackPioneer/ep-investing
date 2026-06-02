@@ -5,7 +5,27 @@ import { MapPin, Clock, Briefcase, ArrowRight, CheckCircle, Search } from "lucid
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
-const SECTORS = ["All", "ev_charging", "green_hydrogen", "nuclear_technologies", "climate_finance", "battery_storage", "solar"];
+// Friendly display labels for sector values
+const SECTOR_LABELS = {
+  solar: "Solar",
+  climate_tech: "Climate Tech",
+  clean_energy: "Clean Energy",
+  climate_finance: "Climate Finance",
+  battery_storage: "Battery Storage",
+  ev_charging: "EV Charging",
+  green_hydrogen: "Green Hydrogen",
+  nuclear_technologies: "Nuclear Technologies",
+  wind_energy: "Wind Energy",
+  geothermal_energy: "Geothermal",
+  carbon_credits: "Carbon Credits",
+  direct_air_capture: "Direct Air Capture",
+  industrial_decarbonization: "Industrial Decarbonization",
+  saf_efuels: "SAF / E-fuels",
+  electric_aviation: "Electric Aviation",
+  grid_storage: "Grid Storage",
+  clean_cooking: "Clean Cooking",
+};
+const formatSectorLabel = (key) => SECTOR_LABELS[key] || key.replace(/_/g, " ");
 
 function JobCard({ job }) {
 const handleApply = () => {
@@ -148,6 +168,14 @@ export default function JobsPage() {
     return matchSearch && matchSector;
   });
 
+  // Derive available sectors from actual job data — only show filters that have jobs.
+  // Sorted by job count descending so the biggest filters appear first.
+  const sectorCounts = jobs.reduce((acc, j) => {
+    if (j.sector) acc[j.sector] = (acc[j.sector] || 0) + 1;
+    return acc;
+  }, {});
+  const availableSectors = ["All", ...Object.keys(sectorCounts).sort((a, b) => sectorCounts[b] - sectorCounts[a])];
+
   if (view === "done") return (
     <div className="min-h-[80vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
@@ -193,10 +221,10 @@ export default function JobsPage() {
                   className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#718096] outline-none" />
               </div>
               <div className="flex gap-2 flex-wrap">
-                {SECTORS.slice(0, 5).map(s => (
+                {availableSectors.slice(0, 5).map(s => (
                   <button key={s} onClick={() => setSector(s)}
                     className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"}`}>
-                    {s === "All" ? "All" : s.replace(/_/g, " ")}
+                    {s === "All" ? `All (${jobs.length})` : `${formatSectorLabel(s)} (${sectorCounts[s] || 0})`}
                   </button>
                 ))}
               </div>
