@@ -69,7 +69,18 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    const { name, website_url, description: submittedDesc } = body;
+    const {
+      name,
+      website_url,
+      description: submittedDesc,
+      // Optional detail fields
+      founded_year,
+      headquarters_city,
+      headquarters_country,
+      total_endowment_usd,
+      annual_grants_budget_usd_range,
+      sector_tags,
+    } = body;
 
     if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
     if (!website_url) return NextResponse.json({ error: "Website URL is required" }, { status: 400 });
@@ -110,18 +121,27 @@ export async function POST(req) {
 
     // Insert — explicitly setting claimable: true and status: "active"
     // (defaults are false and "pending" which would make the NGO invisible/unclaimable)
+    // Build payload — required fields first, then conditionally add optional ones
+    const payload = {
+      name,
+      slug,
+      website_url: normalizedUrl,
+      bio,
+      logo_url: scraped.logo_url || null,
+      claimable: true,
+      status: "active",
+      org_type: "implementation_nonprofit",
+    };
+    if (founded_year && Number.isInteger(founded_year)) payload.founded_year = founded_year;
+    if (headquarters_city) payload.headquarters_city = headquarters_city;
+    if (headquarters_country) payload.headquarters_country = headquarters_country;
+    if (total_endowment_usd && Number.isFinite(total_endowment_usd)) payload.total_endowment_usd = total_endowment_usd;
+    if (annual_grants_budget_usd_range) payload.annual_grants_budget_usd_range = annual_grants_budget_usd_range;
+    if (Array.isArray(sector_tags) && sector_tags.length > 0) payload.sector_tags = sector_tags;
+
     const { data: inserted, error } = await supabase
       .from("ngos")
-      .insert({
-        name,
-        slug,
-        website_url: normalizedUrl,
-        bio,
-        logo_url: scraped.logo_url || null,
-        claimable: true,
-        status: "active",
-        org_type: "implementation_nonprofit",
-      })
+      .insert(payload)
       .select("id, slug")
       .single();
 
