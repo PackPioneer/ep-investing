@@ -20,6 +20,8 @@ const menu = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
   { name: "Add company", href: "/admin/add-company", icon: Plus },
+  { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
+  { name: "Add investor", href: "/admin/add-investor", icon: Plus },
   { name: "Claims", href: "/admin/claims", icon: Building2 },
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
