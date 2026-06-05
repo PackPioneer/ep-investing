@@ -120,6 +120,7 @@ export async function POST(req) {
         logo_url: scraped.logo_url || null,
         claimable: true,
         status: "active",
+        org_type: "implementation_nonprofit",
       })
       .select("id, slug")
       .single();
