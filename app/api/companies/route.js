@@ -4,7 +4,7 @@ export async function GET() {
   const { data: companies, error } = await supabase
     .from('companies')
     .select('*')
-    .order('id', { ascending: true })
+    .order('id', { ascending: false })
     .limit(50);
 
   if (error) {
