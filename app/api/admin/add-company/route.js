@@ -84,7 +84,18 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    const { url, name: submittedName, description: submittedDesc } = body;
+    const {
+      url,
+      name: submittedName,
+      description: submittedDesc,
+      // Optional detail fields
+      founding_year,
+      headquarters_city,
+      headquarters_country,
+      funding_stage,
+      tagline,
+      industry_tags: manualTags,
+    } = body;
 
     if (!url) return NextResponse.json({ error: "URL is required" }, { status: 400 });
     if (!submittedName) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -113,19 +124,31 @@ export async function POST(req) {
     const scraped = await scrapeUrl(normalizedUrl);
     const name = submittedName || scraped.name || hostname;
     const description = submittedDesc || scraped.description || "";
-    const tags = await classifyWithClaude(name, description);
+
+    // Skip Haiku classification when admin provides manual industry tags
+    const tags = Array.isArray(manualTags) && manualTags.length > 0
+      ? manualTags
+      : await classifyWithClaude(name, description);
+
+    // Build payload — required fields first, then conditionally add optional ones
+    const payload = {
+      name,
+      url: normalizedUrl,
+      description: description.slice(0, 500),
+      logo_url: scraped.logo_url || null,
+      industry_tags: tags,
+      sector: "cleantech_company",
+      enrichment_provenance: "admin_quick_add",
+    };
+    if (founding_year && Number.isInteger(founding_year)) payload.founding_year = founding_year;
+    if (headquarters_city) payload.headquarters_city = headquarters_city;
+    if (headquarters_country) payload.headquarters_country = headquarters_country;
+    if (funding_stage) payload.funding_stage = funding_stage;
+    if (tagline) payload.tagline = tagline;
 
     const { data: inserted, error } = await supabase
       .from("companies")
-      .insert({
-        name,
-        url: normalizedUrl,
-        description: description.slice(0, 500),
-        logo_url: scraped.logo_url || null,
-        industry_tags: tags,
-        sector: "cleantech_company",
-        enrichment_provenance: "admin_quick_add",
-      })
+      .insert(payload)
       .select("id")
       .single();
 

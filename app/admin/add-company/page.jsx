@@ -5,11 +5,35 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Plus, ArrowRight } from "lucide-react";
 
+const INDUSTRY_TAGS = [
+  "battery_storage", "carbon_credits", "clean_cooking", "direct_air_capture",
+  "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
+  "grid_storage", "industrial_decarbonization", "nuclear_technologies",
+  "saf_efuels", "solar", "wind_energy",
+];
+
+const FUNDING_STAGES = [
+  { value: "pre_seed", label: "Pre-Seed" },
+  { value: "seed", label: "Seed" },
+  { value: "series_a", label: "Series A" },
+  { value: "series_b", label: "Series B" },
+  { value: "series_c", label: "Series C" },
+  { value: "growth", label: "Growth" },
+  { value: "public", label: "Public" },
+];
+
 export default function AdminAddCompany() {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  // Optional detail fields
+  const [foundingYear, setFoundingYear] = useState("");
+  const [hqCity, setHqCity] = useState("");
+  const [hqCountry, setHqCountry] = useState("");
+  const [fundingStage, setFundingStage] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [industryTags, setIndustryTags] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -22,7 +46,17 @@ export default function AdminAddCompany() {
       const res = await fetch("/api/admin/add-company", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim(), name: name.trim(), description: description.trim() }),
+        body: JSON.stringify({
+          url: url.trim(),
+          name: name.trim(),
+          description: description.trim(),
+          founding_year: foundingYear ? parseInt(foundingYear) : null,
+          headquarters_city: hqCity.trim() || null,
+          headquarters_country: hqCountry.trim() || null,
+          funding_stage: fundingStage || null,
+          tagline: tagline.trim() || null,
+          industry_tags: industryTags.length > 0 ? industryTags : null,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -84,6 +118,98 @@ export default function AdminAddCompany() {
             className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors resize-none disabled:bg-slate-50"
           />
           <p className="text-[11px] text-slate-400 mt-1">If blank, the og:description from the page will be used.</p>
+        </div>
+
+        <div className="border-t border-slate-100 pt-5">
+          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Details (optional)</div>
+
+          <div className="mb-4">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Tagline</label>
+            <input
+              type="text"
+              value={tagline}
+              onChange={e => setTagline(e.target.value)}
+              placeholder="One-line pitch, e.g. Affordable batteries for the grid"
+              disabled={submitting}
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors disabled:bg-slate-50"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Founding year</label>
+              <input
+                type="number"
+                value={foundingYear}
+                onChange={e => setFoundingYear(e.target.value)}
+                placeholder="e.g. 2019"
+                min="1900"
+                max="2030"
+                disabled={submitting}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors disabled:bg-slate-50"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Funding stage</label>
+              <select
+                value={fundingStage}
+                onChange={e => setFundingStage(e.target.value)}
+                disabled={submitting}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors disabled:bg-slate-50">
+                <option value="">Unknown</option>
+                {FUNDING_STAGES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">HQ city</label>
+              <input
+                type="text"
+                value={hqCity}
+                onChange={e => setHqCity(e.target.value)}
+                placeholder="e.g. San Francisco"
+                disabled={submitting}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors disabled:bg-slate-50"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">HQ country</label>
+              <input
+                type="text"
+                value={hqCountry}
+                onChange={e => setHqCountry(e.target.value)}
+                placeholder="e.g. United States"
+                disabled={submitting}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-emerald-500 transition-colors disabled:bg-slate-50"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Industry tags</label>
+            <div className="flex flex-wrap gap-1.5">
+              {INDUSTRY_TAGS.map(tag => {
+                const active = industryTags.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => setIndustryTags(prev => active ? prev.filter(t => t !== tag) : [...prev, tag])}
+                    disabled={submitting}
+                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
+                      active
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                        : "border-slate-200 bg-white text-slate-500 hover:border-slate-300"
+                    } disabled:opacity-40`}>
+                    {tag.replace(/_/g, " ")}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1.5">Click to add or remove. Picking tags here skips AI classification.</p>
+          </div>
         </div>
 
         <button
