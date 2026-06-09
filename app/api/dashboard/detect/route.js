@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, clerkClient } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
@@ -21,15 +21,24 @@ export async function GET() {
     return NextResponse.json({ type: 'admin' })
   }
 
-  // Check if company
-  const { data: company } = await supabase
-    .from('companies')
-    .select('id')
-    .eq('clerk_user_id', userId)
-    .single()
+  // Check if company — via Clerk Organization membership
+  const client = await clerkClient()
+  const { data: memberships } = await client.users.getOrganizationMembershipList({
+    userId,
+    limit: 100,
+  })
+  const orgIds = memberships.map((m) => m.organization.id)
 
-  if (company) {
-    return NextResponse.json({ type: 'company' })
+  if (orgIds.length > 0) {
+    const { data: company } = await supabase
+      .from('companies')
+      .select('id')
+      .in('clerk_organization_id', orgIds)
+      .maybeSingle()
+
+    if (company) {
+      return NextResponse.json({ type: 'company' })
+    }
   }
 
   // Check if investor

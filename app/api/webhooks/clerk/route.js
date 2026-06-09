@@ -81,6 +81,34 @@ export async function POST(req) {
         .update({ clerk_user_id, claimed_by_clerk_user_id: clerk_user_id })
         .eq("id", companyClaim.target_id);
 
+      // Create a Clerk Organization for this company, with the new user as admin.
+      // Idempotent: skip if the company already has an org (handles webhook retries).
+      try {
+        const { data: companyRow } = await supabase
+          .from("companies")
+          .select("name, clerk_organization_id")
+          .eq("id", companyClaim.target_id)
+          .maybeSingle();
+
+        if (companyRow && !companyRow.clerk_organization_id) {
+          const { clerkClient } = await import("@clerk/nextjs/server");
+          const client = await clerkClient();
+          const org = await client.organizations.createOrganization({
+            name: companyRow.name,
+            createdBy: clerk_user_id,
+          });
+
+          await supabase
+            .from("companies")
+            .update({ clerk_organization_id: org.id })
+            .eq("id", companyClaim.target_id);
+        }
+      } catch (orgErr) {
+        console.error("Org creation failed on signup (claim still linked):", orgErr);
+        // Non-fatal: the claim linkage above still succeeded; org can be
+        // created manually or by a re-run if needed.
+      }
+
       await supabase
         .from("claim_requests")
         .update({ status: "completed" })

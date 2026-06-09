@@ -67,7 +67,66 @@ export default function CompanyDashboard() {
   const { triggerPaywall, hasPayment } = usePaywall();
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [logoUrl, setLogoUrl] = useState(null);
+const [teamMembers, setTeamMembers] = useState([]);
+  const [teamPending, setTeamPending] = useState([]);
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviting, setInviting] = useState(false);
+  const [teamError, setTeamError] = useState("");
 
+  async function loadTeam() {
+    setTeamLoading(true);
+    setTeamError("");
+    try {
+      const res = await fetch("/api/dashboard/team");
+      const data = await res.json();
+      if (data.error) { setTeamError(data.error); }
+      else { setTeamMembers(data.members || []); setTeamPending(data.pending || []); }
+    } catch {
+      setTeamError("Failed to load team");
+    }
+    setTeamLoading(false);
+  }
+
+  async function sendInvite() {
+    const email = inviteEmail.trim();
+    if (!email) return;
+    setInviting(true);
+    setTeamError("");
+    try {
+      const res = await fetch("/api/dashboard/team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.error) { setTeamError(data.error); }
+      else { setInviteEmail(""); await loadTeam(); }
+    } catch {
+      setTeamError("Failed to send invitation");
+    }
+    setInviting(false);
+  }
+
+  async function removeMember(targetUserId) {
+    if (!confirm("Remove this member from the team?")) return;
+    try {
+      const res = await fetch("/api/dashboard/team", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetUserId }),
+      });
+      const data = await res.json();
+      if (data.error) { setTeamError(data.error); }
+      else { await loadTeam(); }
+    } catch {
+      setTeamError("Failed to remove member");
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === "team") loadTeam();
+  }, [activeTab]);
   useEffect(() => {
     if (!isLoaded) return;
     if (!user) { router.push("/"); return; }
@@ -223,6 +282,7 @@ async function deleteDeck() {
     { id: "updates", label: "Share an update" },
     { id: "investors", label: "Find investors" },
     { id: "experts", label: "Hire experts" }, 
+    { id: "team", label: "Team" },
   ];
 
   return (
