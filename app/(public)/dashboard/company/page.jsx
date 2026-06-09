@@ -1053,6 +1053,85 @@ async function deleteDeck() {
           </div>
         )}
 
+{activeTab === "team" && (
+          <div className="max-w-3xl">
+            <div className="mb-6">
+              <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-1">Team</h2>
+              <p className="text-sm text-[#4a5568]">Invite colleagues to manage this company profile. Everyone you invite can post jobs, edit the profile, and invite others.</p>
+            </div>
+
+            {teamError && (
+              <div className="mb-4 px-4 py-3 rounded-lg bg-[#fdecea] text-[#9b2c2c] text-sm">{teamError}</div>
+            )}
+
+            <div className="bg-white rounded-xl border border-[#e2e8f0] p-5 mb-6">
+              <label className="block text-xs font-semibold text-[#4a5568] mb-2">Invite by email</label>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") sendInvite(); }}
+                  placeholder="colleague@company.com"
+                  className="flex-1 px-3 py-2 rounded-lg border border-[#cbd5e0] text-sm text-[#0f1a14] focus:outline-none focus:border-[#2d6a4f]"
+                />
+                <button
+                  onClick={sendInvite}
+                  disabled={inviting || !inviteEmail.trim()}
+                  className="px-4 py-2 rounded-lg bg-[#2d6a4f] text-white text-sm font-semibold hover:bg-[#1a2e20] transition-colors disabled:opacity-50"
+                >
+                  {inviting ? "Sending…" : "Send invite"}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl border border-[#e2e8f0] overflow-hidden mb-6">
+              <div className="px-5 py-3 border-b border-[#e2e8f0]">
+                <h3 className="text-sm font-semibold text-[#0f1a14]">Members</h3>
+              </div>
+              {teamLoading ? (
+                <div className="px-5 py-6 text-sm text-[#a0aec0]">Loading…</div>
+              ) : teamMembers.length === 0 ? (
+                <div className="px-5 py-6 text-sm text-[#a0aec0]">No members yet.</div>
+              ) : (
+                teamMembers.map((m) => (
+                  <div key={m.userId || m.email} className="flex items-center justify-between px-5 py-3 border-b border-[#f0f2f5] last:border-b-0">
+                    <div>
+                      <div className="text-sm text-[#0f1a14]">
+                        {m.firstName || m.lastName ? `${m.firstName || ""} ${m.lastName || ""}`.trim() : m.email}
+                        {m.isSelf && <span className="ml-2 text-xs text-[#a0aec0]">(you)</span>}
+                      </div>
+                      {(m.firstName || m.lastName) && <div className="text-xs text-[#718096]">{m.email}</div>}
+                      <div className="text-xs text-[#a0aec0] mt-0.5">Joined {m.joinedAt ? new Date(m.joinedAt).toLocaleDateString() : "—"}</div>
+                    </div>
+                    {!m.isSelf && (
+                      <button
+                        onClick={() => removeMember(m.userId)}
+                        className="text-xs font-semibold text-[#9b2c2c] hover:underline"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {teamPending.length > 0 && (
+              <div className="bg-white rounded-xl border border-[#e2e8f0] overflow-hidden">
+                <div className="px-5 py-3 border-b border-[#e2e8f0]">
+                  <h3 className="text-sm font-semibold text-[#0f1a14]">Pending invitations</h3>
+                </div>
+                {teamPending.map((i) => (
+                  <div key={i.id} className="flex items-center justify-between px-5 py-3 border-b border-[#f0f2f5] last:border-b-0">
+                    <div className="text-sm text-[#0f1a14]">{i.email}</div>
+                    <span className="text-xs text-[#a0aec0]">Invited {i.createdAt ? new Date(i.createdAt).toLocaleDateString() : "—"}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 {activeTab === "experts" && (
           <div className="flex flex-col gap-4">
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
