@@ -23,7 +23,6 @@ async function resolveCompanyForUser(userId) {
     if (data) return data;
   }
 
-  // Fallback for legacy users not yet on an org.
   const { data: legacy } = await supabase
     .from("companies")
     .select("*")
@@ -48,15 +47,10 @@ export async function PATCH(req) {
   const company = await resolveCompanyForUser(userId);
   if (!company) return Response.json({ error: "No company found" }, { status: 404 });
 
- // Coerce empty strings to null for integer columns (Postgres rejects "" for int).
-  const founding_year_clean = founding_year === "" || founding_year === undefined ? null : founding_year;
-  const employee_count_clean = employee_count === "" || employee_count === undefined ? null : employee_count;
-
-  const { data, error } = await supabase
-    .from("companies")
-    .update({
-      url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
-      twitter_url, founding_year: founding_year_clean, employee_count: employee_count_clean, location, funding_stage, business_model,
+  const body = await req.json();
+  const {
+    url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
+    twitter_url, founding_year, employee_count, location, funding_stage, business_model,
     looking_to_raise, is_hiring, seeking_partnerships, industry_tags, raise_target,
     raise_current, raise_close_date, min_check_size, raise_round_type, raise_instrument,
     raise_valuation, raise_lead_investor, raise_use_of_proceeds, raise_revenue_status,
@@ -64,11 +58,16 @@ export async function PATCH(req) {
     primary_contact_email, secondary_contact_name, secondary_contact_email,
   } = body;
 
+  // Coerce empty strings to null for integer columns (Postgres rejects "" for int).
+  const founding_year_clean = founding_year === "" || founding_year === undefined ? null : founding_year;
+  const employee_count_clean = employee_count === "" || employee_count === undefined ? null : employee_count;
+
   const { data, error } = await supabase
     .from("companies")
     .update({
       url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
-      twitter_url, founding_year: founding_year_clean, employee_count: employee_count_clean, location, funding_stage, business_model,
+      twitter_url, founding_year: founding_year_clean, employee_count: employee_count_clean,
+      location, funding_stage, business_model,
       looking_to_raise, is_hiring, seeking_partnerships, industry_tags, show_contact,
       primary_contact_name, primary_contact_email, secondary_contact_name,
       secondary_contact_email, raise_target, raise_current, raise_close_date, min_check_size,
