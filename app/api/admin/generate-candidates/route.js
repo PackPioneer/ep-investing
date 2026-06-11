@@ -18,7 +18,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { auth } from '@clerk/nextjs/server';
+import { requireAdmin } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -105,16 +105,12 @@ Respond with ONLY a JSON object, no prose, no code fences:
 Be conservative: when in doubt, set is_strip_worthy=false. A short, high-signal strip beats a noisy one.`;
 }
 
-async function isAdmin(userId, sessionClaims, supabase) {
-  const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
-  const email = sessionClaims?.email;
-  return Boolean(email && adminEmails.includes(email));
-}
+
 
 export async function POST(req) {
-  const { userId, sessionClaims } = await auth();
+  const userId = await requireAdmin();
   if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const supabase = createClient(
@@ -122,10 +118,6 @@ export async function POST(req) {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     { auth: { persistSession: false } }
   );
-
-  if (!(await isAdmin(userId, sessionClaims, supabase))) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
 
   let body = {};
   try {
