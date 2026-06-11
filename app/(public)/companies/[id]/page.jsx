@@ -369,8 +369,8 @@ async function postUpdate(e) {
               )}
             </div>
 
-            {/* LOCKED INTELLIGENCE */}
-            {isInvestor ? (
+            {/* LOCKED INTELLIGENCE — only shown for companies actively raising */}
+            {company.looking_to_raise && (isInvestor ? (
   <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
     <div className="flex items-center gap-2 mb-5">
       <Lock size={16} className="text-[#2d6a4f]" />
@@ -442,7 +442,7 @@ async function postUpdate(e) {
       Unlock Investor Access
     </Link>
   </div>
-)}
+))}
           </div> 
           {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-5">
