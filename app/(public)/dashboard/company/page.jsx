@@ -73,6 +73,15 @@ const [teamMembers, setTeamMembers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const [teamError, setTeamError] = useState("");
+  const [briefing, setBriefing] = useState([]);
+  const [briefingLoading, setBriefingLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/dashboard/company-feed")
+      .then((r) => r.json())
+      .then((d) => { setBriefing(Array.isArray(d.items) ? d.items : []); setBriefingLoading(false); })
+      .catch(() => setBriefingLoading(false));
+  }, []);
 
   async function loadTeam() {
     setTeamLoading(true);
@@ -332,6 +341,53 @@ async function deleteDeck() {
 
         {activeTab === "overview" && (
           <div className="flex flex-col gap-4">
+
+            {briefing.length > 0 && (
+              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
+                  <span className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">This just in</span>
+                </div>
+                <div className="flex flex-col divide-y divide-[#f0f2f5]">
+                  {briefing.map((item) => {
+                    const badge = {
+                      capital:  "bg-emerald-50 text-emerald-700",
+                      grant:    "bg-violet-50 text-violet-700",
+                      policy:   "bg-blue-50 text-blue-700",
+                      industry: "bg-amber-50 text-amber-700",
+                    }[item.category] || "bg-gray-100 text-gray-600";
+                    const when = item.published_at ? new Date(item.published_at) : null;
+                    const ago = when ? (() => {
+                      const h = Math.floor((Date.now() - when.getTime()) / 3600000);
+                      if (h < 1) return "just now";
+                      if (h < 24) return h + "h ago";
+                      return Math.floor(h / 24) + "d ago";
+                    })() : "";
+                    const Inner = (
+                      <div className="flex items-start gap-3 py-3">
+                        <span className={"text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded mt-0.5 shrink-0 " + badge}>
+                          {item.category}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-[#0f1a14] leading-snug">{item.title}</div>
+                          {item.body && <div className="text-xs text-[#4a5568] mt-0.5 leading-snug">{item.body}</div>}
+                        </div>
+                        <span className="text-[11px] text-[#a0aec0] whitespace-nowrap mt-0.5 shrink-0">{ago}</span>
+                      </div>
+                    );
+                    return item.link_url ? (
+                      <a key={item.id} href={item.link_url} target="_blank" rel="noopener noreferrer"
+                        className="block hover:bg-[#f7f9fc] -mx-2 px-2 rounded transition-colors">
+                        {Inner}
+                      </a>
+                    ) : (
+                      <div key={item.id}>{Inner}</div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
