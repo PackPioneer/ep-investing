@@ -6,9 +6,10 @@ import { useUser } from "@clerk/nextjs";
 
 const PaywallContext = createContext(null);
 
-// Hard block kicks in AFTER the free period ends, not before.
-// Set to July 16, 2026 — one day after the free period ends.
-const HARD_BLOCK_DATE = new Date("2026-07-16");
+// Nudge starts showing on this date; before it, triggerPaywall is a no-op.
+const NUDGE_START_DATE = new Date("2026-11-01");
+// Hard block (non-dismissible) kicks in after the free period ends.
+const HARD_BLOCK_DATE = new Date("2027-01-01");
 
 export function PaywallProvider({ children }) {
   const { user } = useUser();
@@ -24,6 +25,8 @@ export function PaywallProvider({ children }) {
   }, []);
 
   const triggerPaywall = useCallback(() => {
+    // Nudge is disabled until NUDGE_START_DATE (pushed back with billing).
+    if (new Date() < NUDGE_START_DATE) return;
     if (!hasPayment) setShowModal(true);
   }, [hasPayment]);
 
@@ -72,7 +75,7 @@ export function PaywallProvider({ children }) {
             <p className="text-[#4a5568] text-sm leading-relaxed mb-6">
               {isHardBlock
                 ? "Your free access period has ended. Add a payment method to continue using EP Investing."
-                : "Add your card now to keep access after July 15, 2026 — no charge until then. Cancel anytime before July 15th."}
+                : "Add your card now to keep access after December 31, 2026 — no charge until then. Cancel anytime before December 31."}
             </p>
             <div className="flex flex-col gap-3">
               <button
@@ -89,7 +92,7 @@ export function PaywallProvider({ children }) {
             </div>
             {!isHardBlock && (
               <p className="text-xs text-[#a0aec0] font-mono text-center mt-4">
-                Free until July 15, 2026 · No charge today
+                Free until December 31, 2026 · No charge today
               </p>
             )}
           </div>
