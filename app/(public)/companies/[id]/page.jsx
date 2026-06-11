@@ -45,6 +45,7 @@ export default function CompanyProfilePage() {
   const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
   const [postingUpdate, setPostingUpdate] = useState(false);
   const [isInvestor, setIsInvestor] = useState(false);
+  const [companyNews, setCompanyNews] = useState({ mode: "none", items: [] });
   useEffect(() => {
     if (!id) return;
     fetch(`/api/companies/${id}`)
@@ -64,6 +65,11 @@ export default function CompanyProfilePage() {
             .then(g => setGrants(Array.isArray(g) ? g : []))
             .catch(() => {});
         }
+
+        fetch(`/api/companies/${id}/news`)
+          .then(r => r.json())
+          .then(n => setCompanyNews(n && Array.isArray(n.items) ? n : { mode: "none", items: [] }))
+          .catch(() => {});
       })
       .catch(() => setLoading(false));
       fetch("/api/auth/investor-check")
@@ -443,6 +449,47 @@ async function postUpdate(e) {
     </Link>
   </div>
 ))}
+
+            {/* IN THE NEWS */}
+            {companyNews.items.length > 0 && (
+              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+                <div className="flex items-center gap-2 mb-5">
+                  <Newspaper size={16} className="text-[#2d6a4f]" />
+                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">
+                    {companyNews.mode === "sector"
+                      ? `News in ${(companyNews.sector || "your sector").replace(/-/g, " ")}`
+                      : "In the News"}
+                  </h2>
+                </div>
+                <div className="flex flex-col divide-y divide-[#e2e6ed]">
+                  {companyNews.items.map((item) => (
+                                      <a  
+                      key={item.id}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-3 first:pt-0 last:pb-0 group"
+                    >
+                      <div className="text-sm font-medium text-[#0f1a14] leading-snug group-hover:text-[#2d6a4f] transition-colors">
+                        {item.title}
+                      </div>
+                      <div className="text-xs text-[#718096] mt-1">
+                        {item.source_name || "News"}
+                        {item.published_at && (
+                          <> · {new Date(item.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+                {companyNews.mode === "sector" && (
+                  <p className="text-[11px] text-[#a0aec0] mt-4">
+                    Recent coverage in this space. Claim this profile to highlight your own news.
+                  </p>
+                )}
+              </div>
+            )}
+
           </div> 
           {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-5">
