@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Plus,
+  Rss,
 } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 
@@ -23,6 +24,7 @@ const menu = [
   { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
   { name: "Add investor", href: "/admin/add-investor", icon: Plus },
   { name: "Claims", href: "/admin/claims", icon: Building2 },
+  { name: "Feed Queue", href: "/admin/feed-queue", icon: Rss },
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
   { name: "Expert Applications", href: "/admin/expert-applications", icon: Users },
