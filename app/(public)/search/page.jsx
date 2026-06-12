@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { formatSector } from "@/lib/sectors";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X } from "lucide-react";
+import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X, Badgecheck } from "lucide-react";
 import Link from "next/link";
 import posthog from "posthog-js";
 
@@ -85,8 +85,11 @@ function CompanyCard({ company }) {
               {(company.name || company.url || "?")[0].toUpperCase()}
             </div>
           )}
-          <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors leading-snug">
+          <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors leading-snug inline-flex items-center gap-1.5">
             {company.name || company.url}
+            {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+              <BadgeCheck size={13} className="text-[#2d6a4f] flex-shrink-0" />
+            )}
           </h3>
         </div>
         <ChevronRight size={14} className="text-[#718096] group-hover:text-[#2d6a4f] flex-shrink-0 mt-0.5 transition-colors" />
