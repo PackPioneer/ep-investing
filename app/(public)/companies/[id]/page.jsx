@@ -5,7 +5,7 @@ import { formatSector } from "@/lib/sectors";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
-import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper, Linkedin, Twitter } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
   seed: "bg-blue-100 text-blue-700",
@@ -173,6 +173,33 @@ async function postUpdate(e) {
                         className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
                         <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
                       </a>
+                    )}
+                    {company.url && (
+                      <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
+                        <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
+                      </a>
+                    )}
+                    {(company.linkedin_url || company.twitter_url) && (
+                      <div className="flex items-center gap-3 mt-2">
+                        {company.linkedin_url && (
+                          <a href={company.linkedin_url.startsWith("http") ? company.linkedin_url : `https://${company.linkedin_url}`}
+                            target="_blank" rel="noopener noreferrer"
+                            aria-label="LinkedIn"
+                            className="text-[#718096] hover:text-[#2d6a4f] transition-colors">
+                            <Linkedin size={16} />
+                          </a>
+                        )}
+                        {company.twitter_url && (
+                          <a href={company.twitter_url.startsWith("http") ? company.twitter_url : `https://${company.twitter_url}`}
+                            target="_blank" rel="noopener noreferrer"
+                            aria-label="Twitter / X"
+                            className="text-[#718096] hover:text-[#2d6a4f] transition-colors">
+                            <Twitter size={16} />
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
