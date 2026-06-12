@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { formatSector } from "@/lib/sectors";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X, Badgecheck } from "lucide-react";
+import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import posthog from "posthog-js";
 
