@@ -5,7 +5,7 @@ import { formatSector } from "@/lib/sectors";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
-import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper, Linkedin, Twitter } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper, Linkedin, Twitter, BadgeCheck } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
   seed: "bg-blue-100 text-blue-700",
@@ -164,16 +164,16 @@ async function postUpdate(e) {
                     </div>
                   )}
                   <div>
-                    <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight">
-                      {company.name || company.url}
-                    </h1>
-                    {company.url && (
-                      <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
-                        <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
-                      </a>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight">
+                        {company.name || company.url}
+                      </h1>
+                      {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2d6a4f] bg-[#eef7f1] border border-[#cce5d6] rounded-full px-2 py-0.5">
+                          <BadgeCheck size={14} /> Claimed
+                        </span>
+                      )}
+                    </div>
                     {company.url && (
                       <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
                         target="_blank" rel="noopener noreferrer"
@@ -615,7 +615,7 @@ async function postUpdate(e) {
             </div>
 
             {/* CLAIM PROFILE — only shown if unclaimed */}
-            {!company.claimed_by_clerk_user_id && (
+            {!(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
               <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your company?</h3>
                 <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to manage it yourself, edit details, post jobs, and connect directly with investors.</p>

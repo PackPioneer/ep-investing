@@ -9,7 +9,8 @@ import {
   ArrowRight,
   MapPin,
   Layers,
-  Zap
+  Zap,
+  BadgeCheck
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -107,9 +108,14 @@ export default function CompaniesPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">
-                    {company.name}
-                  </h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                      {company.name}
+                    </h3>
+                    {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+                      <BadgeCheck size={18} className="text-emerald-600 flex-shrink-0" />
+                    )}
+                  </div>
                   
                   <p className="text-slate-500 text-sm line-clamp-3 mb-6 leading-relaxed">
                     {company.description || "Building the future of sustainable infrastructure and climate resilience."}
