@@ -4,6 +4,7 @@ export async function GET() {
   const { data: companies, error } = await supabase
     .from('companies')
     .select('*')
+    .neq('is_hidden', true)
     .order('id', { ascending: false })
     .limit(50);
 

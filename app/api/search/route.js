@@ -12,7 +12,7 @@ export async function GET(req) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
-    let companiesQuery = supabase.from('companies').select('*', { count: 'exact' }).range(from, to);
+    let companiesQuery = supabase.from('companies').select('*', { count: 'exact' }).neq('is_hidden', true).range(from, to);
     let investorsQuery = supabase.from('vc_firms').select('*', { count: 'exact' }).range(from, to);
     let grantsQuery = supabase.from('grants').select('*', { count: 'exact' }).range(from, to);
 
