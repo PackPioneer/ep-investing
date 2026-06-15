@@ -204,6 +204,7 @@ const [teamMembers, setTeamMembers] = useState([]);
       return;
     }
     setSaved(true); setTimeout(() => setSaved(false), 3000);
+  }
 
   async function submitJob(e) {
     e.preventDefault();
