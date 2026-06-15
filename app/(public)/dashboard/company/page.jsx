@@ -196,9 +196,14 @@ const [teamMembers, setTeamMembers] = useState([]);
     triggerPaywall(); // shows nudge but doesn't block
     setSaving(true);
     const payload = { ...form, industry_tags: form.industry_tags.split(",").map(t => t.trim()).filter(Boolean) };
-    await fetch("/api/dashboard/company", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 3000);
-  }
+    const res = await fetch("/api/dashboard/company", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    setSaving(false);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert("Save failed: " + (err.error || res.status));
+      return;
+    }
+    setSaved(true); setTimeout(() => setSaved(false), 3000);
 
   async function submitJob(e) {
     e.preventDefault();
