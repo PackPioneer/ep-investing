@@ -6,13 +6,16 @@ export const revalidate = 0;
 
 export async function GET(req, { params }) {
   try {
-    // Await params in Next.js 15+
+   // Await params in Next.js 15+
     const { id } = await params;
+
+    // Accept either a numeric id (legacy links) or a slug (new pretty URLs).
+    const isNumericId = /^\d+$/.test(String(id));
 
     const { data: company, error } = await supabase
       .from('companies')
       .select('*')
-      .eq('id', id)
+      .eq(isNumericId ? 'id' : 'slug', id)
       .single();
 
     if (error) throw error;
