@@ -16,7 +16,7 @@ const quickTags = [
   { slug: "clean_cooking", label: "Clean Cooking" },
   { slug: "electric_aviation", label: "Electric Aviation" },
   { slug: "battery_storage", label: "Battery Storage" },
-
+];
 
 const categories = [
   { name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
