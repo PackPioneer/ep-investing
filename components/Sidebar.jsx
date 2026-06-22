@@ -27,6 +27,7 @@ const menu = [
   { name: "Claims", href: "/admin/claims", icon: Building2 },
   { name: "Feed Queue", href: "/admin/feed-queue", icon: Rss },
   { name: "Enrichment", href: "/admin/enrichment-queue", icon: Sparkles },
+  { name: "Enrich One", href: "/admin/enrich-one", icon: Sparkles },
   { name: "Investors", href: "/admin/investors", icon: Users },
   { name: "Investor Requests", href: "/admin/investor-requests", icon: Users },
   { name: "Expert Applications", href: "/admin/expert-applications", icon: Users },
