@@ -7,8 +7,25 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Cache the sitemap for 1 hour — Next will regenerate on the next request after.
+// Cache the sitemap for 1 hour — Next regenerates on the next request after.
 export const revalidate = 3600;
+
+// Supabase caps a single select at 1000 rows. Paginate to get everything.
+async function fetchAll(table, columns, filter) {
+  const all = [];
+  const PAGE = 1000;
+  let from = 0;
+  while (true) {
+    let q = supabase.from(table).select(columns).range(from, from + PAGE - 1);
+    if (filter) q = filter(q);
+    const { data, error } = await q;
+    if (error || !data || data.length === 0) break;
+    all.push(...data);
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  return all;
+}
 
 export default async function sitemap() {
   const now = new Date();
@@ -25,50 +42,46 @@ export default async function sitemap() {
     { url: `${BASE_URL}/insights`, priority: 0.7, changeFrequency: "weekly" },
     { url: `${BASE_URL}/pricing`, priority: 0.7, changeFrequency: "monthly" },
     { url: `${BASE_URL}/ngos/about`, priority: 0.5, changeFrequency: "monthly" },
-  ].map(p => ({ ...p, lastModified: now }));
+  ].map((p) => ({ ...p, lastModified: now }));
 
-  // -------- COMPANIES (filtered to meaningful content) --------
-  const { data: companies } = await supabase
-    .from("companies")
-    .select("id, description, last_scraped_at, created_at")
-    .not("description", "is", null);
-
-  const companyEntries = (companies || [])
-    .filter(c => c.description && c.description.length > 50)
-    .map(c => ({
-      url: `${BASE_URL}/companies/${c.id}`,
+  // -------- COMPANIES (slug URLs, only meaningful content, all rows) --------
+  const companies = await fetchAll(
+    "companies",
+    "id, slug, description, last_scraped_at, created_at, is_hidden",
+    (q) => q.not("description", "is", null)
+  );
+  const companyEntries = companies
+    .filter((c) => c.description && c.description.length > 50 && !c.is_hidden && c.slug)
+    .map((c) => ({
+      url: `${BASE_URL}/companies/${c.slug}`,
       lastModified: new Date(c.last_scraped_at || c.created_at || now),
       changeFrequency: "weekly",
       priority: 0.7,
     }));
 
-  // -------- INVESTORS --------
-  const { data: investors } = await supabase
-    .from("vc_firms")
-    .select("id, created_at");
-  const investorEntries = (investors || []).map(i => ({
+  // -------- INVESTORS (still id URLs — no slug column yet) --------
+  const investors = await fetchAll("vc_firms", "id, created_at");
+  const investorEntries = investors.map((i) => ({
     url: `${BASE_URL}/investors/${i.id}`,
     lastModified: new Date(i.created_at || now),
     changeFrequency: "weekly",
     priority: 0.7,
   }));
 
-  // -------- NGOs --------
-  const { data: ngos } = await supabase
-    .from("ngos")
-    .select("slug, created_at");
-  const ngoEntries = (ngos || []).map(n => ({
-    url: `${BASE_URL}/ngos/${n.slug}`,
-    lastModified: new Date(n.created_at || now),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  // -------- NGOs (slug URLs) --------
+  const ngos = await fetchAll("ngos", "slug, created_at");
+  const ngoEntries = ngos
+    .filter((n) => n.slug)
+    .map((n) => ({
+      url: `${BASE_URL}/ngos/${n.slug}`,
+      lastModified: new Date(n.created_at || now),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
 
   // -------- GRANTS --------
-  const { data: grants } = await supabase
-    .from("grants")
-    .select("id, created_at");
-  const grantEntries = (grants || []).map(g => ({
+  const grants = await fetchAll("grants", "id, created_at");
+  const grantEntries = grants.map((g) => ({
     url: `${BASE_URL}/grants/${g.id}`,
     lastModified: new Date(g.created_at || now),
     changeFrequency: "weekly",
