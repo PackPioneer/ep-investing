@@ -16,7 +16,7 @@ const quickTags = [
   { slug: "clean_cooking", label: "Clean Cooking" },
   { slug: "electric_aviation", label: "Electric Aviation" },
   { slug: "battery_storage", label: "Battery Storage" },
-];
+
 
 const categories = [
   { name: "Nuclear Technologies", count: 126, slug: "nuclear_technologies" },
@@ -352,7 +352,7 @@ export default function HomePage() {
               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
             </div>
             {recentCompanies.length > 0 ? recentCompanies.map(co => (
-              <Link key={co.id} href={`/companies/${co.id}`}
+              <Link key={co.id} href={`/companies/${co.slug || co.id}`}
                 className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
                 <div>

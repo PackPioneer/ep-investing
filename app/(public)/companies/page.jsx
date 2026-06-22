@@ -135,7 +135,7 @@ export default function CompaniesPage() {
                       {company.location || 'Remote'}
                     </div>
                     <Link
-                      href={`/companies/${company._id}`}
+                     href={`/companies/${company.slug || company.id}`}
                       className="text-sm font-bold text-slate-900 flex items-center gap-1 hover:gap-2 transition-all"
                     >
                       Profile <ArrowRight size={16} />

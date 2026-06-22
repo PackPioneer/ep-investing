@@ -69,7 +69,7 @@ function CompanyCard({ company }) {
   const segments = company.customer_segment || [];
 
   return (
-    <Link href={`/companies/${company.id}`}
+    <Link href={`/companies/${company.slug || company.id}`}
       className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
 
       {/* Top row: logo + name + chevron */}

@@ -327,7 +327,7 @@ export default function InvestorDashboard() {
                         <div className="w-6 h-6 rounded bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f] flex-shrink-0">
                           {c.name?.[0] || "?"}
                         </div>
-                        <Link href={`/companies/${c.id}`} className="text-sm text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link>
+                        <Link href={`/companies/${c.slug || c.id}`} className="text-sm text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link>
                       </div>
                       <div className="flex items-center gap-1.5">
                         {c.looking_to_raise && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Raising</span>}
@@ -755,7 +755,7 @@ export default function InvestorDashboard() {
                           ) : colCompanies.map(c => (
                             <div key={c.id} className="border border-[#e2e6ed] rounded-lg p-2 bg-[#fafbfc]">
                               <div className="flex items-center justify-between mb-1">
-                                <Link href={`/companies/${c.id}`} className="text-xs font-semibold text-[#0f1a14] hover:text-[#2d6a4f] leading-tight">{c.name}</Link>
+                                <Link href={`/companies/${c.slug || c.id}`} className="text-xs font-semibold text-[#0f1a14] hover:text-[#2d6a4f] leading-tight">{c.name}</Link>
                                 <span className="text-[10px] font-mono text-[#2d6a4f] cursor-pointer ml-1 whitespace-nowrap" onClick={() => window.open(`/companies/${c.id}`, '_blank')}>View →</span>
                               </div>
                               <div className="flex items-center gap-1.5 flex-wrap mb-1">
@@ -836,7 +836,7 @@ export default function InvestorDashboard() {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <Link href={`/companies/${company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">{company.name}</Link>
+                        <Link href={`/companies/${company.slug || company.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">{company.name}</Link>
                         {company.funding_stage && (
                           <span className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">
                             {STAGE_LABELS[company.funding_stage] || company.funding_stage.replace(/_/g, " ")}
@@ -859,7 +859,7 @@ export default function InvestorDashboard() {
                       className={`text-lg ${isSaved(company.id) ? "text-[#2d6a4f]" : "text-[#d0d6e0]"}`}>
                       {isSaved(company.id) ? "★" : "☆"}
                     </button>
-                    <Link href={`/companies/${company.id}`} className="text-xs text-[#2d6a4f] font-mono">View</Link>
+                    <Link href={`/companies/${company.slug || company.id}`} className="text-xs text-[#2d6a4f] font-mono">View</Link>
                   </div>
                 </div>
               )) : (
