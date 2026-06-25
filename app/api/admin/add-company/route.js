@@ -4,7 +4,7 @@ import { parse } from "node-html-parser";
 import { requireAdmin } from "@/lib/admin";
 
 const VALID_TAGS = [
-  "battery_storage", "carbon_credits", "clean_cooking", "direct_air_capture",
+  "battery_storage", "carbon_credits", "clean_cooking", "consultancy",  "direct_air_capture",
   "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
   "grid_storage", "industrial_decarbonization", "nuclear_technologies",
   "saf_efuels", "solar", "wind_energy",

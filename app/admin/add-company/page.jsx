@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Plus, ArrowRight } from "lucide-react";
 
 const INDUSTRY_TAGS = [
-  "battery_storage", "carbon_credits", "clean_cooking", "direct_air_capture",
+  "battery_storage", "carbon_credits", "clean_cooking", "consultancy",  "direct_air_capture",
   "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
   "grid_storage", "industrial_decarbonization", "nuclear_technologies",
   "saf_efuels", "solar", "wind_energy",
