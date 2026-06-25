@@ -168,7 +168,7 @@ async function postUpdate(e) {
                       <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight">
                         {company.name || company.url}
                       </h1>
-                      {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+                      {company.claim_status === 'approved' && (
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#2d6a4f] bg-[#eef7f1] border border-[#cce5d6] rounded-full px-2 py-0.5">
                           <BadgeCheck size={14} /> Claimed
                         </span>
@@ -615,7 +615,7 @@ async function postUpdate(e) {
             </div>
 
             {/* CLAIM PROFILE — only shown if unclaimed */}
-            {!(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+            {company.claim_status !== 'approved' && (
               <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your company?</h3>
                 <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to manage it yourself, edit details, post jobs, and connect directly with investors.</p>

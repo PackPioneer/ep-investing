@@ -112,7 +112,7 @@ export default function CompaniesPage() {
                     <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
                       {company.name}
                     </h3>
-                    {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+                    {company.claim_status === 'approved' && (
                       <BadgeCheck size={18} className="text-emerald-600 flex-shrink-0" />
                     )}
                   </div>

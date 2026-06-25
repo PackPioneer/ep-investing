@@ -196,6 +196,25 @@ export async function PATCH(req) {
       return NextResponse.json({ message: "Update failed" }, { status: 500 });
     }
 
+    // Badge is approval-gated: mark the company claimed when its claim is approved.
+    if (status === "approved") {
+      const companyId = isNewClaim
+        ? (data?.profile_type === "company" ? data?.target_id : null)
+        : (data?.matched_company_id || null);
+      if (companyId) {
+        await supabase.from("companies").update({ claim_status: "approved" }).eq("id", companyId);
+      }
+    }
+    // If a claim is rejected, remove the claimed badge.
+    if (status === "rejected") {
+      const companyId = isNewClaim
+        ? (data?.profile_type === "company" ? data?.target_id : null)
+        : (data?.matched_company_id || null);
+      if (companyId) {
+        await supabase.from("companies").update({ claim_status: "unclaimed" }).eq("id", companyId);
+      }
+    }
+
     // If a NEW claim was just approved, send a Clerk invitation so the
     // founder can sign up. The webhook links clerk_user_id on signup.
     if (isNewClaim && status === "approved" && data?.claimant_email) {
