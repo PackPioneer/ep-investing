@@ -24,6 +24,7 @@ export default function EnrichOnePage() {
   const [urlOverride, setUrlOverride] = useState("");
   const [drafts, setDrafts] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [logo, setLogo] = useState(null); // { found, current, needsUpdate, keep }
   const [msg, setMsg] = useState("");
 
   const typeCfg = TYPES.find((t) => t.key === entityType);
@@ -32,9 +33,7 @@ export default function EnrichOnePage() {
     const res = await fetch("/api/admin/enrich-one", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entityType, ...payload }) });
     return res.json();
   };
-
-  const reset = () => { setEntity(null); setDrafts(null); setMsg(""); setUrlOverride(""); };
-
+    else setLogo(null);
   const load = async () => {
     if (!idOrSlug.trim()) return;
     setBusy(true); setMsg(""); setDrafts(null);
@@ -56,14 +55,18 @@ export default function EnrichOnePage() {
     for (const [f, info] of Object.entries(d.drafts || {})) prepared[f] = { ...info, value: info.drafted, keep: true };
     if (Object.keys(prepared).length === 0 && !d.warning) setMsg("No new fields could be extracted from the site.");
     setDrafts(prepared);
+    if (d.logo && d.logo.found) setLogo({ ...d.logo, keep: d.logo.needsUpdate });
+    else setLogo(null);
   };
 
   const save = async () => {
     const fields = {};
     for (const [f, info] of Object.entries(drafts || {})) if (info.keep && info.value && info.value.trim()) fields[f] = info.value.trim();
-    if (Object.keys(fields).length === 0) { setMsg("Nothing selected to save."); return; }
+    if (Object.keys(fields).length === 0 && !(logo && logo.keep && logo.found)) { setMsg("Nothing selected to save."); return; }
     setBusy(true); setMsg("");
-    const d = await post({ action: "save", id: entity.id, fields });
+    const payload = { action: "save", id: entity.id, fields };
+    if (logo && logo.keep && logo.found) payload.logo_url = logo.found;
+    const d = await post(payload);
     setBusy(false);
     if (d.error) { setMsg(d.error); return; }
     setMsg(`Saved ${d.saved.length} field(s) to ${entity.name}.`);
@@ -113,7 +116,35 @@ export default function EnrichOnePage() {
           </div>
         </div>
       )}
-
+{logo && logo.found && (
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <input type="checkbox" checked={logo.keep}
+              onChange={(e) => setLogo((p) => ({ ...p, keep: e.target.checked }))} />
+            <span className="text-sm font-semibold text-gray-800">Logo</span>
+            {!logo.needsUpdate && <span className="text-[11px] text-gray-400">(current logo looks fine — off by default)</span>}
+          </div>
+          <div className="flex items-end gap-5">
+            <div className="text-center">
+              <div className="text-[10px] text-gray-400 mb-1">Found</div>
+              <img src={logo.found} alt="found logo" className="h-12 w-12 object-contain border border-gray-100 rounded bg-white"
+                onError={(e) => { e.target.style.opacity = 0.15; }} />
+            </div>
+            {logo.current && (
+              <div className="text-center">
+                <div className="text-[10px] text-gray-400 mb-1">Current</div>
+                <img src={logo.current} alt="current logo" className="h-12 w-12 object-contain border border-gray-100 rounded bg-white" />
+              </div>
+            )}
+          </div>
+          {!(drafts && Object.keys(drafts).length > 0) && (
+            <button onClick={save} disabled={busy}
+              className="mt-4 inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+              {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save logo
+            </button>
+          )}
+        </div>
+      )}
       {drafts && Object.keys(drafts).length > 0 && (
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">Drafts — review & edit</h2>

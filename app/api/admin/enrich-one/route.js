@@ -55,13 +55,44 @@ async function loadEntity(supabase, cfg, idOrSlug) {
   let col;
   if (cfg.table === 'ngos') col = isNumeric ? 'id' : 'slug';
   else col = isNumeric ? 'id' : 'slug';
-  const selectCols = ['id', 'name', cfg.urlCol, ...cfg.fields];
+  const selectCols = ['id', 'name', 'logo_url', cfg.urlCol, ...cfg.fields];
   if (cfg.table !== 'vc_firms') selectCols.push('slug');
   const { data } = await supabase.from(cfg.table).select([...new Set(selectCols)].join(', ')).eq(col, idOrSlug).single();
   return data;
 }
 
-async function fetchText(url) {
+// Resolve a possibly-relative URL against the page's base.
+function absolutize(candidate, baseUrl) {
+  if (!candidate) return null;
+  try { return new URL(candidate, baseUrl).href; } catch { return null; }
+}
+
+// Extract the best logo candidate from raw HTML, in priority order.
+function extractLogo(html, baseUrl) {
+  if (!html) return null;
+  // 1. og:image (best brand image)
+  let m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+       || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+  if (m && m[1]) return absolutize(m[1], baseUrl);
+  // 2. apple-touch-icon (real app icon, higher-res than favicon)
+  m = html.match(/<link[^>]+rel=["'][^"']*apple-touch-icon[^"']*["'][^>]+href=["']([^"']+)["']/i)
+   || html.match(/<link[^>]+href=["']([^"']+)["'][^>]+rel=["'][^"']*apple-touch-icon[^"']*["']/i);
+  if (m && m[1]) return absolutize(m[1], baseUrl);
+  // 3. a header <img> whose src/alt/class mentions "logo"
+  const imgs = [...html.matchAll(/<img[^>]+>/gi)].map((x) => x[0]);
+  for (const tag of imgs) {
+    if (/logo/i.test(tag)) {
+      const src = tag.match(/src=["']([^"']+)["']/i);
+      if (src && src[1]) return absolutize(src[1], baseUrl);
+    }
+  }
+  // 4. high-res icon link
+  m = html.match(/<link[^>]+rel=["'][^"']*icon[^"']*["'][^>]+href=["']([^"']+)["']/i);
+  if (m && m[1]) return absolutize(m[1], baseUrl);
+  return null;
+}
+
+async function fetchPage(url) {
   const target = url.startsWith('http') ? url : `https://${url}`;
   const res = await fetch(target, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EPInvestingBot/1.0)' }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
   if (!res.ok) throw new Error(`fetch ${res.status}`);
@@ -70,7 +101,7 @@ async function fetchText(url) {
     .replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
     .replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#\d+;/g, ' ')
     .replace(/\s+/g, ' ').trim();
-  return text.slice(0, 12000);
+  return { text: text.slice(0, 12000), logo: extractLogo(html, res.url || target) };
 }
 
 const JUNK = [/kupon kodi|1win|casino|deposit bonus/i, /domain (is )?for sale|buy this domain|page not found|redirecting\.\.\./i];
@@ -115,8 +146,8 @@ export async function POST(req) {
     const url = (body.urlOverride && body.urlOverride.trim()) || e[cfg.urlCol];
     if (!url) return NextResponse.json({ error: 'No URL to scrape (add one in the URL field).' }, { status: 400 });
 
-    let text;
-    try { text = await fetchText(url); }
+    let text, foundLogo = null;
+    try { const page = await fetchPage(url); text = page.text; foundLogo = page.logo; }
     catch (err) { return NextResponse.json({ error: `Couldn't fetch site: ${err.message}` }); }
     if (!text || text.length < 150 || JUNK.some((re) => re.test(text))) {
       return NextResponse.json({ warning: 'Site returned little or junk text — may be a JS-only site or wrong URL.', drafts: {} });
@@ -147,16 +178,24 @@ ${text}`;
         drafts[f] = { current: e[f] ?? '', drafted: String(fld.value).trim(), confidence: fld.confidence || null };
       }
     }
-    return NextResponse.json({ entity: e, drafts, scrapedFrom: url });
+    const currentLogo = e.logo_url || '';
+    const logoNeedsUpdate = !currentLogo || /s2\/favicons/.test(currentLogo);
+    return NextResponse.json({
+      entity: e,
+      drafts,
+      scrapedFrom: url,
+      logo: { found: foundLogo, current: currentLogo, needsUpdate: logoNeedsUpdate },
+    });
   }
 
   if (action === 'save') {
-    const { id, fields } = body;
+    const { id, fields, logo_url } = body;
     if (!id || !fields || typeof fields !== 'object') return NextResponse.json({ error: 'id and fields required' }, { status: 400 });
     const update = {};
     for (const [k, v] of Object.entries(fields)) {
       if (cfg.fields.includes(k) && typeof v === 'string' && v.trim()) update[k] = v.trim();
     }
+    if (typeof logo_url === 'string' && logo_url.trim()) update.logo_url = logo_url.trim();
     if (Object.keys(update).length === 0) return NextResponse.json({ error: 'No valid fields to save' }, { status: 400 });
     const { error } = await supabase.from(cfg.table).update(update).eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
