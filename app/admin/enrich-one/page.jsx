@@ -33,7 +33,6 @@ export default function EnrichOnePage() {
     const res = await fetch("/api/admin/enrich-one", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entityType, ...payload }) });
     return res.json();
   };
-    else setLogo(null);
   const load = async () => {
     if (!idOrSlug.trim()) return;
     setBusy(true); setMsg(""); setDrafts(null);
