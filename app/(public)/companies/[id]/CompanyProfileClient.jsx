@@ -699,7 +699,7 @@ async function postUpdate(e) {
             ) : (
               <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
                 <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">Work in climate?</h3>
-                <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Join EP Investing to connect with companies, investors, and opportunities across the energy transition.</p>
+                <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Join EP Network and connect across the energy transition.</p>
                 <Link href="/pricing"
                   className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                   Get started free

@@ -31,11 +31,11 @@ async function getNgo(slug) {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const n = await getNgo(slug);
-  if (!n) return { title: "Organization | EP Investing" };
+  if (!n) return { title: "Organization | EP Network" };
 
   const type = ORG_TYPE_LABELS[n.org_type] || "Organization";
-  const title = `${n.name} — ${type} | EP Investing`;
-  const description = (n.short_description || n.bio || `${n.name} — a ${type} on EP Investing, the climate platform.`)
+  const title = `${n.name} — ${type} | EP Network`;
+  const description = (n.short_description || n.bio || `${n.name} — a ${type} on EP Network, connecting organizations across the energy transition.`)
     .replace(/\s+/g, " ")
     .slice(0, 155);
   const canonical = `${BASE_URL}/ngos/${n.slug}`;
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }) {
     description,
     alternates: { canonical },
     openGraph: {
-      title, description, url: canonical, type: "website", siteName: "EP Investing",
+      title, description, url: canonical, type: "website", siteName: "EP Network",
       images: n.logo_url ? [{ url: n.logo_url }] : [],
     },
     twitter: { card: "summary", title, description, images: n.logo_url ? [n.logo_url] : [] },

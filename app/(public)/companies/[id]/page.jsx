@@ -25,14 +25,14 @@ async function getCompany(idOrSlug) {
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const c = await getCompany(id);
-  if (!c) return { title: "Company | EP Investing" };
+  if (!c) return { title: "Company | EP Network" };
 
   const sector =
     (c.industry_tags && c.industry_tags[0] && formatSector(c.industry_tags[0])) ||
     (c.sector && formatSector(c.sector)) ||
     "Climate Tech";
-  const title = `${c.name} — ${sector} | EP Investing`;
-  const description = (c.description || `${c.name} — a ${sector} company on EP Investing, the climate investing platform.`)
+  const title = `${c.name} — ${sector} | EP Network`;
+  const description = (c.description || `${c.name} — a ${sector} company on EP Network, connecting companies across the energy transition.`)
     .replace(/\s+/g, " ")
     .slice(0, 155);
   const canonical = `${BASE_URL}/companies/${c.slug || c.id}`;
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
       description,
       url: canonical,
       type: "website",
-      siteName: "EP Investing",
+      siteName: "EP Network",
       images: c.logo_url ? [{ url: c.logo_url }] : [],
     },
     twitter: {

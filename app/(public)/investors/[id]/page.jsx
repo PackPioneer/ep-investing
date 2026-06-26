@@ -23,10 +23,10 @@ async function getInvestor(id) {
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const v = await getInvestor(id);
-  if (!v) return { title: "Investor | EP Investing" };
+  if (!v) return { title: "Investor | EP Network" };
 
-  const title = `${v.name} — Climate Investor | EP Investing`;
-  const description = (v.description || `${v.name} — a climate investor on EP Investing, the climate investing platform.`)
+  const title = `${v.name} — Climate Investor | EP Network`;
+  const description = (v.description || `${v.name} — a climate investor on EP Network, connecting partners across the energy transition.`)
     .replace(/\s+/g, " ")
     .slice(0, 155);
   const canonical = `${BASE_URL}/investors/${v.id}`;
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }) {
     description,
     alternates: { canonical },
     openGraph: {
-      title, description, url: canonical, type: "website", siteName: "EP Investing",
+      title, description, url: canonical, type: "website", siteName: "EP Network",
       images: v.logo_url ? [{ url: v.logo_url }] : [],
     },
     twitter: { card: "summary", title, description, images: v.logo_url ? [v.logo_url] : [] },
