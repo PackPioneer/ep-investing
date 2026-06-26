@@ -70,11 +70,11 @@ export function PaywallProvider({ children }) {
               <CreditCard size={22} className="text-[#2d6a4f]" />
             </div>
             <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-2">
-              {isHardBlock ? "Subscription required" : "You're using EP Investing free"}
+              {isHardBlock ? "Subscription required" : "You're using EP Network free"}
             </h2>
             <p className="text-[#4a5568] text-sm leading-relaxed mb-6">
               {isHardBlock
-                ? "Your free access period has ended. Add a payment method to continue using EP Investing."
+                ? "Your free access period has ended. Add a payment method to continue using EP Network."
                 : "Add your card now to keep access after December 31, 2026 — no charge until then. Cancel anytime before December 31."}
             </p>
             <div className="flex flex-col gap-3">

@@ -8,7 +8,7 @@ export default function PublicLayout({ children }) {
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center">
           <p className="text-sm text-[#cdddd2]">
             <span className="text-[#7fb89c]">●</span>{" "}
-            EP Investing is now open —{" "}
+            EP Network is now open —{" "}
             <span className="text-white font-semibold">free through January 1, 2027</span>
           </p>
           <Link href="/get-started"

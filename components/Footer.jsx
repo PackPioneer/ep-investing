@@ -86,7 +86,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-[#e2e6ed] mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs font-mono text-[#a0aec0]">
-           © {new Date().getFullYear()} EP Investing. All rights reserved.
+           © {new Date().getFullYear()} EP Network. All rights reserved.
           </p>
           <p className="text-xs font-mono text-[#a0aec0]">
             epinvesting.com

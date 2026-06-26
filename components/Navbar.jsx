@@ -33,7 +33,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
             <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#0f1a14]">
-              EP Investing
+              EP Network
             </span>
           </Link>
 
@@ -67,7 +67,7 @@ export default function Navbar() {
                 <div className="relative">
                   <button onClick={() => setJoinOpen(v => !v)}
                     className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
-                    Join EP Investing ▾
+                    Join EP Network ▾
                   </button>
                   {joinOpen && (
                     <>
