@@ -75,7 +75,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm flex flex-col">
               <Link href="/about" className="hover:text-[#2d6a4f] transition-colors">About</Link>
               <a href="mailto:otto@epinvesting.com" className="hover:text-[#2d6a4f] transition-colors">Contact</a>
-              <Link href="/pricing" className="hover:text-[#2d6a4f] transition-colors">Pricing</Link>
+              
               <Link href="/privacy-policy" className="hover:text-[#2d6a4f] transition-colors">Privacy Policy</Link>
               <Link href="/terms-and-conditions" className="hover:text-[#2d6a4f] transition-colors">Terms of Service</Link>
               <Link href="/disclaimer" className="hover:text-[#2d6a4f] transition-colors">Disclaimer</Link>

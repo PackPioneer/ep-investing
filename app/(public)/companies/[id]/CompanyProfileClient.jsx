@@ -470,9 +470,9 @@ async function postUpdate(e) {
         </div>
       ))}
     </div>
-    <Link href="/pricing"
+    <Link href="/get-started"
       className="mt-6 w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">
-      Unlock Investor Access
+      Join free
     </Link>
   </div>
 ))}
@@ -700,7 +700,7 @@ async function postUpdate(e) {
               <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
                 <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">Work in climate?</h3>
                 <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Join EP Network and connect across the energy transition.</p>
-                <Link href="/pricing"
+                <Link href="/get-started"
                   className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                   Get started free
                 </Link>

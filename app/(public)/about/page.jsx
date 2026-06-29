@@ -58,8 +58,8 @@ export default function AboutPage() {
           <Link href="/search" className="bg-[#2d6a4f] text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#235a40] transition-colors">
             Browse companies
           </Link>
-          <Link href="/pricing" className="border border-[#2d6a4f] text-[#2d6a4f] text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#eef1f6] transition-colors">
-            Get access
+          <Link href="/get-started" className="border border-[#2d6a4f] text-[#2d6a4f] text-sm font-semibold px-6 py-3 rounded-lg hover:bg-[#eef1f6] transition-colors">
+            Join free
           </Link>
         </div>
 
