@@ -94,7 +94,7 @@ function extractLogo(html, baseUrl) {
 
 async function fetchPage(url) {
   const target = url.startsWith('http') ? url : `https://${url}`;
-  const res = await fetch(target, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EPInvestingBot/1.0)' }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
+  const res = await fetch(target, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'en-US,en;q=0.9' }, redirect: 'follow', signal: AbortSignal.timeout(20000) });
   if (!res.ok) throw new Error(`fetch ${res.status}`);
   const html = await res.text();
   const text = html
