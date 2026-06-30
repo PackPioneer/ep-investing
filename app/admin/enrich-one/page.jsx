@@ -26,7 +26,8 @@ export default function EnrichOnePage() {
   const [busy, setBusy] = useState(false);
   const [logo, setLogo] = useState(null); // { found, current, needsUpdate, keep }
   const [msg, setMsg] = useState("");
-
+const [pastedText, setPastedText] = useState("");
+  const [showPaste, setShowPaste] = useState(false);
   const typeCfg = TYPES.find((t) => t.key === entityType);
 
   const post = async (payload) => {
@@ -56,6 +57,21 @@ export default function EnrichOnePage() {
     setDrafts(prepared);
     if (d.logo && d.logo.found) setLogo({ ...d.logo, keep: d.logo.needsUpdate });
     else setLogo(null);
+  };
+
+  const extract = async () => {
+    if (!entity) return;
+    if (pastedText.trim().length < 100) { setMsg("Paste more text first (at least a paragraph)."); return; }
+    setBusy(true); setMsg("");
+    const key = entity.slug || entity.id;
+    const d = await post({ action: "extract", idOrSlug: key, pastedText });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    const prepared = {};
+    for (const [f, info] of Object.entries(d.drafts || {})) prepared[f] = { ...info, value: info.drafted, keep: true };
+    if (Object.keys(prepared).length === 0) setMsg("No fields could be extracted from the pasted text.");
+    setDrafts(prepared);
+    setLogo(null);
   };
 
   const save = async () => {
@@ -112,6 +128,25 @@ export default function EnrichOnePage() {
               className="inline-flex items-center gap-1 bg-emerald-600 text-white text-sm font-semibold px-4 rounded-lg disabled:opacity-50">
               {busy ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />} Scrape & draft
             </button>
+          </div>
+
+          <div className="mt-3">
+            <button onClick={() => setShowPaste(v => !v)}
+              className="text-xs text-gray-500 hover:text-gray-800 underline">
+              {showPaste ? "Hide paste option" : "Or paste text instead (for blocked / 403 sites) →"}
+            </button>
+            {showPaste && (
+              <div className="mt-2">
+                <p className="text-[11px] text-gray-400 mb-1">Open the site in your browser, copy the page text, and paste it here. The same AI extraction runs on your pasted text.</p>
+                <textarea value={pastedText} onChange={(e) => setPastedText(e.target.value)}
+                  rows={6} placeholder="Paste the company's website text here..."
+                  className="w-full text-sm border border-gray-200 rounded-lg p-2 focus:outline-none focus:border-emerald-400" />
+                <button onClick={extract} disabled={busy}
+                  className="mt-2 inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                  {busy ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />} Extract from pasted text
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

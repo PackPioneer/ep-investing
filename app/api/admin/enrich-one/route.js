@@ -140,6 +140,43 @@ export async function POST(req) {
     return NextResponse.json({ entity: e, urlCol: cfg.urlCol, fields: cfg.fields });
   }
 
+ // Shared extraction: runs Sonnet on whatever text we have (scraped or pasted).
+  async function extractDrafts(e, text) {
+    const fieldLines = cfg.fields.map((f) => `- ${f}: ${FIELD_GUIDE[f] || 'as stated on the site, else null.'}`).join('\n');
+    const prompt = `Extract factual profile fields for a ${cfg.noun} directory from this website text for "${e.name}".
+Fields to fill: ${cfg.fields.join(', ')}.
+RULES: use ONLY info explicitly on the site; if unsupported, return null. Do not invent. If the text is clearly not about this entity, return null for all.
+${fieldLines}
+Return ONLY JSON: { "fields": { ${cfg.fields.map((f) => `"${f}": {"value": <string|null>, "confidence": "high|medium|low"}`).join(', ')} } }
+
+WEBSITE TEXT:
+${text}`;
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const r = await anthropic.messages.create({ model: SONNET_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: prompt }] });
+    const t = r.content.find((b) => b.type === 'text')?.text || '';
+    const parsed = JSON.parse(t.replace(/```json|```/g, '').trim());
+    const drafts = {};
+    for (const f of cfg.fields) {
+      const fld = parsed.fields?.[f];
+      if (fld && fld.value != null && String(fld.value).trim()) {
+        drafts[f] = { current: e[f] ?? '', drafted: String(fld.value).trim(), confidence: fld.confidence || null };
+      }
+    }
+    return drafts;
+  }
+
+  if (action === 'extract') {
+    const e = await loadEntity(supabase, cfg, body.idOrSlug);
+    if (!e) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    const text = (body.pastedText || '').trim();
+    if (!text || text.length < 100) return NextResponse.json({ error: 'Paste more text — too short to extract from.' }, { status: 400 });
+    let drafts;
+    try { drafts = await extractDrafts(e, text.slice(0, 12000)); }
+    catch (err) { return NextResponse.json({ error: `Extraction failed: ${err.message}` }); }
+    const currentLogo = e.logo_url || '';
+    return NextResponse.json({ entity: e, drafts, source: 'pasted', logo: { found: null, current: currentLogo, needsUpdate: false } });
+  }
+
   if (action === 'scrape') {
     const e = await loadEntity(supabase, cfg, body.idOrSlug);
     if (!e) return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -153,31 +190,9 @@ export async function POST(req) {
       return NextResponse.json({ warning: 'Site returned little or junk text — may be a JS-only site or wrong URL.', drafts: {} });
     }
 
-    const fieldLines = cfg.fields.map((f) => `- ${f}: ${FIELD_GUIDE[f] || 'as stated on the site, else null.'}`).join('\n');
-    const prompt = `Extract factual profile fields for a ${cfg.noun} directory from this website text for "${e.name}".
-Fields to fill: ${cfg.fields.join(', ')}.
-RULES: use ONLY info explicitly on the site; if unsupported, return null. Do not invent. If the text is clearly not about this entity, return null for all.
-${fieldLines}
-Return ONLY JSON: { "fields": { ${cfg.fields.map((f) => `"${f}": {"value": <string|null>, "confidence": "high|medium|low"}`).join(', ')} } }
-
-WEBSITE TEXT:
-${text}`;
-
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    let parsed;
-    try {
-      const r = await anthropic.messages.create({ model: SONNET_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: prompt }] });
-      const t = r.content.find((b) => b.type === 'text')?.text || '';
-      parsed = JSON.parse(t.replace(/```json|```/g, '').trim());
-    } catch (err) { return NextResponse.json({ error: `Extraction failed: ${err.message}` }); }
-
-    const drafts = {};
-    for (const f of cfg.fields) {
-      const fld = parsed.fields?.[f];
-      if (fld && fld.value != null && String(fld.value).trim()) {
-        drafts[f] = { current: e[f] ?? '', drafted: String(fld.value).trim(), confidence: fld.confidence || null };
-      }
-    }
+    let drafts;
+    try { drafts = await extractDrafts(e, text); }
+    catch (err) { return NextResponse.json({ error: `Extraction failed: ${err.message}` }); }
     const currentLogo = e.logo_url || '';
     const logoNeedsUpdate = !currentLogo || /s2\/favicons/.test(currentLogo);
     return NextResponse.json({
