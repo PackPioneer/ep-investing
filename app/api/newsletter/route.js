@@ -1,4 +1,3 @@
-cat > app/api/newsletter/route.js << 'EOF'
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
@@ -45,4 +44,3 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
-EOF
