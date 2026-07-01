@@ -1,9 +1,15 @@
+cat > app/api/newsletter/route.js << 'EOF'
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 export async function GET() {
@@ -20,3 +26,23 @@ export async function GET() {
     subscribers: subscribers.count || 0,
   });
 }
+
+export async function POST(req) {
+  try {
+    const { email, source } = await req.json();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+    }
+    const { error } = await supabaseAdmin
+      .from("subscribers")
+      .upsert(
+        { email: email.toLowerCase().trim(), source: source || "homepage" },
+        { onConflict: "email" }
+      );
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+}
+EOF
