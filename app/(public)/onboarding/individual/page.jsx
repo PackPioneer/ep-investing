@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { ArrowRight, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Rss, Compass, BadgeCheck } from "lucide-react";
 import posthog from "posthog-js";
 import { INDUSTRIES, MAX_INDUSTRIES } from "@/lib/industries";
 import { ROLES } from "@/lib/roles";
@@ -42,6 +42,8 @@ const cardBtn = (active) =>
 export default function IndividualOnboarding() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const emailParam = searchParams.get("email") || "";
 
   const [step, setStep] = useState(1);
   const [role, setRole] = useState(null);
@@ -53,7 +55,7 @@ export default function IndividualOnboarding() {
   const toggleIndustry = (slug) => {
     setIndustries((prev) => {
       if (prev.includes(slug)) return prev.filter((s) => s !== slug);
-      if (prev.length >= MAX_INDUSTRIES) return prev; // cap
+      if (prev.length >= MAX_INDUSTRIES) return prev;
       return [...prev, slug];
     });
   };
@@ -86,32 +88,61 @@ export default function IndividualOnboarding() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+      <div className="min-h-[70vh] bg-[#f2f4f8] flex items-center justify-center">
         <Loader2 className="animate-spin text-[#2d6a4f]" />
       </div>
     );
   }
 
+  // ---- Signed-out: warm welcome for referred users ----
   if (!user) {
+    const signUpHref = `/sign-up?redirect_url=/onboarding/individual${
+      emailParam ? `&email=${encodeURIComponent(emailParam)}` : ""
+    }`;
+    const referred = Boolean(emailParam);
+
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-        <div className="max-w-md w-full text-center">
-          <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-3xl text-[#0f1a14] mb-3">Join EP Network</h1>
-          <p className="text-[#4a5568] text-sm mb-6">Create a free account to set up your personalized feed.</p>
-          <a href="/sign-up?redirect_url=/onboarding/individual" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
+      <div className="min-h-[80vh] bg-[#f2f4f8] flex items-center justify-center px-6 py-16" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+        <div className="max-w-xl w-full text-center">
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#2d6a4f] mb-4">
+            {referred ? "You're almost in" : "Join the network"}
+          </p>
+          <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-4xl md:text-5xl text-[#0f1a14] mb-4 leading-tight">
+            {referred ? "One step from your feed" : "The energy transition, tuned to you"}
+          </h1>
+          <p className="text-[#4a5568] text-base leading-relaxed mb-10 max-w-md mx-auto">
+            Follow the industries you care about and get a feed of the companies, news, and grants that matter — built around you.
+          </p>
+
+          <div className="grid sm:grid-cols-3 gap-4 mb-10 text-left">
+            {[
+              { icon: Rss, title: "Your feed", sub: "Companies, news & grants in your industries" },
+              { icon: Compass, title: "Explore", sub: "The full network of companies & investors" },
+              { icon: BadgeCheck, title: "Get discovered", sub: "List yourself as an expert" },
+            ].map(({ icon: Icon, title, sub }) => (
+              <div key={title} className="bg-white border border-[#e2e6ed] rounded-xl p-4">
+                <Icon size={18} className="text-[#2d6a4f] mb-2" />
+                <div className="text-sm font-semibold text-[#0f1a14] mb-0.5">{title}</div>
+                <div className="text-xs text-[#4a5568] leading-snug">{sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <a href={signUpHref} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-7 py-3.5 hover:bg-[#235a40] transition-colors">
             Sign up free <ArrowRight size={16} />
           </a>
+          <p className="text-xs text-[#a0aec0] mt-4 font-mono">Free to join · Takes under a minute</p>
         </div>
       </div>
     );
   }
 
+  // ---- Signed-in: the 3-question onboarding ----
   return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6 py-12" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-[80vh] bg-[#f2f4f8] flex items-center justify-center px-6 py-12" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-lg w-full">
         <ProgressBar step={step} />
 
-        {/* Step 1 — Role */}
         {step === 1 && (
           <div>
             <div className="text-center mb-8">
@@ -134,7 +165,6 @@ export default function IndividualOnboarding() {
           </div>
         )}
 
-        {/* Step 2 — Industries */}
         {step === 2 && (
           <div>
             <div className="text-center mb-8">
@@ -170,7 +200,6 @@ export default function IndividualOnboarding() {
           </div>
         )}
 
-        {/* Step 3 — Intent */}
         {step === 3 && (
           <div>
             <div className="text-center mb-8">
