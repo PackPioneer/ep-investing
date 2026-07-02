@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, ArrowLeft, CheckCircle, Loader2, Rss, Compass, BadgeCheck } from "lucide-react";
@@ -39,7 +39,7 @@ const cardBtn = (active) =>
     active ? "border-[#2d6a4f] ring-1 ring-[#2d6a4f]" : "border-[#e2e6ed] hover:border-[#2d6a4f]"
   }`;
 
-export default function IndividualOnboarding() {
+function IndividualOnboardingInner() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -227,5 +227,12 @@ export default function IndividualOnboarding() {
         )}
       </div>
     </div>
+  );
+}
+export default function IndividualOnboarding() {
+  return (
+    <Suspense fallback={<div className="min-h-[70vh] bg-[#f2f4f8]" />}>
+      <IndividualOnboardingInner />
+    </Suspense>
   );
 }
