@@ -63,17 +63,16 @@ export async function GET() {
     return NextResponse.json({ type: 'ngo' })
   }
 
-  // Check if expert
-  const { data: expert } = await supabase
+  // Check if individual member / expert
+  const { data: member } = await supabase
     .from('experts')
-    .select('id')
+    .select('id, type')
     .eq('clerk_user_id', userId)
     .eq('status', 'approved')
-    .single()
+    .maybeSingle()
 
-  if (expert) {
-    return NextResponse.json({ type: 'expert' })
+  if (member) {
+    return NextResponse.json({ type: member.type === 'individual' ? 'individual' : 'expert' })
   }
 
   return NextResponse.json({ type: null })
-}
