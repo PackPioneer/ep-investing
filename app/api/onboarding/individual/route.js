@@ -45,22 +45,13 @@ export async function POST(req) {
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
 
   try {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com";
+    const greeting = name ? "Welcome, " + name + "." : "Welcome.";
     await getResend().emails.send({
       from: "EP Network <noreply@epinvesting.com>",
       to: email,
       subject: "Welcome to EP Network",
-      html: `
-        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-          <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
-            <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">Welcome${name ? \`, \${name}\` : ""}.</h2>
-            <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
-              You're now part of EP Network. Your feed is tuned to the industries you follow — connect across the energy transition.
-            </p>
-            <a href="\${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/dashboard/individual" style="display: inline-block; background: #2d6a4f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; margin-bottom: 16px;">Go to your dashboard →</a>
-            <p style="color: #a0aec0; font-size: 11px; margin: 16px 0 0;">EP Network · epinvesting.com</p>
-          </div>
-        </div>
-      `,
+      html: '<div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;"><div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;"><h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">' + greeting + '</h2><p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">You are now part of EP Network. Your feed is tuned to the industries you follow.</p><a href="' + siteUrl + '/dashboard/individual" style="display: inline-block; background: #2d6a4f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; margin-bottom: 16px;">Go to your dashboard</a><p style="color: #a0aec0; font-size: 11px; margin: 16px 0 0;">EP Network</p></div></div>',
     });
   } catch (e) {}
 
