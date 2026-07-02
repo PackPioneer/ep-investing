@@ -40,7 +40,16 @@ export async function GET() {
       return NextResponse.json({ type: 'company' })
     }
   }
+// Fallback: company linked by claimant user id (works even without an org)
+  const { data: companyByUser } = await supabase
+    .from('companies')
+    .select('id')
+    .eq('claimed_by_clerk_user_id', userId)
+    .maybeSingle()
 
+  if (companyByUser) {
+    return NextResponse.json({ type: 'company' })
+  }
   // Check if investor
   const { data: investor } = await supabase
     .from('matched_requests')
