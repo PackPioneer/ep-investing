@@ -58,13 +58,13 @@ export default async function DashboardPage() {
 
   if (investor) redirect('/dashboard/investor')
 
-  const { data: expert } = await supabase
+ const { data: member } = await supabase
     .from('experts')
     .select('id')
     .eq('clerk_user_id', userId)
-    .single()
+    .maybeSingle()
 
-  if (expert) redirect('/dashboard/expert')
+  if (member) redirect('/dashboard/individual')
 
   redirect('/dashboard/pending')
 }
