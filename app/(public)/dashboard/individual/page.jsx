@@ -7,7 +7,22 @@ import { Loader2, Compass, BadgeCheck, ArrowRight, Building2, Newspaper, Check, 
 import { INDUSTRIES, INDUSTRY_LABELS } from "@/lib/industries";
 
 const GEO_OPTIONS = ["us", "europe", "asia", "africa", "latam", "mena", "global"];
-const GEO_LABELS = { us: "🇺🇸 US", europe: "🇪🇺 Europe", asia: "🌏 Asia", africa: "🌍 Africa", latam: "🌎 LatAm", mena: "🌍 MENA", global: "🌐 Global" };
+const GEO_LABELS = { us: "US", europe: "Europe", asia: "Asia", africa: "Africa", latam: "LatAm", mena: "MENA", global: "Global" };
+
+const NEWS_COLORS = {
+  product: "bg-emerald-50 text-emerald-700",
+  policy: "bg-blue-50 text-blue-700",
+  market: "bg-amber-50 text-amber-700",
+  regulatory: "bg-violet-50 text-violet-700",
+  partnership: "bg-teal-50 text-teal-700",
+  funding: "bg-fuchsia-50 text-fuchsia-700",
+  m_and_a: "bg-indigo-50 text-indigo-700",
+  other: "bg-slate-100 text-slate-600",
+};
+const NEWS_LABELS = {
+  product: "Product", policy: "Policy", market: "Market", regulatory: "Regulatory",
+  partnership: "Partnership", funding: "Funding", m_and_a: "M&A", other: "Other",
+};
 
 function timeAgo(dateStr) {
   if (!dateStr) return "";
@@ -46,9 +61,10 @@ export default function IndividualDashboard() {
   const [listingSaved, setListingSaved] = useState(false);
 
   // research filters
-  const [industryFilter, setIndustryFilter] = useState(null);
-  const [geoFilter, setGeoFilter] = useState(null);
+  const [industryFilter, setIndustryFilter] = useState("");
+  const [geoFilter, setGeoFilter] = useState("");
   const [sortBy, setSortBy] = useState("name");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // requests
   const [reqCategory, setReqCategory] = useState("company");
@@ -133,9 +149,12 @@ export default function IndividualDashboard() {
   const isListed = listing?.is_listed;
   const listingStatus = listing?.status;
 
-  // Research: filter + sort (client-side over the industry-matched set from the feed API)
   const researchCompanies = (() => {
     let list = [...allCompanies];
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter((c) => (c.name || "").toLowerCase().includes(q));
+    }
     if (industryFilter) list = list.filter((c) => (c.industry_tags || []).includes(industryFilter));
     if (geoFilter) list = list.filter((c) => {
       const loc = ((c.headquarters_country || c.location || "") + "").toLowerCase();
@@ -158,7 +177,6 @@ export default function IndividualDashboard() {
     <div className="min-h-screen bg-[#f2f4f8] px-6 py-10" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto">
 
-        {/* Header */}
         <div className="mb-6">
           <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-3xl text-[#0f1a14] mb-2">Welcome back, {firstName}</h1>
           <div className="flex flex-wrap items-center gap-2">
@@ -169,7 +187,6 @@ export default function IndividualDashboard() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 border-b border-[#e2e6ed] mb-8 overflow-x-auto">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
@@ -181,7 +198,7 @@ export default function IndividualDashboard() {
           ))}
         </div>
 
-        {/* ---- YOUR FEED (news only) ---- */}
+        {/* YOUR FEED */}
         {tab === "feed" && (
           <div>
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
@@ -210,7 +227,7 @@ export default function IndividualDashboard() {
                       <div className="text-sm font-medium text-[#0f1a14] leading-snug">{a.title}</div>
                       {(a.excerpt || a.summary_factual) && <div className="text-xs text-[#4a5568] mt-1 line-clamp-2">{a.excerpt || a.summary_factual}</div>}
                       <div className="flex items-center gap-2 mt-1.5">
-                        {a.classification && <span className="text-[10px] uppercase tracking-wide text-[#2d6a4f] bg-[#eef4f0] rounded px-1.5 py-0.5">{a.classification}</span>}
+                        {a.classification && <span className={"text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 " + (NEWS_COLORS[a.classification] || "bg-slate-100 text-slate-600")}>{NEWS_LABELS[a.classification] || a.classification}</span>}
                         <span className="text-[11px] text-[#a0aec0]">{timeAgo(a.published_at)}</span>
                       </div>
                     </div>
@@ -221,31 +238,26 @@ export default function IndividualDashboard() {
           </div>
         )}
 
-        {/* ---- RESEARCH (companies + filters) ---- */}
+        {/* RESEARCH */}
         {tab === "research" && (
           <div>
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-4 mb-6 space-y-4">
-              <div>
-                <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Industry</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {INDUSTRIES.map((ind) => (
-                    <Chip key={ind.slug} label={ind.label} active={industryFilter === ind.slug}
-                      onClick={() => setIndustryFilter(industryFilter === ind.slug ? null : ind.slug)} />
-                  ))}
-                </div>
+            <div className="bg-white border border-[#e2e6ed] rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Search size={16} className="text-[#a0aec0]" />
+                <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search companies by name..."
+                  className="flex-1 text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
               </div>
-              <div>
-                <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Geography</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {GEO_OPTIONS.map((g) => (
-                    <Chip key={g} label={GEO_LABELS[g]} active={geoFilter === g}
-                      onClick={() => setGeoFilter(geoFilter === g ? null : g)} />
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-[#718096] uppercase tracking-wider">Sort</span>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#2d6a4f]">
+              <div className="flex flex-wrap items-center gap-2">
+                <select value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
+                  <option value="">All industries</option>
+                  {INDUSTRIES.map((ind) => <option key={ind.slug} value={ind.slug}>{ind.label}</option>)}
+                </select>
+                <select value={geoFilter} onChange={(e) => setGeoFilter(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
+                  <option value="">All geographies</option>
+                  {GEO_OPTIONS.map((g) => <option key={g} value={g}>{GEO_LABELS[g]}</option>)}
+                </select>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
                   <option value="name">Name (A–Z)</option>
                   <option value="default">Default</option>
                 </select>
@@ -281,7 +293,7 @@ export default function IndividualDashboard() {
           </div>
         )}
 
-        {/* ---- EXPERT ---- */}
+        {/* EXPERT */}
         {tab === "expert" && (
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-2">
@@ -335,7 +347,7 @@ export default function IndividualDashboard() {
           </div>
         )}
 
-        {/* ---- REQUESTS ---- */}
+        {/* REQUESTS */}
         {tab === "requests" && (
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-2">
