@@ -19,9 +19,9 @@ export default function ExpertsPage() {
             Connect with vetted climate and energy specialists available for consulting, advisory, and fractional roles.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Link href="/onboarding/expert"
+            <Link href="/onboarding/individual"
               className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">
-              Apply as an expert <ArrowRight size={14} />
+              Join to list yourself <ArrowRight size={14} />
             </Link>
             <Link href="/search"
               className="inline-flex items-center gap-2 border border-[#d0d6e0] text-[#0f1a14] font-semibold text-sm rounded-lg px-6 py-3 hover:border-[#2d6a4f] transition-colors">
@@ -76,9 +76,9 @@ export default function ExpertsPage() {
         <div className="bg-[#0f1a14] rounded-2xl p-10 text-center">
           <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-white mb-3">Ready to join?</h2>
           <p className="text-[#9ca8a0] text-sm mb-6 max-w-sm mx-auto">Applications take under 2 minutes. We review all submissions and reach out within 48 hours.</p>
-          <Link href="/onboarding/expert"
+          <Link href="/onboarding/individual"
             className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#3d8a69] transition-colors">
-            Apply now <ArrowRight size={14} />
+            Join now <ArrowRight size={14} />
           </Link>
         </div>
 

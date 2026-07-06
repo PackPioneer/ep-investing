@@ -94,7 +94,7 @@ export default function Navbar() {
                         <Link href="/onboarding/individual" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm an Individual</span>
-                          <span className="text-xs text-[#718096] mt-0.5">Follow the energy transition & get discovered</span>
+                          <span className="text-xs text-[#718096] mt-0.5">Follow the energy transition</span>
                         </Link>
                       </div>
                     </>

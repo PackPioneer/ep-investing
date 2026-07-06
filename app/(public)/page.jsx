@@ -62,10 +62,10 @@ const roleTiles = [
   },
   {
     icon: Briefcase,
-    title: "Researchers",
-    desc: "Browse companies, open roles, and grants across the energy transition.",
-    cta: "Get started free",
-    href: "/onboarding/researcher",
+    title: "Individuals",
+    desc: "Follow the industries you care about and get a personalized feed of companies, news, and grants.",
+    cta: "Join free",
+    href: "/onboarding/individual",
   },
 ];
 

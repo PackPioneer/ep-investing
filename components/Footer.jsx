@@ -62,7 +62,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm flex flex-col">
               <Link href="/onboarding/company" className="hover:text-[#2d6a4f] transition-colors">Claim your company</Link>
               <Link href="/onboarding/investor" className="hover:text-[#2d6a4f] transition-colors">Investor access</Link>
-              <Link href="/onboarding/expert" className="hover:text-[#2d6a4f] transition-colors">Join as expert</Link>
+              <Link href="/onboarding/individual" className="hover:text-[#2d6a4f] transition-colors">Join as individual</Link>
               <Link href="/onboarding/ngo" className="hover:text-[#2d6a4f] transition-colors">List your NGO</Link>
               <Link href="/get-matched" className="hover:text-[#2d6a4f] transition-colors">Get matched</Link>
               <Link href="/jobs" className="hover:text-[#2d6a4f] transition-colors">Post a job</Link>
