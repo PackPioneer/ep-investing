@@ -83,12 +83,7 @@ export default function Navbar() {
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm an Investor</span>
                           <span className="text-xs text-[#718096] mt-0.5">Get deal flow access</span>
                         </Link>
-                        <div className="border-t border-[#e2e6ed]" />
-                        <Link href="/onboarding/expert" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
-                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an Expert</span>
-                          <span className="text-xs text-[#718096] mt-0.5">Join the expert network</span>
-                        </Link>
+              
                         <div className="border-t border-[#e2e6ed]" />
                         <Link href="/onboarding/ngo" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
@@ -96,10 +91,10 @@ export default function Navbar() {
                           <span className="text-xs text-[#718096] mt-0.5">List your organization</span>
                         </Link>
                         <div className="border-t border-[#e2e6ed]" />
-                        <Link href="/onboarding/researcher" onClick={() => setJoinOpen(false)}
+                        <Link href="/onboarding/individual" onClick={() => setJoinOpen(false)}
                           className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
-                          <span className="text-sm font-semibold text-[#0f1a14]">I'm a Researcher</span>
-                          <span className="text-xs text-[#718096] mt-0.5">Browse companies, jobs & grants</span>
+                          <span className="text-sm font-semibold text-[#0f1a14]">I'm an Individual</span>
+                          <span className="text-xs text-[#718096] mt-0.5">Follow the energy transition & get discovered</span>
                         </Link>
                       </div>
                     </>
