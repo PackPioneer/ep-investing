@@ -31,14 +31,14 @@ const ROLE_CARDS = {
   network: [
     {
       icon: Users,
-      title: "Expert",
-      cta: "Join the network",
-      href: "/onboarding/expert",
+      title: "Individual",
+      cta: "Join free",
+      href: "/onboarding/individual",
       bullets: [
-        "Get hired for high-impact climate roles",
-        "Build inbound deal flow from companies",
-        "Get found by hiring managers and journalists",
-        "Track market activity in your specialty",
+        "Follow the industries you care about",
+        "Get a personalized feed of companies & news",
+        "Research 1,300+ climate companies free",
+        "Get discovered — list yourself as an expert",
       ],
     },
     {
@@ -58,14 +58,14 @@ const ROLE_CARDS = {
 
 const RESEARCHER = {
   icon: Briefcase,
-  title: "Researcher",
-  cta: "Get started free",
-  href: "/onboarding/researcher",
+  title: "Individual",
+  cta: "Join free",
+  href: "/onboarding/individual",
   bullets: [
-    "Browse 1,300+ climate companies free",
-    "Track 350 investors and their portfolios",
-    "Search by sector, technology, geography",
-    "No commitment, no payment",
+    "Follow the industries you care about",
+    "Research 1,300+ climate companies free",
+    "Personalized feed of companies & news",
+    "Get discovered — list yourself as an expert",
   ],
 };
 
