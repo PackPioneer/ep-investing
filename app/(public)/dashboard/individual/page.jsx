@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { Loader2, Compass, BadgeCheck, ArrowRight, Building2, Newspaper, Check, Search, MessageSquarePlus } from "lucide-react";
@@ -134,7 +134,7 @@ export default function IndividualDashboard() {
   const listingStatus = listing?.status;
 
   // Research: filter + sort (client-side over the industry-matched set from the feed API)
-  const researchCompanies = useMemo(() => {
+  const researchCompanies = (() => {
     let list = [...allCompanies];
     if (industryFilter) list = list.filter((c) => (c.industry_tags || []).includes(industryFilter));
     if (geoFilter) list = list.filter((c) => {
@@ -145,7 +145,7 @@ export default function IndividualDashboard() {
     });
     if (sortBy === "name") list.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     return list;
-  }, [allCompanies, industryFilter, geoFilter, sortBy]);
+  })();
 
   const TABS = [
     { id: "feed", label: "Your Feed" },
