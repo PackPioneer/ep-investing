@@ -92,10 +92,7 @@ export default function GetStartedPage() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            Free until January 1, 2027
-          </div>
+          
           <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl text-[#0f1a14] mb-3 leading-[1.05]">
             Get started
           </h1>
@@ -104,26 +101,13 @@ export default function GetStartedPage() {
           </p>
         </div>
 
-        {/* Capital section */}
-        <div className="text-[10px] font-mono uppercase tracking-widest text-[#718096] mb-3">
-          Capital
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+        {/* All three entity cards in one row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
           {ROLE_CARDS.capital.map(role => <RoleCard key={role.title} role={role} />)}
-        </div>
-
-        {/* Network section */}
-        <div className="text-[10px] font-mono uppercase tracking-widest text-[#718096] mb-3">
-          Network
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {ROLE_CARDS.network.map(role => <RoleCard key={role.title} role={role} />)}
         </div>
 
-        {/* Just exploring */}
-        <div className="text-[10px] font-mono uppercase tracking-widest text-[#718096] mb-3">
-          Just exploring
-        </div>
+      
         <Link
           href={RESEARCHER.href}
           className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex items-start gap-4 hover:border-[#2d6a4f] transition-all group mb-8"
