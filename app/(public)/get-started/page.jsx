@@ -29,18 +29,7 @@ const ROLE_CARDS = {
     },
   ],
   network: [
-    {
-      icon: Users,
-      title: "Individual",
-      cta: "Join free",
-      href: "/onboarding/individual",
-      bullets: [
-        "Follow the industries you care about",
-        "Get a personalized feed of companies & news",
-        "Research 1,300+ climate companies free",
-        "Get discovered — list yourself as an expert",
-      ],
-    },
+   
     {
       icon: Heart,
       title: "NGO or foundation",
