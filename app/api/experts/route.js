@@ -48,6 +48,7 @@ export async function GET() {
     .from("experts")
     .select("*")
     .eq("status", "approved")
+    .eq("is_listed", true)
     .order("created_at", { ascending: false });
 
   if (error) return Response.json({ error: error.message }, { status: 500 });

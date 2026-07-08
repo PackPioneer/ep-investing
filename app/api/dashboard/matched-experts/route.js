@@ -14,6 +14,7 @@ export async function GET(req) {
     .from("experts")
     .select("id, name, email, location, expertise_areas, hourly_rate, availability")
     .eq("status", "approved")
+    .eq("is_listed", true)
     .order("created_at", { ascending: false });
 
   return Response.json(experts || []);
