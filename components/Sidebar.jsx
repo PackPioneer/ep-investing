@@ -20,6 +20,7 @@ import { useUser, UserButton } from "@clerk/nextjs";
 
 const menu = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Members", href: "/admin/members", icon: Users },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
   { name: "Add company", href: "/admin/add-company", icon: Plus },
   { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
