@@ -172,7 +172,7 @@ export default function NGOsDirectory() {
         <div className="mt-16 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
           <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">Don't see your organization?</h2>
           <p className="text-sm text-[#4a5568] mb-5 max-w-md mx-auto">
-            Add your NGO, IGO, or foundation to the directory. Free until January 1, 2027.
+            Add your NGO, IGO, or foundation to the directory.
           </p>
           <Link href="/onboarding/ngo"
             className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">

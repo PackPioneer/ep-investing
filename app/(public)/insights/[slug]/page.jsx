@@ -185,7 +185,7 @@ export default function ReportPage() {
                     Sign up free to read the full report
                   </h2>
                   <p className="text-sm text-[#4a5568] font-light max-w-md mb-6">
-                    Free until January 1, 2027 — get the full analysis, key findings, charts, and PDF download.
+                    Get the full analysis, key findings, charts, and PDF download.
                   </p>
                   <SignUpButton mode="modal" forceRedirectUrl={`/insights/${slug}`} signInForceRedirectUrl={`/insights/${slug}`}>
                     <button className="flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-colors">

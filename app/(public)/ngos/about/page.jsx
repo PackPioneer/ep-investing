@@ -93,7 +93,6 @@ export default function NGOsLanding() {
           <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2">Pricing</div>
           <div className="flex items-end justify-center gap-1 mb-2">
             <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#0f1a14]">Free</span>
-            <span className="text-sm text-[#718096] pb-1.5 font-mono">until January 1, 2027</span>
           </div>
           <p className="text-sm text-[#4a5568]">
             Then $19.99/month. Cancel anytime. No credit card required to start.

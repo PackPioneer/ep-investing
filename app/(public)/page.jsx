@@ -141,11 +141,6 @@ export default function HomePage() {
 
   {/* LEFT: pitch */}
   <div>
-    <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
-      <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-      Free until January 1, 2027
-    </div>
-
     <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl leading-[1.05] tracking-tight text-[#0f1a14] mb-5">
       Built for the people building{" "}
       <em className="text-[#2d6a4f] not-italic">the energy transition.</em>
