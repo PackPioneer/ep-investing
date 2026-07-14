@@ -170,8 +170,8 @@ export default function SubmitCompanyPage() {
                     className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "ev_charging" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     ev charging
                   </button>
-                  <button key="industrial_decarb" type="button" onClick={() => setSector(sector === "industrial_decarb" ? "" : "industrial_decarb")}
-                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "industrial_decarb" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                  <button key="industrial_decarbonization" type="button" onClick={() => setSector(sector === "industrial_decarbonization" ? "" : "industrial_decarbonization")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "industrial_decarbonization" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     industrial decarb
                   </button>
                   <button key="carbon_credits" type="button" onClick={() => setSector(sector === "carbon_credits" ? "" : "carbon_credits")}
@@ -186,8 +186,8 @@ export default function SubmitCompanyPage() {
                     className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "saf_efuels" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     saf efuels
                   </button>
-                  <button key="geothermal" type="button" onClick={() => setSector(sector === "geothermal" ? "" : "geothermal")}
-                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "geothermal" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                  <button key="geothermal_energy" type="button" onClick={() => setSector(sector === "geothermal_energy" ? "" : "geothermal_energy")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "geothermal_energy" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     geothermal
                   </button>
                   <button key="clean_cooking" type="button" onClick={() => setSector(sector === "clean_cooking" ? "" : "clean_cooking")}

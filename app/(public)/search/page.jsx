@@ -22,8 +22,8 @@ const getAvatarColor = (name) => {
 
 const INDUSTRY_FILTERS = [
   "nuclear_technologies", "electric_aviation", "battery_storage",
-  "green_hydrogen", "wind_energy", "solar", "geothermal",
-  "industrial_decarb", "ev_charging", "carbon_credits",
+  "green_hydrogen", "wind_energy", "solar", "geothermal_energy",
+  "industrial_decarbonization", "ev_charging", "carbon_credits",
   "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage"
 ];
 

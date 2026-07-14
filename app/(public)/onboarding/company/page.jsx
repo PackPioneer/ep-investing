@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowLeft, CheckCircle, Building2, TrendingUp, Users, Handshake } from "lucide-react";
 import posthog from "posthog-js";
 
-const SECTORS = ["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","wind_energy","ev_charging","industrial_decarb","carbon_credits","direct_air_capture","saf_efuels","geothermal","clean_cooking","grid_storage"];
+const SECTORS = ["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","wind_energy","ev_charging","industrial_decarbonization","carbon_credits","direct_air_capture","saf_efuels","geothermal_energy","clean_cooking","grid_storage"];
 const STAGES = ["Pre-revenue","Pilot","Early revenue","Growth","Profitable"];
 const FUNDING_ROUNDS = ["Pre-seed","Seed","Series A","Series B","Series C+","Grant-funded","Bootstrapped"];
 
