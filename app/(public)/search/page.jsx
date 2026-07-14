@@ -378,6 +378,13 @@ useEffect(() => {
               placeholder="Search companies, investors, grants…"
               className="w-full py-3.5 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#718096]"
             />
+            {(inputValue || query) && (
+              <button type="button" aria-label="Clear search"
+                onClick={() => { setInputValue(""); router.push("/search?q="); }}
+                className="text-[#718096] hover:text-[#0f1a14] flex-shrink-0 transition-colors">
+                <X size={15} />
+              </button>
+            )}
           </div>
           <button type="submit" className="bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm px-5 hover:bg-[#235a40] transition-colors">
             Search
