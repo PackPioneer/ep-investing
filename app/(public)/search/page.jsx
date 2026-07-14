@@ -102,7 +102,7 @@ function CompanyCard({ company }) {
             {STAGE_LABELS[stage] || stage}
           </span>
         )}
-        {model && (
+        {model && (MODEL_LABELS[model] || model.length <= 20) && (
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
             {MODEL_LABELS[model] || model}
           </span>
@@ -113,6 +113,14 @@ function CompanyCard({ company }) {
           </span>
         ))}
       </div>
+
+      {/* Long business-model prose: render as a clean block, not a pill */}
+      {model && !MODEL_LABELS[model] && model.length > 20 && (
+        <div className="bg-[#f4f6f9] border border-[#e2e6ed] rounded-lg px-3 py-2">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-[#718096] mb-1">Business model</p>
+          <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-3 font-light">{model}</p>
+        </div>
+      )}
 
       {/* Description */}
       {(company.description || company.core_technology) && (
