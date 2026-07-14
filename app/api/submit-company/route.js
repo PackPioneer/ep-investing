@@ -19,6 +19,21 @@ const VALID_TAGS = [
   'saf_efuels', 'solar', 'wind_energy',
 ];
 
+// Last-resort display name when we can't scrape a real company name.
+// Turns a bare hostname into a readable label instead of storing "foo.com".
+// "itm-power.com" -> "Itm Power", "ameapower.com" -> "Ameapower".
+// (Admin review of pending submissions can correct acronym casing.)
+function prettifyHostname(hostname) {
+  const base = hostname
+    .replace(/^www\./i, '')
+    .replace(/\.[a-z]{2,}(\.[a-z]{2})?$/i, ''); // strip TLD (and cc-TLD)
+  const words = base
+    .split(/[.\-_]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1));
+  return words.join(' ') || hostname;
+}
+
 async function scrapeUrl(url) {
   try {
     const res = await fetch(url, {
@@ -134,7 +149,7 @@ export async function POST(req) {
 
     // Scrape the URL for info
     const scraped = await scrapeUrl(normalizedUrl);
-    const name = submittedName || scraped.name || hostname;
+    const name = submittedName || scraped.name || prettifyHostname(hostname);
     const description = submittedDesc || scraped.description || '';
 
     // Classify
