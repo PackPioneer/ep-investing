@@ -329,6 +329,10 @@ useEffect(() => {
     setGeoFilter(null); setModelFilter(null); setSignalFilter(null);
   };
 
+  // Applying a filter drops any active text search, so the filter runs against
+  // the whole database instead of just the current search results.
+  const dropQuery = () => { if (query) { setInputValue(""); router.push("/search?q="); } };
+
   const activeFilterCount = [industryFilter, stageFilter, geoFilter, modelFilter, signalFilter].filter(Boolean).length;
 
   // Client-side filtering
@@ -423,7 +427,7 @@ useEffect(() => {
                     onClick={() => {
                       const next = industryFilter === tag ? null : tag;
                       setIndustryFilter(next);
-                      if (next) posthog.capture("search_filter_applied", { filter_type: "industry", filter_value: next, query });
+                      if (next) { dropQuery(); posthog.capture("search_filter_applied", { filter_type: "industry", filter_value: next, query }); }
                     }} />
                 ))}
               </div>
@@ -437,7 +441,7 @@ useEffect(() => {
                   {STAGE_OPTIONS.map(s => (
                     <FilterChip key={s} label={STAGE_LABELS[s]}
                       active={stageFilter === s}
-                      onClick={() => setStageFilter(stageFilter === s ? null : s)} />
+                      onClick={() => { const next = stageFilter === s ? null : s; setStageFilter(next); if (next) dropQuery(); }} />
                   ))}
                 </div>
               </div>
@@ -450,7 +454,7 @@ useEffect(() => {
                 {GEO_OPTIONS.map(g => (
                   <FilterChip key={g} label={GEO_LABELS_MAP[g]}
                     active={geoFilter === g}
-                    onClick={() => setGeoFilter(geoFilter === g ? null : g)} />
+                    onClick={() => { const next = geoFilter === g ? null : g; setGeoFilter(next); if (next) dropQuery(); }} />
                 ))}
               </div>
             </div>
@@ -463,7 +467,7 @@ useEffect(() => {
                   {MODEL_OPTIONS.map(m => (
                     <FilterChip key={m} label={MODEL_LABELS[m]}
                       active={modelFilter === m}
-                      onClick={() => setModelFilter(modelFilter === m ? null : m)} />
+                      onClick={() => { const next = modelFilter === m ? null : m; setModelFilter(next); if (next) dropQuery(); }} />
                   ))}
                 </div>
               </div>
@@ -481,7 +485,7 @@ useEffect(() => {
                   ].map(s => (
                     <FilterChip key={s.key} label={s.label}
                       active={signalFilter === s.key}
-                      onClick={() => setSignalFilter(signalFilter === s.key ? null : s.key)} />
+                      onClick={() => { const next = signalFilter === s.key ? null : s.key; setSignalFilter(next); if (next) dropQuery(); }} />
                   ))}
                 </div>
               </div>
