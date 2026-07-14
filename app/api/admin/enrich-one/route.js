@@ -204,13 +204,22 @@ ${text}`;
   }
 
   if (action === 'save') {
-    const { id, fields, logo_url } = body;
-    if (!id || !fields || typeof fields !== 'object') return NextResponse.json({ error: 'id and fields required' }, { status: 400 });
+    const { id, fields, logo_url, url } = body;
+    if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
     const update = {};
-    for (const [k, v] of Object.entries(fields)) {
-      if (cfg.fields.includes(k) && typeof v === 'string' && v.trim()) update[k] = v.trim();
+    if (fields && typeof fields === 'object') {
+      for (const [k, v] of Object.entries(fields)) {
+        if (cfg.fields.includes(k) && typeof v === 'string' && v.trim()) update[k] = v.trim();
+      }
     }
     if (typeof logo_url === 'string' && logo_url.trim()) update.logo_url = logo_url.trim();
+    // Manually correct the website URL (stored in this entity type's url column).
+    if (typeof url === 'string' && url.trim()) {
+      let u = url.trim();
+      if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+      try { u = new URL(u).href; } catch { return NextResponse.json({ error: 'Invalid URL' }, { status: 400 }); }
+      update[cfg.urlCol] = u;
+    }
     if (Object.keys(update).length === 0) return NextResponse.json({ error: 'No valid fields to save' }, { status: 400 });
     const { error } = await supabase.from(cfg.table).update(update).eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

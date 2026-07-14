@@ -44,6 +44,18 @@ const [pastedText, setPastedText] = useState("");
     setUrlOverride(d.entity[d.urlCol] || "");
   };
 
+  // Manually save the website URL to the profile (fixes wrong scraped links).
+  const saveUrl = async () => {
+    if (!entity) return;
+    const u = urlOverride.trim();
+    if (!u) { setMsg("Enter a URL first."); return; }
+    setBusy(true); setMsg("");
+    const d = await post({ action: "save", id: entity.id, url: u });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    setMsg(`Saved website URL for ${entity.name}.`);
+  };
+
   const scrape = async () => {
     setBusy(true); setMsg("");
     const key = entity.slug || entity.id;
@@ -120,15 +132,21 @@ const [pastedText, setPastedText] = useState("");
             <span className="text-base font-bold text-gray-900">{entity.name}</span>
             <span className="text-xs text-gray-400">#{entity.id}</span>
           </div>
-          <label className="block text-xs font-semibold text-gray-500 mb-1">Website to scrape (editable)</label>
+          <label className="block text-xs font-semibold text-gray-500 mb-1">Website URL (editable)</label>
           <div className="flex gap-2">
             <input value={urlOverride} onChange={(e) => setUrlOverride(e.target.value)} placeholder="https://example.com"
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-400" />
+            <button onClick={saveUrl} disabled={busy || !urlOverride.trim()}
+              className="inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 rounded-lg disabled:opacity-50"
+              title="Save this URL as the profile's website">
+              {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save URL
+            </button>
             <button onClick={scrape} disabled={busy || !urlOverride.trim()}
               className="inline-flex items-center gap-1 bg-emerald-600 text-white text-sm font-semibold px-4 rounded-lg disabled:opacity-50">
               {busy ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />} Scrape & draft
             </button>
           </div>
+          <p className="text-[11px] text-gray-400 mt-1">Wrong link? Fix it here and click <span className="font-semibold">Save URL</span> — no scrape needed.</p>
 
           <div className="mt-3">
             <button onClick={() => setShowPaste(v => !v)}
