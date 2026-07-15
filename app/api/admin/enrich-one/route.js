@@ -204,7 +204,7 @@ ${text}`;
   }
 
   if (action === 'save') {
-    const { id, fields, logo_url, url } = body;
+    const { id, fields, logo_url, url, name } = body;
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
     const update = {};
     if (fields && typeof fields === 'object') {
@@ -213,6 +213,14 @@ ${text}`;
       }
     }
     if (typeof logo_url === 'string' && logo_url.trim()) update.logo_url = logo_url.trim();
+    // Manually correct the name (fixes scraped page-titles). Regenerate slug too.
+    if (typeof name === 'string' && name.trim()) {
+      update.name = name.trim();
+      if (cfg.table !== 'vc_firms') {
+        const base = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+        update.slug = base ? `${base}-${id}` : `company-${id}`;
+      }
+    }
     // Manually correct the website URL (stored in this entity type's url column).
     if (typeof url === 'string' && url.trim()) {
       let u = url.trim();

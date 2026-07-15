@@ -21,6 +21,7 @@ export default function EnrichOnePage() {
   const [entityType, setEntityType] = useState("company");
   const [idOrSlug, setIdOrSlug] = useState("");
   const [entity, setEntity] = useState(null);
+  const [nameOverride, setNameOverride] = useState("");
   const [urlOverride, setUrlOverride] = useState("");
   const [drafts, setDrafts] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -41,7 +42,21 @@ const [pastedText, setPastedText] = useState("");
     setBusy(false);
     if (d.error) { setMsg(d.error); setEntity(null); return; }
     setEntity(d.entity);
+    setNameOverride(d.entity.name || "");
     setUrlOverride(d.entity[d.urlCol] || "");
+  };
+
+  // Manually save the name to the profile (fixes wrong scraped titles).
+  const saveName = async () => {
+    if (!entity) return;
+    const n = nameOverride.trim();
+    if (!n) { setMsg("Enter a name first."); return; }
+    setBusy(true); setMsg("");
+    const d = await post({ action: "save", id: entity.id, name: n });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    setEntity((p) => ({ ...p, name: n }));
+    setMsg(`Saved name: ${n}.`);
   };
 
   // Manually save the website URL to the profile (fixes wrong scraped links).
@@ -132,6 +147,17 @@ const [pastedText, setPastedText] = useState("");
             <span className="text-base font-bold text-gray-900">{entity.name}</span>
             <span className="text-xs text-gray-400">#{entity.id}</span>
           </div>
+          <label className="block text-xs font-semibold text-gray-500 mb-1">Company name (editable)</label>
+          <div className="flex gap-2 mb-3">
+            <input value={nameOverride} onChange={(e) => setNameOverride(e.target.value)} placeholder="Correct company name"
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-400" />
+            <button onClick={saveName} disabled={busy || !nameOverride.trim() || nameOverride.trim() === (entity.name || "")}
+              className="inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 rounded-lg disabled:opacity-50"
+              title="Save this as the profile's name">
+              {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save name
+            </button>
+          </div>
+
           <label className="block text-xs font-semibold text-gray-500 mb-1">Website URL (editable)</label>
           <div className="flex gap-2">
             <input value={urlOverride} onChange={(e) => setUrlOverride(e.target.value)} placeholder="https://example.com"
