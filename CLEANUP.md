@@ -35,6 +35,20 @@ forms; these remain:
   Aerospace, Flyv, Becaps.
 - **Fervo Energy (id 992)** is mis-tagged `industrial_decarbonization` — should be
   `geothermal_energy`.
+- **`business_model` holding prose instead of a code**: the field is meant to be a
+  short code (`b2b`, `b2c`, `b2g`, `hardware`, `software`, `project_developer`,
+  `marketplace`) but some companies (e.g. EX-Fusion, AMEA earlier) have a full
+  paragraph stored there. Card UI now renders long values as a clean block, but
+  prose values don't match the Business Model filter. Write a sweep to flag every
+  company whose `business_model` isn't one of the valid codes, then shorten them.
+- **Duplicate company profiles**: the scraper/auto-discovery creates two rows for
+  the same company (often one with a scraped page-title name + full quick facts,
+  another with the correct name + logo but sparse facts) — e.g. AMEA Power,
+  QuantumScape (2652/1546). Fix one at a time with `inspect-company.mjs` +
+  `merge-companies.mjs --keep --loser`. Better: a periodic dedupe sweep that
+  flags rows sharing the same root domain (normalize url → hostname) so they can
+  be merged before users spot them. Root cause worth checking: `cron_auto_discovery`
+  inserts without a strong dedupe on domain.
 
 ## Logos
 - Many `logo_url`s point at company sites that block hotlinking → render blank.
