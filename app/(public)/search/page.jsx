@@ -24,7 +24,8 @@ const INDUSTRY_FILTERS = [
   "nuclear_technologies", "electric_aviation", "battery_storage",
   "green_hydrogen", "wind_energy", "solar", "geothermal_energy",
   "industrial_decarbonization", "ev_charging", "carbon_credits",
-  "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage"
+  "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage",
+  "energy_generation"
 ];
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public"];
