@@ -39,6 +39,7 @@ export default function CompanyProfilePage() {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
   const [grants, setGrants] = useState([]);
+  const [showAllGrants, setShowAllGrants] = useState(false);
   const [loading, setLoading] = useState(true);
   const [updates, setUpdates] = useState([]);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
@@ -630,7 +631,7 @@ async function postUpdate(e) {
             <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-4">Relevant Grants</h3>
               {grants.length > 0 ? (
-                grants.map((grant) => (
+                (showAllGrants ? grants : grants.slice(0, 4)).map((grant) => (
                   <div key={grant.id} className="flex items-start justify-between py-2.5 border-b border-[#e2e6ed] last:border-0">
                     <span className="text-xs text-[#4a5568] leading-snug pr-2">{grant.title}</span>
                     {grant.deadline && (
@@ -642,6 +643,12 @@ async function postUpdate(e) {
                 ))
               ) : (
                 <p className="text-xs text-[#718096]">Browse our grants database for funding opportunities.</p>
+              )}
+              {grants.length > 4 && (
+                <button onClick={() => setShowAllGrants(v => !v)}
+                  className="mt-3 text-xs text-[#2d6a4f] font-mono hover:underline">
+                  {showAllGrants ? "Show less" : `Show ${grants.length - 4} more`}
+                </button>
               )}
               <Link href="/grants" className="mt-4 text-xs text-[#2d6a4f] font-mono hover:underline flex items-center gap-1">
                 Browse all grants →
