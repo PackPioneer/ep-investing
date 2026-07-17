@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/admin";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const tables = {
   investors: "vc_firms",
@@ -17,6 +15,11 @@ const tables = {
 export async function GET(req) {
   const userId = await requireAdmin();
   if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
 
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") || "investors";
