@@ -203,6 +203,30 @@ ${text}`;
     });
   }
 
+  if (action === 'upload_logo') {
+    const { id, dataUrl } = body;
+    if (!id || typeof dataUrl !== 'string') return NextResponse.json({ error: 'id and image required' }, { status: 400 });
+    const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!m) return NextResponse.json({ error: 'Invalid image data' }, { status: 400 });
+    const contentType = m[1];
+    const buffer = Buffer.from(m[2], 'base64');
+    if (buffer.length > 3_000_000) return NextResponse.json({ error: 'Image too large (max 3MB)' }, { status: 400 });
+    const extMap = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/webp': 'webp', 'image/svg+xml': 'svg', 'image/gif': 'gif' };
+    const ext = extMap[contentType] || 'png';
+    const BUCKET = 'company-logos';
+    // Ensure the public bucket exists (no-op if it already does).
+    await supabase.storage.createBucket(BUCKET, { public: true }).catch(() => {});
+    const path = `${entityType}/${id}-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, buffer, { contentType, upsert: true });
+    if (upErr) return NextResponse.json({ error: `Upload failed: ${upErr.message}` }, { status: 500 });
+    const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    const logo_url = pub?.publicUrl;
+    if (!logo_url) return NextResponse.json({ error: 'Could not get public URL' }, { status: 500 });
+    const { error: dbErr } = await supabase.from(cfg.table).update({ logo_url }).eq('id', id);
+    if (dbErr) return NextResponse.json({ error: dbErr.message }, { status: 500 });
+    return NextResponse.json({ ok: true, logo_url });
+  }
+
   if (action === 'save') {
     const { id, fields, logo_url, url, name } = body;
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });

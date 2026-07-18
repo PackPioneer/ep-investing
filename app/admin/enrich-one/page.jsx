@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Search, Sparkles, Save } from "lucide-react";
+import { Loader2, Search, Sparkles, Save, Upload } from "lucide-react";
 
 const FIELD_LABELS = {
   description: "Description", core_technology: "Core Technology", target_market: "Target Market",
@@ -29,6 +29,7 @@ export default function EnrichOnePage() {
   const [msg, setMsg] = useState("");
 const [pastedText, setPastedText] = useState("");
   const [showPaste, setShowPaste] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
   const typeCfg = TYPES.find((t) => t.key === entityType);
 
   const post = async (payload) => {
@@ -69,6 +70,24 @@ const [pastedText, setPastedText] = useState("");
     setBusy(false);
     if (d.error) { setMsg(d.error); return; }
     setMsg(`Saved website URL for ${entity.name}.`);
+  };
+
+  // Upload a logo file (drag-drop or picker) -> Supabase Storage -> save URL.
+  const uploadLogoFile = async (file) => {
+    if (!entity || !file) return;
+    if (!file.type.startsWith("image/")) { setMsg("Please choose an image file (PNG, JPG, SVG)."); return; }
+    if (file.size > 3_000_000) { setMsg("Image too large — max 3MB."); return; }
+    setBusy(true); setMsg("Uploading logo…");
+    try {
+      const dataUrl = await new Promise((res, rej) => {
+        const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
+      });
+      const d = await post({ action: "upload_logo", id: entity.id, dataUrl });
+      setBusy(false);
+      if (d.error) { setMsg(d.error); return; }
+      setEntity((p) => ({ ...p, logo_url: d.logo_url }));
+      setMsg("Logo uploaded and saved.");
+    } catch (e) { setBusy(false); setMsg("Upload failed: " + e.message); }
   };
 
   const scrape = async () => {
@@ -173,6 +192,24 @@ const [pastedText, setPastedText] = useState("");
             </button>
           </div>
           <p className="text-[11px] text-gray-400 mt-1">Wrong link? Fix it here and click <span className="font-semibold">Save URL</span> — no scrape needed.</p>
+
+          {/* Logo upload (drag-drop or click) */}
+          <label className="block text-xs font-semibold text-gray-500 mb-1 mt-4">Logo (drag a file or click to upload)</label>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => { e.preventDefault(); setDragOver(false); uploadLogoFile(e.dataTransfer.files?.[0]); }}
+            onClick={() => document.getElementById("logo-file-input")?.click()}
+            className={`flex items-center gap-3 border-2 border-dashed rounded-lg px-3 py-3 cursor-pointer transition-colors ${dragOver ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:border-gray-300"}`}>
+            {entity.logo_url
+              ? <img src={entity.logo_url} alt="logo" className="w-11 h-11 object-contain rounded bg-white border border-gray-100 flex-shrink-0" onError={(e) => { e.target.style.opacity = 0.2; }} />
+              : <div className="w-11 h-11 rounded bg-gray-100 flex items-center justify-center flex-shrink-0"><Upload size={16} className="text-gray-400" /></div>}
+            <span className="text-xs text-gray-500">
+              {busy ? "Uploading…" : "Drag an image here, or click to choose a file (PNG / JPG / SVG, max 3MB)"}
+            </span>
+          </div>
+          <input id="logo-file-input" type="file" accept="image/*" className="hidden"
+            onChange={(e) => { if (e.target.files?.[0]) uploadLogoFile(e.target.files[0]); e.target.value = ""; }} />
 
           <div className="mt-3">
             <button onClick={() => setShowPaste(v => !v)}
