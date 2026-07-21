@@ -7,7 +7,7 @@ const VALID_TAGS = [
   "battery_storage", "carbon_credits", "circular_economy", "clean_cooking", "consultancy",  "direct_air_capture",
   "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
   "grid_storage", "industrial_decarbonization", "nuclear_technologies",
-  "saf_efuels", "solar", "wind_energy", "energy_generation",
+  "saf_efuels", "solar", "wind_energy", "energy_generation", "energy_efficiency",
 ];
 
 async function scrapeUrl(url) {

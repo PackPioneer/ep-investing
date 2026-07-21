@@ -25,7 +25,7 @@ const INDUSTRY_FILTERS = [
   "green_hydrogen", "wind_energy", "solar", "geothermal_energy",
   "industrial_decarbonization", "ev_charging", "carbon_credits",
   "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage",
-  "energy_generation"
+  "energy_generation", "energy_efficiency"
 ];
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public"];
@@ -88,8 +88,10 @@ function CompanyCard({ company }) {
           )}
           <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors leading-snug inline-flex items-center gap-1.5">
             {company.name || company.url}
-            {(company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
-              <BadgeCheck size={13} className="text-[#2d6a4f] flex-shrink-0" />
+            {(company.claim_status === "approved" || company.clerk_organization_id || company.claimed_by_clerk_user_id || company.clerk_user_id) && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#2d6a4f] bg-[#eef7f1] border border-[#cce5d6] rounded-full px-1.5 py-0.5 flex-shrink-0">
+                <BadgeCheck size={11} /> Claimed
+              </span>
             )}
           </h3>
         </div>
