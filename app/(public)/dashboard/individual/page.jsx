@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Compass, BadgeCheck, ArrowRight, Building2, Newspaper, Check, Search, MessageSquarePlus } from "lucide-react";
 import { INDUSTRIES, INDUSTRY_LABELS } from "@/lib/industries";
@@ -46,6 +47,7 @@ function Chip({ label, active, onClick }) {
 
 export default function IndividualDashboard() {
   const { user, isLoaded } = useUser();
+  const router = useRouter();
   const [data, setData] = useState(null);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +81,9 @@ export default function IndividualDashboard() {
       fetch("/api/news/for-you?limit=8").then((r) => r.json()).catch(() => ({})),
       fetch("/api/dashboard/individual/expert").then((r) => r.json()).catch(() => ({})),
     ]).then(([feed, newsRes, listingRes]) => {
+      // No member profile yet (signed up but never finished onboarding) —
+      // send them to complete it so they become a real member.
+      if (!feed || !feed.member) { router.replace("/onboarding/individual"); return; }
       setData(feed);
       setNews(Array.isArray(newsRes.articles) ? newsRes.articles : []);
       const l = listingRes.listing;
