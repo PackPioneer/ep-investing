@@ -16,6 +16,17 @@ const TYPE_LABELS = { venture_equity: "Venture", corporate_strategic: "Strategic
 const TYPE_COLOR = { venture_equity: "#7c3aed", corporate_strategic: "#0ea5e9", project_finance: "#2d6a4f", debt: "#d97706", grant: "#059669", fund_raise: "#db2777", m_and_a: "#4f46e5", ipo_spac: "#e11d48", offtake: "#0d9488", ppa: "#0891b2" };
 const label = (s) => (s || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
+const REGION = new Set(["africa", "asia", "europe", "global", "mena", "latam", "oceania", "middle east", "north america", "south america", "apac", "worldwide", "international", "eu", "emea"]);
+const CTRY_ALIAS = { usa: "United States", us: "United States", "u.s.": "United States", "u.s.a.": "United States", "united states of america": "United States", uk: "United Kingdom", "u.k.": "United Kingdom", "great britain": "United Kingdom", britain: "United Kingdom", england: "United Kingdom", scotland: "United Kingdom", wales: "United Kingdom" };
+function normCountry(g) {
+  if (!g) return null;
+  let s = String(g).trim();
+  if (s.includes(",")) s = s.split(",").pop().trim();   // "Louisiana, USA" -> "USA"
+  const low = s.toLowerCase();
+  if (REGION.has(low)) return null;                      // drop continents / regions
+  return CTRY_ALIAS[low] || s;
+}
+
 function Bars({ rows, max, title }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4">
@@ -58,6 +69,8 @@ export default function AdminMarketsPage() {
   const [geo, setGeo] = useState("");
   const [saved, setSaved] = useState([]);
   const [quotes, setQuotes] = useState([]);
+  const [wireQ, setWireQ] = useState("");
+  const [wireOpen, setWireOpen] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -78,14 +91,14 @@ export default function AdminMarketsPage() {
 
   const opts = useMemo(() => {
     const uniq = (k) => [...new Set(events.map((e) => e[k]).filter(Boolean))].sort();
-    return { types: uniq("type"), sectors: uniq("sector"), stages: uniq("stage"), geos: uniq("geography") };
+    return { types: uniq("type"), sectors: uniq("sector"), stages: uniq("stage"), geos: [...new Set(events.map((e) => normCountry(e.geography)).filter(Boolean))].sort() };
   }, [events]);
 
   const filtered = useMemo(() => events.filter((e) => {
     if (type && e.type !== type) return false;
     if (sector && e.sector !== sector) return false;
     if (stage && e.stage !== stage) return false;
-    if (geo && e.geography !== geo) return false;
+    if (geo && normCountry(e.geography) !== geo) return false;
     if (q) { const s = (e.company_name + " " + (e.counterparty || "") + " " + (e.investors || []).join(" ")).toLowerCase(); if (!s.includes(q.toLowerCase())) return false; }
     return true;
   }), [events, type, sector, stage, geo, q]);
@@ -99,13 +112,16 @@ export default function AdminMarketsPage() {
       capital: sum(cap), deals: cap.length, events: filtered.length,
       avg: cap.length ? Math.round(sum(cap) / cap.length) : null,
       median: amts.length ? amts[Math.floor(amts.length / 2)] : null,
-      byType: grp(cap, "type"), bySector: grp(cap, "sector").slice(0, 12), byGeo: grp(cap, "geography").slice(0, 12),
+      byType: grp(cap, "type"), bySector: grp(cap, "sector").slice(0, 12),
+      byGeo: grp(cap.map((r) => ({ ...r, _c: normCountry(r.geography) })).filter((r) => r._c), "_c").slice(0, 12),
     };
   }, [filtered]);
 
   if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-emerald-600" /></div>;
 
   const active = type || sector || stage || geo || q;
+  const wireRows = wireQ ? filtered.filter((e) => (e.company_name || "").toLowerCase().includes(wireQ.toLowerCase())) : filtered;
+  const wireShown = wireOpen ? wireRows.slice(0, 400) : wireRows.slice(0, 5);
   const stat = (l, v, s) => (<div className="bg-white border border-slate-200 rounded-xl p-4"><p className="text-xs font-mono uppercase tracking-wider text-slate-400">{l}</p><p className="text-2xl font-semibold text-slate-900 mt-1">{v}</p>{s && <p className="text-xs text-slate-400 mt-0.5">{s}</p>}</div>);
   const maxT = Math.max(...agg.byType.map((r) => r.capital), 1);
   const maxS = Math.max(...agg.bySector.map((r) => r.capital), 1);
@@ -171,14 +187,17 @@ export default function AdminMarketsPage() {
       <div className="mb-5"><Bars rows={agg.byGeo} max={maxG} title="Capital by geography" /></div>
 
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <p className="text-xs font-mono uppercase tracking-wider text-slate-400 px-4 pt-4 pb-2">Funding wire ({filtered.length})</p>
-        <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+        <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-2">
+          <p className="text-xs font-mono uppercase tracking-wider text-slate-400">Funding wire ({wireRows.length})</p>
+          <input value={wireQ} onChange={(e) => setWireQ(e.target.value)} placeholder="Search companies…" className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-slate-50 text-slate-500 text-left sticky top-0">
+            <thead className="bg-slate-50 text-slate-500 text-left">
               <tr><th className="px-3 py-2 font-medium">Date</th><th className="px-3 py-2 font-medium">Company</th><th className="px-3 py-2 font-medium text-right">Amount</th><th className="px-3 py-2 font-medium">Type</th><th className="px-3 py-2 font-medium">Sector</th><th className="px-3 py-2 font-medium">Stage</th><th className="px-3 py-2 font-medium">Lead / buyer</th><th className="px-3 py-2 font-medium">Geo</th></tr>
             </thead>
             <tbody>
-              {filtered.slice(0, 400).map((e) => (
+              {wireShown.map((e) => (
                 <tr key={e.id} className="border-t border-slate-100 hover:bg-slate-50">
                   <td className="px-3 py-2 text-slate-400 font-mono whitespace-nowrap">{e.announced_date?.slice(0, 10) || "—"}</td>
                   <td className="px-3 py-2 text-slate-800 font-medium">
@@ -191,12 +210,17 @@ export default function AdminMarketsPage() {
                   <td className="px-3 py-2 text-slate-500">{label(e.sector) || "—"}</td>
                   <td className="px-3 py-2 text-slate-500">{e.stage || "—"}</td>
                   <td className="px-3 py-2 text-slate-500 max-w-[160px] truncate">{e.counterparty || (e.investors || []).join(", ") || "—"}</td>
-                  <td className="px-3 py-2 text-slate-400">{e.geography || "—"}</td>
+                  <td className="px-3 py-2 text-slate-400">{normCountry(e.geography) || e.geography || "—"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {wireRows.length > 5 && (
+          <button onClick={() => setWireOpen((v) => !v)} className="w-full text-xs text-emerald-700 hover:bg-slate-50 py-2.5 border-t border-slate-100">
+            {wireOpen ? "Show less" : `Show ${wireRows.length - 5} more`}
+          </button>
+        )}
       </div>
     </div>
   );
