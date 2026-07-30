@@ -152,6 +152,71 @@ export const PHASE_1_SOURCES = [
   },
 
   // --------------------------------------------------------------------------
+  // Tier 2 — Finance / deal-dense trade press (funding, project finance, M&A)
+  // Added to widen funding coverage for the markets tracker. RSS verified live.
+  // --------------------------------------------------------------------------
+  {
+    slug: 'energy-storage-news',
+    name: 'Energy Storage News',
+    feed_url: 'https://www.energy-storage.news/feed/',
+    feed_type: 'rss',
+    homepage_url: 'https://www.energy-storage.news',
+    region: 'global',
+    category: 'climate_publication',
+    credibility_tier: 2,
+    is_secondary_source: false,
+    notes: 'Heavy on storage project finance and funding rounds.',
+  },
+  {
+    slug: 'impact-alpha',
+    name: 'ImpactAlpha',
+    feed_url: 'https://impactalpha.com/feed/',
+    feed_type: 'rss',
+    homepage_url: 'https://impactalpha.com',
+    region: 'global',
+    category: 'analysis',
+    credibility_tier: 2,
+    is_secondary_source: false,
+    notes: 'Impact/climate investing — dense on rounds and fund closes.',
+  },
+  {
+    slug: 'renew-economy',
+    name: 'RenewEconomy',
+    feed_url: 'https://reneweconomy.com.au/feed/',
+    feed_type: 'rss',
+    homepage_url: 'https://reneweconomy.com.au',
+    region: 'apac',
+    category: 'climate_publication',
+    credibility_tier: 2,
+    is_secondary_source: false,
+    notes: 'APAC renewables + project finance.',
+  },
+  {
+    slug: 'mercom-india',
+    name: 'Mercom India',
+    feed_url: 'https://www.mercomindia.com/feed',
+    feed_type: 'rss',
+    homepage_url: 'https://www.mercomindia.com',
+    region: 'india',
+    category: 'climate_publication',
+    credibility_tier: 2,
+    is_secondary_source: false,
+    notes: 'Very deal-dense: solar/storage funding, M&A, tenders.',
+  },
+  {
+    slug: 'pv-tech',
+    name: 'PV Tech',
+    feed_url: 'https://www.pv-tech.org/feed/',
+    feed_type: 'rss',
+    homepage_url: 'https://www.pv-tech.org',
+    region: 'global',
+    category: 'climate_publication',
+    credibility_tier: 2,
+    is_secondary_source: false,
+    notes: 'Solar manufacturing + finance.',
+  },
+
+  // --------------------------------------------------------------------------
   // Press releases (company news, funding, partnerships)
   // --------------------------------------------------------------------------
   {
