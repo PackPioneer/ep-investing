@@ -20,6 +20,7 @@ import { enrichPending } from '@/lib/news/enrichment';
 import { refreshAllUserEmbeddings } from '@/lib/news/user-embeddings';
 import { ingestAllPolicySources } from '@/lib/policies/ingestion';
 import { enrichPendingPolicies } from '@/lib/policies/enrichment';
+import { sendSavedSearchAlerts } from '@/lib/alerts/saved-search';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -86,6 +87,13 @@ export async function GET(request) {
       response.user_embeddings = await refreshAllUserEmbeddings(supabase, { maxAgeHours: 24 });
     } catch (err) {
       response.user_embeddings = { error: err.message };
+    }
+
+    // 4. Saved-search alerts — email owners about new matching funding events
+    try {
+      response.saved_search_alerts = await sendSavedSearchAlerts();
+    } catch (err) {
+      response.saved_search_alerts = { error: err.message };
     }
 
     response.completed_at = new Date().toISOString();

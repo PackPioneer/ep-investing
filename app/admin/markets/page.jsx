@@ -57,10 +57,12 @@ export default function AdminMarketsPage() {
   const [stage, setStage] = useState("");
   const [geo, setGeo] = useState("");
   const [saved, setSaved] = useState([]);
+  const [quotes, setQuotes] = useState([]);
   const { user } = useUser();
 
   useEffect(() => {
     fetch("/api/admin/markets").then((r) => r.json()).then((d) => { setEvents(d.events || []); setMeta(d.meta || {}); setLoading(false); }).catch(() => setLoading(false));
+    fetch("/api/admin/markets/quotes").then((r) => r.json()).then((d) => setQuotes(Array.isArray(d) ? d : [])).catch(() => {});
     loadSaved();
   }, []);
 
@@ -117,6 +119,21 @@ export default function AdminMarketsPage() {
         <span className="text-[10px] font-mono uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">admin preview</span>
       </div>
       <p className="text-sm text-slate-500 mb-4">Filter by type, sector, stage, or geography — everything recomputes. Aggregates and low-confidence rows are excluded.</p>
+
+      {quotes.filter((q) => q.price).length > 0 && (
+        <div className="mb-5">
+          <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">EP Climate basket — public markets</p>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {quotes.filter((q) => q.price).map((q) => (
+              <div key={q.ticker} className="flex-shrink-0 bg-white border border-slate-200 rounded-lg px-3 py-2 min-w-[110px]">
+                <div className="text-xs font-semibold text-slate-800">{q.ticker}</div>
+                <div className="text-sm font-mono text-slate-900">${Number(q.price).toFixed(2)}</div>
+                <div className={`text-xs font-mono ${q.change_pct >= 0 ? "text-emerald-600" : "text-red-500"}`}>{q.change_pct >= 0 ? "+" : ""}{Number(q.change_pct ?? 0).toFixed(1)}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search company or investor…" className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 w-56 focus:outline-none focus:border-emerald-400" />
