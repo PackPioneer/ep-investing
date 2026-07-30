@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, TrendingUp, X } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
+import { Loader2, TrendingUp, X, Bookmark, Bell } from "lucide-react";
 
 function usd(n) {
   if (n == null) return "—";
@@ -54,10 +56,23 @@ export default function AdminMarketsPage() {
   const [sector, setSector] = useState("");
   const [stage, setStage] = useState("");
   const [geo, setGeo] = useState("");
+  const [saved, setSaved] = useState([]);
+  const { user } = useUser();
 
   useEffect(() => {
     fetch("/api/admin/markets").then((r) => r.json()).then((d) => { setEvents(d.events || []); setMeta(d.meta || {}); setLoading(false); }).catch(() => setLoading(false));
+    loadSaved();
   }, []);
+
+  const loadSaved = () => fetch("/api/admin/saved-searches").then((r) => r.json()).then((d) => setSaved(Array.isArray(d) ? d : [])).catch(() => {});
+  const currentFilters = () => ({ type, sector, stage, geo, q });
+  const filterName = () => [TYPE_LABELS[type] || type, sector && label(sector), stage && label(stage), geo, q].filter(Boolean).join(" · ") || "All events";
+  const saveSearch = async () => {
+    await fetch("/api/admin/saved-searches", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: filterName(), filters: currentFilters(), email: user?.primaryEmailAddress?.emailAddress }) });
+    loadSaved();
+  };
+  const applySearch = (f) => { setType(f.type || ""); setSector(f.sector || ""); setStage(f.stage || ""); setGeo(f.geo || ""); setQ(f.q || ""); };
+  const deleteSearch = async (id) => { await fetch(`/api/admin/saved-searches?id=${id}`, { method: "DELETE" }); loadSaved(); };
 
   const opts = useMemo(() => {
     const uniq = (k) => [...new Set(events.map((e) => e[k]).filter(Boolean))].sort();
@@ -110,7 +125,20 @@ export default function AdminMarketsPage() {
         <Select value={stage} onChange={setStage} options={opts.stages} placeholder="All stages" />
         <Select value={geo} onChange={setGeo} options={opts.geos} placeholder="All geographies" />
         {active && <button onClick={() => { setType(""); setSector(""); setStage(""); setGeo(""); setQ(""); }} className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1"><X size={12} /> Clear</button>}
+        {active && <button onClick={saveSearch} className="text-xs text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1"><Bookmark size={12} /> Save search + alert</button>}
       </div>
+
+      {saved.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-5">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 inline-flex items-center gap-1"><Bell size={11} /> Saved</span>
+          {saved.map((s) => (
+            <span key={s.id} className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full pl-3 pr-1.5 py-1">
+              <button onClick={() => applySearch(s.filters)} className="hover:underline">{s.name}</button>
+              <button onClick={() => deleteSearch(s.id)} className="text-emerald-400 hover:text-red-500"><X size={11} /></button>
+            </span>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {stat("Capital tracked", usd(agg.capital), `${agg.deals} deals`)}
@@ -136,7 +164,11 @@ export default function AdminMarketsPage() {
               {filtered.slice(0, 400).map((e) => (
                 <tr key={e.id} className="border-t border-slate-100 hover:bg-slate-50">
                   <td className="px-3 py-2 text-slate-400 font-mono whitespace-nowrap">{e.announced_date?.slice(0, 10) || "—"}</td>
-                  <td className="px-3 py-2 text-slate-800 font-medium">{e.company_name || "—"}{e.company_id && <span className="ml-1 text-emerald-600" title="linked">•</span>}</td>
+                  <td className="px-3 py-2 text-slate-800 font-medium">
+                    {e.company_id
+                      ? <Link href={`/companies/${e.company_id}`} className="hover:text-emerald-700 hover:underline">{e.company_name || "—"}<span className="ml-1 text-emerald-600" title="view profile">›</span></Link>
+                      : (e.company_name || "—")}
+                  </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-700 whitespace-nowrap">{e.amount_usd ? usd(e.amount_usd) : (e.commercial_volume ? `${e.commercial_volume} ${e.commercial_unit || ""}` : "—")}</td>
                   <td className="px-3 py-2"><span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: (TYPE_COLOR[e.type] || "#64748b") + "22", color: TYPE_COLOR[e.type] || "#64748b" }}>{TYPE_LABELS[e.type] || e.type}</span></td>
                   <td className="px-3 py-2 text-slate-500">{label(e.sector) || "—"}</td>
