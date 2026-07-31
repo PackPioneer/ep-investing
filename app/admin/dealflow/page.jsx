@@ -11,6 +11,17 @@ function usd(n) {
 }
 const label = (s) => (s || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 const monthsAgo = (d) => d ? Math.round((Date.now() - new Date(d).getTime()) / (1000 * 60 * 60 * 24 * 30.4)) : null;
+const daysAgo = (d) => d ? Math.round((Date.now() - new Date(d).getTime()) / (1000 * 60 * 60 * 24)) : null;
+
+const BADGE = {
+  self: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  press: "bg-sky-50 text-sky-700 border-sky-200",
+  dormant: "bg-amber-50 text-amber-700 border-amber-200",
+  hiring: "bg-violet-50 text-violet-700 border-violet-200",
+};
+function Badge({ kind, children }) {
+  return <span className={`text-[9px] font-medium uppercase tracking-wide border px-1.5 py-0.5 rounded ${BADGE[kind]}`}>{children}</span>;
+}
 
 function Panel({ icon: Icon, color, title, sub, count, children }) {
   return (
@@ -23,21 +34,26 @@ function Panel({ icon: Icon, color, title, sub, count, children }) {
         </div>
         <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
       </div>
-      <div className="max-h-[520px] overflow-y-auto divide-y divide-slate-100">{children}</div>
+      <div className="max-h-[560px] overflow-y-auto divide-y divide-slate-100">{children}</div>
     </div>
   );
 }
 
-function Row({ name, tag, right, sub }) {
-  return (
+function Row({ name, tag, right, sub, badge, href, external }) {
+  const inner = (
     <div className="px-4 py-2.5 hover:bg-slate-50 flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <div className="text-sm text-slate-800 font-medium truncate">{name}</div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm text-slate-800 font-medium truncate">{name}</span>
+          {badge}
+        </div>
         <div className="text-xs text-slate-400">{tag}{sub ? ` · ${sub}` : ""}</div>
       </div>
       <div className="text-xs font-mono text-slate-600 whitespace-nowrap text-right">{right}</div>
     </div>
   );
+  if (href) return <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} className="block">{inner}</a>;
+  return inner;
 }
 
 export default function DealflowPage() {
@@ -48,6 +64,10 @@ export default function DealflowPage() {
   if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-emerald-600" /></div>;
   if (!d || d.error) return <div className="p-6 text-sm text-red-600">Error: {d?.error || "no data"}</div>;
 
+  const c = d.counts;
+  const currentTotal = c.currentlyRaising + c.pressRaising;
+  const likelyTotal = c.likelyRaising + c.hiringSignal;
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center gap-2 mb-1">
@@ -55,26 +75,47 @@ export default function DealflowPage() {
         <h1 className="text-2xl font-bold text-slate-900">Deal flow — who's raising</h1>
         <span className="text-[10px] font-mono uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">admin preview</span>
       </div>
-      <p className="text-sm text-slate-500 mb-5">Forward-looking view: companies raising now, statistically due, or with fresh momentum. This is the part investors pay for.</p>
+      <p className="text-sm text-slate-500 mb-5">Forward-looking view: companies raising now, signalled by the press or their hiring, statistically due, or with fresh momentum. This is the part investors pay for.</p>
 
       <div className="grid md:grid-cols-3 gap-3">
-        <Panel icon={CheckCircle} color="#2d6a4f" title="Currently raising" sub="Self-reported on EP — verified" count={d.counts.currentlyRaising}>
-          {d.currentlyRaising.length === 0 && <p className="px-4 py-4 text-xs text-slate-400">None yet. Fills as claimed companies mark themselves open to raise.</p>}
-          {d.currentlyRaising.map((c) => (
-            <Row key={c.id} name={c.name} tag={label((c.industry_tags || [])[0]) || "—"} sub={c.raise_round_type ? label(c.raise_round_type) : null} right={c.raise_target ? usd(c.raise_target) : "raising"} />
+        <Panel icon={CheckCircle} color="#2d6a4f" title="Currently raising" sub="Self-reported on EP + detected in the press" count={currentTotal}>
+          {currentTotal === 0 && <p className="px-4 py-4 text-xs text-slate-400">None yet. Fills from self-reports and from news of companies in-market.</p>}
+          {d.currentlyRaising.map((co) => (
+            <Row key={`s${co.id}`} name={co.name} tag={label((co.industry_tags || [])[0]) || "—"}
+              sub={co.raise_round_type ? label(co.raise_round_type) : null}
+              right={co.raise_target ? usd(co.raise_target) : "raising"}
+              badge={<Badge kind="self">verified</Badge>}
+              href={`/companies/${co.id}`} />
+          ))}
+          {(d.pressRaising || []).map((r, i) => (
+            <Row key={`p${i}`} name={r.name} tag={label((r.industry_tags || [])[0]) || (r.matched ? "—" : "not in directory")}
+              sub={`${daysAgo(r.published_at)}d ago`}
+              right="in market"
+              badge={<Badge kind="press">press</Badge>}
+              href={r.matched ? `/companies/${r.company_id}` : r.article_url}
+              external={!r.matched} />
           ))}
         </Panel>
 
-        <Panel icon={Clock} color="#d97706" title="Likely raising soon" sub="Last round 18-33 months ago — statistically due" count={d.counts.likelyRaising}>
-          {d.likelyRaising.length === 0 && <p className="px-4 py-4 text-xs text-slate-400">Fills as more companies get linked to their funding history.</p>}
-          {d.likelyRaising.map((c) => (
-            <Row key={c.id} name={c.name} tag={label((c.industry_tags || [])[0]) || label(c.last_round?.sector) || "—"}
-              sub={`last: ${label(c.last_round?.stage) || c.last_round?.type} ${usd(c.last_round?.amount_usd)}`}
-              right={`${monthsAgo(c.last_round?.announced_date)}mo ago`} />
+        <Panel icon={Clock} color="#d97706" title="Likely raising soon" sub="Statistically due, or hiring like they're about to" count={likelyTotal}>
+          {likelyTotal === 0 && <p className="px-4 py-4 text-xs text-slate-400">Fills as companies get linked to funding history or post hiring bursts.</p>}
+          {(d.hiringSignal || []).map((co) => (
+            <Row key={`h${co.id}`} name={co.name} tag={label((co.industry_tags || [])[0]) || "—"}
+              sub={`${co.postings} new roles${co.senior ? `, ${co.senior} senior/finance` : ""}`}
+              right={`${daysAgo(co.latest)}d ago`}
+              badge={<Badge kind="hiring">hiring</Badge>}
+              href={`/companies/${co.id}`} />
+          ))}
+          {d.likelyRaising.map((co) => (
+            <Row key={`d${co.id}`} name={co.name} tag={label((co.industry_tags || [])[0]) || label(co.last_round?.sector) || "—"}
+              sub={`last: ${label(co.last_round?.stage) || co.last_round?.type} ${usd(co.last_round?.amount_usd)}`}
+              right={`${monthsAgo(co.last_round?.announced_date)}mo ago`}
+              badge={<Badge kind="dormant">dormant</Badge>}
+              href={`/companies/${co.id}`} />
           ))}
         </Panel>
 
-        <Panel icon={Zap} color="#7c3aed" title="Recently raised" sub="Closed in the last ~4 months — momentum" count={d.counts.recentlyRaised}>
+        <Panel icon={Zap} color="#7c3aed" title="Recently raised" sub="Closed in the last ~4 months — momentum" count={c.recentlyRaised}>
           {d.recentlyRaised.map((e, i) => (
             <Row key={i} name={e.company_name} tag={label(e.sector) || label(e.type)}
               sub={label(e.stage)} right={`${usd(e.amount_usd)} · ${monthsAgo(e.announced_date)}mo`} />
