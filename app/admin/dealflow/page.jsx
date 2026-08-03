@@ -75,7 +75,17 @@ export default function DealflowPage() {
         <h1 className="text-2xl font-bold text-slate-900">Deal flow — who's raising</h1>
         <span className="text-[10px] font-mono uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">admin preview</span>
       </div>
-      <p className="text-sm text-slate-500 mb-5">Forward-looking view: companies raising now, signalled by the press or their hiring, statistically due, or with fresh momentum. This is the part investors pay for.</p>
+      <p className="text-sm text-slate-500 mb-3">Forward-looking view: companies raising now, signalled by the press or their hiring, statistically due, or with fresh momentum. This is the part investors pay for.</p>
+
+      <details className="mb-5 bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500">
+        <summary className="cursor-pointer font-medium text-slate-600 select-none">How these signals are derived</summary>
+        <div className="mt-3 space-y-2 leading-relaxed">
+          <p><span className="font-medium text-slate-700">Currently raising.</span> <span className="text-emerald-700">Verified</span> = the company self-reported on EP. <span className="text-sky-700">Press</span> = we detected news language that the company is actively seeking capital (round open, not yet closed).</p>
+          <p><span className="font-medium text-slate-700">Likely raising soon.</span> <span className="text-amber-700">Dormant</span> = the last known round closed 18–33 months ago, the typical window before a follow-on raise. <span className="text-violet-700">Hiring</span> = a recent burst of open roles (especially senior finance/BD), which tends to precede expansion and a new raise.</p>
+          <p><span className="font-medium text-slate-700">Recently raised.</span> Rounds that closed in the last ~4 months.</p>
+          <p className="text-slate-400 border-t border-slate-100 pt-2"><span className="font-medium">Disclaimer:</span> Verified and Recently raised are factual. Dormant, Hiring, and Press are <em>inferred</em> signals, not confirmations — a company shown here may not be raising, and absence here doesn't mean it isn't.</p>
+        </div>
+      </details>
 
       <div className="grid md:grid-cols-3 gap-3">
         <Panel icon={CheckCircle} color="#2d6a4f" title="Currently raising" sub="Self-reported on EP + detected in the press" count={currentTotal}>
