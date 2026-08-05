@@ -203,10 +203,10 @@ export default function AdminMarketsPage() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        {stat("Capital tracked", usd(agg.capital), `across ${agg.deals} deals`, "Total capital across the deals currently shown. The number below is how many separate funding events add up to that total.")}
-        {stat("Median round", usd(agg.median), "midpoint deal size", "The median deal size — half the deals are bigger, half smaller. We show the median instead of the average so a few giant deals don't skew the number.")}
-        {stat("Events shown", agg.events, active ? "filtered" : `${meta.marketStat || 0} market-wide totals set aside`, "Some sources report industry-wide figures (e.g. “global solar investment hit $50B”). Those aren't a single company's deal, so they're kept out of this view and counted separately.")}
-        {stat("In our database", filtered.filter((e) => e.company_id).length, `of ${filtered.length} deals shown`, "How many of the shown deals come from a company that appears in the EP database (has a profile). The rest are companies we've logged a deal for but haven't added a profile for yet.")}
+        {stat("Capital tracked", usd(agg.capital), `across ${agg.deals} deals`)}
+        {stat("Median round", usd(agg.median), "midpoint deal size")}
+        {stat("Events shown", agg.events, active ? "filtered" : `${meta.marketStat || 0} market-wide totals set aside`)}
+        {stat("In our database", filtered.filter((e) => e.company_id).length, `of ${filtered.length} deals shown`)}
       </div>
 
       <div className="grid md:grid-cols-2 gap-3 mb-3">
