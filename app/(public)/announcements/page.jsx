@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { ctaLabelFor } from "@/lib/announcements/categories";
 
 const CATS = [
   { id: "", label: "All" },
@@ -87,7 +88,11 @@ export default function NewsroomPage() {
                       <div className="text-sm font-semibold text-slate-900 leading-snug">{a.title}</div>
                       {metaLine(a) && <div className="text-xs text-slate-500 mt-0.5">{metaLine(a)}</div>}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}
-                      {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-700 hover:underline mt-1.5 inline-block">Read more →</a>}
+                      {a.link_url && (
+                        <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block mt-2.5 text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">
+                          {ctaLabelFor(a.category, a.meta)} →
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
