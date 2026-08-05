@@ -114,6 +114,18 @@ export default function AdminMarketsPage() {
     return true;
   }), [events, type, sector, stage, geo, q, range]);
 
+  // Distinct companies in the current search — surfaced right under the search
+  // bar with a save star so tracking a company is one obvious tap.
+  const matchCompanies = useMemo(() => {
+    if (!q) return [];
+    const seen = new Map();
+    for (const e of filtered) {
+      if (!e.company_id || seen.has(e.company_id)) continue;
+      seen.set(e.company_id, { id: e.company_id, name: e.company_name, sector: e.sector });
+    }
+    return [...seen.values()].slice(0, 12);
+  }, [filtered, q]);
+
   const agg = useMemo(() => {
     const cap = filtered.filter((e) => e.category === "capital" && e.amount_usd);
     const sum = (a) => a.reduce((s, r) => s + (r.amount_usd || 0), 0);
@@ -190,7 +202,26 @@ export default function AdminMarketsPage() {
         </select>
         {active && <button onClick={() => { setType(""); setSector(""); setStage(""); setGeo(""); setQ(""); setRange("all"); }} className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1"><X size={12} /> Clear</button>}
       </div>
-      <p className="text-[11px] text-slate-400 mb-5">Tap the <span className="text-emerald-600">☆</span> next to any company to add it to your tracked companies — they'll show up in your Saved list.</p>
+      {q && matchCompanies.length > 0 ? (
+        <div className="mb-5">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Matching {matchCompanies.length === 1 ? "company" : "companies"} — tap ☆ to track</p>
+          <div className="flex flex-wrap gap-2">
+            {matchCompanies.map((c) => (
+              <div key={c.id} className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-lg pl-2.5 pr-3 py-1.5">
+                <button onClick={() => toggleTrack(c.id)}
+                  className={`text-sm leading-none ${isSaved(c.id) ? "text-emerald-600" : "text-slate-300 hover:text-emerald-500"}`}
+                  title={isSaved(c.id) ? "Tracked — in your Saved list" : "Track this company"}>
+                  {isSaved(c.id) ? "★" : "☆"}
+                </button>
+                <Link href={`/companies/${c.id}`} className="text-sm font-medium text-slate-800 hover:text-emerald-700">{c.name}</Link>
+                {c.sector && <span className="text-[10px] text-slate-400">{label(c.sector)}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="text-[11px] text-slate-400 mb-5">Click the <span className="text-emerald-600">☆</span> to add to your saved list.</p>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {stat("Capital tracked", usd(agg.capital), `across ${agg.deals} deals`)}
