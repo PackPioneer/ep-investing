@@ -132,7 +132,13 @@ export default function AdminMarketsPage() {
   const wireRows = sortBy === "amount" ? [...wireBase].sort((a, b) => (b.amount_usd || 0) - (a.amount_usd || 0)) : wireBase;
   const wireShown = wireOpen ? wireRows.slice(0, 400) : wireRows.slice(0, 8);
   const quoteAsOf = quotes.map((x) => x.updated_at).filter(Boolean).sort().slice(-1)[0];
-  const stat = (l, v, s) => (<div className="bg-white border border-slate-200 rounded-xl p-4"><p className="text-xs font-mono uppercase tracking-wider text-slate-400">{l}</p><p className="text-2xl font-semibold text-slate-900 mt-1">{v}</p>{s && <p className="text-xs text-slate-400 mt-0.5">{s}</p>}</div>);
+  const stat = (l, v, s, tip) => (
+    <div className="bg-white border border-slate-200 rounded-xl p-4" title={tip || undefined}>
+      <p className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">{l}{tip && <span className="text-slate-300 cursor-help">ⓘ</span>}</p>
+      <p className="text-2xl font-semibold text-slate-900 mt-1">{v}</p>
+      {s && <p className="text-xs text-slate-400 mt-0.5">{s}</p>}
+    </div>
+  );
   const maxT = Math.max(...agg.byType.map((r) => r.capital), 1);
   const maxS = Math.max(...agg.bySector.map((r) => r.capital), 1);
   const maxG = Math.max(...agg.byGeo.map((r) => r.capital), 1);
@@ -190,10 +196,10 @@ export default function AdminMarketsPage() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        {stat("Capital tracked", usd(agg.capital), `${agg.deals} deals`)}
-        {stat("Median round", usd(agg.median), `avg ${usd(agg.avg)}`)}
-        {stat("Events shown", agg.events, active ? "filtered" : `${meta.marketStat || 0} aggregates hidden`)}
-        {stat("Company-linked", filtered.filter((e) => e.company_id).length, `of ${filtered.length} shown`)}
+        {stat("Capital tracked", usd(agg.capital), `across ${agg.deals} deals`, "Total capital across the deals currently shown. The number below is how many separate funding events add up to that total.")}
+        {stat("Median round", usd(agg.median), "midpoint deal size", "The median deal size — half the deals are bigger, half smaller. We show the median instead of the average so a few giant deals don't skew the number.")}
+        {stat("Events shown", agg.events, active ? "filtered" : `${meta.marketStat || 0} market-wide totals set aside`, "Some sources report industry-wide figures (e.g. “global solar investment hit $50B”). Those aren't a single company's deal, so they're kept out of this view and counted separately.")}
+        {stat("In our database", filtered.filter((e) => e.company_id).length, `of ${filtered.length} deals shown`, "How many of the shown deals come from a company that appears in the EP database (has a profile). The rest are companies we've logged a deal for but haven't added a profile for yet.")}
       </div>
 
       <div className="grid md:grid-cols-2 gap-3 mb-3">
