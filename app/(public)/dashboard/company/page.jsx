@@ -7,6 +7,7 @@ import ForYouFeed from "@/components/news/ForYouFeed";
 import PolicyDigestWidget from "@/components/policies/PolicyDigestWidget";
 import MAPulseWidget from "@/components/widgets/MAPulseWidget";
 import SignalWidget from "@/components/widgets/SignalWidget";
+import CompanyAnnouncements from "@/components/dashboard/CompanyAnnouncements";
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public","unknown"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth", public:"Public", unknown:"Unknown" };
 const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_developer","marketplace","mixed"];
@@ -291,6 +292,7 @@ async function deleteDeck() {
   const navItems = [
     { id: "overview", label: "Overview" },
     { id: "for-you", label: "For You" },
+    { id: "announcements", label: "Announcements" },
     { id: "profile", label: "Edit profile" },
     { id: "funding", label: "Raise capital" },
     { id: "jobs", label: "Post a job" },
@@ -534,7 +536,8 @@ async function deleteDeck() {
             </div>
           </div>
         )}
-        {activeTab === "profile" && ( 
+        {activeTab === "announcements" && <CompanyAnnouncements />}
+        {activeTab === "profile" && (
            form ? (<>
           <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
 

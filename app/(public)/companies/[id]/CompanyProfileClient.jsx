@@ -5,6 +5,7 @@ import { formatSector } from "@/lib/sectors";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
+import CompanyNewsroom from "@/components/CompanyNewsroom";
 import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper, Linkedin, Twitter, BadgeCheck } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
@@ -654,6 +655,9 @@ async function postUpdate(e) {
                 Browse all grants →
               </Link>
             </div>
+
+            {/* ANNOUNCEMENTS — hidden if the company has none */}
+            <CompanyNewsroom companyId={company.id} />
 
 {/* POINT OF CONTACT */}
 {company.show_contact && company.primary_contact_email && (

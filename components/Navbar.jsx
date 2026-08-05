@@ -13,6 +13,7 @@ const navItems = [
   { name: "Experts", href: "/experts" },
   { name: "NGOs", href: "/ngos" },
   { name: "Jobs", href: "/jobs" },
+  { name: "Newsroom", href: "/announcements" },
   { name: "Insights", href: "/insights" },
 ];
 
