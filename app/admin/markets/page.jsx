@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { Loader2, X, Bookmark, Bell } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { usePipeline } from "@/components/pipeline/usePipeline";
 
 function usd(n) {
   if (n == null) return "—";
@@ -74,6 +75,8 @@ export default function AdminMarketsPage() {
   const [range, setRange] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const { user } = useUser();
+  const { isSaved, save, unsave } = usePipeline();
+  const toggleTrack = (id) => (isSaved(id) ? unsave(id) : save(id, "watching"));
 
   useEffect(() => {
     fetch("/api/admin/markets").then((r) => r.json()).then((d) => { setEvents(d.events || []); setMeta(d.meta || {}); setLoading(false); }).catch(() => setLoading(false));
@@ -186,21 +189,8 @@ export default function AdminMarketsPage() {
           <option value="12mo">Last 12 months</option>
         </select>
         {active && <button onClick={() => { setType(""); setSector(""); setStage(""); setGeo(""); setQ(""); setRange("all"); }} className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1"><X size={12} /> Clear</button>}
-        {active && <button onClick={saveSearch} className="text-xs text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1"><Bookmark size={12} /> Save search + alert</button>}
       </div>
-      {!active && <p className="text-[11px] text-slate-400 mb-5">Tip: apply a filter, then <span className="text-emerald-700">Save search + alert</span> to get emailed when new matching deals land.</p>}
-
-      {saved.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 mb-5">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 inline-flex items-center gap-1"><Bell size={11} /> Saved</span>
-          {saved.map((s) => (
-            <span key={s.id} className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full pl-3 pr-1.5 py-1">
-              <button onClick={() => applySearch(s.filters)} className="hover:underline">{s.name}</button>
-              <button onClick={() => deleteSearch(s.id)} className="text-emerald-400 hover:text-red-500"><X size={11} /></button>
-            </span>
-          ))}
-        </div>
-      )}
+      <p className="text-[11px] text-slate-400 mb-5">Tap the <span className="text-emerald-600">☆</span> next to any company to add it to your tracked companies — they'll show up in your Saved list.</p>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {stat("Capital tracked", usd(agg.capital), `across ${agg.deals} deals`)}
@@ -241,9 +231,18 @@ export default function AdminMarketsPage() {
                 <tr key={e.id} className="border-t border-slate-100 hover:bg-slate-50">
                   <td className="px-3 py-2 text-slate-400 font-mono whitespace-nowrap">{e.announced_date?.slice(0, 10) || "—"}</td>
                   <td className="px-3 py-2 text-slate-800 font-medium">
-                    {e.company_id
-                      ? <Link href={`/companies/${e.company_id}`} className="hover:text-emerald-700 hover:underline">{e.company_name || "—"}<span className="ml-1 text-emerald-600" title="view profile">›</span></Link>
-                      : (e.company_name || "—")}
+                    <span className="inline-flex items-center gap-1.5">
+                      {e.company_id && (
+                        <button onClick={() => toggleTrack(e.company_id)}
+                          className={`text-sm leading-none ${isSaved(e.company_id) ? "text-emerald-600" : "text-slate-300 hover:text-emerald-500"}`}
+                          title={isSaved(e.company_id) ? "Tracked — in your Saved list" : "Track this company"}>
+                          {isSaved(e.company_id) ? "★" : "☆"}
+                        </button>
+                      )}
+                      {e.company_id
+                        ? <Link href={`/companies/${e.company_id}`} className="hover:text-emerald-700 hover:underline">{e.company_name || "—"}</Link>
+                        : (e.company_name || "—")}
+                    </span>
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-700 whitespace-nowrap">{e.amount_usd ? usd(e.amount_usd) : (e.commercial_volume ? `${e.commercial_volume} ${e.commercial_unit || ""}` : "—")}</td>
                   <td className="px-3 py-2"><span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: (TYPE_COLOR[e.type] || "#64748b") + "22", color: TYPE_COLOR[e.type] || "#64748b" }}>{TYPE_LABELS[e.type] || e.type}</span></td>
