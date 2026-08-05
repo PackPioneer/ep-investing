@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CTA } from "@/lib/announcements/categories";
+import { CTA, CTA_OPTIONS } from "@/lib/announcements/categories";
 
 const CATEGORIES = [
   { id: "partnership", label: "Partnership", hint: "Announce a partnership, JV, offtake, or commercial deal.",
@@ -88,14 +88,9 @@ export default function CompanyAnnouncements() {
           <div className="mt-5 pt-5 border-t border-[#e2e6ed] flex flex-col gap-4">
             <div>
               <label className={labelClass}>Type</label>
-              <div className="flex flex-wrap gap-1.5">
-                {CATEGORIES.map((c) => (
-                  <button key={c.id} onClick={() => { setCat(c.id); setMeta({}); setCtaLabel(CTA[c.id]?.label || "Learn more"); }}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${cat === c.id ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"}`}>
-                    {c.label}
-                  </button>
-                ))}
-              </div>
+              <select value={cat} onChange={(e) => { const id = e.target.value; setCat(id); setMeta({}); setCtaLabel(CTA[id]?.label || "Learn more"); }} className={inputClass}>
+                {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              </select>
               <p className="text-[11px] text-[#a0aec0] mt-1.5">{CATEGORIES.find((c) => c.id === cat)?.hint}</p>
             </div>
 
@@ -120,12 +115,23 @@ export default function CompanyAnnouncements() {
               <textarea rows={3} value={bodyText} onChange={(e) => setBodyText(e.target.value)} placeholder="A sentence or two of context." className={inputClass + " resize-none"} />
             </div>
             <div>
-              <label className={labelClass}>Call to action</label>
+              <label className={labelClass}>Call-to-action button</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <input value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} placeholder="Button label" className={inputClass} />
-                <input value={link} onChange={(e) => setLink(e.target.value)} placeholder={CTA[cat]?.ph || "Action link"} className={inputClass} />
+                <div>
+                  <div className="text-[10px] text-[#a0aec0] mb-1">Button says</div>
+                  <select value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} className={inputClass}>
+                    {CTA_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#a0aec0] mb-1">Button links to</div>
+                  <input value={link} onChange={(e) => setLink(e.target.value)} placeholder={CTA[cat]?.ph || "https://…"} className={inputClass} />
+                </div>
               </div>
-              <p className="text-[11px] text-[#a0aec0] mt-1">Becomes a button on your announcement — e.g. “{ctaLabel || "Learn more"}” pointing wherever you want people to act (demo form, careers page, sales, data room).</p>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-[11px] text-[#a0aec0]">Preview:</span>
+                <span className="inline-block text-xs font-semibold bg-[#2d6a4f] text-white px-3 py-1.5 rounded-lg">{ctaLabel || "Learn more"} →</span>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
