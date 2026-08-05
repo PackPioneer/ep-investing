@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Zap, Clock, CheckCircle } from "lucide-react";
+import { Loader2, Zap, Clock, CheckCircle, ExternalLink } from "lucide-react";
 
 function usd(n) {
   if (n == null) return "—";
@@ -45,6 +45,7 @@ function Row({ name, tag, right, sub, badge, href, external }) {
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="text-sm text-slate-800 font-medium truncate">{name}</span>
+          {external && <ExternalLink size={11} className="text-slate-400 flex-shrink-0" />}
           {badge}
         </div>
         <div className="text-xs text-slate-400">{tag}{sub ? ` · ${sub}` : ""}</div>
@@ -73,9 +74,8 @@ export default function DealflowPage() {
       <div className="flex items-center gap-2 mb-1">
         <Zap size={18} className="text-emerald-600" />
         <h1 className="text-2xl font-bold text-slate-900">Deal flow — who's raising</h1>
-        <span className="text-[10px] font-mono uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">admin preview</span>
       </div>
-      <p className="text-sm text-slate-500 mb-3">Forward-looking view: companies raising now, signalled by the press or their hiring, statistically due, or with fresh momentum. This is the part investors pay for.</p>
+      <p className="text-sm text-slate-500 mb-3">A forward-looking view of climate & energy companies: who's raising now, who looks likely to raise soon, and who just closed a round.</p>
 
       <details className="mb-5 bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-500">
         <summary className="cursor-pointer font-medium text-slate-600 select-none">How these signals are derived</summary>
@@ -108,7 +108,7 @@ export default function DealflowPage() {
         </Panel>
 
         <Panel icon={Clock} color="#d97706" title="Likely raising soon" sub="Statistically due, or hiring like they're about to" count={likelyTotal}>
-          {likelyTotal === 0 && <p className="px-4 py-4 text-xs text-slate-400">Fills as companies get linked to funding history or post hiring bursts.</p>}
+          {likelyTotal === 0 && <p className="px-4 py-4 text-xs text-slate-400">Nothing flagged yet — fills as companies post hiring bursts or their last round ages toward the follow-on window.</p>}
           {(d.hiringSignal || []).map((co) => (
             <Row key={`h${co.id}`} name={co.name} tag={label((co.industry_tags || [])[0]) || "—"}
               sub={`${co.postings} new roles${co.senior ? `, ${co.senior} senior/finance` : ""}`}
@@ -132,6 +132,8 @@ export default function DealflowPage() {
           ))}
         </Panel>
       </div>
+
+      <p className="text-[11px] text-slate-400 mt-4">Sources: EP news wire, SEC filings, and companies self-reporting on EP.</p>
     </div>
   );
 }

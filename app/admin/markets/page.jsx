@@ -71,6 +71,8 @@ export default function AdminMarketsPage() {
   const [quotes, setQuotes] = useState([]);
   const [wireQ, setWireQ] = useState("");
   const [wireOpen, setWireOpen] = useState(false);
+  const [range, setRange] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
   const { user } = useUser();
 
   useEffect(() => {
@@ -80,13 +82,13 @@ export default function AdminMarketsPage() {
   }, []);
 
   const loadSaved = () => fetch("/api/admin/saved-searches").then((r) => r.json()).then((d) => setSaved(Array.isArray(d) ? d : [])).catch(() => {});
-  const currentFilters = () => ({ type, sector, stage, geo, q });
-  const filterName = () => [TYPE_LABELS[type] || type, sector && label(sector), stage && label(stage), geo, q].filter(Boolean).join(" · ") || "All events";
+  const currentFilters = () => ({ type, sector, stage, geo, q, range });
+  const filterName = () => [TYPE_LABELS[type] || type, sector && label(sector), stage && label(stage), geo, q, range !== "all" && range].filter(Boolean).join(" · ") || "All events";
   const saveSearch = async () => {
     await fetch("/api/admin/saved-searches", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: filterName(), filters: currentFilters(), email: user?.primaryEmailAddress?.emailAddress }) });
     loadSaved();
   };
-  const applySearch = (f) => { setType(f.type || ""); setSector(f.sector || ""); setStage(f.stage || ""); setGeo(f.geo || ""); setQ(f.q || ""); };
+  const applySearch = (f) => { setType(f.type || ""); setSector(f.sector || ""); setStage(f.stage || ""); setGeo(f.geo || ""); setQ(f.q || ""); setRange(f.range || "all"); };
   const deleteSearch = async (id) => { await fetch(`/api/admin/saved-searches?id=${id}`, { method: "DELETE" }); loadSaved(); };
 
   const opts = useMemo(() => {
@@ -99,9 +101,15 @@ export default function AdminMarketsPage() {
     if (sector && e.sector !== sector) return false;
     if (stage && e.stage !== stage) return false;
     if (geo && normCountry(e.geography) !== geo) return false;
+    if (range !== "all") {
+      const d = e.announced_date ? new Date(e.announced_date) : null;
+      if (!d) return false;
+      if (range === "ytd") { if (d < new Date(new Date().getFullYear(), 0, 1)) return false; }
+      else { const days = range === "90d" ? 90 : 365; if ((Date.now() - d.getTime()) / 864e5 > days) return false; }
+    }
     if (q) { const s = (e.company_name + " " + (e.counterparty || "") + " " + (e.investors || []).join(" ")).toLowerCase(); if (!s.includes(q.toLowerCase())) return false; }
     return true;
-  }), [events, type, sector, stage, geo, q]);
+  }), [events, type, sector, stage, geo, q, range]);
 
   const agg = useMemo(() => {
     const cap = filtered.filter((e) => e.category === "capital" && e.amount_usd);
@@ -119,9 +127,11 @@ export default function AdminMarketsPage() {
 
   if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-emerald-600" /></div>;
 
-  const active = type || sector || stage || geo || q;
-  const wireRows = wireQ ? filtered.filter((e) => (e.company_name || "").toLowerCase().includes(wireQ.toLowerCase())) : filtered;
-  const wireShown = wireOpen ? wireRows.slice(0, 400) : wireRows.slice(0, 5);
+  const active = type || sector || stage || geo || q || range !== "all";
+  const wireBase = wireQ ? filtered.filter((e) => (e.company_name || "").toLowerCase().includes(wireQ.toLowerCase())) : filtered;
+  const wireRows = sortBy === "amount" ? [...wireBase].sort((a, b) => (b.amount_usd || 0) - (a.amount_usd || 0)) : wireBase;
+  const wireShown = wireOpen ? wireRows.slice(0, 400) : wireRows.slice(0, 8);
+  const quoteAsOf = quotes.map((x) => x.updated_at).filter(Boolean).sort().slice(-1)[0];
   const stat = (l, v, s) => (<div className="bg-white border border-slate-200 rounded-xl p-4"><p className="text-xs font-mono uppercase tracking-wider text-slate-400">{l}</p><p className="text-2xl font-semibold text-slate-900 mt-1">{v}</p>{s && <p className="text-xs text-slate-400 mt-0.5">{s}</p>}</div>);
   const maxT = Math.max(...agg.byType.map((r) => r.capital), 1);
   const maxS = Math.max(...agg.bySector.map((r) => r.capital), 1);
@@ -132,13 +142,12 @@ export default function AdminMarketsPage() {
       <div className="flex items-center gap-2 mb-1">
         <TrendingUp size={18} className="text-emerald-600" />
         <h1 className="text-2xl font-bold text-slate-900">Markets — funding tracker</h1>
-        <span className="text-[10px] font-mono uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">admin preview</span>
       </div>
-      <p className="text-sm text-slate-500 mb-4">Filter by type, sector, stage, or geography — everything recomputes. Aggregates and low-confidence rows are excluded.</p>
+      <p className="text-sm text-slate-500 mb-4">Every climate & energy funding event we track — filter by type, sector, stage, date, or geography and it all recomputes.</p>
 
       {quotes.filter((q) => q.price).length > 0 && (
         <div className="mb-5">
-          <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">EP Climate basket — public markets</p>
+          <p className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">EP Climate basket — public markets{quoteAsOf && <span className="ml-2 normal-case tracking-normal text-slate-300">prices as of {new Date(quoteAsOf).toLocaleDateString()}</span>}</p>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {quotes.filter((q) => q.price).map((q) => (
               <div key={q.ticker} className="flex-shrink-0 bg-white border border-slate-200 rounded-lg px-3 py-2 min-w-[110px]">
@@ -151,15 +160,22 @@ export default function AdminMarketsPage() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-2 mb-5">
+      <div className="flex flex-wrap items-center gap-2 mb-2">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search company or investor…" className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 w-56 focus:outline-none focus:border-emerald-400" />
         <Select value={type} onChange={setType} options={opts.types} placeholder="All types" />
         <Select value={sector} onChange={setSector} options={opts.sectors} placeholder="All sectors" />
         <Select value={stage} onChange={setStage} options={opts.stages} placeholder="All stages" />
         <Select value={geo} onChange={setGeo} options={opts.geos} placeholder="All geographies" />
-        {active && <button onClick={() => { setType(""); setSector(""); setStage(""); setGeo(""); setQ(""); }} className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1"><X size={12} /> Clear</button>}
+        <select value={range} onChange={(e) => setRange(e.target.value)} className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:border-emerald-400">
+          <option value="all">All time</option>
+          <option value="90d">Last 90 days</option>
+          <option value="ytd">Year to date</option>
+          <option value="12mo">Last 12 months</option>
+        </select>
+        {active && <button onClick={() => { setType(""); setSector(""); setStage(""); setGeo(""); setQ(""); setRange("all"); }} className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1"><X size={12} /> Clear</button>}
         {active && <button onClick={saveSearch} className="text-xs text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1"><Bookmark size={12} /> Save search + alert</button>}
       </div>
+      {!active && <p className="text-[11px] text-slate-400 mb-5">Tip: apply a filter, then <span className="text-emerald-700">Save search + alert</span> to get emailed when new matching deals land.</p>}
 
       {saved.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-5">
@@ -175,21 +191,32 @@ export default function AdminMarketsPage() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {stat("Capital tracked", usd(agg.capital), `${agg.deals} deals`)}
-        {stat("Avg round", usd(agg.avg), `median ${usd(agg.median)}`)}
+        {stat("Median round", usd(agg.median), `avg ${usd(agg.avg)}`)}
         {stat("Events shown", agg.events, active ? "filtered" : `${meta.marketStat || 0} aggregates hidden`)}
-        {stat("Company-linked", filtered.filter((e) => e.company_id).length, `${filtered.filter((e) => !e.company_id).length} to add`)}
+        {stat("Company-linked", filtered.filter((e) => e.company_id).length, `of ${filtered.length} shown`)}
       </div>
 
       <div className="grid md:grid-cols-2 gap-3 mb-3">
         <Bars rows={agg.byType} max={maxT} title="Capital by type" />
         <Bars rows={agg.bySector} max={maxS} title="Capital by sector" />
       </div>
-      <div className="mb-5"><Bars rows={agg.byGeo} max={maxG} title="Capital by geography" /></div>
+      <div className="mb-5">
+        <Bars rows={agg.byGeo} max={maxG} title="Capital by geography" />
+        <p className="text-[11px] text-slate-400 mt-1">Country-tagged deals only — region-wide events (e.g. "Europe") are excluded, so this won't sum to total capital.</p>
+      </div>
 
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-2">
           <p className="text-xs font-mono uppercase tracking-wider text-slate-400">Funding wire ({wireRows.length})</p>
-          <input value={wireQ} onChange={(e) => setWireQ(e.target.value)} placeholder="Search companies…" className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-emerald-400" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-[10px] font-mono text-slate-400">
+              <span>sort</span>
+              <button onClick={() => setSortBy("date")} className={sortBy === "date" ? "text-emerald-700" : "hover:text-slate-600"}>date</button>
+              <span>·</span>
+              <button onClick={() => setSortBy("amount")} className={sortBy === "amount" ? "text-emerald-700" : "hover:text-slate-600"}>amount</button>
+            </div>
+            <input value={wireQ} onChange={(e) => setWireQ(e.target.value)} placeholder="Search companies…" className="text-xs border border-slate-200 rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-emerald-400" />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -216,12 +243,14 @@ export default function AdminMarketsPage() {
             </tbody>
           </table>
         </div>
-        {wireRows.length > 5 && (
+        {wireRows.length > 8 && (
           <button onClick={() => setWireOpen((v) => !v)} className="w-full text-xs text-emerald-700 hover:bg-slate-50 py-2.5 border-t border-slate-100">
-            {wireOpen ? "Show less" : `Show ${wireRows.length - 5} more`}
+            {wireOpen ? "Show less" : `Show ${wireRows.length - 8} more`}
           </button>
         )}
       </div>
+
+      <p className="text-[11px] text-slate-400 mt-4">Sources: EP news wire, SEC filings, and companies self-reporting on EP. Aggregates and low-confidence rows are excluded.</p>
     </div>
   );
 }
