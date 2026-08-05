@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { Loader2, TrendingUp, X, Bookmark, Bell } from "lucide-react";
+import { Loader2, X, Bookmark, Bell } from "lucide-react";
 
 function usd(n) {
   if (n == null) return "—";
@@ -133,8 +133,16 @@ export default function AdminMarketsPage() {
   const wireShown = wireOpen ? wireRows.slice(0, 400) : wireRows.slice(0, 8);
   const quoteAsOf = quotes.map((x) => x.updated_at).filter(Boolean).sort().slice(-1)[0];
   const stat = (l, v, s, tip) => (
-    <div className="bg-white border border-slate-200 rounded-xl p-4" title={tip || undefined}>
-      <p className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">{l}{tip && <span className="text-slate-300 cursor-help">ⓘ</span>}</p>
+    <div className="bg-white border border-slate-200 rounded-xl p-4">
+      <p className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">
+        {l}
+        {tip && (
+          <span className="relative group cursor-help">
+            <span className="text-slate-300">ⓘ</span>
+            <span className="pointer-events-none absolute left-0 top-6 z-30 hidden group-hover:block w-60 rounded-lg bg-slate-800 text-white text-[11px] leading-snug font-normal normal-case tracking-normal px-3 py-2 shadow-lg">{tip}</span>
+          </span>
+        )}
+      </p>
       <p className="text-2xl font-semibold text-slate-900 mt-1">{v}</p>
       {s && <p className="text-xs text-slate-400 mt-0.5">{s}</p>}
     </div>
@@ -146,7 +154,6 @@ export default function AdminMarketsPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center gap-2 mb-1">
-        <TrendingUp size={18} className="text-emerald-600" />
         <h1 className="text-2xl font-bold text-slate-900">Markets — funding tracker</h1>
       </div>
       <p className="text-sm text-slate-500 mb-4">Every climate & energy funding event we track — filter by type, sector, stage, date, or geography and it all recomputes.</p>
