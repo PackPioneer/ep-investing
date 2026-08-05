@@ -16,7 +16,7 @@ const daysAgo = (d) => d ? Math.round((Date.now() - new Date(d).getTime()) / (10
 const BADGE = {
   self: "bg-emerald-50 text-emerald-700 border-emerald-200",
   press: "bg-sky-50 text-sky-700 border-sky-200",
-  dormant: "bg-amber-50 text-amber-700 border-amber-200",
+  due: "bg-amber-50 text-amber-700 border-amber-200",
   hiring: "bg-violet-50 text-violet-700 border-violet-200",
 };
 function Badge({ kind, children }) {
@@ -28,7 +28,7 @@ function Panel({ icon: Icon, color, title, sub, count, children }) {
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div className="px-4 py-3 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <Icon size={15} style={{ color }} />
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
           <span className="text-sm font-semibold text-slate-900">{title}</span>
           <span className="text-xs font-mono text-slate-400">{count}</span>
         </div>
@@ -72,7 +72,6 @@ export default function DealflowPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center gap-2 mb-1">
-        <Zap size={18} className="text-emerald-600" />
         <h1 className="text-2xl font-bold text-slate-900">Deal flow — who's raising</h1>
       </div>
       <p className="text-sm text-slate-500 mb-3">A forward-looking view of climate & energy companies: who's raising now, who looks likely to raise soon, and who just closed a round.</p>
@@ -81,9 +80,9 @@ export default function DealflowPage() {
         <summary className="cursor-pointer font-medium text-slate-600 select-none">How these signals are derived</summary>
         <div className="mt-3 space-y-2 leading-relaxed">
           <p><span className="font-medium text-slate-700">Currently raising.</span> <span className="text-emerald-700">Verified</span> = the company self-reported on EP. <span className="text-sky-700">Press</span> = we detected news language that the company is actively seeking capital (round open, not yet closed).</p>
-          <p><span className="font-medium text-slate-700">Likely raising soon.</span> <span className="text-amber-700">Dormant</span> = the last known round closed 18–33 months ago, the typical window before a follow-on raise. <span className="text-violet-700">Hiring</span> = a recent burst of open roles (especially senior finance/BD), which tends to precede expansion and a new raise.</p>
+          <p><span className="font-medium text-slate-700">Likely raising soon.</span> <span className="text-amber-700">Due</span> = the last equity round closed 12–18 months ago — the typical window before a follow-on raise. <span className="text-violet-700">Hiring</span> = a recent burst of open roles (especially senior finance/BD), which tends to precede expansion and a new raise.</p>
           <p><span className="font-medium text-slate-700">Recently raised.</span> Rounds that closed in the last ~4 months.</p>
-          <p className="text-slate-400 border-t border-slate-100 pt-2"><span className="font-medium">Disclaimer:</span> Verified and Recently raised are factual. Dormant, Hiring, and Press are <em>inferred</em> signals, not confirmations — a company shown here may not be raising, and absence here doesn't mean it isn't.</p>
+          <p className="text-slate-400 border-t border-slate-100 pt-2"><span className="font-medium">Disclaimer:</span> Verified and Recently raised are factual. Due, Hiring, and Press are <em>inferred</em> signals, not confirmations — a company shown here may not be raising, and absence here doesn't mean it isn't.</p>
         </div>
       </details>
 
@@ -120,7 +119,7 @@ export default function DealflowPage() {
             <Row key={`d${co.id}`} name={co.name} tag={label((co.industry_tags || [])[0]) || label(co.last_round?.sector) || "—"}
               sub={`last: ${label(co.last_round?.stage) || co.last_round?.type} ${usd(co.last_round?.amount_usd)}`}
               right={`${monthsAgo(co.last_round?.announced_date)}mo ago`}
-              badge={<Badge kind="dormant">dormant</Badge>}
+              badge={<Badge kind="due">due</Badge>}
               href={`/companies/${co.id}`} />
           ))}
         </Panel>
