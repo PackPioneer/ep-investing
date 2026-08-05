@@ -24,12 +24,12 @@ const clerkAppearance = {
   elements: {
     rootBox: "w-full",
     cardBox: "w-full shadow-none",
-    card: "shadow-none border border-[#e2e6ed] bg-white rounded-2xl",
+    card: "shadow-none border border-[#e8eaee] bg-white rounded-2xl",
     header: "hidden",
     formButtonPrimary:
       "bg-[#2d6a4f] hover:bg-[#235a40] text-sm font-semibold normal-case shadow-none",
     formFieldInput:
-      "border-[#d0d6e0] focus:border-[#2d6a4f] focus:ring-0 rounded-lg",
+      "border-[#dbdfe4] focus:border-[#2d6a4f] focus:ring-0 rounded-lg",
     formFieldLabel: "text-[#0f1a14]",
     footerActionLink: "text-[#2d6a4f] hover:text-[#235a40]",
     identityPreviewEditButtonIcon: "text-[#2d6a4f]",
@@ -44,7 +44,7 @@ function SignUpInner() {
 
   return (
     <div
-      className="min-h-screen bg-[#f2f4f8] px-6 py-16 flex items-center justify-center"
+      className="min-h-screen bg-[#f6f7f9] px-6 py-16 flex items-center justify-center"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
     >
       <div className="max-w-4xl w-full grid md:grid-cols-2 gap-10 md:gap-14 items-center">
@@ -66,7 +66,7 @@ function SignUpInner() {
           <div className="flex flex-col gap-3">
             {FEATURES.map(({ icon: Icon, title, sub }) => (
               <div key={title} className="flex items-start gap-3">
-                <div className="mt-0.5 w-8 h-8 rounded-lg bg-white border border-[#e2e6ed] flex items-center justify-center flex-shrink-0">
+                <div className="mt-0.5 w-8 h-8 rounded-lg bg-white border border-[#e8eaee] flex items-center justify-center flex-shrink-0">
                   <Icon size={15} className="text-[#2d6a4f]" />
                 </div>
                 <div>

@@ -12,7 +12,7 @@ const SECTORS = [
   "methane", "air-quality", "water", "waste", "environmental-justice", "agriculture", "forestry",
 ];
 
-const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-2.5 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
+const inputClass = "w-full bg-white border border-[#dbdfe4] rounded-lg px-4 py-2.5 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function EditGrant() {
@@ -83,7 +83,7 @@ export default function EditGrant() {
         <ArrowLeft size={14} /> All grants
       </Link>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+      <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
 
         {saved && (
           <div className="mb-5 p-3 bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] rounded-lg flex items-center justify-between gap-2.5 text-[#2d6a4f] text-sm">
@@ -145,7 +145,7 @@ export default function EditGrant() {
                   className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
                     form.industry_tags.includes(s)
                       ? "border-[#2d6a4f] bg-[#2d6a4f] text-white"
-                      : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
+                      : "border-[#e8eaee] text-[#4a5568] hover:border-[#2d6a4f]"
                   }`}>
                   {s.replace(/-/g, " ")}
                 </button>
@@ -153,7 +153,7 @@ export default function EditGrant() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-3 border-t border-[#e2e6ed]">
+          <div className="flex justify-end pt-3 border-t border-[#e8eaee]">
             <button onClick={handleSave} disabled={!valid || saving}
               className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-40 transition-colors">
               <Save size={13} /> {saving ? "Saving..." : "Save changes"}

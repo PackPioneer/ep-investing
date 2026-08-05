@@ -24,14 +24,14 @@ function ProgressBar({ step }) {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border transition-all ${
               i + 1 < step ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" :
               i + 1 === step ? "bg-white border-[#2d6a4f] text-[#2d6a4f]" :
-              "bg-white border-[#d0d6e0] text-[#a0aec0]"
+              "bg-white border-[#dbdfe4] text-[#a0aec0]"
             }`}>
               {i + 1 < step ? <CheckCircle size={14} /> : i + 1}
             </div>
             <span className={`text-[10px] font-mono ${i + 1 === step ? "text-[#2d6a4f]" : "text-[#a0aec0]"}`}>{s}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e2e6ed]"}`} />
+            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e8eaee]"}`} />
           )}
         </div>
       ))}
@@ -39,7 +39,7 @@ function ProgressBar({ step }) {
   );
 }
 
-const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
+const inputClass = "w-full bg-white border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function CompanyOnboarding() {
@@ -79,7 +79,7 @@ export default function CompanyOnboarding() {
   };
 
   if (done) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={32} className="text-[#2d6a4f]" />
@@ -99,7 +99,7 @@ export default function CompanyOnboarding() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-xl mx-auto px-6 py-16">
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
@@ -111,7 +111,7 @@ export default function CompanyOnboarding() {
 
         <ProgressBar step={step} />
 
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-8">
 
           {/* STEP 1 — Basics */}
           {step === 1 && (
@@ -156,12 +156,12 @@ export default function CompanyOnboarding() {
                 <div className="flex flex-wrap gap-2 mt-1">
                   {SECTORS.map(s => (
                     <button key={s} type="button" onClick={() => set("sector", s)}
-                      className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
+                      className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e8eaee] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
                       {s.replace(/_/g, " ")}
                     </button>
                   ))}
                   <button type="button" onClick={() => set("sector", "other")}
-                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === "other" ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${form.sector === "other" ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e8eaee] text-[#4a5568] hover:border-[#2d6a4f]"}`}>
                     other
                   </button>
                 </div>
@@ -207,15 +207,15 @@ export default function CompanyOnboarding() {
                 <div className="flex flex-col gap-2.5 mt-1">
                   {SIGNALS.map(({ key, icon: Icon, label, sublabel, color: c }) => (
                     <button key={key} type="button" onClick={() => toggle(key)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${form[key] ? `${c.bg} ${c.border} ring-1 ${c.ring}` : "bg-slate-50 border-[#e2e6ed] hover:border-[#c8d8cc]"}`}>
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${form[key] ? c.bg : "bg-white border border-[#e2e6ed]"}`}>
+                      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${form[key] ? `${c.bg} ${c.border} ring-1 ${c.ring}` : "bg-slate-50 border-[#e8eaee] hover:border-[#c8d8cc]"}`}>
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${form[key] ? c.bg : "bg-white border border-[#e8eaee]"}`}>
                         <Icon size={16} className={form[key] ? c.icon : "text-[#a0aec0]"} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium ${form[key] ? "text-[#0f1a14]" : "text-[#4a5568]"}`}>{label}</p>
                         <p className="text-xs text-[#a0aec0] mt-0.5">{sublabel}</p>
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${form[key] ? `${c.check} border-transparent` : "border-[#d0d6e0]"}`}>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${form[key] ? `${c.check} border-transparent` : "border-[#dbdfe4]"}`}>
                         {form[key] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                       </div>
                     </button>
@@ -224,7 +224,7 @@ export default function CompanyOnboarding() {
               </div>
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(1)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={() => setStep(3)} disabled={!form.sector || !form.description}
@@ -243,23 +243,23 @@ export default function CompanyOnboarding() {
                 <p className="text-xs text-[#718096]">Let investors and partners contact you directly.</p>
               </div>
 
-              <div className="flex items-center justify-between bg-[#f8f9fb] border border-[#e2e6ed] rounded-xl p-4">
+              <div className="flex items-center justify-between bg-[#fafbfc] border border-[#e8eaee] rounded-xl p-4">
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14]">Show as point of contact</div>
                   <div className="text-xs text-[#718096] mt-0.5">Investors can see your contact info on your company profile</div>
                 </div>
                 <button onClick={() => set("show_contact", !form.show_contact)}
-                  className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${form.show_contact ? "bg-[#2d6a4f]" : "bg-[#d0d6e0]"}`}>
+                  className={`w-11 h-6 rounded-full transition-colors relative flex-shrink-0 ${form.show_contact ? "bg-[#2d6a4f]" : "bg-[#dbdfe4]"}`}>
                   <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${form.show_contact ? "left-6" : "left-1"}`} />
                 </button>
               </div>
 
               {form.show_contact && (
                 <div className="flex flex-col gap-4">
-                  <div className="border border-[#e2e6ed] rounded-xl p-4">
+                  <div className="border border-[#e8eaee] rounded-xl p-4">
                     <div className="text-xs font-mono text-[#2d6a4f] uppercase tracking-wide mb-3">Primary contact</div>
                     <button onClick={() => { set("primary_contact_name", form.contact_name); set("primary_contact_email", form.contact_email); }}
-                      className="text-xs border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#eef1f6] mb-3">
+                      className="text-xs border border-[#2d6a4f] text-[#2d6a4f] px-3 py-1.5 rounded-lg hover:bg-[#f2f4f6] mb-3">
                       Use my details
                     </button>
                     <div className="flex flex-col gap-3">
@@ -276,7 +276,7 @@ export default function CompanyOnboarding() {
                     </div>
                   </div>
 
-                  <div className="border border-[#e2e6ed] rounded-xl p-4">
+                  <div className="border border-[#e8eaee] rounded-xl p-4">
                     <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-3">Secondary contact (optional)</div>
                     <div className="flex flex-col gap-3">
                       <div>
@@ -296,7 +296,7 @@ export default function CompanyOnboarding() {
 
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(2)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={() => setStep(4)}
@@ -311,7 +311,7 @@ export default function CompanyOnboarding() {
           {step === 4 && (
             <div className="flex flex-col gap-5">
               <h2 className="font-semibold text-[#0f1a14] mb-1">Confirm your details</h2>
-              <div className="bg-[#f8f9fb] rounded-xl border border-[#e2e6ed] p-5 flex flex-col gap-3">
+              <div className="bg-[#fafbfc] rounded-xl border border-[#e8eaee] p-5 flex flex-col gap-3">
                 {[
                   { label: "Company", value: form.company_name },
                   { label: "Website", value: form.website },
@@ -332,13 +332,13 @@ export default function CompanyOnboarding() {
                   </div>
                 ))}
                 {form.description && (
-                  <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
+                  <div className="flex gap-3 text-sm pt-2 border-t border-[#e8eaee]">
                     <span className="text-[#718096] font-mono text-xs w-24 flex-shrink-0 pt-0.5">About</span>
                     <span className="text-[#4a5568] line-clamp-3 text-xs leading-relaxed">{form.description}</span>
                   </div>
                 )}
                 {(form.looking_to_raise || form.is_hiring || form.seeking_partnerships) && (
-                  <div className="flex gap-3 text-sm pt-2 border-t border-[#e2e6ed]">
+                  <div className="flex gap-3 text-sm pt-2 border-t border-[#e8eaee]">
                     <span className="text-[#718096] font-mono text-xs w-24 flex-shrink-0 pt-0.5">Signals</span>
                     <div className="flex flex-wrap gap-1.5">
                       {form.looking_to_raise && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Raising</span>}
@@ -358,7 +358,7 @@ export default function CompanyOnboarding() {
               </label>
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(3)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={handleSubmit} disabled={loading || !agreedToTerms}

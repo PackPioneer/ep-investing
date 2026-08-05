@@ -39,7 +39,7 @@ export default function CollapsibleCard({
   const metaSize = dense ? "text-[10px]" : "text-[11px]";
   const summarySize = dense ? "text-[11px]" : "text-xs";
   const iconSize = dense ? 10 : 12;
-  const borderColor = expanded ? "border-[#2d6a4f]" : "border-[#e2e6ed]";
+  const borderColor = expanded ? "border-[#2d6a4f]" : "border-[#e8eaee]";
 
   function handleToggle() {
     setExpanded((v) => !v);
@@ -106,7 +106,7 @@ export default function CollapsibleCard({
           className={`${dense ? "px-2.5 pb-2" : "px-3 pb-3"}`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className={`pt-2 border-t border-[#e2e6ed]`}>
+          <div className={`pt-2 border-t border-[#e8eaee]`}>
             {summary && (
               <p className={`${summarySize} text-[#4a5568] leading-relaxed mb-2`}>
                 {summary}

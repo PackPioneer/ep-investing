@@ -88,7 +88,7 @@ export default function ClaimCompanyPage() {
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           We'll verify your company and reach out to {form.contact_email} within 1–2 business days to complete your listing.
         </p>
-        <Link href="/search" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+        <Link href="/search" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
           Browse companies <ArrowRight size={14} />
         </Link>
       </div>
@@ -96,12 +96,12 @@ export default function ClaimCompanyPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#f2f4f6] rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             For Companies
           </div>
@@ -132,7 +132,7 @@ export default function ClaimCompanyPage() {
                   className={`text-left rounded-2xl border p-8 transition-all ${
                     selectedPlan === plan.id
                       ? "border-[#2d6a4f] bg-[rgba(200,245,96,0.04)]"
-                      : "border-[#e2e6ed] bg-[#ffffff] hover:border-[#d0d6e0]"
+                      : "border-[#e8eaee] bg-[#ffffff] hover:border-[#dbdfe4]"
                   }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -159,8 +159,8 @@ export default function ClaimCompanyPage() {
                   </ul>
                   <div className={`mt-6 w-full py-2.5 rounded-lg text-sm font-semibold text-center transition-all ${
                     selectedPlan === plan.id
-                      ? "bg-[#2d6a4f] text-[#f2f4f8]"
-                      : "bg-[#f8f9fb] text-[#4a5568] border border-[#d0d6e0]"
+                      ? "bg-[#2d6a4f] text-[#f6f7f9]"
+                      : "bg-[#fafbfc] text-[#4a5568] border border-[#dbdfe4]"
                   }`}>
                     {selectedPlan === plan.id ? "✓ Selected" : "Select plan"}
                   </div>
@@ -170,7 +170,7 @@ export default function ClaimCompanyPage() {
 
             <div className="text-center">
               <button onClick={() => setStep(2)}
-                className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-8 py-3.5 hover:bg-[#235a40] transition-all">
+                className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg px-8 py-3.5 hover:bg-[#235a40] transition-all">
                 Continue with {PLANS.find(p => p.id === selectedPlan)?.name}
                 <ArrowRight size={14} />
               </button>
@@ -185,11 +185,11 @@ export default function ClaimCompanyPage() {
               ← Back to plans
             </button>
 
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
+            <div className="bg-[#ffffff] border border-[#e8eaee] rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e8eaee]">
                 <Building2 size={18} className="text-[#2d6a4f]" />
                 <h2 className="font-semibold text-[#0f1a14]">Company details</h2>
-                <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6]">
+                <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6]">
                   {PLANS.find(p => p.id === selectedPlan)?.name}
                 </span>
               </div>
@@ -213,7 +213,7 @@ export default function ClaimCompanyPage() {
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       required={field.required}
-                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
+                      className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
                     />
                   </div>
                 ))}
@@ -228,12 +228,12 @@ export default function ClaimCompanyPage() {
                     onChange={handleChange}
                     placeholder="What does your company do? What's your core technology?"
                     rows={3}
-                    className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
+                    className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
                   />
                 </div>
 
                 <button type="submit" disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
                   {loading ? "Submitting…" : "Submit claim request"}
                   {!loading && <ArrowRight size={14} />}
                 </button>

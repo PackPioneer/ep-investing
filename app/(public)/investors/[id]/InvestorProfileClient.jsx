@@ -60,13 +60,13 @@ function IntroForm({ investor }) {
       <input
         type="email" value={email} onChange={e => setEmail(e.target.value)}
         placeholder="Your email" required
-        className="w-full px-3 py-2.5 rounded-lg border border-[#d0d6e0] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#dbdfe4] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors"
       />
       <textarea
         value={message} onChange={e => setMessage(e.target.value)}
         placeholder="Brief intro — company name, stage, what you're raising…"
         rows={3}
-        className="w-full px-3 py-2.5 rounded-lg border border-[#d0d6e0] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#dbdfe4] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
       />
       <button
         type="submit"
@@ -93,13 +93,13 @@ export default function InvestorProfilePage() {
   }, [id]);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (!investor) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center text-[#4a5568]">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center text-[#4a5568]">
       Investor not found.
     </div>
   );
@@ -111,7 +111,7 @@ export default function InvestorProfilePage() {
   const decisionMakers = investor.decision_makers || [];
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         <Link href="/investors" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
@@ -124,19 +124,19 @@ export default function InvestorProfilePage() {
           <div className="lg:col-span-2 flex flex-col gap-6">
 
             {/* HERO CARD */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-8">
               <div className="flex items-start gap-5 mb-6">
                 {investor.logo_url ? (
                   <>
                     <img src={investor.logo_url} alt={investor.name}
-                      className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e2e6ed] flex-shrink-0"
+                      className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e8eaee] flex-shrink-0"
                       onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
-                    <div style={{ display: "none" }} className="w-16 h-16 rounded-xl bg-[#eef1f6] items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+                    <div style={{ display: "none" }} className="w-16 h-16 rounded-xl bg-[#f2f4f6] items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
                       {(investor.name || "?")[0].toUpperCase()}
                     </div>
                   </>
                 ) : (
-                  <div className="w-16 h-16 rounded-xl bg-[#eef1f6] flex items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+                  <div className="w-16 h-16 rounded-xl bg-[#f2f4f6] flex items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
                     {(investor.name || "?")[0].toUpperCase()}
                   </div>
                 )}
@@ -179,7 +179,7 @@ export default function InvestorProfilePage() {
 
             {/* INVESTMENT THESIS */}
             {investor.thesis && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Target size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investment Thesis</h2>
@@ -190,7 +190,7 @@ export default function InvestorProfilePage() {
 
             {/* INVESTMENT STAGES */}
             {stages.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investment Stages</h2>
@@ -209,14 +209,14 @@ export default function InvestorProfilePage() {
 
             {/* DECISION MAKERS */}
             {decisionMakers.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Users size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Key People</h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {decisionMakers.map((person, i) => (
-                    <span key={i} className="px-3 py-2 rounded-lg text-sm bg-[#f8f9fb] border border-[#d0d6e0] text-[#4a5568]">
+                    <span key={i} className="px-3 py-2 rounded-lg text-sm bg-[#fafbfc] border border-[#dbdfe4] text-[#4a5568]">
                       {person}
                     </span>
                   ))}
@@ -225,7 +225,7 @@ export default function InvestorProfilePage() {
             )}
 
             {/* PORTFOLIO — placeholder for future enrichment */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
               <div className="flex items-center gap-2 mb-4">
                 <Briefcase size={16} className="text-[#2d6a4f]" />
                 <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Portfolio Companies</h2>
@@ -244,7 +244,7 @@ export default function InvestorProfilePage() {
           <div className="flex flex-col gap-5">
 
             {/* QUICK FACTS */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-5">Quick Facts</h3>
               <div className="flex flex-col gap-4">
                 {investor.fund_size && (
@@ -294,14 +294,14 @@ export default function InvestorProfilePage() {
               {website && (
                 <a href={website.startsWith("http") ? website : `https://${website}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#d0d6e0] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#dbdfe4] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                   <Globe size={14} /> Visit website
                 </a>
               )}
             </div>
 
             {/* REQUEST INTRO */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-1">
                 Request an introduction
               </h3>

@@ -29,7 +29,7 @@ function AutoRedirect() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
@@ -282,7 +282,7 @@ async function deleteDeck() {
   ] : [];
 
   if (loading) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
   );
@@ -329,7 +329,7 @@ async function deleteDeck() {
         ))}
       </div>
 
-      <div className="flex-1 bg-[#f2f4f8] p-4 md:p-8 overflow-auto">
+      <div className="flex-1 bg-[#f6f7f9] p-4 md:p-8 overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <button className="md:hidden mr-3 text-[#0f1a14]" onClick={() => setSidebarOpen(true)}>
             <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -341,7 +341,7 @@ async function deleteDeck() {
           </h1>
           {company?.id && (
             <a href={"/companies/" + company.id} target="_blank" rel="noopener noreferrer"
-              className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+              className="text-xs font-semibold border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#f2f4f6] transition-colors">
               Preview public profile
             </a>
           )}
@@ -351,7 +351,7 @@ async function deleteDeck() {
           <div className="flex flex-col gap-4">
 
             {briefing.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
                   <span className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">This just in</span>
@@ -397,44 +397,44 @@ async function deleteDeck() {
             )}
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Open Jobs</div>
                 <div className="text-2xl font-semibold text-[#0f1a14]">{jobs.length}</div>
               </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Updates Posted</div>
                 <div className="text-2xl font-semibold text-[#0f1a14]">{updates.length}</div>
               </div>
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1">Profile Views</div>
                 <div className="text-2xl font-semibold text-[#0f1a14]">--</div>
               </div>
             </div>
 
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+            <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
               <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Quick Actions</div>
               <div className="flex gap-3 flex-wrap">
                 <button onClick={() => setActiveTab("jobs")}
-                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#f2f4f6] transition-colors">
                   Add job posting
                 </button>
                 <button onClick={() => { setActiveTab("updates"); setShowUpdateForm(true); }}
-                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#f2f4f6] transition-colors">
                   Post an update
                 </button>
                 <button onClick={() => setActiveTab("funding")}
-                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#eef1f6] transition-colors">
+                  className="text-sm border border-[#2d6a4f] text-[#2d6a4f] px-4 py-2 rounded-lg hover:bg-[#f2f4f6] transition-colors">
                   Upload pitch deck
                 </button>
               </div>
             </div>
 
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-xl p-6">
               <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Profile Completeness</div>
               <div className="flex flex-col gap-3">
                 {profileChecks.map(({ label, done }) => (
                   <div key={label} className={"flex items-center gap-2.5 text-sm " + (done ? "text-[#2d6a4f]" : "text-[#718096]")}>
-                    <div className={"w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 " + (done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#d0d6e0]")}>
+                    <div className={"w-5 h-5 rounded-full border flex items-center justify-center text-xs flex-shrink-0 " + (done ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" : "border-[#dbdfe4]")}>
                       {done ? "✓" : ""}
                     </div>
                     {label}
@@ -444,7 +444,7 @@ async function deleteDeck() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Jobs</div>
                   <button onClick={() => setActiveTab("jobs")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all</button>
@@ -469,7 +469,7 @@ async function deleteDeck() {
                 )}
               </div>
 
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">Recent Updates</div>
                   <button onClick={() => setActiveTab("updates")} className="text-xs text-[#2d6a4f] font-mono hover:underline">View all</button>
@@ -479,7 +479,7 @@ async function deleteDeck() {
                     {updates.slice(0, 3).map(u => (
                       <div key={u.id}>
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
+                          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] capitalize">{u.type}</span>
                           <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                         </div>
                         <p className="text-sm font-medium text-[#0f1a14]">{u.title}</p>
@@ -539,51 +539,51 @@ async function deleteDeck() {
         {activeTab === "announcements" && <CompanyAnnouncements />}
         {activeTab === "profile" && (
            form ? (<>
-          <form onSubmit={saveProfile} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+          <form onSubmit={saveProfile} className="bg-white border border-[#e8eaee] rounded-2xl p-7">
 
             <div className="text-base font-semibold text-[#0f1a14] mb-1">Profile settings</div>
             <p className="text-xs text-[#718096] mb-6">Edit how your company appears across the platform.</p>
 
             {/* SECTION A — IDENTITY */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">Identity</div>
               <div className="flex flex-col gap-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Tagline</label>
                   <input type="text" placeholder='e.g. "Climate intelligence for the energy transition"' value={form.tagline || ""}
                     onChange={e => setForm(p => ({ ...p, tagline: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Website URL</label>
                   <input type="url" placeholder="https://yourcompany.com" value={form.url}
                     onChange={e => setForm(p => ({ ...p, url: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Description</label>
                   <textarea rows={4} placeholder="What does your company do? Who are you serving?" value={form.description}
                     onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-vertical" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-vertical" />
                 </div>
               </div>
             </div>
 
             {/* SECTION B — ABOUT */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">About the company</div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Founded year</label>
                   <input type="number" placeholder="2024" value={form.founding_year || ""}
                     onChange={e => setForm(p => ({ ...p, founding_year: e.target.value ? parseInt(e.target.value) : null }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Company size</label>
                   <select value={form.employee_count || ""}
                     onChange={e => setForm(p => ({ ...p, employee_count: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="">Select size</option>
                     <option value="1-10">1-10 employees</option>
                     <option value="11-50">11-50 employees</option>
@@ -596,25 +596,25 @@ async function deleteDeck() {
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Headquarters city</label>
                   <input type="text" placeholder="e.g. San Francisco" value={form.headquarters_city || ""}
                     onChange={e => setForm(p => ({ ...p, headquarters_city: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Headquarters country</label>
                   <input type="text" placeholder="e.g. United States" value={form.headquarters_country || ""}
                     onChange={e => setForm(p => ({ ...p, headquarters_country: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
             </div>
 
             {/* SECTION C — SECTOR & BUSINESS MODEL */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">Sector & business model</div>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Funding stage</label>
                   <select value={form.funding_stage} onChange={e => setForm(p => ({ ...p, funding_stage: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="unknown">Select stage</option>
                     <option value="pre_seed">Pre-seed</option>
                     <option value="seed">Seed</option>
@@ -628,7 +628,7 @@ async function deleteDeck() {
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Business model</label>
                   <select value={form.business_model} onChange={e => setForm(p => ({ ...p, business_model: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="">Select model</option>
                     <option value="b2b">B2B</option>
                     <option value="b2c">B2C</option>
@@ -644,12 +644,12 @@ async function deleteDeck() {
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Industry tags (comma separated)</label>
                 <input type="text" placeholder="e.g. solar, hydrogen, climate-tech" value={form.industry_tags}
                   onChange={e => setForm(p => ({ ...p, industry_tags: e.target.value }))}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
             </div>
 
             {/* SECTION D — SIGNALS */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-3">Signals</div>
               <p className="text-xs text-[#718096] mb-4">What you're open to. These show up as badges on your public profile and help with discovery.</p>
               <div className="flex flex-col gap-3">
@@ -672,33 +672,33 @@ async function deleteDeck() {
             </div>
 
             {/* SECTION E — ONLINE PRESENCE */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">Online presence</div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">LinkedIn URL</label>
                   <input type="url" placeholder="https://linkedin.com/company/..." value={form.linkedin_url || ""}
                     onChange={e => setForm(p => ({ ...p, linkedin_url: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">X / Twitter URL</label>
                   <input type="url" placeholder="https://x.com/..." value={form.twitter_url || ""}
                     onChange={e => setForm(p => ({ ...p, twitter_url: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
             </div>
 
             {/* SECTION F — CONTACT */}
-            <div className="mb-6 pb-6 border-b border-[#e2e6ed]">
+            <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide">Point of contact</div>
                   <p className="text-xs text-[#718096] mt-1">Let investors contact you directly from your profile.</p>
                 </div>
                 <button type="button" onClick={() => setForm(p => ({ ...p, show_contact: !p.show_contact }))}
-                  className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${form.show_contact ? 'bg-[#2d6a4f]' : 'bg-[#d0d6e0]'}`}>
+                  className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${form.show_contact ? 'bg-[#2d6a4f]' : 'bg-[#dbdfe4]'}`}>
                   <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.show_contact ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </button>
               </div>
@@ -707,22 +707,22 @@ async function deleteDeck() {
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Primary contact name</label>
                     <input value={form.primary_contact_name || ""} onChange={e => setForm(p => ({ ...p, primary_contact_name: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Primary contact email</label>
                     <input type="email" value={form.primary_contact_email || ""} onChange={e => setForm(p => ({ ...p, primary_contact_email: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Secondary contact name (optional)</label>
                     <input placeholder="Team member" value={form.secondary_contact_name || ""} onChange={e => setForm(p => ({ ...p, secondary_contact_name: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Secondary contact email (optional)</label>
                     <input type="email" placeholder="teammate@company.com" value={form.secondary_contact_email || ""} onChange={e => setForm(p => ({ ...p, secondary_contact_email: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </div>
               )}
@@ -737,7 +737,7 @@ async function deleteDeck() {
           </form>
           </>
         ) : (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-7 text-center">
       <p className="text-[#718096] text-sm mb-4">Your company profile is being set up. This can take a few minutes after your account is created.</p>
       <button onClick={() => window.location.reload()} className="text-sm bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40]">
         Refresh
@@ -747,7 +747,7 @@ async function deleteDeck() {
 )}
 
         {activeTab === "funding" && (
-          <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+          <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
             <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-2">Funding Round</div>
             <p className="text-xs text-[#718096] mb-6">Only visible to verified investors.</p>
             <form onSubmit={saveFunding} className="flex flex-col gap-4">
@@ -758,7 +758,7 @@ async function deleteDeck() {
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Type</label>
                   <select value={fundingForm.raise_round_type || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_round_type: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="">Select round type</option>
                     <option value="pre_seed">Pre-seed</option>
                     <option value="seed">Seed</option>
@@ -773,7 +773,7 @@ async function deleteDeck() {
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Round Close Date</label>
                   <input type="date" value={fundingForm.raise_close_date || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_close_date: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -781,25 +781,25 @@ async function deleteDeck() {
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Target Raise</label>
                   <input type="text" placeholder="e.g. 2000000" value={fundingForm.raise_target || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_target: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Raised So Far</label>
                   <input type="text" placeholder="e.g. 500000" value={fundingForm.raise_current || ""}
                     onChange={e => setFundingForm(p => ({ ...p, raise_current: e.target.value }))}
-                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
 
               {/* SECTION 2 — TERMS (collapsible) */}
-              <details className="border-t border-[#e2e6ed] pt-4">
+              <details className="border-t border-[#e8eaee] pt-4">
                 <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Round terms</summary>
                 <div className="grid grid-cols-2 gap-4 mt-3">
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Instrument</label>
                     <select value={fundingForm.raise_instrument || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_instrument: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                       <option value="">Select instrument</option>
                       <option value="safe">SAFE</option>
                       <option value="priced_equity">Priced equity</option>
@@ -811,57 +811,57 @@ async function deleteDeck() {
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Valuation / Cap</label>
                     <input type="text" placeholder='e.g. "$8M post" or "TBD"' value={fundingForm.raise_valuation || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_valuation: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Min Check Size</label>
                     <input type="text" placeholder="e.g. 25000" value={fundingForm.min_check_size || ""}
                       onChange={e => setFundingForm(p => ({ ...p, min_check_size: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Lead Investor</label>
                     <input type="text" placeholder='e.g. "Breakthrough Energy" or "Looking for lead"' value={fundingForm.raise_lead_investor || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_lead_investor: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </div>
               </details>
 
               {/* SECTION 3 — USE & TRACTION (collapsible) */}
-              <details className="border-t border-[#e2e6ed] pt-4">
+              <details className="border-t border-[#e8eaee] pt-4">
                 <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Use of funds & traction</summary>
                 <div className="flex flex-col gap-4 mt-3">
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Use of Proceeds</label>
                     <textarea rows={3} placeholder="e.g. 30% R&D, 40% commercialization, 30% team" value={fundingForm.raise_use_of_proceeds || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_use_of_proceeds: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Revenue / ARR</label>
                     <input type="text" placeholder='e.g. "$50k MRR", "$1.2M ARR", or "Pre-revenue"' value={fundingForm.raise_revenue_status || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_revenue_status: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </div>
               </details>
 
               {/* SECTION 4 — MATERIALS & ACCESS (collapsible) */}
-              <details className="border-t border-[#e2e6ed] pt-4">
+              <details className="border-t border-[#e8eaee] pt-4">
                 <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f] mb-3">Materials & investor access</summary>
                 <div className="flex flex-col gap-4 mt-3">
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Data Room URL</label>
                     <input type="url" placeholder="https://docsend.com/view/..." value={fundingForm.raise_data_room_url || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_data_room_url: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                   <div>
                     <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Intro Call Booking Link</label>
                     <input type="url" placeholder="https://calendly.com/..." value={fundingForm.raise_intro_call_url || ""}
                       onChange={e => setFundingForm(p => ({ ...p, raise_intro_call_url: e.target.value }))}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </div>
               </details>
@@ -878,7 +878,7 @@ async function deleteDeck() {
         )}
 
         {activeTab === "jobs" && (
-          <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+          <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
               <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Job Postings</div>
               <button onClick={() => setShowJobForm(v => !v)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
@@ -886,30 +886,30 @@ async function deleteDeck() {
               </button>
             </div>
             {showJobForm && (
-              <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+              <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
 
                 {/* SECTION 1 — REQUIRED (always visible) */}
                 <div className="text-xs font-mono uppercase tracking-wide text-[#2d6a4f] pb-1">Required info</div>
                 <input required placeholder="Job title *" value={jobForm.title} onChange={e => setJobForm(p => ({ ...p, title: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 <input required placeholder="Location * (e.g., San Francisco, CA, or Remote)" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 <input required type="email" placeholder="Contact email *" value={jobForm.contact_email} onChange={e => setJobForm(p => ({ ...p, contact_email: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
 
                 {/* SECTION 2 — JOB DETAILS */}
-                <details className="border-t border-[#e2e6ed] pt-3">
+                <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Job details</summary>
                   <div className="grid grid-cols-3 gap-2 mt-3">
                     <select value={jobForm.work_mode || ""} onChange={e => setJobForm(p => ({ ...p, work_mode: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                       <option value="">Work mode</option>
                       <option value="remote">Remote</option>
                       <option value="hybrid">Hybrid</option>
                       <option value="onsite">Onsite</option>
                     </select>
                     <select value={jobForm.type || ""} onChange={e => setJobForm(p => ({ ...p, type: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                       <option value="">Employment type</option>
                       <option value="full_time">Full-time</option>
                       <option value="part_time">Part-time</option>
@@ -917,7 +917,7 @@ async function deleteDeck() {
                       <option value="internship">Internship</option>
                     </select>
                     <select value={jobForm.experience_level || ""} onChange={e => setJobForm(p => ({ ...p, experience_level: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                       <option value="">Experience level</option>
                       <option value="entry">Entry</option>
                       <option value="mid">Mid</option>
@@ -929,16 +929,16 @@ async function deleteDeck() {
                 </details>
 
                 {/* SECTION 3 — COMPENSATION */}
-                <details className="border-t border-[#e2e6ed] pt-3">
+                <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Compensation</summary>
                   <div className="flex flex-col gap-2 mt-3">
                     <div className="grid grid-cols-3 gap-2">
                       <input type="number" placeholder="Min salary" value={jobForm.salary_min || ""} onChange={e => setJobForm(p => ({ ...p, salary_min: e.target.value ? parseInt(e.target.value) : null }))}
-                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                        className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                       <input type="number" placeholder="Max salary" value={jobForm.salary_max || ""} onChange={e => setJobForm(p => ({ ...p, salary_max: e.target.value ? parseInt(e.target.value) : null }))}
-                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                        className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                       <select value={jobForm.salary_currency || "USD"} onChange={e => setJobForm(p => ({ ...p, salary_currency: e.target.value }))}
-                        className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                        className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
                         <option value="GBP">GBP</option>
@@ -954,45 +954,45 @@ async function deleteDeck() {
                 </details>
 
                 {/* SECTION 4 — ABOUT THE ROLE */}
-                <details className="border-t border-[#e2e6ed] pt-3">
+                <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">About the role</summary>
                   <div className="flex flex-col gap-2 mt-3">
                     <textarea placeholder="Role overview" rows={2} value={jobForm.role_overview || ""} onChange={e => setJobForm(p => ({ ...p, role_overview: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                     <textarea placeholder="Responsibilities" rows={4} value={jobForm.responsibilities || ""} onChange={e => setJobForm(p => ({ ...p, responsibilities: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                     <textarea placeholder="Requirements" rows={4} value={jobForm.requirements || ""} onChange={e => setJobForm(p => ({ ...p, requirements: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                     <textarea placeholder="Nice-to-haves (optional)" rows={3} value={jobForm.nice_to_haves || ""} onChange={e => setJobForm(p => ({ ...p, nice_to_haves: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                   </div>
                 </details>
 
                 {/* SECTION 5 — SECTOR & MISSION */}
-                <details className="border-t border-[#e2e6ed] pt-3">
+                <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Sector & mission</summary>
                   <div className="flex flex-col gap-2 mt-3">
                     <input placeholder="Sector tags (comma-separated)" value={Array.isArray(jobForm.sector_tags) ? jobForm.sector_tags.join(", ") : (jobForm.sector_tags || "")}
                       onChange={e => setJobForm(p => ({ ...p, sector_tags: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                     <textarea placeholder="Mission/impact statement" rows={2} value={jobForm.mission_statement || ""} onChange={e => setJobForm(p => ({ ...p, mission_statement: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                   </div>
                 </details>
 
                 {/* SECTION 6 — HOW TO APPLY */}
-                <details className="border-t border-[#e2e6ed] pt-3">
+                <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">How to apply</summary>
                   <div className="flex flex-col gap-2 mt-3">
                     <input type="url" placeholder="Application URL (optional)" value={jobForm.apply_url || ""} onChange={e => setJobForm(p => ({ ...p, apply_url: e.target.value }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                     <input type="date" value={jobForm.application_deadline || ""} onChange={e => setJobForm(p => ({ ...p, application_deadline: e.target.value || null }))}
-                      className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </details>
 
                 <div className="flex gap-2 justify-end pt-2">
-                  <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
+                  <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>
                   <button type="submit" disabled={submittingJob} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                     {submittingJob ? "Posting..." : "Post job"}
                   </button>
@@ -1002,7 +1002,7 @@ async function deleteDeck() {
             {jobs.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {jobs.map(job => (
-                  <div key={job.id} className="flex items-center justify-between py-3 border-b border-[#e2e6ed] last:border-0">
+                  <div key={job.id} className="flex items-center justify-between py-3 border-b border-[#e8eaee] last:border-0">
                     <div>
                       <div className="text-sm font-semibold text-[#0f1a14]">{job.title}</div>
                       <div className="text-xs text-[#718096] mt-0.5">{job.location} · {job.type?.replace(/_/g, " ")}</div>
@@ -1024,7 +1024,7 @@ async function deleteDeck() {
         )}
 
         {activeTab === "updates" && (
-          <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+          <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
               <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Updates</div>
               <button onClick={() => setShowUpdateForm(v => !v)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
@@ -1032,15 +1032,15 @@ async function deleteDeck() {
               </button>
             </div>
             {showUpdateForm && (
-              <form onSubmit={submitUpdate} className="mb-6 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+              <form onSubmit={submitUpdate} className="mb-6 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
                 <input required placeholder="Title *" value={updateForm.title} onChange={e => setUpdateForm(p => ({ ...p, title: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 <textarea placeholder="Details (optional)" rows={2} value={updateForm.body} onChange={e => setUpdateForm(p => ({ ...p, body: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
                 <input placeholder="Link (optional)" value={updateForm.link} onChange={e => setUpdateForm(p => ({ ...p, link: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                 <select value={updateForm.type} onChange={e => setUpdateForm(p => ({ ...p, type: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                   <option value="milestone">Milestone</option>
                   <option value="hiring">Hiring</option>
                   <option value="funding">Funding</option>
@@ -1049,7 +1049,7 @@ async function deleteDeck() {
                   <option value="other">Other</option>
                 </select>
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setShowUpdateForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
+                  <button type="button" onClick={() => setShowUpdateForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>
                   <button type="submit" disabled={submittingUpdate} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                     {submittingUpdate ? "Posting..." : "Post update"}
                   </button>
@@ -1059,9 +1059,9 @@ async function deleteDeck() {
             {updates.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {updates.map(u => (
-                  <div key={u.id} className="border-b border-[#e2e6ed] last:border-0 pb-4 last:pb-0">
+                  <div key={u.id} className="border-b border-[#e8eaee] last:border-0 pb-4 last:pb-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] capitalize">{u.type}</span>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] capitalize">{u.type}</span>
                       <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                     </div>
                     <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
@@ -1077,7 +1077,7 @@ async function deleteDeck() {
         )}
         {activeTab === "investors" && (
           <div className="flex flex-col gap-4">
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-1">
                 <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investor Discovery</div>
                 <a href="/investors" target="_blank" className="text-xs text-[#2d6a4f] font-mono hover:underline">Browse all →</a>
@@ -1086,14 +1086,14 @@ async function deleteDeck() {
               {matchedInvestors.length > 0 ? (
                 <div className="flex flex-col gap-3">
                   {matchedInvestors.map(inv => (
-                    <div key={inv.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
+                    <div key={inv.id} className="border border-[#e8eaee] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
                       <div className="flex-1">
                         <div className="text-sm font-semibold text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{inv.name}</div>
                         {inv.firm && <div className="text-xs text-[#718096] mt-0.5">{inv.firm}</div>}
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {inv.focus && <span className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">{inv.focus}</span>}
-                          {inv.stage && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f8] border border-[#e2e6ed] text-[#718096]">{inv.stage}</span>}
-                          {inv.check_size && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f8] border border-[#e2e6ed] text-[#718096]">{inv.check_size}</span>}
+                          {inv.focus && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#c8d8cc] text-[#2d6a4f]">{inv.focus}</span>}
+                          {inv.stage && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f6f7f9] border border-[#e8eaee] text-[#718096]">{inv.stage}</span>}
+                          {inv.check_size && <span className="text-xs px-2 py-0.5 rounded-full bg-[#f6f7f9] border border-[#e8eaee] text-[#718096]">{inv.check_size}</span>}
                         </div>
                       </div>
                       {inv.show_contact && inv.primary_contact_email && (
@@ -1106,7 +1106,7 @@ async function deleteDeck() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 border border-dashed border-[#e2e6ed] rounded-xl">
+                <div className="text-center py-8 border border-dashed border-[#e8eaee] rounded-xl">
                   <p className="text-sm text-[#718096] mb-3">No matched investors yet.</p>
                   <p className="text-xs text-[#a0aec0] max-w-xs mx-auto">Fill in your industry tags and funding stage on your Profile tab to get matched with relevant investors.</p>
                   <button onClick={() => setActiveTab("profile")} className="mt-4 text-xs text-[#2d6a4f] font-semibold hover:underline">
@@ -1199,7 +1199,7 @@ async function deleteDeck() {
         )}
 {activeTab === "experts" && (
           <div className="flex flex-col gap-4">
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-1">
                 <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Available Experts</div>
                 <a href="/experts" target="_blank" className="text-xs text-[#2d6a4f] font-mono hover:underline">Browse all →</a>
@@ -1208,14 +1208,14 @@ async function deleteDeck() {
               {matchedExperts.length > 0 ? (
                 <div className="flex flex-col gap-3">
                   {matchedExperts.map(exp => (
-                    <div key={exp.id} className="border border-[#e2e6ed] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
+                    <div key={exp.id} className="border border-[#e8eaee] rounded-xl p-4 flex items-start justify-between hover:border-[#2d6a4f] transition-colors group">
                       <div className="flex-1">
                         <div className="text-sm font-semibold text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{exp.name}</div>
                         {exp.location && <div className="text-xs text-[#718096] mt-0.5">{exp.location}</div>}
                         {exp.expertise_areas?.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {exp.expertise_areas.slice(0, 3).map(a => (
-                              <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">{a}</span>
+                              <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#c8d8cc] text-[#2d6a4f]">{a}</span>
                             ))}
                           </div>
                         )}
@@ -1234,7 +1234,7 @@ async function deleteDeck() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 border border-dashed border-[#e2e6ed] rounded-xl">
+                <div className="text-center py-8 border border-dashed border-[#e8eaee] rounded-xl">
                   <p className="text-sm text-[#718096] mb-2">No experts available yet.</p>
                   <p className="text-xs text-[#a0aec0] max-w-xs mx-auto">We're building our expert network. Check back soon or browse all experts.</p>
                   <a href="/experts" className="mt-4 inline-block text-xs text-[#2d6a4f] font-semibold hover:underline">

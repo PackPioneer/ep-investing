@@ -30,7 +30,7 @@ const STATUS = {
   rejected: { label: "Needs changes", cls: "bg-red-50 text-red-600 border-red-200" },
 };
 const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || id;
-const inputClass = "w-full text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]";
+const inputClass = "w-full text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]";
 const labelClass = "text-xs font-mono text-[#718096] uppercase tracking-wide mb-1 block";
 
 export default function CompanyAnnouncements() {
@@ -71,7 +71,7 @@ export default function CompanyAnnouncements() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+      <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-sm font-semibold text-[#0f1a14] mb-1">Announcements</div>
@@ -85,7 +85,7 @@ export default function CompanyAnnouncements() {
         </div>
 
         {open && (
-          <div className="mt-5 pt-5 border-t border-[#e2e6ed] flex flex-col gap-4">
+          <div className="mt-5 pt-5 border-t border-[#e8eaee] flex flex-col gap-4">
             <div>
               <label className={labelClass}>Type</label>
               <select value={cat} onChange={(e) => { const id = e.target.value; setCat(id); setMeta({}); setCtaLabel(CTA[id]?.label || "Learn more"); }} className={inputClass}>
@@ -144,21 +144,21 @@ export default function CompanyAnnouncements() {
         )}
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+      <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
         <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-4">Your announcements</div>
         {loading ? (
           <p className="text-sm text-[#718096]">Loading…</p>
         ) : list.length === 0 ? (
           <p className="text-sm text-[#718096]">No announcements yet. Post your first one above.</p>
         ) : (
-          <div className="flex flex-col divide-y divide-[#f2f4f8]">
+          <div className="flex flex-col divide-y divide-[#f6f7f9]">
             {list.map((a) => {
               const st = STATUS[a.status] || STATUS.pending;
               return (
                 <div key={a.id} className="py-3 flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0]">{catLabel(a.category)}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] border border-[#dbdfe4]">{catLabel(a.category)}</span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
                       {a.is_featured && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Boosted</span>}
                     </div>

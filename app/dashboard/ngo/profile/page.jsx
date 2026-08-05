@@ -15,7 +15,7 @@ const SECTORS = [
 const STAFF_SIZES = ["1-10", "11-50", "51-200", "201-1000", "1000+"];
 const BUDGET_RANGES = ["<1M", "1-10M", "10-100M", "100M+"];
 
-const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-2.5 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
+const inputClass = "w-full bg-white border border-[#dbdfe4] rounded-lg px-4 py-2.5 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function NGOProfileEditor() {
@@ -89,7 +89,7 @@ export default function NGOProfileEditor() {
   if (!form) return <div className="text-sm text-[#718096]">No profile found.</div>;
 
   return (
-    <div ref={topRef} className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+    <div ref={topRef} className="bg-white border border-[#e8eaee] rounded-2xl p-7">
 
       {/* Saved banner */}
       {saved && (
@@ -153,7 +153,7 @@ export default function NGOProfileEditor() {
                 className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
                   form.sector_tags.includes(s)
                     ? "border-[#2d6a4f] bg-[#2d6a4f] text-white"
-                    : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
+                    : "border-[#e8eaee] text-[#4a5568] hover:border-[#2d6a4f]"
                 }`}>
                 {s.replace(/-/g, " ")}
               </button>
@@ -189,7 +189,7 @@ export default function NGOProfileEditor() {
           <input type="number" className={inputClass} value={form.founded_year ?? ""} onChange={e => set("founded_year", e.target.value ? parseInt(e.target.value, 10) : null)} />
         </div>
 
-        <div className="border-t border-[#e2e6ed] pt-5">
+        <div className="border-t border-[#e8eaee] pt-5">
           <label className="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" className="mt-1" checked={!!form.open_to_partnerships}
               onChange={e => set("open_to_partnerships", e.target.checked)} />
@@ -214,7 +214,7 @@ export default function NGOProfileEditor() {
           <input type="email" className={inputClass} value={form.contact_email ?? ""} onChange={e => set("contact_email", e.target.value)} />
         </div>
 
-        <div className="flex justify-end pt-3 border-t border-[#e2e6ed]">
+        <div className="flex justify-end pt-3 border-t border-[#e8eaee]">
           <button onClick={handleSave} disabled={saving}
             className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#235a40] disabled:opacity-40 transition-colors">
             <Save size={13} /> {saving ? "Saving..." : "Save changes"}

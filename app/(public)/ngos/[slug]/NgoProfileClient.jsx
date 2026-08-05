@@ -48,13 +48,13 @@ export default function NGOProfile() {
   }, [slug]);
 
   if (loading || !userLoaded) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (!data || data.error) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center text-[#4a5568]">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center text-[#4a5568]">
       Organization not found.
     </div>
   );
@@ -62,7 +62,7 @@ export default function NGOProfile() {
   const { ngo, grants, jobs } = data;
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto px-6 py-10">
 
         <Link href="/ngos" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
@@ -70,23 +70,23 @@ export default function NGOProfile() {
         </Link>
 
         {/* Hero */}
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 mb-6">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 mb-6">
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]">
               {ORG_TYPE_LABELS[ngo.org_type] ?? ngo.org_type}
             </span>
             {ngo.headquarters_country && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e2e6ed] bg-white text-[#4a5568] flex items-center gap-1">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e8eaee] bg-white text-[#4a5568] flex items-center gap-1">
                 <Globe size={9} /> {ngo.headquarters_city ? `${ngo.headquarters_city}, ` : ""}{ngo.headquarters_country}
               </span>
             )}
             {ngo.open_to_partnerships && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f] flex items-center gap-1">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f] flex items-center gap-1">
                 <Handshake size={9} /> Open to partnerships
               </span>
             )}
             {ngo.claimable && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e2e6ed] bg-[#f8f9fb] text-[#718096]">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e8eaee] bg-[#fafbfc] text-[#718096]">
                 Unclaimed
               </span>
             )}
@@ -96,14 +96,14 @@ export default function NGOProfile() {
             {ngo.logo_url ? (
               <>
                 <img src={ngo.logo_url} alt={ngo.name}
-                  className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e2e6ed] flex-shrink-0"
+                  className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e8eaee] flex-shrink-0"
                   onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-                <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e2e6ed] items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+                <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e8eaee] items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
                   {(ngo.name||"?")[0].toUpperCase()}
                 </div>
               </>
             ) : (
-              <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
+              <div className="w-16 h-16 rounded-xl bg-[#e8eaee] flex items-center justify-center text-2xl font-bold text-[#2d6a4f] flex-shrink-0">
                 {(ngo.name||"?")[0].toUpperCase()}
               </div>
             )}
@@ -134,7 +134,7 @@ export default function NGOProfile() {
                 </a>
               ) : (
                 <SignInButton mode="modal" forceRedirectUrl={`/ngos/${slug}`}>
-                  <button className="inline-flex items-center gap-1.5 border border-[#d0d6e0] text-[#0f1a14] text-sm font-semibold rounded-lg px-4 py-2 hover:border-[#2d6a4f] transition-colors">
+                  <button className="inline-flex items-center gap-1.5 border border-[#dbdfe4] text-[#0f1a14] text-sm font-semibold rounded-lg px-4 py-2 hover:border-[#2d6a4f] transition-colors">
                     <Lock size={12} /> Sign in to contact
                   </button>
                 </SignInButton>
@@ -155,14 +155,14 @@ export default function NGOProfile() {
           <div className="lg:col-span-2 flex flex-col gap-6">
 
             {ngo.bio && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-4">About</h2>
                 <p className="text-sm text-[#4a5568] leading-relaxed font-light whitespace-pre-line">{ngo.bio}</p>
               </div>
             )}
 
             {ngo.open_to_partnerships && ngo.partnership_description && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Handshake size={14} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Partnership opportunities</h2>
@@ -172,7 +172,7 @@ export default function NGOProfile() {
             )}
 
             {grants.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <FileText size={14} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Active grant programs ({grants.length})</h2>
@@ -180,7 +180,7 @@ export default function NGOProfile() {
                 <div className="flex flex-col gap-3">
                   {grants.map(g => (
                     <a key={g.id} href={g.application_url || "#"} target="_blank" rel="noopener noreferrer"
-                      className="block border border-[#e2e6ed] rounded-lg p-4 hover:border-[#2d6a4f] transition-colors">
+                      className="block border border-[#e8eaee] rounded-lg p-4 hover:border-[#2d6a4f] transition-colors">
                       <div className="text-sm font-semibold text-[#0f1a14] mb-1">{g.title}</div>
                       <div className="flex items-center gap-3 text-[11px] text-[#718096] flex-wrap">
                         {formatUSD(g.amount_min_usd, g.amount_max_usd, g.currency) && (
@@ -200,7 +200,7 @@ export default function NGOProfile() {
             )}
 
             {jobs.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Briefcase size={14} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Open positions ({jobs.length})</h2>
@@ -208,7 +208,7 @@ export default function NGOProfile() {
                 <div className="flex flex-col gap-3">
                   {jobs.map(j => (
                     <a key={j.id} href={j.apply_url || "#"} target="_blank" rel="noopener noreferrer"
-                      className="block border border-[#e2e6ed] rounded-lg p-4 hover:border-[#2d6a4f] transition-colors">
+                      className="block border border-[#e8eaee] rounded-lg p-4 hover:border-[#2d6a4f] transition-colors">
                       <div className="text-sm font-semibold text-[#0f1a14] mb-1">{j.title}</div>
                       <div className="flex items-center gap-3 text-[11px] text-[#718096] flex-wrap">
                         {j.location && <span>{j.location}</span>}
@@ -225,7 +225,7 @@ export default function NGOProfile() {
 
           {/* Sidebar */}
           <div className="flex flex-col gap-6">
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-5">Org details</h3>
               <div className="flex flex-col gap-4 text-sm">
                 {ngo.founded_year && (
@@ -251,7 +251,7 @@ export default function NGOProfile() {
                     <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-1.5">Sector focus</div>
                     <div className="flex flex-wrap gap-1">
                       {ngo.sector_tags.map(s => (
-                        <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] capitalize">
+                        <span key={s} className="text-[10px] px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#2d6a4f] capitalize">
                           {s.replace(/-/g, " ")}
                         </span>
                       ))}
@@ -263,7 +263,7 @@ export default function NGOProfile() {
                     <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-1.5">Geography</div>
                     <div className="flex flex-wrap gap-1">
                       {ngo.geography_focus.map(g => (
-                        <span key={g} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-[#e2e6ed] text-[#4a5568]">
+                        <span key={g} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-[#e8eaee] text-[#4a5568]">
                           {g}
                         </span>
                       ))}
@@ -274,7 +274,7 @@ export default function NGOProfile() {
             </div>
 
             {ngo.claimable && (
-              <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
+              <div className="bg-[#f2f4f6] border border-[#c8d8cc] rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your organization?</h3>
                 <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to edit details, post grant programs, and add job openings.</p>
                 <Link href={`/claim/ngo/${slug}`}
@@ -284,7 +284,7 @@ export default function NGOProfile() {
               </div>
             )}
 
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-3">Browse</h3>
               <Link href="/ngos" className="text-xs text-[#2d6a4f] font-mono hover:underline flex items-center gap-1">
                 All organizations →

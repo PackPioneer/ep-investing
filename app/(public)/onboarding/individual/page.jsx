@@ -19,14 +19,14 @@ function ProgressBar({ step }) {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border transition-all ${
               i + 1 < step ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" :
               i + 1 === step ? "bg-white border-[#2d6a4f] text-[#2d6a4f]" :
-              "bg-white border-[#d0d6e0] text-[#a0aec0]"
+              "bg-white border-[#dbdfe4] text-[#a0aec0]"
             }`}>
               {i + 1 < step ? <CheckCircle size={14} /> : i + 1}
             </div>
             <span className={`text-[10px] font-mono ${i + 1 === step ? "text-[#2d6a4f]" : "text-[#a0aec0]"}`}>{s}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e2e6ed]"}`} />
+            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e8eaee]"}`} />
           )}
         </div>
       ))}
@@ -36,7 +36,7 @@ function ProgressBar({ step }) {
 
 const cardBtn = (active) =>
   `w-full text-left bg-white border rounded-xl p-4 transition-all ${
-    active ? "border-[#2d6a4f] ring-1 ring-[#2d6a4f]" : "border-[#e2e6ed] hover:border-[#2d6a4f]"
+    active ? "border-[#2d6a4f] ring-1 ring-[#2d6a4f]" : "border-[#e8eaee] hover:border-[#2d6a4f]"
   }`;
 
 function IndividualOnboardingInner() {
@@ -88,7 +88,7 @@ function IndividualOnboardingInner() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-[70vh] bg-[#f2f4f8] flex items-center justify-center">
+      <div className="min-h-[70vh] bg-[#f6f7f9] flex items-center justify-center">
         <Loader2 className="animate-spin text-[#2d6a4f]" />
       </div>
     );
@@ -102,7 +102,7 @@ function IndividualOnboardingInner() {
     const referred = Boolean(emailParam);
 
     return (
-      <div className="min-h-[80vh] bg-[#f2f4f8] flex items-center justify-center px-6 py-16" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="min-h-[80vh] bg-[#f6f7f9] flex items-center justify-center px-6 py-16" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <div className="max-w-xl w-full text-center">
           <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#2d6a4f] mb-4">
             {referred ? "You're almost in" : "Join the network"}
@@ -120,7 +120,7 @@ function IndividualOnboardingInner() {
               { icon: Compass, title: "Explore", sub: "The full network of companies & investors" },
               { icon: BadgeCheck, title: "Get discovered", sub: "List yourself as an expert" },
             ].map(({ icon: Icon, title, sub }) => (
-              <div key={title} className="bg-white border border-[#e2e6ed] rounded-xl p-4">
+              <div key={title} className="bg-white border border-[#e8eaee] rounded-xl p-4">
                 <Icon size={18} className="text-[#2d6a4f] mb-2" />
                 <div className="text-sm font-semibold text-[#0f1a14] mb-0.5">{title}</div>
                 <div className="text-xs text-[#4a5568] leading-snug">{sub}</div>
@@ -139,7 +139,7 @@ function IndividualOnboardingInner() {
 
   // ---- Signed-in: the 3-question onboarding ----
   return (
-    <div className="min-h-[80vh] bg-[#f2f4f8] flex items-center justify-center px-6 py-12" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-[80vh] bg-[#f6f7f9] flex items-center justify-center px-6 py-12" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-lg w-full">
         <ProgressBar step={step} />
 
@@ -180,8 +180,8 @@ function IndividualOnboardingInner() {
                   <button key={ind.slug} onClick={() => toggleIndustry(ind.slug)} disabled={disabled}
                     className={`text-sm rounded-full px-4 py-2 border transition-all ${
                       active ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" :
-                      disabled ? "bg-white text-[#c0c6d0] border-[#e2e6ed] cursor-not-allowed" :
-                      "bg-white text-[#0f1a14] border-[#d0d6e0] hover:border-[#2d6a4f]"
+                      disabled ? "bg-white text-[#c0c6d0] border-[#e8eaee] cursor-not-allowed" :
+                      "bg-white text-[#0f1a14] border-[#dbdfe4] hover:border-[#2d6a4f]"
                     }`}>
                     {ind.label}
                   </button>
@@ -231,7 +231,7 @@ function IndividualOnboardingInner() {
 }
 export default function IndividualOnboarding() {
   return (
-    <Suspense fallback={<div className="min-h-[70vh] bg-[#f2f4f8]" />}>
+    <Suspense fallback={<div className="min-h-[70vh] bg-[#f6f7f9]" />}>
       <IndividualOnboardingInner />
     </Suspense>
   );

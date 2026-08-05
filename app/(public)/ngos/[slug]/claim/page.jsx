@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Lock } from "lucide-react";
 
-const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
+const inputClass = "w-full bg-white border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 export default function ClaimNGO() {
@@ -66,19 +66,19 @@ export default function ClaimNGO() {
   }
 
   if (loading || !isLoaded) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (!ngo) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center text-[#4a5568]">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center text-[#4a5568]">
       Organization not found.
     </div>
   );
 
   if (!ngo.claimable || ngo.clerk_user_id) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <AlertCircle size={32} className="text-amber-500 mx-auto mb-4" />
@@ -94,7 +94,7 @@ export default function ClaimNGO() {
   );
 
   if (!isSignedIn) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <Lock size={32} className="text-[#2d6a4f] mx-auto mb-4" />
@@ -112,7 +112,7 @@ export default function ClaimNGO() {
   );
 
   if (done) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
@@ -130,7 +130,7 @@ export default function ClaimNGO() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-2xl mx-auto px-6 py-12">
 
         <Link href={`/ngos/${slug}`} className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
@@ -144,7 +144,7 @@ export default function ClaimNGO() {
           Submit a claim to take ownership of this profile. We'll verify your association with the organization before approving.
         </p>
 
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7 flex flex-col gap-5">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-7 flex flex-col gap-5">
           <div>
             <label className={labelClass}>Your name *</label>
             <input className={inputClass} value={form.claimant_name}

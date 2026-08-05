@@ -27,24 +27,24 @@ const ORG_TYPES = [
 function NGOCard({ ngo }) {
   return (
     <Link href={`/ngos/${ngo.slug}`}
-      className="bg-white border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
+      className="bg-white border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
       <div className="flex items-start gap-3">
         {ngo.logo_url ? (
           <>
             <img src={ngo.logo_url} alt={ngo.name}
-              className="w-10 h-10 rounded-lg object-contain bg-white p-1 border border-[#e2e6ed] flex-shrink-0"
+              className="w-10 h-10 rounded-lg object-contain bg-white p-1 border border-[#e8eaee] flex-shrink-0"
               onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-            <div style={{display:"none"}} className="w-10 h-10 rounded-lg bg-[#e2e6ed] items-center justify-center text-base font-bold text-[#2d6a4f] flex-shrink-0">
+            <div style={{display:"none"}} className="w-10 h-10 rounded-lg bg-[#e8eaee] items-center justify-center text-base font-bold text-[#2d6a4f] flex-shrink-0">
               {(ngo.name||"?")[0].toUpperCase()}
             </div>
           </>
         ) : (
-          <div className="w-10 h-10 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-base font-bold text-[#2d6a4f] flex-shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-[#e8eaee] flex items-center justify-center text-base font-bold text-[#2d6a4f] flex-shrink-0">
             {(ngo.name||"?")[0].toUpperCase()}
           </div>
         )}
         <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]">
           {ORG_TYPE_LABELS[ngo.org_type] ?? ngo.org_type}
         </span>
         {ngo.open_to_partnerships && (
@@ -53,7 +53,7 @@ function NGOCard({ ngo }) {
           </span>
         )}
         {ngo.claimable && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e2e6ed] bg-[#f8f9fb] text-[#718096]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e8eaee] bg-[#fafbfc] text-[#718096]">
             Unclaimed
           </span>
         )}
@@ -107,11 +107,11 @@ export default function NGOsDirectory() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
 
         <div className="mb-10">
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#f2f4f6] rounded-full px-3 py-1.5 mb-6">
             <Building2 size={11} /> NGO Directory
           </div>
           <div className="flex items-end justify-between gap-6 flex-wrap">
@@ -131,7 +131,7 @@ export default function NGOsDirectory() {
         </div>
 
         {/* Search + filters */}
-        <div className="flex items-center gap-3 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 mb-4 focus-within:border-[#2d6a4f] transition-all max-w-xl">
+        <div className="flex items-center gap-3 bg-white border border-[#dbdfe4] rounded-xl px-4 py-3 mb-4 focus-within:border-[#2d6a4f] transition-all max-w-xl">
           <Search size={14} className="text-[#718096]" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search organizations…"
@@ -144,7 +144,7 @@ export default function NGOsDirectory() {
               className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
                 orgType === t.value
                   ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                  : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                  : "border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
               }`}>
               {t.label}
             </button>
@@ -154,7 +154,7 @@ export default function NGOsDirectory() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="bg-white border border-[#e2e6ed] rounded-xl p-5 h-40 animate-pulse" />
+              <div key={i} className="bg-white border border-[#e8eaee] rounded-xl p-5 h-40 animate-pulse" />
             ))}
           </div>
         ) : filtered.length > 0 ? (
@@ -162,14 +162,14 @@ export default function NGOsDirectory() {
             {filtered.map(ngo => <NGOCard key={ngo.id} ngo={ngo} />)}
           </div>
         ) : (
-          <div className="text-center py-24 border border-dashed border-[#e2e6ed] rounded-2xl">
-            <Building2 size={32} className="text-[#d0d6e0] mx-auto mb-4" />
+          <div className="text-center py-24 border border-dashed border-[#e8eaee] rounded-2xl">
+            <Building2 size={32} className="text-[#dbdfe4] mx-auto mb-4" />
             <p className="text-[#718096] font-mono text-sm">No organizations found</p>
             <p className="text-[#718096] text-xs mt-1">Try adjusting your filters</p>
           </div>
         )}
 
-        <div className="mt-16 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
+        <div className="mt-16 bg-white border border-[#e8eaee] rounded-2xl p-7 text-center">
           <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">Don't see your organization?</h2>
           <p className="text-sm text-[#4a5568] mb-5 max-w-md mx-auto">
             Add your NGO, IGO, or foundation to the directory.

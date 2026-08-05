@@ -19,8 +19,8 @@ export async function POST(req) {
     to: ADMIN_EMAIL,
     subject: `🤝 New intro request: ${investor_name}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <div style="border-left: 4px solid #2d6a4f; padding-left: 16px; margin-bottom: 24px;">
             <h2 style="margin: 0; font-size: 22px; color: #0f1a14;">New Introduction Request</h2>
             <p style="margin: 4px 0 0; color: #718096; font-family: monospace; font-size: 12px;">EP Investing</p>
@@ -36,7 +36,7 @@ export async function POST(req) {
             </tr>
           </table>
           ${message ? `
-          <div style="margin-top: 16px; padding: 16px; background: #f8f9fb; border-radius: 8px; border: 1px solid #e2e6ed;">
+          <div style="margin-top: 16px; padding: 16px; background: #fafbfc; border-radius: 8px; border: 1px solid #e8eaee;">
             <p style="margin: 0; color: #4a5568; font-size: 13px; line-height: 1.6;">${message}</p>
           </div>` : ""}
         </div>
@@ -50,13 +50,13 @@ export async function POST(req) {
     to: email,
     subject: `Your intro request to ${investor_name}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <h2 style="margin: 0 0 8px; font-size: 22px; color: #0f1a14;">Request received.</h2>
           <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 20px;">
             We've received your introduction request to <strong>${investor_name}</strong> and will be in touch within 1–2 business days.
           </p>
-          <hr style="border: none; border-top: 1px solid #e2e6ed; margin: 24px 0;" />
+          <hr style="border: none; border-top: 1px solid #e8eaee; margin: 24px 0;" />
           <p style="color: #a0aec0; font-size: 11px; font-family: monospace; margin: 0;">EP Investing · epinvesting.com</p>
         </div>
       </div>

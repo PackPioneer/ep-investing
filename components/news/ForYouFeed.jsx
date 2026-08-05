@@ -99,7 +99,7 @@ export default function ForYouFeed({ userType = "default", limit = 5 }) {
   }
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-5">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-5">
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">
@@ -121,7 +121,7 @@ export default function ForYouFeed({ userType = "default", limit = 5 }) {
           Couldn't load news right now. Try again in a moment.
         </div>
       ) : articles.length === 0 ? (
-        <div className="py-6 text-center border border-dashed border-[#e2e6ed] rounded-xl">
+        <div className="py-6 text-center border border-dashed border-[#e8eaee] rounded-xl">
           <p className="text-sm text-[#0f1a14] font-medium mb-1">{copy.emptyTitle}</p>
           <p className="text-xs text-[#718096] max-w-sm mx-auto">{copy.emptyBody}</p>
         </div>
@@ -137,7 +137,7 @@ export default function ForYouFeed({ userType = "default", limit = 5 }) {
                   <>
                     <span className="font-medium">{sourceName}</span>
                     {classLabel && (
-                      <span className="inline-flex items-center rounded-full bg-[#f2f4f8] border border-[#e2e6ed] px-1.5 py-0.5 text-[9px] font-medium text-[#4a5568]">
+                      <span className="inline-flex items-center rounded-full bg-[#f6f7f9] border border-[#e8eaee] px-1.5 py-0.5 text-[9px] font-medium text-[#4a5568]">
                         {classLabel}
                       </span>
                     )}

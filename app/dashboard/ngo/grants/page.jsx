@@ -60,8 +60,8 @@ export default function GrantsList() {
       {loading ? (
         <div className="text-sm text-[#718096]">Loading...</div>
       ) : grants.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-[#e2e6ed] rounded-2xl bg-white">
-          <FileText size={32} className="text-[#d0d6e0] mx-auto mb-4" />
+        <div className="text-center py-16 border border-dashed border-[#e8eaee] rounded-2xl bg-white">
+          <FileText size={32} className="text-[#dbdfe4] mx-auto mb-4" />
           <p className="text-sm text-[#4a5568] mb-1">No grant programs yet</p>
           <p className="text-xs text-[#718096] mb-5">Publish your first grant to get applications from climate companies.</p>
           <Link href="/dashboard/ngo/grants/new"
@@ -72,7 +72,7 @@ export default function GrantsList() {
       ) : (
         <div className="flex flex-col gap-3">
           {grants.map(g => (
-            <div key={g.id} className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+            <div key={g.id} className="bg-white border border-[#e8eaee] rounded-xl p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-[#0f1a14] mb-1">{g.title}</div>
@@ -89,12 +89,12 @@ export default function GrantsList() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {g.application_url && (
                     <a href={g.application_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#f8f9fb] transition-colors" title="Open application URL">
+                      className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#fafbfc] transition-colors" title="Open application URL">
                       <ExternalLink size={14} />
                     </a>
                   )}
                   <Link href={`/dashboard/ngo/grants/${g.id}/edit`}
-                    className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#f8f9fb] transition-colors" title="Edit">
+                    className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#fafbfc] transition-colors" title="Edit">
                     <Edit3 size={14} />
                   </Link>
                   <button onClick={() => handleDelete(g.id)}

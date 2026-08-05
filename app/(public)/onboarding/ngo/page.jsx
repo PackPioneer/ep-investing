@@ -26,7 +26,7 @@ const SECTORS = [
 const STAFF_SIZES = ["1-10", "11-50", "51-200", "201-1000", "1000+"];
 const BUDGET_RANGES = ["<1M", "1-10M", "10-100M", "100M+"];
 
-const inputClass = "w-full bg-white border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
+const inputClass = "w-full bg-white border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors";
 const labelClass = "block text-xs font-mono text-[#4a5568] uppercase tracking-wider mb-1.5";
 
 function ProgressBar({ step }) {
@@ -39,14 +39,14 @@ function ProgressBar({ step }) {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold border transition-all ${
               i + 1 < step ? "bg-[#2d6a4f] border-[#2d6a4f] text-white" :
               i + 1 === step ? "bg-white border-[#2d6a4f] text-[#2d6a4f]" :
-              "bg-white border-[#d0d6e0] text-[#a0aec0]"
+              "bg-white border-[#dbdfe4] text-[#a0aec0]"
             }`}>
               {i + 1 < step ? <CheckCircle size={14} /> : i + 1}
             </div>
             <span className={`text-[10px] font-mono ${i + 1 === step ? "text-[#2d6a4f]" : "text-[#a0aec0]"}`}>{s}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e2e6ed]"}`} />
+            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i + 1 < step ? "bg-[#2d6a4f]" : "bg-[#e8eaee]"}`} />
           )}
         </div>
       ))}
@@ -109,7 +109,7 @@ export default function NGOOnboarding() {
   const step3Valid = form.contact_email;
 
   if (done) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
@@ -127,7 +127,7 @@ export default function NGOOnboarding() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-2xl mx-auto px-6 py-12">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-white rounded-full px-3 py-1.5 mb-4">
@@ -141,7 +141,7 @@ export default function NGOOnboarding() {
 
         <ProgressBar step={step} />
 
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
 
           {step === 1 && (
             <div className="flex flex-col gap-5">
@@ -161,7 +161,7 @@ export default function NGOOnboarding() {
                       className={`text-left px-4 py-3 rounded-lg border transition-all ${
                         form.org_type === t.value
                           ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.04)]"
-                          : "border-[#e2e6ed] hover:border-[#2d6a4f]"
+                          : "border-[#e8eaee] hover:border-[#2d6a4f]"
                       }`}>
                       <div className="text-sm font-semibold text-[#0f1a14]">{t.label}</div>
                       <div className="text-xs text-[#718096] mt-0.5">{t.desc}</div>
@@ -229,7 +229,7 @@ export default function NGOOnboarding() {
                       className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
                         form.sector_tags.includes(s)
                           ? "border-[#2d6a4f] bg-[#2d6a4f] text-white"
-                          : "border-[#e2e6ed] text-[#4a5568] hover:border-[#2d6a4f]"
+                          : "border-[#e8eaee] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>
                       {s.replace(/-/g, " ")}
                     </button>

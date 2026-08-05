@@ -30,8 +30,8 @@ const STATUS_COLORS = {
   comment_period: "bg-amber-50 text-amber-800 border-amber-200",
   enacted: "bg-emerald-50 text-emerald-800 border-emerald-200",
   enacted_pending_effective: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  in_force: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
-  implemented: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
+  in_force: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
+  implemented: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
   amended: "bg-purple-50 text-purple-700 border-purple-200",
   withdrawn: "bg-gray-50 text-gray-600 border-gray-200",
   expired: "bg-gray-50 text-gray-500 border-gray-200",
@@ -52,7 +52,7 @@ function PolicyRow({ policy }) {
   return (
     <Link
       href={`/news/policy/${policy.id}`}
-      className="block bg-white border border-[#e2e6ed] rounded-lg px-3 py-2.5 hover:border-[#2d6a4f] transition-colors"
+      className="block bg-white border border-[#e8eaee] rounded-lg px-3 py-2.5 hover:border-[#2d6a4f] transition-colors"
     >
       <div className="flex items-center gap-1.5 text-[11px] text-[#718096] mb-0.5 flex-wrap">
         <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full border text-[10px] font-semibold ${statusColor}`}>
@@ -101,7 +101,7 @@ export default function PolicyDigestWidget({ limit = 3, userType = "investor" })
     : "Policy changes for your thesis";
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-5">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-5">
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">
@@ -123,7 +123,7 @@ export default function PolicyDigestWidget({ limit = 3, userType = "investor" })
       ) : error ? (
         <div className="py-6 text-sm text-[#718096]">Couldn't load policies.</div>
       ) : policies.length === 0 ? (
-        <div className="py-6 text-center border border-dashed border-[#e2e6ed] rounded-xl">
+        <div className="py-6 text-center border border-dashed border-[#e8eaee] rounded-xl">
           <p className="text-sm text-[#0f1a14] font-medium mb-1">No matching policies yet</p>
           <p className="text-xs text-[#718096] max-w-sm mx-auto">
             Add sector focus to your profile to start seeing relevant regulatory developments.

@@ -66,8 +66,8 @@ export async function POST(req) {
     to: ADMIN_EMAIL,
     subject: `🏢 New company claim: ${company_name}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <div style="border-left: 4px solid #2d6a4f; padding-left: 16px; margin-bottom: 24px;">
             <h2 style="margin: 0; font-size: 22px; color: #0f1a14;">New Company Claim</h2>
             <p style="margin: 4px 0 0; color: #718096; font-family: monospace; font-size: 12px;">EP Investing</p>
@@ -91,7 +91,7 @@ export async function POST(req) {
               </tr>
             `).join("")}
           </table>
-          ${description ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e6ed;"><p style="color: #4a5568; font-size: 13px; line-height: 1.6; margin: 0;">${description}</p></div>` : ""}
+          ${description ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8eaee;"><p style="color: #4a5568; font-size: 13px; line-height: 1.6; margin: 0;">${description}</p></div>` : ""}
           <div style="margin-top: 24px;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/admin/claims"
               style="background: #2d6a4f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">
@@ -109,14 +109,14 @@ export async function POST(req) {
     to: contact_email,
     subject: `We received your claim for ${company_name}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">You're on the list, ${contact_name}.</h2>
           <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
             We've received your claim for <strong>${company_name}</strong> and will verify it within 1–2 business days.
             Once approved, your profile will be live and discoverable by investors on EP Investing.
           </p>
-          <div style="background: #f8f9fb; border-radius: 12px; padding: 20px; border: 1px solid #e2e6ed; margin-bottom: 24px;">
+          <div style="background: #fafbfc; border-radius: 12px; padding: 20px; border: 1px solid #e8eaee; margin-bottom: 24px;">
             <p style="margin: 0; font-family: monospace; font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Your submission</p>
             <p style="margin: 0; font-size: 14px; color: #0f1a14;"><strong>${company_name}</strong>${sector ? ` · ${sector.replace(/_/g, " ")}` : ""}${stage ? ` · ${stage}` : ""}</p>
             ${signals.length > 0 ? `<p style="margin: 8px 0 0; font-size: 12px; color: #718096;">${signals.join(" · ")}</p>` : ""}
@@ -124,7 +124,7 @@ export async function POST(req) {
           <p style="color: #718096; font-size: 13px; margin: 0;">
             Questions? Reply to this email and we'll get back to you.
           </p>
-          <hr style="border: none; border-top: 1px solid #e2e6ed; margin: 24px 0;" />
+          <hr style="border: none; border-top: 1px solid #e8eaee; margin: 24px 0;" />
           <p style="color: #a0aec0; font-size: 11px; font-family: monospace; margin: 0;">EP Investing · epinvesting.com</p>
         </div>
       </div>

@@ -103,7 +103,7 @@ export default function GetMatchedPage() {
         <p className="text-[#4a5568] text-sm leading-relaxed mb-8">
           Thanks — we'll review your submission and follow up at {form.email} within 2–3 business days with your matched results.
         </p>
-        <Link href="/" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+        <Link href="/" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
           Back to home <ArrowRight size={14} />
         </Link>
       </div>
@@ -111,12 +111,12 @@ export default function GetMatchedPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-4xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#f2f4f6] rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             Matching Service
           </div>
@@ -133,7 +133,7 @@ export default function GetMatchedPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {PATHS.map((p) => (
               <button key={p.id} onClick={() => { setSelectedPath(p.id); setStep(2); setForm({}); }}
-                className="text-left bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+                className="text-left bg-[#ffffff] border border-[#e8eaee] rounded-2xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
                 <p.icon size={24} className={p.color} />
                 <div>
                   <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">{p.title}</h3>
@@ -154,8 +154,8 @@ export default function GetMatchedPage() {
               <ArrowLeft size={13} /> Back
             </button>
 
-            <div className="bg-[#ffffff] border border-[#e2e6ed] rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
+            <div className="bg-[#ffffff] border border-[#e8eaee] rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e8eaee]">
                 <path.icon size={18} className={path.color} />
                 <h2 className="font-semibold text-[#0f1a14]">{path.title}</h2>
               </div>
@@ -173,7 +173,7 @@ export default function GetMatchedPage() {
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       required={field.required}
-                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
+                      className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors"
                     />
                   </div>
                 ))}
@@ -189,13 +189,13 @@ export default function GetMatchedPage() {
                       onChange={handleChange}
                       placeholder={path.textarea.placeholder}
                       rows={4}
-                      className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
+                      className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
                     />
                   </div>
                 )}
 
                 <button type="submit" disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
                   {loading ? "Submitting…" : "Submit match request"}
                   {!loading && <ArrowRight size={14} />}
                 </button>

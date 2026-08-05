@@ -29,8 +29,8 @@ const STATUS_COLORS = {
   comment_period: "bg-amber-50 text-amber-800 border-amber-200",
   enacted: "bg-emerald-50 text-emerald-800 border-emerald-200",
   enacted_pending_effective: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  in_force: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
-  implemented: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
+  in_force: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
+  implemented: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
   amended: "bg-purple-50 text-purple-700 border-purple-200",
   withdrawn: "bg-gray-50 text-gray-600 border-gray-200",
   expired: "bg-gray-50 text-gray-500 border-gray-200",
@@ -52,7 +52,7 @@ export default function PolicyCard({ policy, compact = false }) {
   return (
     <Link
       href={`/news/policy/${policy.id}`}
-      className={`block bg-white border border-[#e2e6ed] rounded-xl ${compact ? "p-4" : "p-5"} hover:border-[#2d6a4f] transition-colors`}
+      className={`block bg-white border border-[#e8eaee] rounded-xl ${compact ? "p-4" : "p-5"} hover:border-[#2d6a4f] transition-colors`}
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="flex items-center gap-2 flex-wrap text-xs text-[#718096]">
@@ -101,7 +101,7 @@ export default function PolicyCard({ policy, compact = false }) {
         {policy.sectors?.length > 0 && !compact && (
           <div className="flex flex-wrap gap-1">
             {policy.sectors.slice(0, 3).map((s) => (
-              <span key={s} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f2f4f8] text-[#718096] border border-[#e2e6ed]">
+              <span key={s} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f6f7f9] text-[#718096] border border-[#e8eaee]">
                 {s.replace(/-/g, " ")}
               </span>
             ))}

@@ -120,6 +120,36 @@ const CAREERS_PAGES_FULL = [
   { company: "Breakthrough Energy", url: "https://breakthroughenergy.org/careers/", sector: "climate_finance", ats: "web" },
 ];
 
+// Additional companies on Greenhouse's public board API. Slugs are best-effort;
+// any that don't return 200 are skipped automatically. Add/remove freely.
+const GREENHOUSE_PAGES = [
+  { company: "Rivian", slug: "rivian", sector: "electric_vehicles" },
+  { company: "Redwood Materials", slug: "redwoodmaterials", sector: "battery_storage" },
+  { company: "Sila Nanotechnologies", slug: "silanano", sector: "battery_storage" },
+  { company: "Aurora Solar", slug: "aurorasolar", sector: "solar" },
+  { company: "Persefoni", slug: "persefoni", sector: "climate_tech" },
+  { company: "Span", slug: "span", sector: "energy_efficiency" },
+  { company: "Dandelion Energy", slug: "dandelionenergy", sector: "geothermal" },
+  { company: "BlocPower", slug: "blocpower", sector: "energy_efficiency" },
+  { company: "Charm Industrial", slug: "charmindustrial", sector: "carbon_markets" },
+  { company: "Sublime Systems", slug: "sublimesystems", sector: "industrial_decarbonization" },
+  { company: "Lucid Motors", slug: "lucidmotors", sector: "electric_vehicles" },
+  { company: "Zola Electric", slug: "zolaelectric", sector: "clean_energy" },
+  { company: "Nuvve", slug: "nuvve", sector: "ev_charging" },
+  { company: "Wallbox", slug: "wallbox", sector: "ev_charging" },
+  { company: "Ampds", slug: "ampd", sector: "battery_storage" },
+  { company: "Moxion Power", slug: "moxionpower", sector: "battery_storage" },
+  { company: "Electric Hydrogen", slug: "electrichydrogen", sector: "green_hydrogen" },
+  { company: "Koloma", slug: "koloma", sector: "green_hydrogen" },
+  { company: "Fervo Energy", slug: "fervoenergy", sector: "geothermal" },
+  { company: "Crusoe", slug: "crusoeenergy", sector: "data_center_energy" },
+  { company: "Lila Sciences", slug: "lilasciences", sector: "climate_tech" },
+  { company: "Mill", slug: "mill", sector: "waste" },
+  { company: "Aemetis", slug: "aemetis", sector: "saf_efuels" },
+  { company: "Ascend Elements", slug: "ascendelements", sector: "battery_storage" },
+  { company: "Verdox", slug: "verdox", sector: "direct_air_capture" },
+];
+
 async function fetchLeverJobs(url) {
   const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
   if (!res.ok) return null;
@@ -131,6 +161,57 @@ async function fetchLeverJobs(url) {
     type: j.categories?.commitment || 'Full-time',
     apply_url: j.hostedUrl || url,
   }));
+}
+
+async function fetchGreenhouseJobs(slug) {
+  const url = `https://boards-api.greenhouse.io/v1/boards/${slug}/jobs`;
+  const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const jobs = data.jobs || [];
+  console.log(`  Greenhouse API: found ${jobs.length} jobs`);
+  return jobs.map(j => ({
+    title: j.title,
+    location: j.location?.name || 'Unknown',
+    type: 'Full-time',
+    apply_url: j.absolute_url || `https://boards.greenhouse.io/${slug}`,
+  }));
+}
+
+// --- Company resolution ---------------------------------------------------
+// Preloaded once in main(); maps normalized directory names -> company id so
+// scraped jobs reliably link to a company (which is what the hiring signal and
+// the "potentially raising" panel read from).
+let COMPANY_INDEX = null;
+const normName = (s) =>
+  (s || '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '')
+    .replace(/(incorporated|inc|ltd|limited|llc|corporation|corp|company|co|group|holdings|technologies|technology|energy|power|inc)$/g, '');
+
+async function loadCompanyIndex() {
+  const idx = new Map();
+  let from = 0;
+  const PAGE = 1000;
+  for (;;) {
+    const { data } = await supabase.from('companies').select('id, name').range(from, from + PAGE - 1);
+    if (!data || data.length === 0) break;
+    for (const c of data) {
+      const n = normName(c.name);
+      if (n && !idx.has(n)) idx.set(n, c.id);
+    }
+    if (data.length < PAGE) break;
+    from += PAGE;
+  }
+  COMPANY_INDEX = idx;
+  console.log(`Loaded ${idx.size} companies for name matching.\n`);
+}
+
+function resolveCompanyId(company) {
+  if (!COMPANY_INDEX) return null;
+  const n = normName(company);
+  return COMPANY_INDEX.get(n) || null;
 }
 
 async function fetchWebPage(url) {
@@ -177,14 +258,14 @@ If no jobs found return []. Return ONLY the JSON array.`;
   return JSON.parse(match[0]);
 }
 
+const LINKED_COMPANY_IDS = new Set(); // companies that got fresh jobs this run
+
 async function insertJobs(jobs, company, sector) {
   if (jobs.length === 0) return 0;
 
-  const { data: companyRow } = await supabase
-    .from('companies')
-    .select('id')
-    .ilike('name', company)
-    .single();
+  const companyId = resolveCompanyId(company);
+  if (companyId) LINKED_COMPANY_IDS.add(companyId);
+  else console.log(`  (no directory match for "${company}" — jobs stored without company_id)`);
 
   const { data: existing } = await supabase
     .from('job_listings')
@@ -198,7 +279,7 @@ async function insertJobs(jobs, company, sector) {
     .map(job => ({
       title: job.title,
       company: company,
-      company_id: companyRow?.id || null,
+      company_id: companyId,
       location: job.location || 'Unknown',
       type: job.type || 'Full-time',
       sector: sector,
@@ -220,16 +301,24 @@ async function insertJobs(jobs, company, sector) {
 }
 
 async function main() {
-  console.log(`Starting job scraper for ${CAREERS_PAGES.length} companies...\n`);
+  await loadCompanyIndex();
+
+  // Build one unified worklist: existing Lever pages + Greenhouse pages.
+  const leverPages = CAREERS_PAGES.map(p => ({ ...p, ats: p.ats || 'lever' }));
+  const ghPages = GREENHOUSE_PAGES.map(p => ({ company: p.company, slug: p.slug, sector: p.sector, ats: 'greenhouse' }));
+  const worklist = [...leverPages, ...ghPages];
+  console.log(`Starting job scraper for ${worklist.length} companies (${leverPages.length} Lever, ${ghPages.length} Greenhouse)...\n`);
   let total = 0;
 
- for (const { company, url, sector, ats, limit } of CAREERS_PAGES) {
+  for (const { company, url, slug, sector, ats, limit } of worklist) {
     console.log(`Scraping ${company}...`);
     let jobs = [];
 
     try {
       if (ats === 'lever') {
         jobs = await fetchLeverJobs(url) || [];
+      } else if (ats === 'greenhouse') {
+        jobs = await fetchGreenhouseJobs(slug) || [];
       } else {
         const pageText = await fetchWebPage(url);
         console.log(`  Page text length: ${pageText?.length || 0}`);
@@ -247,10 +336,18 @@ async function main() {
     console.log(`  Inserted ${inserted} new jobs`);
     total += inserted;
 
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 1200));
   }
 
-  console.log(`\nDone. Total jobs inserted: ${total}`);
+  // Reflect real hiring activity onto company records — powers the hiring
+  // signal and the "Hiring" badge on profiles / the jobs board. Additive only.
+  if (LINKED_COMPANY_IDS.size) {
+    const ids = [...LINKED_COMPANY_IDS];
+    const { error } = await supabase.from('companies').update({ is_hiring: true }).in('id', ids);
+    console.log(`\nMarked ${ids.length} companies is_hiring=true${error ? ` (warn: ${error.message})` : ''}.`);
+  }
+
+  console.log(`\nDone. Total jobs inserted: ${total}. Linked companies: ${LINKED_COMPANY_IDS.size}.`);
 }
 
 main();

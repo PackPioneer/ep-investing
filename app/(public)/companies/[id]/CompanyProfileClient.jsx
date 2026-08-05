@@ -101,13 +101,13 @@ async function postUpdate(e) {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (!company) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center text-[#4a5568]">
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center text-[#4a5568]">
       Company not found.
     </div>
   );
@@ -116,7 +116,7 @@ async function postUpdate(e) {
   const hasSignals = company.looking_to_raise || company.is_hiring || company.seeking_partnerships;
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       {/* Structured data for search engines (schema.org Organization) */}
       <script
         type="application/ld+json"
@@ -148,20 +148,20 @@ async function postUpdate(e) {
           <div className="lg:col-span-2 flex flex-col gap-6">
 
             {/* HERO CARD */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-8">
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div className="flex items-center gap-5">
                   {company.logo_url ? (
                     <>
                       <img src={company.logo_url} alt={company.name}
-                        className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e2e6ed]"
+                        className="w-16 h-16 rounded-xl object-contain bg-white p-2 border border-[#e8eaee]"
                         onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-                      <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e2e6ed] items-center justify-center text-2xl font-bold text-[#2d6a4f]">
+                      <div style={{display:"none"}} className="w-16 h-16 rounded-xl bg-[#e8eaee] items-center justify-center text-2xl font-bold text-[#2d6a4f]">
                         {(company.name||"?")[0].toUpperCase()}
                       </div>
                     </>
                   ) : (
-                    <div className="w-16 h-16 rounded-xl bg-[#e2e6ed] flex items-center justify-center text-2xl font-bold text-[#2d6a4f]">
+                    <div className="w-16 h-16 rounded-xl bg-[#e8eaee] flex items-center justify-center text-2xl font-bold text-[#2d6a4f]">
                       {(company.name || company.url || "?")[0].toUpperCase()}
                     </div>
                   )}
@@ -206,7 +206,7 @@ async function postUpdate(e) {
                   </div>
                 </div>
                 {company.production_status && (
-                  <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+                  <div className="flex-shrink-0 px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]">
                     {company.production_status}
                   </div>
                 )}
@@ -214,7 +214,7 @@ async function postUpdate(e) {
 
               {/* Stage section */}
               {company.funding_stage && company.funding_stage !== 'unknown' && (
-                <div className="pt-3 mt-3 border-t border-[#e2e6ed]">
+                <div className="pt-3 mt-3 border-t border-[#e8eaee]">
                   <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Stage</div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STAGE_COLORS[company.funding_stage] || STAGE_COLORS.unknown}`}>
                     {STAGE_LABELS[company.funding_stage] || company.funding_stage}
@@ -224,7 +224,7 @@ async function postUpdate(e) {
 
               {/* Focus areas section */}
               {tags.length > 0 && (
-                <div className="pt-3 mt-3 border-t border-[#e2e6ed]">
+                <div className="pt-3 mt-3 border-t border-[#e8eaee]">
                   <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Focus areas</div>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
@@ -238,7 +238,7 @@ async function postUpdate(e) {
 
               {/* Signals section */}
               {(hasSignals || (company.show_contact && company.primary_contact_email)) && (
-                <div className="pt-3 mt-3 mb-5 border-t border-[#e2e6ed]">
+                <div className="pt-3 mt-3 mb-5 border-t border-[#e8eaee]">
                   <div className="text-[10px] font-mono text-[#718096] uppercase tracking-widest mb-2">Signals</div>
                   <div className="flex flex-wrap gap-2">
                     {company.looking_to_raise && (
@@ -275,7 +275,7 @@ async function postUpdate(e) {
 
             {/* CORE TECHNOLOGY */}
             {company.core_technology && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Cpu size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Core Technology</h2>
@@ -286,14 +286,14 @@ async function postUpdate(e) {
 
             {/* KEY CUSTOMERS */}
             {company.key_customers && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Users size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Key Customers</h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {company.key_customers.split(",").map((c) => (
-                    <span key={c} className="px-3 py-1.5 rounded-lg text-sm bg-[#f8f9fb] border border-[#d0d6e0] text-[#4a5568]">
+                    <span key={c} className="px-3 py-1.5 rounded-lg text-sm bg-[#fafbfc] border border-[#dbdfe4] text-[#4a5568]">
                       {c.trim()}
                     </span>
                   ))}
@@ -303,7 +303,7 @@ async function postUpdate(e) {
 
             {/* RECENT MILESTONES */}
             {company.recent_milestones && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Star size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Milestones</h2>
@@ -314,7 +314,7 @@ async function postUpdate(e) {
 
             {/* MANUFACTURING */}
             {company.manufacturing_capability && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-4">
                   <Factory size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Manufacturing Capability</h2>
@@ -324,7 +324,7 @@ async function postUpdate(e) {
             )}
 
             {/* RECENT UPDATES */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Rss size={16} className="text-[#2d6a4f]" />
@@ -337,31 +337,31 @@ async function postUpdate(e) {
               </div>
 
               {showUpdateForm && (
-                <form onSubmit={postUpdate} className="mb-5 flex flex-col gap-3 bg-[#f8f9fb] rounded-xl p-4 border border-[#e2e6ed]">
+                <form onSubmit={postUpdate} className="mb-5 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
                   <input
                     required
                     placeholder="Title *"
                     value={updateForm.title}
                     onChange={e => setUpdateForm(p => ({ ...p, title: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                    className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]"
                   />
                   <textarea
                     placeholder="Details (optional)"
                     rows={2}
                     value={updateForm.body}
                     onChange={e => setUpdateForm(p => ({ ...p, body: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none"
+                    className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none"
                   />
                   <input
                     placeholder="Link (optional)"
                     value={updateForm.link}
                     onChange={e => setUpdateForm(p => ({ ...p, link: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                    className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]"
                   />
                   <select
                     value={updateForm.type}
                     onChange={e => setUpdateForm(p => ({ ...p, type: e.target.value }))}
-                    className="text-sm px-3 py-2 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]">
+                    className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="milestone">Milestone</option>
                     <option value="hiring">Hiring</option>
                     <option value="funding">Funding</option>
@@ -371,7 +371,7 @@ async function postUpdate(e) {
                   </select>
                   <div className="flex gap-2 justify-end">
                     <button type="button" onClick={() => setShowUpdateForm(false)}
-                      className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e2e6ed]">Cancel</button>
+                      className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>
                     <button type="submit" disabled={postingUpdate}
                       className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                       {postingUpdate ? "Posting..." : "Post update"}
@@ -383,9 +383,9 @@ async function postUpdate(e) {
               {updates.length > 0 ? (
                 <div className="flex flex-col gap-4">
                   {updates.map(u => (
-                    <div key={u.id} className="border-b border-[#e2e6ed] last:border-0 pb-4 last:pb-0">
+                    <div key={u.id} className="border-b border-[#e8eaee] last:border-0 pb-4 last:pb-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] text-[#4a5568] border border-[#d0d6e0] capitalize">{u.type}</span>
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] border border-[#dbdfe4] capitalize">{u.type}</span>
                         <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       </div>
                       <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
@@ -406,7 +406,7 @@ async function postUpdate(e) {
 
             {/* LOCKED INTELLIGENCE — only shown for companies actively raising */}
             {company.looking_to_raise && (isInvestor ? (
-  <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+  <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
     <div className="flex items-center gap-2 mb-5">
       <Lock size={16} className="text-[#2d6a4f]" />
       <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investor Intelligence</h2>
@@ -445,7 +445,7 @@ async function postUpdate(e) {
         </div>
       )}
       {company.pitch_deck_url && (
-        <div className="pt-2 border-t border-[#e2e6ed]">
+        <div className="pt-2 border-t border-[#e8eaee]">
           <a href={company.pitch_deck_url} target="_blank" rel="noopener noreferrer"
             className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
             View Pitch Deck
@@ -458,7 +458,7 @@ async function postUpdate(e) {
     </div>
   </div>
 ) : (
-  <div className="bg-white border border-[#d0d6e0] rounded-2xl p-7 relative overflow-hidden">
+  <div className="bg-white border border-[#dbdfe4] rounded-2xl p-7 relative overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white pointer-events-none" />
     <div className="flex items-center gap-2 mb-5">
       <Lock size={16} className="text-[#718096]" />
@@ -466,9 +466,9 @@ async function postUpdate(e) {
     </div>
     <div className="flex flex-col gap-3">
       {["Target raise amount", "Raised so far", "Round close date", "Min check size", "Pitch deck"].map((field) => (
-        <div key={field} className="flex items-center justify-between py-2 border-b border-[#e2e6ed] last:border-0">
+        <div key={field} className="flex items-center justify-between py-2 border-b border-[#e8eaee] last:border-0">
           <span className="text-sm text-[#718096]">{field}</span>
-          <div className="h-4 w-24 bg-[#e2e6ed] rounded-sm" />
+          <div className="h-4 w-24 bg-[#e8eaee] rounded-sm" />
         </div>
       ))}
     </div>
@@ -481,7 +481,7 @@ async function postUpdate(e) {
 
             {/* IN THE NEWS */}
             {companyNews.items.length > 0 && (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <div className="flex items-center gap-2 mb-5">
                   <Newspaper size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">
@@ -490,7 +490,7 @@ async function postUpdate(e) {
                       : "In the News"}
                   </h2>
                 </div>
-                <div className="flex flex-col divide-y divide-[#e2e6ed]">
+                <div className="flex flex-col divide-y divide-[#e8eaee]">
                   {companyNews.items.map((item) => (
                                       <a  
                       key={item.id}
@@ -524,7 +524,7 @@ async function postUpdate(e) {
           <div className="flex flex-col gap-5">
 
             {/* QUICK FACTS */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-5">Quick Facts</h3>
               <div className="flex flex-col gap-4">
                 {company.founding_year && (
@@ -610,7 +610,7 @@ async function postUpdate(e) {
               {company.url && (
                 <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#d0d6e0] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#dbdfe4] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                   <Globe size={14} /> Visit website
                 </a>
               )}
@@ -618,7 +618,7 @@ async function postUpdate(e) {
 
             {/* CLAIM PROFILE — only shown if unclaimed */}
             {company.claim_status !== 'approved' && (
-              <div className="bg-[#eef1f6] border border-[#c8d8cc] rounded-2xl p-6">
+              <div className="bg-[#f2f4f6] border border-[#c8d8cc] rounded-2xl p-6">
                 <h3 className="text-sm font-semibold text-[#0f1a14] mb-1">Is this your company?</h3>
                 <p className="text-xs text-[#4a5568] mb-4 leading-relaxed">Claim this profile to manage it yourself, edit details, post jobs, and connect directly with investors.</p>
                 <a href={`/claim/company/${company.id}`}
@@ -629,11 +629,11 @@ async function postUpdate(e) {
             )}
 
             {/* RELEVANT GRANTS */}
-            <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+            <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-4">Relevant Grants</h3>
               {grants.length > 0 ? (
                 (showAllGrants ? grants : grants.slice(0, 4)).map((grant) => (
-                  <div key={grant.id} className="flex items-start justify-between py-2.5 border-b border-[#e2e6ed] last:border-0">
+                  <div key={grant.id} className="flex items-start justify-between py-2.5 border-b border-[#e8eaee] last:border-0">
                     <span className="text-xs text-[#4a5568] leading-snug pr-2">{grant.title}</span>
                     {grant.deadline && (
                       <span className="text-xs font-mono text-[#ff9650] flex-shrink-0">
@@ -671,7 +671,7 @@ async function postUpdate(e) {
     </p>
     <div className="flex flex-col gap-2 mb-4">
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
+        <div className="w-8 h-8 rounded-full bg-[#f2f4f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
           {company.primary_contact_name?.[0]?.toUpperCase() || "?"}
         </div>
         <div>
@@ -681,7 +681,7 @@ async function postUpdate(e) {
       </div>
       {company.secondary_contact_name && (
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#eef1f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
+          <div className="w-8 h-8 rounded-full bg-[#f2f4f6] flex items-center justify-center text-xs font-semibold text-[#2d6a4f]">
             {company.secondary_contact_name?.[0]?.toUpperCase() || "?"}
           </div>
           <div>
@@ -699,20 +699,20 @@ async function postUpdate(e) {
 )}
             {/* CONTACT CTA */}
             {company?.show_contact && company?.primary_contact_email ? (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">Contact this company</h3>
                 <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Reach out directly to the team at {company.name}.</p>
                 <a href={`mailto:${company.primary_contact_email}`}
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                   Send an email
                 </a>
               </div>
             ) : (
-              <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
                 <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">Work in climate?</h3>
                 <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Join EP Network and connect across the energy transition.</p>
                 <Link href="/get-started"
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                   Get started free
                 </Link>
               </div>

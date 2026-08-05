@@ -126,7 +126,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
 
       {/* HERO */}
       <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-16">
@@ -154,7 +154,7 @@ export default function HomePage() {
       <Link href="/get-started" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all">
         Start free <ArrowRight size={14} />
       </Link>
-      <button onClick={() => setShowDemo(true)} className="inline-flex items-center gap-1.5 border border-[#d0d6e0] text-[#0f1a14] font-semibold text-sm rounded-lg px-5 py-3 hover:border-[#2d6a4f] transition-all">
+      <button onClick={() => setShowDemo(true)} className="inline-flex items-center gap-1.5 border border-[#dbdfe4] text-[#0f1a14] font-semibold text-sm rounded-lg px-5 py-3 hover:border-[#2d6a4f] transition-all">
         <Play size={14} /> Watch demo
       </button>
     </div>
@@ -164,7 +164,7 @@ export default function HomePage() {
   </div>
 
   {/* RIGHT: dashboard mockup */}
-  <div className="bg-white rounded-xl border border-[#e2e6ed] overflow-hidden grid grid-cols-[140px_1fr] min-h-[420px]">
+  <div className="bg-white rounded-xl border border-[#e8eaee] overflow-hidden grid grid-cols-[140px_1fr] min-h-[420px]">
 
     {/* Sidebar */}
     <div className="bg-[#0f1a14] p-3">
@@ -196,12 +196,12 @@ export default function HomePage() {
     </div>
 
     {/* Feed pane */}
-    <div className="p-3.5 bg-[#f8f9fb]">
+    <div className="p-3.5 bg-[#fafbfc]">
       <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">
         Activity in your sector
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
         <div className="flex items-center gap-1.5 mb-1">
           <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e1f5ee] text-[#0f6e56] font-medium">IPO</div>
           <div className="text-[8px] text-[#718096] font-mono">Climate Capital Weekly</div>
@@ -212,9 +212,9 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
         <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#eef1f6] text-[#2d6a4f] font-medium">Funding</div>
+          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#f2f4f6] text-[#2d6a4f] font-medium">Funding</div>
           <div className="text-[8px] text-[#718096] font-mono">Energy Intelligence</div>
           <div className="text-[8px] text-[#718096] ml-auto">8h</div>
         </div>
@@ -223,7 +223,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-3">
+      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-3">
         <div className="flex items-center gap-1.5 mb-1">
           <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faece7] text-[#993c1d] font-medium">Activity</div>
           <div className="text-[8px] text-[#718096] font-mono">Solar Futures</div>
@@ -238,7 +238,7 @@ export default function HomePage() {
         Policy &amp; deadlines
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5 mb-1.5">
+      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
         <div className="flex items-center gap-1.5 mb-1">
           <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e6f1fb] text-[#185fa5] font-medium">Policy</div>
           <div className="text-[8px] text-[#718096] font-mono">Nuclear Business</div>
@@ -249,7 +249,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-[#e2e6ed] rounded-md p-2.5">
+      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5">
         <div className="flex items-center gap-1.5 mb-1">
           <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faeeda] text-[#854f0b] font-medium">Grant</div>
           <div className="text-[8px] text-[#718096] font-mono">DOE</div>
@@ -265,7 +265,7 @@ export default function HomePage() {
 
 </div>
 
-          <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden mb-6 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
+          <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#dbdfe4] rounded-xl overflow-hidden mb-6 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
             <div className="flex items-center flex-1 px-4 gap-3">
               <Search size={16} className="text-[#718096] flex-shrink-0" />
               <input
@@ -275,7 +275,7 @@ export default function HomePage() {
                 className="w-full py-4 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#718096]"
               />
             </div>
-            <button type="submit" className="bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm px-6 hover:bg-[#235a40] transition-colors">
+            <button type="submit" className="bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm px-6 hover:bg-[#235a40] transition-colors">
               Search
             </button>
           </form>
@@ -284,7 +284,7 @@ export default function HomePage() {
             <span className="text-[#718096] text-xs font-mono tracking-wider">Browse:</span>
             {quickTags.map(tag => (
               <button key={tag.slug} onClick={() => handleSearch(null, tag.slug)}
-                className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[rgba(45,106,79,0.06)] transition-all">
+                className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[rgba(45,106,79,0.06)] transition-all">
                 {tag.label}
               </button>
             ))}
@@ -294,8 +294,8 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {roleTiles.map(tile => (
               <Link key={tile.title} href={tile.href}
-                className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
-                <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center">
+                className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
+                <div className="w-9 h-9 rounded-lg bg-[#f2f4f6] flex items-center justify-center">
                   <tile.icon size={18} className="text-[#2d6a4f]" />
                 </div>
                 <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14]">{tile.title}</div>
@@ -324,7 +324,7 @@ export default function HomePage() {
             { num: "500+", title: "Jobs", desc: "Roles across the energy transition — deep tech to climate finance.", href: "/jobs" },
           ].map(card => (
             <Link key={card.title} href={card.href}
-              className="relative bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+              className="relative bg-[#ffffff] border border-[#e8eaee] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
               <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{card.num}</div>
               <div className="text-base font-semibold text-[#0f1a14]">{card.title}</div>
               <div className="text-sm text-[#4a5568] leading-relaxed font-light">{card.desc}</div>
@@ -334,66 +334,66 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="border-t border-[#e2e6ed]" />
+      <div className="border-t border-[#e8eaee]" />
 
       {/* LIVE FEEDS */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e2e6ed] border border-[#e2e6ed] rounded-xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e8eaee] border border-[#e8eaee] rounded-xl overflow-hidden">
 
           <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New companies</span>
               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
             </div>
             {recentCompanies.length > 0 ? recentCompanies.map(co => (
               <Link key={co.id} href={`/companies/${co.slug || co.id}`}
-                className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{co.name || co.url}</div>
                   {co.industry_tags?.[0] && <div className="text-xs font-mono text-[#718096] mt-1">{formatSector(co.industry_tags[0])}</div>}
                 </div>
               </Link>
             )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
-                <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
+                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
               </div>
             ))}
           </div>
 
           <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Investors</span>
               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
             </div>
             {recentInvestors.length > 0 ? recentInvestors.map(inv => (
               <Link key={inv.id} href="/investors"
-                className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{inv.name}</div>
                   <div className="text-xs font-mono text-[#718096] mt-1">{inv.type?.replace(/_/g, " ") || "VC Firm"}</div>
                 </div>
               </Link>
             )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
-                <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
+                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
               </div>
             ))}
           </div>
 
           <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Grants closing soon</span>
               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
             </div>
             {recentGrants.length > 0 ? recentGrants.map(grant => (
               <Link key={grant.id} href="/grants"
-                className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{(grant.title || "").toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</div>
                   {grant.deadline_date && (
@@ -404,38 +404,38 @@ export default function HomePage() {
                 </div>
               </Link>
             )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
-                <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
+                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
               </div>
             ))}
           </div>
 
           <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e2e6ed]">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
               <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New jobs</span>
               <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
             </div>
             {recentJobs.length > 0 ? recentJobs.map(job => (
               <Link key={job.id} href="/jobs"
-                className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5 flex-shrink-0" />
+                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
                 <div>
                   <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{job.title}</div>
                   <div className="text-xs font-mono text-[#718096] mt-1">{job.company}</div>
                 </div>
               </Link>
             )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e2e6ed] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#d0d6e0] mt-1.5" />
-                <div className="h-4 bg-[#e2e6ed] rounded w-32 animate-pulse" />
+              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
+                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <div className="border-t border-[#e2e6ed]" />
+      <div className="border-t border-[#e8eaee]" />
 
       {/* CATEGORIES */}
       <section className="max-w-6xl mx-auto px-6 py-20">
@@ -446,7 +446,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {categories.map(cat => (
             <button key={cat.name} onClick={() => handleSearch(null, cat.slug)}
-              className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-2 text-left hover:border-[#2d6a4f] hover:bg-[#f8f9fb] hover:-translate-y-0.5 transition-all">
+              className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-2 text-left hover:border-[#2d6a4f] hover:bg-[#fafbfc] hover:-translate-y-0.5 transition-all">
               <div className="text-sm font-medium text-[#0f1a14] leading-snug">{cat.name}</div>
               <div className="text-xs text-[#718096] font-mono">{cat.count} companies</div>
             </button>
@@ -455,7 +455,7 @@ export default function HomePage() {
       </section>
 
       {/* EMAIL CAPTURE */}
-      <div className="bg-[#ffffff] border-y border-[#e2e6ed]">
+      <div className="bg-[#ffffff] border-y border-[#e8eaee]">
         <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">
@@ -471,7 +471,7 @@ export default function HomePage() {
                 ✓ You're subscribed — check your inbox.
               </div>
             ) : (
-              <div className="flex bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg overflow-hidden focus-within:border-[#2d6a4f] transition-all">
+              <div className="flex bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg overflow-hidden focus-within:border-[#2d6a4f] transition-all">
                 <input
                   type="email"
                   value={email}
@@ -481,7 +481,7 @@ export default function HomePage() {
                   className="flex-1 bg-transparent px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none"
                 />
                 <button onClick={handleEmailSubmit} disabled={emailStatus === "loading"}
-                  className="bg-[#2d6a4f] text-[#f2f4f8] text-sm font-semibold px-5 hover:bg-[#235a40] transition-colors disabled:opacity-60">
+                  className="bg-[#2d6a4f] text-[#f6f7f9] text-sm font-semibold px-5 hover:bg-[#235a40] transition-colors disabled:opacity-60">
                   {emailStatus === "loading" ? "..." : "Subscribe"}
                 </button>
               </div>

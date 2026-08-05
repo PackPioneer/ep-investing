@@ -71,8 +71,8 @@ export async function POST(req) {
     to: ADMIN_EMAIL,
     subject: `New investor: ${name}${firm ? ` · ${firm}` : ""}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <h2 style="margin: 0 0 8px; font-size: 22px; color: #0f1a14;">New Investor Profile</h2>
           <table style="width: 100%; border-collapse: collapse;">
             ${[
@@ -90,7 +90,7 @@ export async function POST(req) {
               </tr>
             `).join("")}
           </table>
-          ${thesis ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e6ed;"><p style="font-family: monospace; font-size: 11px; color: #718096; margin: 0 0 8px;">THESIS</p><p style="color: #4a5568; font-size: 13px; line-height: 1.6; margin: 0;">${thesis}</p></div>` : ""}
+          ${thesis ? `<div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8eaee;"><p style="font-family: monospace; font-size: 11px; color: #718096; margin: 0 0 8px;">THESIS</p><p style="color: #4a5568; font-size: 13px; line-height: 1.6; margin: 0;">${thesis}</p></div>` : ""}
           <div style="margin-top: 24px;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/admin" style="background: #2d6a4f; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">View in Admin →</a>
           </div>
@@ -104,14 +104,14 @@ export async function POST(req) {
     to: email,
     subject: `Welcome to EP Investing${firm ? `, ${firm}` : ""}`,
     html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+        <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
           <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">Application received, ${name}.</h2>
           <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
             We've received your investor profile and are reviewing it now. You'll hear back from us within 1 business day once your access is approved.
             ${sectors?.length ? `Your focus areas — <strong>${sectors.slice(0, 2).map(s => s.replace(/_/g, " ")).join(" and ")}</strong>${sectors.length > 2 ? ` and ${sectors.length - 2} more` : ""} — have been noted.` : ""}
           </p>
-          <div style="background: #f8f9fb; border-radius: 12px; padding: 20px; border: 1px solid #e2e6ed; margin-bottom: 24px;">
+          <div style="background: #fafbfc; border-radius: 12px; padding: 20px; border: 1px solid #e8eaee; margin-bottom: 24px;">
             <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://epinvesting.com"}/search" style="color: #2d6a4f; font-size: 14px; font-weight: 600; text-decoration: none;">Browse 1,300+ climate companies →</a>
           </div>
           <p style="color: #a0aec0; font-size: 11px; font-family: monospace; margin: 0;">EP Investing · epinvesting.com</p>

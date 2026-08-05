@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-[#e2e6ed] text-[#4a5568]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <footer className="bg-white border-t border-[#e8eaee] text-[#4a5568]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
 
         {/* Top Section */}
@@ -28,15 +28,15 @@ export default function Footer() {
             </p>
             <div className="flex gap-3 mt-6">
               <a href="mailto:otto@epinvesting.com"
-                className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                className="p-2 rounded-lg border border-[#e8eaee] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Mail size={15} />
               </a>
               <a href="https://www.linkedin.com/company/the-energy-pioneer" target="_blank" rel="noopener noreferrer"
-                className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                className="p-2 rounded-lg border border-[#e8eaee] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Linkedin size={15} />
               </a>
               <a href="https://x.com/energypioneer" target="_blank" rel="noopener noreferrer"
-                className="p-2 rounded-lg border border-[#e2e6ed] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                className="p-2 rounded-lg border border-[#e8eaee] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                 <Twitter size={15} />
               </a>
             </div>
@@ -84,7 +84,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-[#e2e6ed] mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-[#e8eaee] mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs font-mono text-[#a0aec0]">
            © {new Date().getFullYear()} EP Network. All rights reserved.
           </p>

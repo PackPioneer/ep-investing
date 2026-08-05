@@ -94,7 +94,7 @@ export default function ArticleCard({ article, showActions = false, onDismiss, o
   const classLabel = CLASSIFICATION_LABELS[article.classification];
 
   return (
-    <article className={`bg-white border border-[#e2e6ed] rounded-xl ${compact ? "p-4" : "p-5"} hover:border-[#2d6a4f] transition-colors`}>
+    <article className={`bg-white border border-[#e8eaee] rounded-xl ${compact ? "p-4" : "p-5"} hover:border-[#2d6a4f] transition-colors`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs text-[#718096] mb-1.5 flex-wrap">
@@ -106,12 +106,12 @@ export default function ArticleCard({ article, showActions = false, onDismiss, o
               <span className="font-medium">{source?.name}</span>
             )}
             {source?.attribution_label && (
-              <span className="inline-flex items-center rounded-full bg-[#eef1f6] px-2 py-0.5 text-[10px] font-medium text-[#2d6a4f] border border-[#c8d8cc]">
+              <span className="inline-flex items-center rounded-full bg-[#f2f4f6] px-2 py-0.5 text-[10px] font-medium text-[#2d6a4f] border border-[#c8d8cc]">
                 {source.attribution_label}
               </span>
             )}
             {classLabel && (
-              <span className="inline-flex items-center rounded-full bg-[#f2f4f8] px-2 py-0.5 text-[10px] font-medium text-[#4a5568] border border-[#e2e6ed]">
+              <span className="inline-flex items-center rounded-full bg-[#f6f7f9] px-2 py-0.5 text-[10px] font-medium text-[#4a5568] border border-[#e8eaee]">
                 {classLabel}
               </span>
             )}
@@ -140,7 +140,7 @@ export default function ArticleCard({ article, showActions = false, onDismiss, o
           {article.sector_tags?.length > 0 && !compact && (
             <div className="mt-2 flex flex-wrap gap-1">
               {article.sector_tags.slice(0, 3).map((tag) => (
-                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f2f4f8] text-[#718096] border border-[#e2e6ed]">
+                <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f6f7f9] text-[#718096] border border-[#e8eaee]">
                   {tag.replace(/-/g, " ")}
                 </span>
               ))}
@@ -154,7 +154,7 @@ export default function ArticleCard({ article, showActions = false, onDismiss, o
               onClick={handleSave}
               disabled={busy !== null || saved}
               aria-label={saved ? "Saved" : "Save article"}
-              className={`p-1.5 rounded-md transition-colors ${saved ? "bg-[#eef1f6]" : "hover:bg-[#f2f4f8]"} disabled:opacity-50`}
+              className={`p-1.5 rounded-md transition-colors ${saved ? "bg-[#f2f4f6]" : "hover:bg-[#f6f7f9]"} disabled:opacity-50`}
             >
               <Bookmark
                 size={16}
@@ -165,7 +165,7 @@ export default function ArticleCard({ article, showActions = false, onDismiss, o
               onClick={handleDismiss}
               disabled={busy !== null}
               aria-label="Dismiss"
-              className="p-1.5 rounded-md hover:bg-[#f2f4f8] transition-colors disabled:opacity-50"
+              className="p-1.5 rounded-md hover:bg-[#f6f7f9] transition-colors disabled:opacity-50"
             >
               <X size={16} className="text-[#a0aec0] hover:text-[#4a5568]" />
             </button>

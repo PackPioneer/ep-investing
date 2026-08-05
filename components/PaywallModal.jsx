@@ -59,14 +59,14 @@ export function PaywallProvider({ children }) {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
           style={{ background: "rgba(15,26,20,0.6)" }}>
-          <div className="bg-white rounded-2xl border border-[#e2e6ed] max-w-md w-full p-8 relative">
+          <div className="bg-white rounded-2xl border border-[#e8eaee] max-w-md w-full p-8 relative">
             {!isHardBlock && (
               <button onClick={() => setShowModal(false)}
                 className="absolute top-4 right-4 text-[#718096] hover:text-[#0f1a14] transition-colors">
                 <X size={18} />
               </button>
             )}
-            <div className="w-12 h-12 rounded-xl bg-[#eef1f6] flex items-center justify-center mb-5">
+            <div className="w-12 h-12 rounded-xl bg-[#f2f4f6] flex items-center justify-center mb-5">
               <CreditCard size={22} className="text-[#2d6a4f]" />
             </div>
             <h2 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14] mb-2">

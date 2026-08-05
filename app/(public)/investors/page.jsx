@@ -11,14 +11,14 @@ function InvestorCard({ investor }) {
   const domain = website ? new URL(website).hostname.replace("www.", "") : null;
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
+    <div className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
       <div className="flex items-start gap-3">
         {investor.logo_url ? (
           <img src={investor.logo_url} alt={investor.name}
             onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }}
-            className="w-10 h-10 object-contain rounded-lg border border-[#e2e6ed] p-1 bg-white flex-shrink-0" />
+            className="w-10 h-10 object-contain rounded-lg border border-[#e8eaee] p-1 bg-white flex-shrink-0" />
         ) : null}
-        <div className={`w-10 h-10 rounded-lg bg-[#eef1f6] items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0 ${investor.logo_url ? "hidden" : "flex"}`}>
+        <div className={`w-10 h-10 rounded-lg bg-[#f2f4f6] items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0 ${investor.logo_url ? "hidden" : "flex"}`}>
           {(investor.name || "?")[0].toUpperCase()}
         </div>
         <div className="min-w-0 flex-1">
@@ -71,7 +71,7 @@ function InvestorCard({ investor }) {
         )}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-[#e2e6ed] flex items-center justify-between">
+      <div className="mt-auto pt-3 border-t border-[#e8eaee] flex items-center justify-between">
         {website ? (
           <a href={website} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1 text-xs text-[#2d6a4f] font-medium hover:underline">
@@ -112,7 +112,7 @@ export default function InvestorsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
 
         <div className="flex items-end justify-between gap-6 flex-wrap mb-10">
@@ -135,7 +135,7 @@ export default function InvestorsPage() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-3 mb-6">
-          <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
+          <div className="flex items-center gap-3 flex-1 bg-white border border-[#dbdfe4] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
             <Search size={14} className="text-[#718096]" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, focus, or sector…"
@@ -147,7 +147,7 @@ export default function InvestorsPage() {
                className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
                  type === f
                    ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                   : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                   : "border-[#e8eaee] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
                 }`}>
                 {f === "All" ? "All types" : f}
                </button>
@@ -164,11 +164,11 @@ export default function InvestorsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="bg-white border border-[#e2e6ed] rounded-xl p-6 h-52 animate-pulse" />
+              <div key={i} className="bg-white border border-[#e8eaee] rounded-xl p-6 h-52 animate-pulse" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-[#e2e6ed] rounded-2xl bg-white">
+          <div className="text-center py-24 border border-dashed border-[#e8eaee] rounded-2xl bg-white">
             <p className="text-[#718096] text-sm">No investors found</p>
           </div>
         ) : (
@@ -177,7 +177,7 @@ export default function InvestorsPage() {
           </div>
         )}
 
-        <div className="mt-14 bg-white border border-[#e2e6ed] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-14 bg-white border border-[#e8eaee] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-1">
               Investing in climate?

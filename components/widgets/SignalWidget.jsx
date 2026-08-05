@@ -65,7 +65,7 @@ export default function SignalWidget({
   }, [classification, limit]);
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-4">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="min-w-0">
           <div className="text-[11px] font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">
@@ -96,7 +96,7 @@ export default function SignalWidget({
       ) : error ? (
         <div className="py-4 text-xs text-[#718096]">Couldn't load this.</div>
       ) : articles.length === 0 ? (
-        <div className="py-4 text-center border border-dashed border-[#e2e6ed] rounded-lg">
+        <div className="py-4 text-center border border-dashed border-[#e8eaee] rounded-lg">
           <p className="text-xs text-[#0f1a14] font-medium mb-0.5">{emptyTitle}</p>
           <p className="text-[11px] text-[#718096]">{emptyBody}</p>
         </div>

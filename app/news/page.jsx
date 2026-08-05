@@ -32,7 +32,7 @@ const CLASSIFICATIONS = [
 
 function Paywall() {
   return (
-    <div className="mt-6 rounded-2xl border border-[#c8d8cc] bg-[#eef1f6]/50 p-6 text-center">
+    <div className="mt-6 rounded-2xl border border-[#c8d8cc] bg-[#f2f4f6]/50 p-6 text-center">
       <h3 className="text-base font-semibold text-[#0f1a14]">
         Sign in to read the full climate intelligence feed
       </h3>
@@ -48,7 +48,7 @@ function Paywall() {
         </Link>
         <Link
           href="/sign-in"
-          className="rounded-lg border border-[#d0d6e0] px-4 py-2 text-sm font-medium text-[#4a5568] hover:bg-white"
+          className="rounded-lg border border-[#dbdfe4] px-4 py-2 text-sm font-medium text-[#4a5568] hover:bg-white"
         >
           Sign in
         </Link>
@@ -126,7 +126,7 @@ function NewsPageContent() {
 
       {/* Sort toggle — only visible when authed */}
       {isSignedIn && (
-        <div className="mb-4 inline-flex border border-[#d0d6e0] rounded-full p-0.5 bg-white">
+        <div className="mb-4 inline-flex border border-[#dbdfe4] rounded-full p-0.5 bg-white">
           <button
             onClick={() => setSort("latest")}
             className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
@@ -158,7 +158,7 @@ function NewsPageContent() {
                 className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                   active
                     ? "bg-[#2d6a4f] text-white border-[#2d6a4f]"
-                    : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"
+                    : "bg-white text-[#4a5568] border-[#dbdfe4] hover:border-[#2d6a4f]"
                 }`}
               >
                 {c.label}
@@ -170,7 +170,7 @@ function NewsPageContent() {
 
       {/* For You embedding status hint */}
       {sort === "for-you" && hasEmbedding === false && (
-        <div className="mb-4 text-xs text-[#718096] bg-[#f8f9fb] border border-[#e2e6ed] rounded-lg px-3 py-2">
+        <div className="mb-4 text-xs text-[#718096] bg-[#fafbfc] border border-[#e8eaee] rounded-lg px-3 py-2">
           Add sector and geography focus to your profile to improve these rankings.
         </div>
       )}

@@ -20,11 +20,11 @@ export default function CompanyNewsroom({ companyId }) {
   if (!rows.length) return null;
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
       <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-4">Announcements</h3>
       <div className="flex flex-col">
         {rows.map((a) => (
-          <div key={a.id} className="py-2.5 border-b border-[#e2e6ed] last:border-0">
+          <div key={a.id} className="py-2.5 border-b border-[#e8eaee] last:border-0">
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-[9px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ background: (CAT_COLOR[a.category] || "#64748b") + "1a", color: CAT_COLOR[a.category] || "#64748b" }}>{CAT_LABEL[a.category] || a.category}</span>
               <span className="text-[10px] text-[#a0aec0] ml-auto">{when(a.published_at)}</span>

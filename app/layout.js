@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
+import { Lato, Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -6,9 +6,12 @@ import { Toaster } from "react-hot-toast";
 import { PHProvider } from "./providers";
 import { PaywallProvider } from "@/components/PaywallModal";
 
-const geistSans = Geist({
+// Body font — Lato, matching The Energy Pioneer. Variable name kept as
+// --font-geist-sans so every existing usage picks up the new font unchanged.
+const geistSans = Lato({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -16,10 +19,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const robotoCondensed = Roboto_Condensed({
+// Headline / display font — Montserrat, matching The Energy Pioneer post titles.
+const robotoCondensed = Montserrat({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata = {
@@ -59,7 +63,7 @@ export default function RootLayout({ children }) {
     },
         variables: {
           colorPrimary: "#2d6a4f",
-          colorBackground: "#f2f4f8",
+          colorBackground: "#f6f7f9",
           colorInputBackground: "#ffffff",
           colorInputText: "#0f1a14",
           colorText: "#0f1a14",
@@ -78,10 +82,10 @@ export default function RootLayout({ children }) {
           },
           card: {
             boxShadow: "none",
-            border: "1px solid #e2e6ed",
+            border: "1px solid #e8eaee",
           },
           headerTitle: {
-            fontFamily: "Georgia, serif",
+            fontFamily: "var(--font-display), sans-serif",
             fontSize: "24px",
             color: "#0f1a14",
           },

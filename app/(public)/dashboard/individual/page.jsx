@@ -38,7 +38,7 @@ function Chip({ label, active, onClick }) {
   return (
     <button onClick={onClick}
       className={`text-xs rounded-full px-3 py-1.5 border transition-all ${
-        active ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#0f1a14] border-[#d0d6e0] hover:border-[#2d6a4f]"
+        active ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#0f1a14] border-[#dbdfe4] hover:border-[#2d6a4f]"
       }`}>
       {label}
     </button>
@@ -133,12 +133,12 @@ export default function IndividualDashboard() {
   };
 
   if (!isLoaded || loading) {
-    return <div className="min-h-[70vh] bg-[#f2f4f8] flex items-center justify-center"><Loader2 className="animate-spin text-[#2d6a4f]" /></div>;
+    return <div className="min-h-[70vh] bg-[#f6f7f9] flex items-center justify-center"><Loader2 className="animate-spin text-[#2d6a4f]" /></div>;
   }
 
   if (!user) {
     return (
-      <div className="min-h-[70vh] bg-[#f2f4f8] flex items-center justify-center px-6" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <div className="min-h-[70vh] bg-[#f6f7f9] flex items-center justify-center px-6" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <div className="text-center">
           <p className="text-[#4a5568] mb-4">Please sign in to view your dashboard.</p>
           <a href="/sign-in" className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3">Sign in</a>
@@ -179,7 +179,7 @@ export default function IndividualDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] px-6 py-10" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] px-6 py-10" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-5xl mx-auto">
 
         <div className="mb-6">
@@ -187,12 +187,12 @@ export default function IndividualDashboard() {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-[#4a5568]">Following:</span>
             {industries.length > 0 ? industries.map((slug) => (
-              <span key={slug} className="text-xs bg-white border border-[#e2e6ed] rounded-full px-3 py-1 text-[#0f1a14]">{INDUSTRY_LABELS[slug] || slug}</span>
+              <span key={slug} className="text-xs bg-white border border-[#e8eaee] rounded-full px-3 py-1 text-[#0f1a14]">{INDUSTRY_LABELS[slug] || slug}</span>
             )) : <Link href="/onboarding/individual" className="text-xs text-[#2d6a4f] underline">Set up your industries</Link>}
           </div>
         </div>
 
-        <div className="flex gap-1 border-b border-[#e2e6ed] mb-8 overflow-x-auto">
+        <div className="flex gap-1 border-b border-[#e8eaee] mb-8 overflow-x-auto">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors ${
@@ -207,11 +207,11 @@ export default function IndividualDashboard() {
         {tab === "feed" && (
           <div>
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              <button onClick={() => setTab("research")} className="text-left flex items-center gap-3 bg-white border border-[#e2e6ed] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
+              <button onClick={() => setTab("research")} className="text-left flex items-center gap-3 bg-white border border-[#e8eaee] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
                 <Search size={20} className="text-[#2d6a4f]" />
                 <div><div className="text-sm font-semibold text-[#0f1a14]">Research companies</div><div className="text-xs text-[#4a5568]">Filter & sort companies in your space</div></div>
               </button>
-              <button onClick={() => setTab("expert")} className="text-left flex items-center gap-3 bg-white border border-[#e2e6ed] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
+              <button onClick={() => setTab("expert")} className="text-left flex items-center gap-3 bg-white border border-[#e8eaee] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
                 <BadgeCheck size={20} className="text-[#2d6a4f]" />
                 <div><div className="text-sm font-semibold text-[#0f1a14]">List yourself as an expert</div><div className="text-xs text-[#4a5568]">Get discovered by companies & investors</div></div>
               </button>
@@ -222,9 +222,9 @@ export default function IndividualDashboard() {
               <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl text-[#0f1a14]">Latest in the energy transition</h2>
             </div>
             {news.length === 0 ? (
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 text-center text-sm text-[#4a5568]">No news yet — check back soon.</div>
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-6 text-center text-sm text-[#4a5568]">No news yet — check back soon.</div>
             ) : (
-              <div className="bg-white border border-[#e2e6ed] rounded-xl divide-y divide-[#f0f2f6]">
+              <div className="bg-white border border-[#e8eaee] rounded-xl divide-y divide-[#f0f2f6]">
                 {news.map((a) => (
                   <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 p-4 hover:bg-[#f7f9fc] transition-colors">
                     {a.image_url && <img src={a.image_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" onError={(e) => { e.target.style.display = "none"; }} />}
@@ -246,23 +246,23 @@ export default function IndividualDashboard() {
         {/* RESEARCH */}
         {tab === "research" && (
           <div>
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-4 mb-6">
+            <div className="bg-white border border-[#e8eaee] rounded-xl p-4 mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Search size={16} className="text-[#a0aec0]" />
                 <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search companies by name..."
-                  className="flex-1 text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                  className="flex-1 text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <select value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
+                <select value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)} className="text-xs border border-[#dbdfe4] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
                   <option value="">All industries</option>
                   {INDUSTRIES.map((ind) => <option key={ind.slug} value={ind.slug}>{ind.label}</option>)}
                 </select>
-                <select value={geoFilter} onChange={(e) => setGeoFilter(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
+                <select value={geoFilter} onChange={(e) => setGeoFilter(e.target.value)} className="text-xs border border-[#dbdfe4] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
                   <option value="">All geographies</option>
                   {GEO_OPTIONS.map((g) => <option key={g} value={g}>{GEO_LABELS[g]}</option>)}
                 </select>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-xs border border-[#d0d6e0] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-xs border border-[#dbdfe4] rounded-lg px-2 py-2 focus:outline-none focus:border-[#2d6a4f]">
                   <option value="name">Name (A–Z)</option>
                   <option value="default">Default</option>
                 </select>
@@ -271,15 +271,15 @@ export default function IndividualDashboard() {
             </div>
 
             {researchCompanies.length === 0 ? (
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-8 text-center">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-8 text-center">
                 <Building2 size={24} className="text-[#a0aec0] mx-auto mb-2" />
                 <p className="text-sm text-[#4a5568]">No companies match these filters. Try clearing them.</p>
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-3">
                 {researchCompanies.map((c) => (
-                  <Link key={c.id} href={`/companies/${c.slug || c.id}`} className="flex items-start gap-3 bg-white border border-[#e2e6ed] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
-                    <div className="w-10 h-10 rounded-lg bg-[#f2f4f8] border border-[#e2e6ed] flex items-center justify-center overflow-hidden shrink-0">
+                  <Link key={c.id} href={`/companies/${c.slug || c.id}`} className="flex items-start gap-3 bg-white border border-[#e8eaee] rounded-xl p-4 hover:border-[#2d6a4f] transition-all">
+                    <div className="w-10 h-10 rounded-lg bg-[#f6f7f9] border border-[#e8eaee] flex items-center justify-center overflow-hidden shrink-0">
                       {c.logo_url ? <img src={c.logo_url} alt={c.name} className="w-full h-full object-contain" onError={(e) => { e.target.style.display = "none"; }} /> : <Building2 size={16} className="text-[#a0aec0]" />}
                     </div>
                     <div className="min-w-0">
@@ -314,23 +314,23 @@ export default function IndividualDashboard() {
               </div>
             )}
 
-            <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 space-y-4">
+            <div className="bg-white border border-[#e8eaee] rounded-xl p-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-[#4a5568] uppercase tracking-wide mb-1">Short bio</label>
-                <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="What you do and your expertise..." className="w-full text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="What you do and your expertise..." className="w-full text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-[#4a5568] uppercase tracking-wide mb-1">Areas of expertise (comma-separated)</label>
-                <input value={expertise} onChange={(e) => setExpertise(e.target.value)} placeholder="e.g. carbon markets, project finance, policy" className="w-full text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                <input value={expertise} onChange={(e) => setExpertise(e.target.value)} placeholder="e.g. carbon markets, project finance, policy" className="w-full text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#4a5568] uppercase tracking-wide mb-1">LinkedIn</label>
-                  <input value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="https://linkedin.com/in/..." className="w-full text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                  <input value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="https://linkedin.com/in/..." className="w-full text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-[#4a5568] uppercase tracking-wide mb-1">Website</label>
-                  <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://..." className="w-full text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                  <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://..." className="w-full text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
@@ -368,7 +368,7 @@ export default function IndividualDashboard() {
                 <button onClick={() => setReqSent(false)} className="text-xs text-[#2d6a4f] underline ml-2">Send another</button>
               </div>
             ) : (
-              <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 space-y-4">
+              <div className="bg-white border border-[#e8eaee] rounded-xl p-5 space-y-4">
                 <div>
                   <p className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-2">Type</p>
                   <div className="flex flex-wrap gap-1.5">
@@ -385,7 +385,7 @@ export default function IndividualDashboard() {
                   <label className="block text-xs font-semibold text-[#4a5568] uppercase tracking-wide mb-1">Details</label>
                   <textarea value={reqDetails} onChange={(e) => setReqDetails(e.target.value)} rows={4}
                     placeholder={reqCategory === "company" ? "Which company should we add? Include a website if you have it." : reqCategory === "feature" ? "What feature would make this more useful?" : "What's on your mind?"}
-                    className="w-full text-sm border border-[#d0d6e0] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
+                    className="w-full text-sm border border-[#dbdfe4] rounded-lg px-3 py-2 focus:outline-none focus:border-[#2d6a4f]" />
                 </div>
                 <button onClick={sendRequest} disabled={reqSending || !reqDetails.trim()} className="inline-flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-2.5 hover:bg-[#235a40] disabled:opacity-40">
                   {reqSending ? <Loader2 size={14} className="animate-spin" /> : <ArrowRight size={14} />} Send

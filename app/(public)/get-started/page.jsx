@@ -63,10 +63,10 @@ function RoleCard({ role }) {
   return (
     <Link
       href={role.href}
-      className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col hover:border-[#2d6a4f] transition-all group"
+      className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col hover:border-[#2d6a4f] transition-all group"
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-lg bg-[#f2f4f6] flex items-center justify-center flex-shrink-0">
           <Icon size={16} className="text-[#2d6a4f]" />
         </div>
         <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14]">
@@ -78,7 +78,7 @@ function RoleCard({ role }) {
           <div key={i} className="mb-1">— {b}</div>
         ))}
       </div>
-      <div className="text-xs text-[#2d6a4f] font-mono pt-3 border-t border-[#e2e6ed] flex items-center gap-1 group-hover:gap-2 transition-all">
+      <div className="text-xs text-[#2d6a4f] font-mono pt-3 border-t border-[#e8eaee] flex items-center gap-1 group-hover:gap-2 transition-all">
         {role.cta} <ArrowRight size={11} />
       </div>
     </Link>
@@ -87,7 +87,7 @@ function RoleCard({ role }) {
 
 export default function GetStartedPage() {
   return (
-    <div className="min-h-screen bg-[#f2f4f8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-4xl mx-auto px-6 py-16">
 
         {/* Header */}
@@ -110,9 +110,9 @@ export default function GetStartedPage() {
       
         <Link
           href={RESEARCHER.href}
-          className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex items-start gap-4 hover:border-[#2d6a4f] transition-all group mb-8"
+          className="bg-white border border-[#e8eaee] rounded-xl p-6 flex items-start gap-4 hover:border-[#2d6a4f] transition-all group mb-8"
         >
-          <div className="w-9 h-9 rounded-lg bg-[#eef1f6] flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg bg-[#f2f4f6] flex items-center justify-center flex-shrink-0">
             <RESEARCHER.icon size={16} className="text-[#2d6a4f]" />
           </div>
           <div className="flex-1">

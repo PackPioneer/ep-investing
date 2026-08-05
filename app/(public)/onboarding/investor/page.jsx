@@ -104,7 +104,7 @@ export default function InvestorOnboardingPage() {
   };
 
   if (done) return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-md text-center">
         <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
@@ -127,7 +127,7 @@ export default function InvestorOnboardingPage() {
     .flatMap(c => c.sectors.map(s => ({ category: c.label, sector: s })));
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] py-12 px-6"
+    <div className="min-h-screen bg-[#f6f7f9] py-12 px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-xl mx-auto">
 
@@ -142,30 +142,30 @@ export default function InvestorOnboardingPage() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-[#e2e6ed] rounded-2xl p-7">
+          className="bg-white border border-[#e8eaee] rounded-2xl p-7">
 
           {step === 1 && (
             <div className="flex flex-col gap-5">
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your name *</label>
                 <input value={form.name} onChange={e => set("name", e.target.value)}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Email *</label>
                 <input type="email" value={form.email} onChange={e => set("email", e.target.value)}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">What kind of investor are you? *</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {INVESTOR_TYPES.map(t => (
                     <button key={t.value} type="button" onClick={() => set("investor_type", t.value)}
                       className={`text-left rounded-lg p-3 border transition-all ${
                         form.investor_type === t.value
-                          ? "bg-[#eef1f6] border-[#2d6a4f]"
-                          : "bg-white border-[#d0d6e0] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f]"
+                          : "bg-white border-[#dbdfe4] hover:border-[#2d6a4f]"
                       }`}>
                       <div className="text-sm font-medium text-[#0f1a14]">{t.label}</div>
                       <div className="text-[11px] text-[#718096] leading-tight mt-0.5">{t.description}</div>
@@ -179,7 +179,7 @@ export default function InvestorOnboardingPage() {
                       placeholder="e.g. impact fund, syndicate"
                       value={form.investor_type_other}
                       onChange={e => set("investor_type_other", e.target.value)}
-                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+                      className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]"
                     />
                   </div>
                 )}
@@ -188,7 +188,7 @@ export default function InvestorOnboardingPage() {
               <div>
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Firm name (optional for individuals)</label>
                 <input value={form.firm} onChange={e => set("firm", e.target.value)}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
 
               <button onClick={() => setStep(2)} disabled={!form.name || !form.email || !form.investor_type || (form.investor_type === "other" && !form.investor_type_other)}
@@ -208,8 +208,8 @@ export default function InvestorOnboardingPage() {
                     <button key={cat.id} type="button" onClick={() => toggle("sectors", cat.id)}
                       className={`text-left rounded-lg p-3 border transition-all ${
                         form.sectors.includes(cat.id)
-                          ? "bg-[#eef1f6] border-[#2d6a4f]"
-                          : "bg-white border-[#d0d6e0] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f]"
+                          : "bg-white border-[#dbdfe4] hover:border-[#2d6a4f]"
                       }`}>
                       <div className="text-sm font-medium text-[#0f1a14]">{cat.label}</div>
                       <div className="text-[11px] text-[#718096] mt-0.5">{cat.sectors.slice(0, 3).join(" · ")}{cat.sectors.length > 3 ? " · ..." : ""}</div>
@@ -219,15 +219,15 @@ export default function InvestorOnboardingPage() {
               </div>
 
               {visibleSubSectors.length > 0 && (
-                <div className="pt-3 border-t border-[#e2e6ed]">
+                <div className="pt-3 border-t border-[#e8eaee]">
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">Specific sub-sectors (optional)</label>
                   <div className="flex flex-wrap gap-2">
                     {visibleSubSectors.map(({ sector }) => (
                       <button key={sector} type="button" onClick={() => toggle("sub_sectors", sector)}
                         className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                           form.sub_sectors.includes(sector)
-                            ? "bg-[#eef1f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
-                            : "bg-white border-[#d0d6e0] text-[#4a5568] hover:border-[#2d6a4f]"
+                            ? "bg-[#f2f4f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
+                            : "bg-white border-[#dbdfe4] text-[#4a5568] hover:border-[#2d6a4f]"
                         }`}>
                         {sector}
                       </button>
@@ -236,15 +236,15 @@ export default function InvestorOnboardingPage() {
                 </div>
               )}
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">Investment stages</label>
                 <div className="flex flex-wrap gap-2">
                   {STAGES.map(s => (
                     <button key={s} type="button" onClick={() => toggle("stages", s)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                         form.stages.includes(s)
-                          ? "bg-[#eef1f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
-                          : "bg-white border-[#d0d6e0] text-[#4a5568] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
+                          : "bg-white border-[#dbdfe4] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>
                       {s}
                     </button>
@@ -252,15 +252,15 @@ export default function InvestorOnboardingPage() {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">Investment instruments</label>
                 <div className="flex flex-wrap gap-2">
                   {INSTRUMENTS.map(i => (
                     <button key={i} type="button" onClick={() => toggle("investment_instruments", i)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                         form.investment_instruments.includes(i)
-                          ? "bg-[#eef1f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
-                          : "bg-white border-[#d0d6e0] text-[#4a5568] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
+                          : "bg-white border-[#dbdfe4] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>
                       {i}
                     </button>
@@ -268,15 +268,15 @@ export default function InvestorOnboardingPage() {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">Check size range</label>
                 <div className="flex flex-wrap gap-2">
                   {CHECK_SIZES.map(c => (
                     <button key={c} type="button" onClick={() => toggle("check_sizes", c)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                         form.check_sizes.includes(c)
-                          ? "bg-[#eef1f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
-                          : "bg-white border-[#d0d6e0] text-[#4a5568] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
+                          : "bg-white border-[#dbdfe4] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>
                       {c}
                     </button>
@@ -286,7 +286,7 @@ export default function InvestorOnboardingPage() {
 
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(1)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={() => setStep(3)} disabled={form.sectors.length === 0}
@@ -303,18 +303,18 @@ export default function InvestorOnboardingPage() {
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Geographic focus (optional)</label>
                 <input placeholder="e.g. North America, Europe, global" value={form.geographies.join(", ")}
                   onChange={e => set("geographies", e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-2.5 block">Are you an accredited investor?</label>
                 <div className="flex gap-2">
                   {[{ v: "yes", l: "Yes" }, { v: "no", l: "No" }, { v: "prefer_not_to_say", l: "Prefer not to say" }].map(opt => (
                     <button key={opt.v} type="button" onClick={() => set("accredited_investor", opt.v)}
                       className={`text-sm px-4 py-2 rounded-lg border transition-all ${
                         form.accredited_investor === opt.v
-                          ? "bg-[#eef1f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
-                          : "bg-white border-[#d0d6e0] text-[#4a5568] hover:border-[#2d6a4f]"
+                          ? "bg-[#f2f4f6] border-[#2d6a4f] text-[#2d6a4f] font-medium"
+                          : "bg-white border-[#dbdfe4] text-[#4a5568] hover:border-[#2d6a4f]"
                       }`}>
                       {opt.l}
                     </button>
@@ -323,14 +323,14 @@ export default function InvestorOnboardingPage() {
                 <p className="text-[11px] text-[#718096] mt-2 leading-relaxed">Affects what investment opportunities you can see (e.g., Reg D offerings).</p>
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Investment thesis (optional)</label>
                 <textarea rows={3} placeholder="What's your investment thesis or focus?" value={form.thesis}
                   onChange={e => set("thesis", e.target.value)}
-                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
+                  className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-none" />
               </div>
 
-              <div className="pt-3 border-t border-[#e2e6ed]">
+              <div className="pt-3 border-t border-[#e8eaee]">
                 <label className="flex items-center gap-2 text-sm text-[#0f1a14] mb-3 cursor-pointer">
                   <input type="checkbox" checked={form.show_contact}
                     onChange={e => set("show_contact", e.target.checked)}
@@ -341,23 +341,23 @@ export default function InvestorOnboardingPage() {
                   <div className="grid grid-cols-2 gap-3 mt-3">
                     <input placeholder="Primary contact name" value={form.primary_contact_name}
                       onChange={e => set("primary_contact_name", e.target.value)}
-                      className="text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                     <input type="email" placeholder="Primary contact email" value={form.primary_contact_email}
                       onChange={e => set("primary_contact_email", e.target.value)}
-                      className="text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                     <input placeholder="Secondary contact name (optional)" value={form.secondary_contact_name}
                       onChange={e => set("secondary_contact_name", e.target.value)}
-                      className="text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                     <input type="email" placeholder="Secondary contact email (optional)" value={form.secondary_contact_email}
                       onChange={e => set("secondary_contact_email", e.target.value)}
-                      className="text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                      className="text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 )}
               </div>
 
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(2)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={() => setStep(4)}
@@ -370,7 +370,7 @@ export default function InvestorOnboardingPage() {
 
           {step === 4 && (
             <div className="flex flex-col gap-5">
-              <div className="bg-[#f8f9fb] border border-[#e2e6ed] rounded-lg p-4">
+              <div className="bg-[#fafbfc] border border-[#e8eaee] rounded-lg p-4">
                 <div className="text-xs font-mono uppercase tracking-wide text-[#718096] mb-2">Your profile</div>
                 <div className="text-sm font-semibold text-[#0f1a14] mb-1">{form.name}</div>
                 <div className="text-xs text-[#4a5568] mb-2">{form.email} · {form.firm || "Individual"}</div>
@@ -406,7 +406,7 @@ export default function InvestorOnboardingPage() {
 
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setStep(3)}
-                  className="flex items-center gap-1.5 border border-[#d0d6e0] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#f8f9fb] transition-all">
+                  className="flex items-center gap-1.5 border border-[#dbdfe4] text-[#4a5568] text-sm font-medium rounded-lg px-5 py-3 hover:bg-[#fafbfc] transition-all">
                   <ArrowLeft size={13} /> Back
                 </button>
                 <button onClick={handleSubmit} disabled={loading || !agreedToTerms}

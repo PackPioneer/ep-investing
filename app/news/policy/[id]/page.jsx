@@ -35,8 +35,8 @@ const STATUS_COLORS = {
   comment_period: "bg-amber-50 text-amber-800 border-amber-200",
   enacted: "bg-emerald-50 text-emerald-800 border-emerald-200",
   enacted_pending_effective: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  in_force: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
-  implemented: "bg-[#eef1f6] text-[#2d6a4f] border-[#c8d8cc]",
+  in_force: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
+  implemented: "bg-[#f2f4f6] text-[#2d6a4f] border-[#c8d8cc]",
   amended: "bg-purple-50 text-purple-700 border-purple-200",
   withdrawn: "bg-gray-50 text-gray-600 border-gray-200",
   expired: "bg-gray-50 text-gray-500 border-gray-200",
@@ -159,7 +159,7 @@ export default function PolicyDetailPage() {
       </header>
 
       {/* Key dates strip */}
-      <div className="bg-white border border-[#e2e6ed] rounded-xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="bg-white border border-[#e8eaee] rounded-xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wide">Published</div>
           <div className="text-sm font-medium text-[#0f1a14] mt-1">
@@ -188,12 +188,12 @@ export default function PolicyDetailPage() {
       {(policy.sectors?.length > 0 || policy.affected_company_types?.length > 0) && (
         <div className="mb-6 flex flex-wrap gap-1.5">
           {policy.sectors?.map((s) => (
-            <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">
+            <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-[#f2f4f6] text-[#2d6a4f] border border-[#c8d8cc]">
               {s.replace(/-/g, " ")}
             </span>
           ))}
           {policy.affected_company_types?.map((t) => (
-            <span key={t} className="text-xs px-2.5 py-1 rounded-full bg-white text-[#4a5568] border border-[#d0d6e0]">
+            <span key={t} className="text-xs px-2.5 py-1 rounded-full bg-white text-[#4a5568] border border-[#dbdfe4]">
               {t.replace(/_/g, " ")}
             </span>
           ))}
@@ -206,7 +206,7 @@ export default function PolicyDetailPage() {
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-3">
             Implications for investors
           </div>
-          <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 prose prose-sm max-w-none">
+          <div className="bg-white border border-[#e8eaee] rounded-xl p-6 prose prose-sm max-w-none">
             {policy.investor_implications.split("\n\n").map((para, i) => (
               <p key={i} className="text-[#0f1a14] text-sm leading-relaxed mb-3 last:mb-0">{para}</p>
             ))}
@@ -223,7 +223,7 @@ export default function PolicyDetailPage() {
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-3">
             Status timeline
           </div>
-          <div className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+          <div className="bg-white border border-[#e8eaee] rounded-xl p-5">
             <ol className="flex flex-col gap-3">
               {status_history.map((h, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -260,7 +260,7 @@ export default function PolicyDetailPage() {
             Official abstract
           </button>
           {showAbstract && (
-            <div className="bg-[#f8f9fb] border border-[#e2e6ed] rounded-xl p-5 text-sm text-[#4a5568] leading-relaxed whitespace-pre-wrap">
+            <div className="bg-[#fafbfc] border border-[#e8eaee] rounded-xl p-5 text-sm text-[#4a5568] leading-relaxed whitespace-pre-wrap">
               {policy.abstract}
             </div>
           )}
@@ -280,7 +280,7 @@ export default function PolicyDetailPage() {
                 href={a.url}
                 target="_blank"
                 rel="noopener"
-                className="block bg-white border border-[#e2e6ed] rounded-xl p-4 hover:border-[#2d6a4f] transition-colors"
+                className="block bg-white border border-[#e8eaee] rounded-xl p-4 hover:border-[#2d6a4f] transition-colors"
               >
                 <div className="flex items-center gap-2 text-xs text-[#718096] mb-1">
                   <span className="font-medium">{a.source_name}</span>
@@ -303,7 +303,7 @@ export default function PolicyDetailPage() {
 
       {/* Original source */}
       {policy.source_url && (
-        <section className="mb-8 pt-6 border-t border-[#e2e6ed]">
+        <section className="mb-8 pt-6 border-t border-[#e8eaee]">
           <a
             href={policy.source_url}
             target="_blank"

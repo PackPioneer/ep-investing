@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 
 export default function ExpertsPage() {
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-4xl mx-auto px-6 py-20">
 
         {/* Hero */}
@@ -24,7 +24,7 @@ export default function ExpertsPage() {
               Join to list yourself <ArrowRight size={14} />
             </Link>
             <Link href="/search"
-              className="inline-flex items-center gap-2 border border-[#d0d6e0] text-[#0f1a14] font-semibold text-sm rounded-lg px-6 py-3 hover:border-[#2d6a4f] transition-colors">
+              className="inline-flex items-center gap-2 border border-[#dbdfe4] text-[#0f1a14] font-semibold text-sm rounded-lg px-6 py-3 hover:border-[#2d6a4f] transition-colors">
               Browse directory
             </Link>
           </div>
@@ -46,8 +46,8 @@ export default function ExpertsPage() {
               desc: "Every expert is reviewed before being listed. Quality over quantity.",
             },
           ].map(item => (
-            <div key={item.title} className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
-              <div className="w-8 h-8 rounded-lg bg-[#eef1f6] flex items-center justify-center mb-4">
+            <div key={item.title} className="bg-white border border-[#e8eaee] rounded-2xl p-6">
+              <div className="w-8 h-8 rounded-lg bg-[#f2f4f6] flex items-center justify-center mb-4">
                 <CheckCircle size={16} className="text-[#2d6a4f]" />
               </div>
               <div className="text-sm font-semibold text-[#0f1a14] mb-2">{item.title}</div>
@@ -57,7 +57,7 @@ export default function ExpertsPage() {
         </div>
 
         {/* Expertise areas */}
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8 mb-16">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 mb-16">
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide mb-5">Areas of expertise</div>
           <div className="flex flex-wrap gap-2">
             {[
@@ -67,7 +67,7 @@ export default function ExpertsPage() {
               "Policy & Regulation", "ESG & Sustainability", "Project Development",
               "Engineering", "AI & Data Science", "Legal & Compliance", "Fundraising Advisory"
             ].map(area => (
-              <span key={area} className="text-xs px-3 py-1.5 rounded-full bg-[#eef1f6] text-[#2d6a4f] border border-[#c8d8cc]">{area}</span>
+              <span key={area} className="text-xs px-3 py-1.5 rounded-full bg-[#f2f4f6] text-[#2d6a4f] border border-[#c8d8cc]">{area}</span>
             ))}
           </div>
         </div>

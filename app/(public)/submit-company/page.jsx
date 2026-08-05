@@ -91,7 +91,7 @@ export default function SubmitCompanyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] py-16 px-4">
+    <div className="min-h-screen bg-[#f6f7f9] py-16 px-4">
       <div className="max-w-xl mx-auto">
         <div className="mb-10">
           <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">Submit a company</h1>

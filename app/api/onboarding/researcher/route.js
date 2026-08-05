@@ -35,8 +35,8 @@ export async function POST(req) {
       to: email,
       subject: "Welcome to EP Investing",
       html: `
-        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f2f4f8;">
-          <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e2e6ed;">
+        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 32px; background: #f6f7f9;">
+          <div style="background: white; border-radius: 16px; padding: 32px; border: 1px solid #e8eaee;">
             <h2 style="margin: 0 0 8px; font-size: 24px; color: #0f1a14;">Welcome${name ? `, ${name}` : ""}.</h2>
             <p style="color: #4a5568; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
               You're now set up on EP Investing — the climate and energy intelligence platform.

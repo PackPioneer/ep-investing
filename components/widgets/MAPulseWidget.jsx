@@ -52,7 +52,7 @@ export default function MAPulseWidget({ limit = 5 }) {
   }, [limit]);
 
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-2xl p-5">
+    <div className="bg-white border border-[#e8eaee] rounded-2xl p-5">
       <div className="flex items-center justify-between mb-3">
         <div>
           <div className="text-xs font-mono font-semibold text-[#0f1a14] uppercase tracking-wide">
@@ -76,7 +76,7 @@ export default function MAPulseWidget({ limit = 5 }) {
           Couldn't load M&amp;A activity right now.
         </div>
       ) : articles.length === 0 ? (
-        <div className="py-6 text-center border border-dashed border-[#e2e6ed] rounded-xl">
+        <div className="py-6 text-center border border-dashed border-[#e8eaee] rounded-xl">
           <p className="text-sm text-[#0f1a14] font-medium mb-1">No recent M&amp;A activity</p>
           <p className="text-xs text-[#718096]">Check back after new news is ingested.</p>
         </div>

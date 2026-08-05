@@ -132,7 +132,7 @@ function PolicyTrackerContent() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search policies by title or impact..."
-          className="w-full text-sm px-4 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]"
+          className="w-full text-sm px-4 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]"
         />
       </form>
 
@@ -147,7 +147,7 @@ function PolicyTrackerContent() {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 activeJurisdiction === j
                   ? "bg-[#2d6a4f] text-white border-[#2d6a4f]"
-                  : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"
+                  : "bg-white text-[#4a5568] border-[#dbdfe4] hover:border-[#2d6a4f]"
               }`}
             >
               {j}
@@ -164,7 +164,7 @@ function PolicyTrackerContent() {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 activeAgency === a
                   ? "bg-[#2d6a4f] text-white border-[#2d6a4f]"
-                  : "bg-white text-[#4a5568] border-[#d0d6e0] hover:border-[#2d6a4f]"
+                  : "bg-white text-[#4a5568] border-[#dbdfe4] hover:border-[#2d6a4f]"
               }`}
             >
               {a.replace("US ", "").replace("Department of ", "")}
@@ -192,7 +192,7 @@ function PolicyTrackerContent() {
               className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 ${
                 activeStatus === g.key
                   ? "border-[#2d6a4f] bg-[#2d6a4f]/5 text-[#2d6a4f]"
-                  : "border-[#e2e6ed] bg-white hover:border-[#2d6a4f]"
+                  : "border-[#e8eaee] bg-white hover:border-[#2d6a4f]"
               }`}
             >
               <span>{g.label}</span>
@@ -208,7 +208,7 @@ function PolicyTrackerContent() {
           <div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : policies.length === 0 ? (
-        <div className="py-12 text-center border border-dashed border-[#e2e6ed] rounded-xl">
+        <div className="py-12 text-center border border-dashed border-[#e8eaee] rounded-xl">
           <p className="text-sm text-[#0f1a14] font-medium mb-2">No policies match your filters</p>
           <p className="text-xs text-[#718096] mb-4">Try loosening some filters or browsing the full tracker.</p>
           {hasFilters && (

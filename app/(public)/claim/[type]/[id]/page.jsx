@@ -91,7 +91,7 @@ export default function ClaimProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center"
+      <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center"
         style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <div className="text-sm text-[#718096]">Loading...</div>
       </div>
@@ -100,7 +100,7 @@ export default function ClaimProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+      <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
         style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <div className="max-w-md text-center">
           <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-6">
@@ -116,7 +116,7 @@ export default function ClaimProfilePage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+      <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
         style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <div className="max-w-md text-center">
           <div className="w-16 h-16 rounded-full bg-[rgba(45,106,79,0.1)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-6">
@@ -136,7 +136,7 @@ export default function ClaimProfilePage() {
   const profileLabel = type === "company" ? "company" : type === "ngo" ? "organization" : "investment firm";
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] py-12 px-6"
+    <div className="min-h-screen bg-[#f6f7f9] py-12 px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-xl mx-auto">
 
@@ -154,13 +154,13 @@ export default function ClaimProfilePage() {
         </div>
 
         {/* PROFILE PREVIEW */}
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6 mb-6">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-6 mb-6">
           <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-3">You're claiming</div>
           <div className="flex items-start gap-4">
             {profile.logo_url ? (
-              <img src={profile.logo_url} alt="" className="w-14 h-14 rounded-lg border border-[#e2e6ed] object-cover flex-shrink-0" />
+              <img src={profile.logo_url} alt="" className="w-14 h-14 rounded-lg border border-[#e8eaee] object-cover flex-shrink-0" />
             ) : (
-              <div className="w-14 h-14 rounded-lg bg-[#eef1f6] border border-[#e2e6ed] flex items-center justify-center text-[#2d6a4f] flex-shrink-0">
+              <div className="w-14 h-14 rounded-lg bg-[#f2f4f6] border border-[#e8eaee] flex items-center justify-center text-[#2d6a4f] flex-shrink-0">
                 <Building2 size={20} />
               </div>
             )}
@@ -188,33 +188,33 @@ export default function ClaimProfilePage() {
         </div>
 
         {/* CLAIM FORM */}
-        <div className="bg-white border border-[#e2e6ed] rounded-2xl p-6">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
           <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">About you</div>
 
           <div className="flex flex-col gap-4">
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your name *</label>
               <input value={form.claimant_name} onChange={e => setForm(p => ({ ...p, claimant_name: e.target.value }))}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
             </div>
 
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Work email *</label>
               <input type="email" placeholder={`name@${profile.url?.replace(/https?:\/\//, "").replace(/\/$/, "") || "yourcompany.com"}`} value={form.claimant_email} onChange={e => setForm(p => ({ ...p, claimant_email: e.target.value }))}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               <p className="text-[11px] text-[#718096] mt-1.5">Use an email at this {profileLabel}'s domain to speed up verification.</p>
             </div>
 
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your role *</label>
               <input placeholder={type === "company" ? "e.g. CEO, Head of Marketing, Founder" : type === "ngo" ? "e.g. Executive Director, Communications Lead" : "e.g. Partner, Principal, Analyst"} value={form.claimant_role} onChange={e => setForm(p => ({ ...p, claimant_role: e.target.value }))}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
             </div>
 
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your LinkedIn URL *</label>
               <input type="url" placeholder="https://linkedin.com/in/yourname" value={form.claimant_linkedin_url} onChange={e => setForm(p => ({ ...p, claimant_linkedin_url: e.target.value }))}
-                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#d0d6e0] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
               <p className="text-[11px] text-[#718096] mt-1.5">Helps us confirm you're with this organization.</p>
             </div>
 

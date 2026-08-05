@@ -18,7 +18,7 @@ function DeadlineBadge({ date }) {
   const days = daysUntil(date);
   const label = new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   if (days < 0) return (
-    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f5f5f3] border border-[#e2e6ed] text-[#718096]">Closed</span>
+    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f5f5f3] border border-[#e8eaee] text-[#718096]">Closed</span>
   );
   if (days <= 14) return (
     <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-600 flex items-center gap-1">
@@ -26,7 +26,7 @@ function DeadlineBadge({ date }) {
     </span>
   );
   return (
-    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#e2e6ed] text-[#4a5568]">
+    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
       Due {label}
     </span>
   );
@@ -40,8 +40,8 @@ function GrantCard({ grant }) {
   return (
     <div className={`bg-white border rounded-xl p-6 flex flex-col gap-4 hover:shadow-sm transition-all group ${
       isUrgent ? "border-orange-200 hover:border-orange-300" :
-      isClosed ? "border-[#e2e6ed] opacity-60" :
-      "border-[#e2e6ed] hover:border-[#2d6a4f]"
+      isClosed ? "border-[#e8eaee] opacity-60" :
+      "border-[#e8eaee] hover:border-[#2d6a4f]"
     }`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -68,18 +68,18 @@ function GrantCard({ grant }) {
           </span>
         )}
         {grant.category && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#e2e6ed] text-[#4a5568]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
             {grant.category.replace(/_/g, " ")}
           </span>
         )}
         {grant.geography && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#e2e6ed] text-[#4a5568]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
             {grant.geography}
           </span>
         )}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-[#e2e6ed]">
+      <div className="mt-auto pt-3 border-t border-[#e8eaee]">
         {grant.url ? (
           <a href={grant.url} target="_blank" rel="noopener noreferrer"
             onClick={() => posthog.capture("grant_external_link_clicked", { grant_title: grant.title || grant.name, grant_id: grant.id, url: grant.url })}
@@ -126,7 +126,7 @@ export default function GrantsPage() {
   }).length;
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
 
         {/* Header */}
@@ -159,7 +159,7 @@ export default function GrantsPage() {
 
         {/* Search + filters */}
         <div className="flex flex-col md:flex-row gap-3 mb-4">
-          <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
+          <div className="flex items-center gap-3 flex-1 bg-white border border-[#dbdfe4] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
             <Search size={14} className="text-[#718096]" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search grants, funders…"
@@ -169,7 +169,7 @@ export default function GrantsPage() {
             className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${
               showClosed
                 ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                : "border-[#e2e6ed] bg-white text-[#4a5568]"
+                : "border-[#e8eaee] bg-white text-[#4a5568]"
             }`}>
             {showClosed ? "Hiding closed" : "Show closed"}
           </button>
@@ -182,7 +182,7 @@ export default function GrantsPage() {
               className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
                 category === c
                   ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                  : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                  : "border-[#e8eaee] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
               }`}>
               {c === "All" ? "All categories" : c.replace(/_/g, " ")}
             </button>
@@ -200,12 +200,12 @@ export default function GrantsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white border border-[#e2e6ed] rounded-xl p-6 h-48 animate-pulse" />
+              <div key={i} className="bg-white border border-[#e8eaee] rounded-xl p-6 h-48 animate-pulse" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-[#e2e6ed] rounded-2xl bg-white">
-            <FileText size={32} className="text-[#d0d6e0] mx-auto mb-3" />
+          <div className="text-center py-24 border border-dashed border-[#e8eaee] rounded-2xl bg-white">
+            <FileText size={32} className="text-[#dbdfe4] mx-auto mb-3" />
             <p className="text-[#718096] text-sm">No grants found</p>
           </div>
         ) : (
@@ -215,7 +215,7 @@ export default function GrantsPage() {
         )}
 
         {/* CTA */}
-        <div className="mt-14 bg-white border border-[#e2e6ed] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-14 bg-white border border-[#e8eaee] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-1">
               Looking for non-dilutive funding?

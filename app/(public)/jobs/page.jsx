@@ -34,9 +34,9 @@ const handleApply = () => {
   else if (job.contact_email) window.location.href = `mailto:${job.contact_email}`;
 };
   return (
-    <div className="bg-white border border-[#e2e6ed] rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#2d6a4f] transition-all group">
+    <div className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-[#2d6a4f] transition-all group">
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-[#e8eaee] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
           {(job.company || job.company_name || "?")[0]}
         </div>
         <div>
@@ -55,8 +55,8 @@ const handleApply = () => {
             )}
           </div>
           <div className="flex gap-2 mt-2 flex-wrap">
-            {job.type && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.type.replace(/_/g, " ")}</span>}
-            {job.sector && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">{job.sector.replace(/_/g, " ")}</span>}
+            {job.type && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568]">{job.type.replace(/_/g, " ")}</span>}
+            {job.sector && <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568]">{job.sector.replace(/_/g, " ")}</span>}
           </div>
         </div>
       </div>
@@ -85,11 +85,11 @@ function PostJobForm({ onDone }) {
 
   return (
     <div className="max-w-xl mx-auto">
-      <div className="bg-white border border-[#e2e6ed] rounded-2xl p-8">
-        <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e2e6ed]">
+      <div className="bg-white border border-[#e8eaee] rounded-2xl p-8">
+        <div className="flex items-center gap-3 mb-7 pb-6 border-b border-[#e8eaee]">
           <Briefcase size={18} className="text-[#2d6a4f]" />
           <h2 className="font-semibold text-[#0f1a14]">Post a job</h2>
-          <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6]">Free during beta</span>
+          <span className="ml-auto text-xs font-mono text-[#2d6a4f] px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6]">Free during beta</span>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {[
@@ -102,28 +102,28 @@ function PostJobForm({ onDone }) {
               <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">{field.label} <span className="text-[#2d6a4f]">*</span></label>
               <input name={field.name} type={field.type || "text"} value={form[field.name]} onChange={handleChange}
                 placeholder={field.placeholder} required={field.required}
-                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
+                className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
             </div>
           ))}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Type</label>
               <select name="type" value={form.type} onChange={handleChange}
-                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] outline-none focus:border-[#2d6a4f] transition-colors">
+                className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] outline-none focus:border-[#2d6a4f] transition-colors">
                 {["Full-time", "Part-time", "Contract", "Fractional", "Advisory"].map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Sector</label>
               <input name="sector" value={form.sector} onChange={handleChange} placeholder="e.g. green_hydrogen"
-                className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
+                className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors" />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-mono text-[#4a5568] tracking-wider uppercase">Job description</label>
             <textarea name="description" value={form.description} onChange={handleChange}
               placeholder="Role responsibilities, requirements..." rows={4}
-              className="bg-[#f2f4f8] border border-[#d0d6e0] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none" />
+              className="bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none focus:border-[#2d6a4f] transition-colors resize-none" />
           </div>
           <button type="submit" disabled={loading}
             className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3.5 hover:bg-[#235a40] transition-all disabled:opacity-60 mt-2">
@@ -192,11 +192,11 @@ export default function JobsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-4xl mx-auto px-6 py-16">
         <div className="flex items-start justify-between mb-10 gap-4 flex-wrap">
           <div>
-            <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-4">
+            <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#f2f4f6] rounded-full px-3 py-1.5 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
               Climate Jobs
             </div>
@@ -215,7 +215,7 @@ export default function JobsPage() {
         {view === "post" ? <PostJobForm onDone={() => setView("done")} /> : (
           <>
             <div className="flex flex-col md:flex-row gap-3 mb-6">
-              <div className="flex items-center gap-3 flex-1 bg-white border border-[#d0d6e0] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all">
+              <div className="flex items-center gap-3 flex-1 bg-white border border-[#dbdfe4] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all">
                 <Search size={14} className="text-[#718096]" />
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search job titles or companies…"
                   className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#718096] outline-none" />
@@ -223,7 +223,7 @@ export default function JobsPage() {
               <div className="flex gap-2 flex-wrap">
                 {availableSectors.slice(0, 5).map(s => (
                   <button key={s} onClick={() => setSector(s)}
-                    className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e2e6ed] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"}`}>
+                    className={`text-xs font-mono px-3 py-2 rounded-lg border transition-all ${sector === s ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]" : "border-[#e8eaee] bg-white text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"}`}>
                     {s === "All" ? `All (${jobs.length})` : `${formatSectorLabel(s)} (${sectorCounts[s] || 0})`}
                   </button>
                 ))}
@@ -238,7 +238,7 @@ export default function JobsPage() {
                 <div className="text-center py-20 text-[#718096] font-mono text-sm">No jobs found</div>
               )}
             </div>
-            <div className="mt-10 bg-white border border-[#e2e6ed] rounded-2xl p-7 text-center">
+            <div className="mt-10 bg-white border border-[#e8eaee] rounded-2xl p-7 text-center">
               <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-xl text-[#0f1a14] mb-2">Hiring in climate?</h3>
               <p className="text-sm text-[#4a5568] mb-5 font-light">Post your role to reach thousands of climate professionals.</p>
               <button

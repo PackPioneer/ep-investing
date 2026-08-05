@@ -54,8 +54,8 @@ export default function JobsList() {
       {loading ? (
         <div className="text-sm text-[#718096]">Loading...</div>
       ) : jobs.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-[#e2e6ed] rounded-2xl bg-white">
-          <Briefcase size={32} className="text-[#d0d6e0] mx-auto mb-4" />
+        <div className="text-center py-16 border border-dashed border-[#e8eaee] rounded-2xl bg-white">
+          <Briefcase size={32} className="text-[#dbdfe4] mx-auto mb-4" />
           <p className="text-sm text-[#4a5568] mb-1">No job postings yet</p>
           <p className="text-xs text-[#718096] mb-5">Hire from a pool of climate-focused candidates.</p>
           <Link href="/dashboard/ngo/jobs/new"
@@ -66,15 +66,15 @@ export default function JobsList() {
       ) : (
         <div className="flex flex-col gap-3">
           {jobs.map(j => (
-            <div key={j.id} className="bg-white border border-[#e2e6ed] rounded-xl p-5">
+            <div key={j.id} className="bg-white border border-[#e8eaee] rounded-xl p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span className="font-semibold text-[#0f1a14]">{j.title}</span>
                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
                       j.status === "active"
-                        ? "border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]"
-                        : "border-[#e2e6ed] bg-[#f8f9fb] text-[#718096]"
+                        ? "border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]"
+                        : "border-[#e8eaee] bg-[#fafbfc] text-[#718096]"
                     }`}>
                       {j.status}
                     </span>
@@ -89,16 +89,16 @@ export default function JobsList() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {j.apply_url && (
                     <a href={j.apply_url} target="_blank" rel="noopener noreferrer"
-                      className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#f8f9fb] transition-colors" title="Open apply URL">
+                      className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#fafbfc] transition-colors" title="Open apply URL">
                       <ExternalLink size={14} />
                     </a>
                   )}
                   <button onClick={() => toggleStatus(j)}
-                    className="text-xs font-mono text-[#4a5568] hover:text-[#2d6a4f] px-2 py-1 rounded hover:bg-[#f8f9fb] transition-colors">
+                    className="text-xs font-mono text-[#4a5568] hover:text-[#2d6a4f] px-2 py-1 rounded hover:bg-[#fafbfc] transition-colors">
                     {j.status === "active" ? "Deactivate" : "Activate"}
                   </button>
                   <Link href={`/dashboard/ngo/jobs/${j.id}/edit`}
-                    className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#f8f9fb] transition-colors" title="Edit">
+                    className="text-[#718096] hover:text-[#2d6a4f] p-2 rounded-lg hover:bg-[#fafbfc] transition-colors" title="Edit">
                     <Edit3 size={14} />
                   </Link>
                   <button onClick={() => handleDelete(j.id)}

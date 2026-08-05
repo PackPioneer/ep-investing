@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-.cl-userButtonPopoverFooter, .cl-footer{
-  display: none !important;
-}body { background-color: #f2f4f8; color: #0f1a14; }
-@import "tailwindcss";
-
-.cl-userButtonPopoverFooter, .cl-footer{
+.cl-userButtonPopoverFooter, .cl-footer {
   display: none !important;
 }
-body { background-color: #f2f4f8; color: #0f1a14; }
+
+body {
+  background-color: #f6f7f9;
+  color: #0f1a14;
+  font-family: var(--font-geist-sans), sans-serif;
+}
 
 .font-mono {
   font-family: var(--font-geist-sans), sans-serif !important;

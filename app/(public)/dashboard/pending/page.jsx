@@ -42,7 +42,7 @@ export default function DashboardPending() {
   }, [isLoaded, user, router]);
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+    <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       {timedOut ? (
         <div className="max-w-md text-center">

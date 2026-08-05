@@ -10,17 +10,17 @@ const GEOGRAPHIES = ["All", "United States", "Europe", "Global", "Asia Pacific",
 function ReportCard({ report }) {
   return (
     <Link href={`/insights/${report.slug}`}
-      className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+      className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-7 flex flex-col gap-4 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
       
       {/* Sector + geography badges */}
       <div className="flex items-center gap-2 flex-wrap">
         {report.sector && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]">
             {report.sector.replace(/_/g, " ")}
           </span>
         )}
         {report.geography && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e2e6ed] bg-[#ffffff] text-[#4a5568] flex items-center gap-1">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#e8eaee] bg-[#ffffff] text-[#4a5568] flex items-center gap-1">
             <Globe size={8} /> {report.geography}
           </span>
         )}
@@ -46,7 +46,7 @@ function ReportCard({ report }) {
 
       {/* Market stats */}
       {(report.market_value || report.expected_growth) && (
-        <div className="flex gap-4 pt-3 border-t border-[#e2e6ed]">
+        <div className="flex gap-4 pt-3 border-t border-[#e8eaee]">
           {report.market_value && (
             <div>
               <div className="text-[10px] font-mono text-[#718096] uppercase tracking-wider mb-0.5">Market Size</div>
@@ -93,12 +93,12 @@ export default function InsightsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="mb-14">
-          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#eef1f6] rounded-full px-3 py-1.5 mb-6">
+          <div className="inline-flex items-center gap-2 text-[#2d6a4f] text-xs font-mono tracking-widest uppercase border border-[#c8d8cc] bg-[#f2f4f6] rounded-full px-3 py-1.5 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
             EP Investing Intelligence
           </div>
@@ -119,7 +119,7 @@ export default function InsightsPage() {
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-3 bg-[#ffffff] border border-[#d0d6e0] rounded-xl px-4 py-3 mb-6 focus-within:border-[#2d6a4f] transition-all max-w-xl">
+        <div className="flex items-center gap-3 bg-[#ffffff] border border-[#dbdfe4] rounded-xl px-4 py-3 mb-6 focus-within:border-[#2d6a4f] transition-all max-w-xl">
           <Search size={14} className="text-[#718096]" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search reports…"
@@ -133,7 +133,7 @@ export default function InsightsPage() {
               className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
                 sector === s
                   ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                  : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                  : "border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
               }`}>
               {s === "All" ? "All sectors" : s.replace(/_/g, " ")}
             </button>
@@ -147,7 +147,7 @@ export default function InsightsPage() {
               className={`text-xs font-mono px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1 ${
                 geography === g
                   ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                  : "border-[#e2e6ed] bg-[#ffffff] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+                  : "border-[#e8eaee] bg-[#ffffff] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
               }`}>
               <Globe size={9} /> {g}
             </button>
@@ -158,7 +158,7 @@ export default function InsightsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-7 h-64 animate-pulse" />
+              <div key={i} className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-7 h-64 animate-pulse" />
             ))}
           </div>
         ) : filtered.length > 0 ? (
@@ -166,8 +166,8 @@ export default function InsightsPage() {
             {filtered.map(report => <ReportCard key={report.id} report={report} />)}
           </div>
         ) : (
-          <div className="text-center py-24 border border-dashed border-[#e2e6ed] rounded-2xl">
-            <FileText size={32} className="text-[#d0d6e0] mx-auto mb-4" />
+          <div className="text-center py-24 border border-dashed border-[#e8eaee] rounded-2xl">
+            <FileText size={32} className="text-[#dbdfe4] mx-auto mb-4" />
             <p className="text-[#718096] font-mono text-sm">No reports found</p>
             <p className="text-[#718096] text-xs mt-1">Try adjusting your filters</p>
           </div>

@@ -27,12 +27,12 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-[#e2e6ed] bg-[#f2f4f8]/90 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-[#e8eaee] bg-[#f6f7f9]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-14">
 
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
-            <span style={{ fontFamily: "Georgia, serif" }} className="text-base text-[#0f1a14]">
+            <span style={{ fontFamily: "var(--font-display), sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }} className="text-base text-[#0f1a14]">
               EP Network
             </span>
           </Link>
@@ -53,7 +53,7 @@ export default function Navbar() {
             {isLoaded && user ? (
               <>
                 <Link href="/dashboard"
-                  className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
+                  className="text-sm text-[#4a5568] border border-[#dbdfe4] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
                   Dashboard
                 </Link>
                 <UserButton afterSignOutUrl="/" />
@@ -61,39 +61,39 @@ export default function Navbar() {
             ) : (
               <>
                 <a href="https://accounts.epinvesting.com/sign-in"
-                  className="text-sm text-[#4a5568] border border-[#d0d6e0] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
+                  className="text-sm text-[#4a5568] border border-[#dbdfe4] rounded-md px-3 py-1.5 hover:text-[#0f1a14] hover:border-[#718096] transition-all">
                   Sign in
                 </a>
                 <div className="relative">
                   <button onClick={() => setJoinOpen(v => !v)}
-                    className="text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
+                    className="text-sm bg-[#2d6a4f] text-[#f6f7f9] font-semibold rounded-md px-4 py-1.5 hover:bg-[#235a40] transition-all">
                     Join EP Network ▾
                   </button>
                   {joinOpen && (
                     <>
                       <div className="fixed inset-0 z-40" onClick={() => setJoinOpen(false)} />
-                      <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-[#e2e6ed] rounded-xl shadow-lg z-50 overflow-hidden">
+                      <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-[#e8eaee] rounded-xl shadow-lg z-50 overflow-hidden">
                         <Link href="/onboarding/company" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#fafbfc] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm a Company</span>
                           <span className="text-xs text-[#718096] mt-0.5">Claim your profile</span>
                         </Link>
-                        <div className="border-t border-[#e2e6ed]" />
+                        <div className="border-t border-[#e8eaee]" />
                         <Link href="/onboarding/investor" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#fafbfc] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm an Investor</span>
                           <span className="text-xs text-[#718096] mt-0.5">Get deal flow access</span>
                         </Link>
               
-                        <div className="border-t border-[#e2e6ed]" />
+                        <div className="border-t border-[#e8eaee]" />
                         <Link href="/onboarding/ngo" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#fafbfc] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm an NGO</span>
                           <span className="text-xs text-[#718096] mt-0.5">List your organization</span>
                         </Link>
-                        <div className="border-t border-[#e2e6ed]" />
+                        <div className="border-t border-[#e8eaee]" />
                         <Link href="/onboarding/individual" onClick={() => setJoinOpen(false)}
-                          className="flex flex-col px-4 py-3 hover:bg-[#f8f9fb] transition-colors">
+                          className="flex flex-col px-4 py-3 hover:bg-[#fafbfc] transition-colors">
                           <span className="text-sm font-semibold text-[#0f1a14]">I'm an Individual</span>
                           <span className="text-xs text-[#718096] mt-0.5">Follow the energy transition</span>
                         </Link>
@@ -113,7 +113,7 @@ export default function Navbar() {
       </nav>
 
       {isOpen && (
-        <div className="fixed inset-0 top-14 z-40 bg-[#f2f4f8] border-t border-[#e2e6ed] md:hidden overflow-y-auto">
+        <div className="fixed inset-0 top-14 z-40 bg-[#f6f7f9] border-t border-[#e8eaee] md:hidden overflow-y-auto">
           <div className="flex flex-col p-6 gap-2">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
@@ -128,11 +128,11 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <div className="border-t border-[#e2e6ed] mt-4 pt-4 flex flex-col gap-3">
+            <div className="border-t border-[#e8eaee] mt-4 pt-4 flex flex-col gap-3">
               {isLoaded && user ? (
                 <>
                   <Link href="/dashboard"
-                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0]">
+                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#dbdfe4]">
                     Dashboard
                   </Link>
                   <div className="flex justify-center">
@@ -142,11 +142,11 @@ export default function Navbar() {
               ) : (
                 <>
                   <a href="https://accounts.epinvesting.com/sign-in"
-                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#d0d6e0]">
+                    className="text-center py-3 rounded-lg text-sm text-[#4a5568] border border-[#dbdfe4]">
                     Sign in
                   </a>
                   <Link href="/onboarding/company"
-                    className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f2f4f8] font-semibold hover:bg-[#235a40] transition-all">
+                    className="text-center py-3 rounded-lg text-sm bg-[#2d6a4f] text-[#f6f7f9] font-semibold hover:bg-[#235a40] transition-all">
                     Join as Company
                   </Link>
                   <Link href="/onboarding/investor"

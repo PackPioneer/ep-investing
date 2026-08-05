@@ -71,7 +71,7 @@ function CompanyCard({ company }) {
 
   return (
     <Link href={`/companies/${company.slug || company.id}`}
-      className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+      className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
 
       {/* Top row: logo + name + chevron */}
       <div className="flex items-start justify-between gap-3">
@@ -79,10 +79,10 @@ function CompanyCard({ company }) {
           {company.logo_url ? (
             <>
               <img src={company.logo_url} alt={company.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-              <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(company.name||company.url||"?")[0].toUpperCase()}</div>
+              <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e8eaee] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(company.name||company.url||"?")[0].toUpperCase()}</div>
             </>
           ) : (
-            <div className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#e8eaee] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
               {(company.name || company.url || "?")[0].toUpperCase()}
             </div>
           )}
@@ -106,12 +106,12 @@ function CompanyCard({ company }) {
           </span>
         )}
         {model && (MODEL_LABELS[model] || model.length <= 20) && (
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#2d6a4f]">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#2d6a4f]">
             {MODEL_LABELS[model] || model}
           </span>
         )}
         {tags.slice(0, 2).map(tag => (
-          <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+          <span key={tag} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568]">
             {formatSector(tag)}
           </span>
         ))}
@@ -119,7 +119,7 @@ function CompanyCard({ company }) {
 
       {/* Long business-model prose: render as a clean block, not a pill */}
       {model && !MODEL_LABELS[model] && model.length > 20 && (
-        <div className="bg-[#f4f6f9] border border-[#e2e6ed] rounded-lg px-3 py-2">
+        <div className="bg-[#f4f6f9] border border-[#e8eaee] rounded-lg px-3 py-2">
           <p className="text-[10px] font-mono uppercase tracking-wider text-[#718096] mb-1">Business model</p>
           <p className="text-xs text-[#4a5568] leading-relaxed line-clamp-3 font-light">{model}</p>
         </div>
@@ -153,7 +153,7 @@ function CompanyCard({ company }) {
         </div>
       )}
 {company.show_contact && company.primary_contact_email && (
-  <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#eef1f6] border border-[#c8d8cc] text-[#2d6a4f]">
+  <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] border border-[#c8d8cc] text-[#2d6a4f]">
     <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f]" />
     Open to contact
   </span>
@@ -195,16 +195,16 @@ function CompanyCard({ company }) {
 function InvestorCard({ investor }) {
   return (
     <Link href={`/investors/${investor.id}`}
-      className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+      className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {investor.logo_url ? (
             <>
               <img src={investor.logo_url} alt={investor.name} className="w-9 h-9 rounded-lg object-contain bg-white p-1 flex-shrink-0" onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-              <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(investor.name||"?")[0].toUpperCase()}</div>
+              <div style={{display:"none"}} className="w-9 h-9 rounded-lg bg-[#e8eaee] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(investor.name||"?")[0].toUpperCase()}</div>
             </>
           ) : (
-            <div className="w-9 h-9 rounded-lg bg-[#e2e6ed] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-[#e8eaee] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">
               {(investor.name || "?")[0].toUpperCase()}
             </div>
           )}
@@ -215,7 +215,7 @@ function InvestorCard({ investor }) {
         <ChevronRight size={14} className="text-[#718096] group-hover:text-[#2d6a4f] flex-shrink-0 mt-0.5 transition-colors" />
       </div>
       <div className="flex flex-wrap gap-1.5">
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568]">
           VC Firm
         </span>
         {investor.fund_size && (
@@ -224,7 +224,7 @@ function InvestorCard({ investor }) {
           </span>
         )}
         {(investor.investment_stages || []).slice(0, 2).map(s => (
-          <span key={s} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568]">
+          <span key={s} className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568]">
             {s.replace(/_/g, " ")}
           </span>
         ))}
@@ -239,7 +239,7 @@ function InvestorCard({ investor }) {
 function GrantCard({ grant }) {
   return (
     <Link href={grant.application_url || grant.url || "/grants"} target="_blank" rel="noopener noreferrer"
-    className="bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#f8f9fb] transition-all group">
+    className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors leading-snug">
           {grant.title || grant.name}
@@ -274,7 +274,7 @@ function FilterChip({ label, active, onClick }) {
       className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 ${
         active
           ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-          : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
+          : "border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f]"
       }`}>
       {label}
       {active && <X size={10} className="ml-0.5" />}
@@ -384,7 +384,7 @@ useEffect(() => {
         <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-6">
           <ArrowLeft size={14} /> Back to home
         </Link>
-        <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#d0d6e0] rounded-xl overflow-hidden focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all mb-4">
+        <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#dbdfe4] rounded-xl overflow-hidden focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all mb-4">
           <div className="flex items-center flex-1 px-4 gap-3">
             <Search size={15} className="text-[#718096] flex-shrink-0" />
             <input
@@ -401,7 +401,7 @@ useEffect(() => {
               </button>
             )}
           </div>
-          <button type="submit" className="bg-[#2d6a4f] text-[#f2f4f8] font-semibold text-sm px-5 hover:bg-[#235a40] transition-colors">
+          <button type="submit" className="bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm px-5 hover:bg-[#235a40] transition-colors">
             Search
           </button>
         </form>
@@ -412,7 +412,7 @@ useEffect(() => {
             className={`flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${
               showFilters || activeFilterCount > 0
                 ? "border-[#2d6a4f] bg-[rgba(45,106,79,0.08)] text-[#2d6a4f]"
-                : "border-[#c8d8cc] bg-[#eef1f6] text-[#4a5568] hover:border-[#2d6a4f]"
+                : "border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f]"
             }`}>
             <SlidersHorizontal size={11} />
             Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
@@ -426,7 +426,7 @@ useEffect(() => {
 
         {/* Expandable filter panel */}
         {showFilters && (
-          <div className="bg-white border border-[#e2e6ed] rounded-xl p-5 mb-4 flex flex-col gap-4">
+          <div className="bg-white border border-[#e8eaee] rounded-xl p-5 mb-4 flex flex-col gap-4">
 
             {/* Industry */}
             <div>
@@ -511,18 +511,18 @@ useEffect(() => {
         </h1>
       </div>
 
-      <div className="flex gap-1 mb-6 bg-[#ffffff] border border-[#e2e6ed] rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#ffffff] border border-[#e8eaee] rounded-xl p-1 w-fit">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? "bg-[#2d6a4f] text-[#f2f4f8]"
+                ? "bg-[#2d6a4f] text-[#f6f7f9]"
                 : "text-[#4a5568] hover:text-[#0f1a14]"
             }`}>
             <tab.icon size={14} />
             {tab.label}
             <span className={`text-xs px-1.5 py-0.5 rounded-full font-mono ${
-              activeTab === tab.id ? "bg-[#f2f4f8]/20 text-[#f2f4f8]" : "bg-[#e2e6ed] text-[#718096]"
+              activeTab === tab.id ? "bg-[#f6f7f9]/20 text-[#f6f7f9]" : "bg-[#e8eaee] text-[#718096]"
             }`}>{tab.count}</span>
           </button>
         ))}
@@ -576,7 +576,7 @@ useEffect(() => {
 
 export default function SearchPage() {
   return (
-    <div className="min-h-screen bg-[#f2f4f8] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <Suspense fallback={
         <div className="flex items-center justify-center py-32">
           <Loader2 className="animate-spin text-[#2d6a4f]" size={32} />

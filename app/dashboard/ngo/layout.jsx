@@ -16,9 +16,9 @@ export default async function NGODashboardLayout({ children }) {
 
   if (ngo.status !== "active") {
     return (
-      <div className="min-h-screen bg-[#f2f4f8] flex items-center justify-center px-6"
+      <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
         style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-        <div className="max-w-md text-center bg-white border border-[#e2e6ed] rounded-2xl p-8">
+        <div className="max-w-md text-center bg-white border border-[#e8eaee] rounded-2xl p-8">
           <div className="w-12 h-12 rounded-full bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] flex items-center justify-center mx-auto mb-5">
             <Building2 size={20} className="text-[#2d6a4f]" />
           </div>
@@ -44,11 +44,11 @@ export default async function NGODashboardLayout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f2f4f8]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+    <div className="min-h-screen bg-[#f6f7f9]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-7xl mx-auto px-6 py-8">
 
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#e2e6ed]">
+        <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#e8eaee]">
           <div>
             <div className="text-[10px] font-mono uppercase tracking-widest text-[#718096] mb-1">NGO Dashboard</div>
             <h1 style={{ fontFamily: "Georgia, serif" }} className="text-2xl text-[#0f1a14]">
@@ -57,7 +57,7 @@ export default async function NGODashboardLayout({ children }) {
           </div>
           <Link href={`/ngos/${ngo.slug}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#2d6a4f] border border-[#d0d6e0] hover:border-[#2d6a4f] rounded-lg px-3 py-2 transition-colors">
+            className="inline-flex items-center gap-1.5 text-sm text-[#4a5568] hover:text-[#2d6a4f] border border-[#dbdfe4] hover:border-[#2d6a4f] rounded-lg px-3 py-2 transition-colors">
             <Eye size={13} /> View public profile <ExternalLink size={11} />
           </Link>
         </div>
