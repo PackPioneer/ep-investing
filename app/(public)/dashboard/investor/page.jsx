@@ -4,13 +4,15 @@ import { formatSector } from "@/lib/sectors";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight, Sparkles } from "lucide-react";
+import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight, Sparkles, BarChart3, Radar } from "lucide-react";
 import { usePaywall } from "@/components/PaywallModal";
 import { usePipeline } from "@/components/pipeline/usePipeline";
 import ForYouFeed from "@/components/news/ForYouFeed";
 import PolicyDigestWidget from "@/components/policies/PolicyDigestWidget";
 import MAPulseWidget from "@/components/widgets/MAPulseWidget";
 import SignalWidget from "@/components/widgets/SignalWidget";
+import MarketsTab from "@/components/dashboard/MarketsTab";
+import RaisingTab from "@/components/dashboard/RaisingTab";
 
 const STAGES = ["pre_seed","seed","series_a","series_b","series_c","growth"];
 const STAGE_LABELS = { pre_seed:"Pre-Seed", seed:"Seed", series_a:"Series A", series_b:"Series B", series_c:"Series C", growth:"Growth" };
@@ -189,7 +191,9 @@ export default function InvestorDashboard() {
   const NAV = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "for-you", label: "For You", icon: Sparkles },
-    { id: "feed", label: "Deal Flow", icon: TrendingUp },
+    { id: "markets", label: "Markets", icon: BarChart3 },
+    { id: "raising", label: "Raising", icon: Radar },
+    { id: "feed", label: "Companies", icon: TrendingUp },
     { id: "saved", label: "Saved", icon: Bookmark, badge: savedIds.size },
     { id: "grants", label: "Grants", icon: FileText },
     { id: "profile", label: "Profile", icon: User },
@@ -436,6 +440,12 @@ export default function InvestorDashboard() {
             </div>
           </div>
         )}
+
+        {/* MARKETS TAB */}
+        {activeTab === "markets" && <MarketsTab isSaved={isSaved} onToggleSave={toggleSave} />}
+
+        {/* RAISING TAB */}
+        {activeTab === "raising" && <RaisingTab isSaved={isSaved} onToggleSave={toggleSave} />}
 
         {/* PROFILE TAB */}
         {activeTab === "profile" && profileForm && (
