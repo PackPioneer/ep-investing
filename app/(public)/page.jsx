@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { formatSector } from "@/lib/sectors";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, ArrowRight, TrendingUp, Zap, Users, Briefcase, Heart, Play, X } from "lucide-react";
 import posthog from "posthog-js";
 
 const quickTags = [
@@ -13,9 +12,8 @@ const quickTags = [
   { slug: "green_hydrogen", label: "Green Hydrogen" },
   { slug: "nuclear_technologies", label: "Nuclear Technologies" },
   { slug: "carbon_credits", label: "Carbon Credits" },
-  { slug: "clean_cooking", label: "Clean Cooking" },
-  { slug: "electric_aviation", label: "Electric Aviation" },
   { slug: "battery_storage", label: "Battery Storage" },
+  { slug: "electric_aviation", label: "Electric Aviation" },
 ];
 
 const categories = [
@@ -32,71 +30,46 @@ const categories = [
 ];
 
 const roleTiles = [
-  {
-    icon: TrendingUp,
-    title: "Investors",
-    desc: "Source deals and track the energy transition across 14 sectors.",
-    cta: "Get investor access",
-    href: "/onboarding/investor",
-  },
-  {
-    icon: Zap,
-    title: "Founders",
-    desc: "Get matched with investors and surface your company to the right people.",
-    cta: "Claim your profile",
-    href: "/onboarding/company",
-  },
-  {
-    icon: Users,
-    title: "Experts",
-    desc: "Get hired for high-impact climate roles and attract inbound deal flow.",
-    cta: "Join as an expert",
-    href: "/experts",
-  },
-  {
-    icon: Heart,
-    title: "NGOs",
-    desc: "List grants and jobs, find partners, and discover funded climate companies.",
-    cta: "List your organization",
-    href: "/ngos",
-  },
-  {
-    icon: Briefcase,
-    title: "Individuals",
-    desc: "Follow the industries you care about and get a personalized feed of companies, news, and grants.",
-    cta: "Join free",
-    href: "/onboarding/individual",
-  },
+  { title: "Company", desc: "Get discovered, raise, hire, and announce.", cta: "Claim your profile", href: "/onboarding/company" },
+  { title: "Investor", desc: "Track deals and follow the whole market.", cta: "Get investor access", href: "/onboarding/investor" },
+  { title: "Expert", desc: "Get found for high-impact climate roles.", cta: "Join as an expert", href: "/experts" },
+  { title: "NGO", desc: "Partner, convene, and list grants and jobs.", cta: "List your organization", href: "/ngos" },
+  { title: "Individual", desc: "Follow your sectors, get a feed built for you.", cta: "Join free", href: "/onboarding/individual" },
 ];
+
+const FEED_LABEL = { raise_close: "Raise", raise_open: "Raising", partnership: "Partnership", product: "Product", hire: "Hire", milestone: "Milestone", award: "Award", expansion: "Expansion", other: "Update" };
+const FEED_STYLE = {
+  Raise: ["#efe9fb", "#5b3fa8"], Raising: ["#efe9fb", "#5b3fa8"], Partnership: ["#e2eff0", "#0d6a72"],
+  Product: ["#faece7", "#993c1d"], Hire: ["#e6f1fb", "#185fa5"], Milestone: ["#e2eff0", "#0d6a72"],
+  Award: ["#e6f2ea", "#2d6a4f"], Expansion: ["#fbeaf0", "#993556"], Update: ["#f2f4f6", "#4a5568"],
+  Insight: ["#e6f1fb", "#185fa5"], New: ["#e6f2ea", "#2d6a4f"],
+};
+const ago = (d) => {
+  if (!d) return "";
+  const h = (Date.now() - new Date(d).getTime()) / 3.6e6;
+  if (h < 1) return "just now";
+  if (h < 24) return `${Math.round(h)}h ago`;
+  const days = Math.round(h / 24);
+  return `${days}d ago`;
+};
+const fmt = (n, fallback) => (typeof n === "number" ? n.toLocaleString() : fallback);
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
   const [recentCompanies, setRecentCompanies] = useState([]);
-  const [recentInvestors, setRecentInvestors] = useState([]);
-  const [recentGrants, setRecentGrants] = useState([]);
-  const [recentJobs, setRecentJobs] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [news, setNews] = useState([]);
+  const [stats, setStats] = useState(null);
   const [email, setEmail] = useState("");
   const [showDemo, setShowDemo] = useState(false);
   const [emailStatus, setEmailStatus] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/companies?limit=5")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setRecentCompanies(data.slice(0, 5)); })
-      .catch(() => {});
-    fetch("/api/investors")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setRecentInvestors(data.slice(0, 5)); })
-      .catch(() => {});
-    fetch("/api/grants")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setRecentGrants(data.slice(0, 5)); })
-      .catch(() => {});
-    fetch("/api/jobs?limit=5")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setRecentJobs(data.slice(0, 5)); })
-      .catch(() => {});
+    fetch("/api/stats").then(r => r.json()).then(setStats).catch(() => {});
+    fetch("/api/companies?limit=6").then(r => r.json()).then(d => { if (Array.isArray(d)) setRecentCompanies(d.slice(0, 6)); }).catch(() => {});
+    fetch("/api/announcements?limit=8").then(r => r.json()).then(d => { if (Array.isArray(d)) setAnnouncements(d); }).catch(() => {});
+    fetch("/api/news?limit=8").then(r => r.json()).then(d => { const arr = Array.isArray(d) ? d : (d?.articles || []); setNews(arr); }).catch(() => {});
   }, []);
 
   const handleSearch = (e, override) => {
@@ -111,409 +84,236 @@ export default function HomePage() {
     if (!email || !email.includes("@")) return;
     setEmailStatus("loading");
     try {
-      await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       posthog.identify(email, { email });
       posthog.capture("newsletter_subscribed", { email, source: "homepage" });
       setEmailStatus("success");
       setEmail("");
-    } catch {
-      setEmailStatus("error");
-    }
+    } catch { setEmailStatus("error"); }
   };
+
+  const liveFeed = useMemo(() => {
+    const items = [];
+    for (const a of announcements) {
+      items.push({ id: `a${a.id}`, kind: FEED_LABEL[a.category] || "Update", title: `${a.company?.name ? a.company.name + ": " : ""}${a.title}`, when: a.published_at, href: a.company?.id ? `/companies/${a.company.id}` : "/announcements" });
+    }
+    for (const n of (news || []).slice(0, 6)) {
+      items.push({ id: `n${n.id}`, kind: "Insight", title: n.title, when: n.published_at, href: "/news" });
+    }
+    for (const co of recentCompanies.slice(0, 4)) {
+      items.push({ id: `c${co.id}`, kind: "New", title: `${co.name || co.url} joined EP Network`, when: co.created_at, href: `/companies/${co.slug || co.id}` });
+    }
+    return items.filter(x => x.title).sort((a, b) => new Date(b.when || 0) - new Date(a.when || 0)).slice(0, 8);
+  }, [announcements, news, recentCompanies]);
+
+  const statBar = [
+    { num: fmt(stats?.companies, "1,300+"), label: "Companies", href: "/search" },
+    { num: fmt(stats?.investors, "350+"), label: "Investors", href: "/investors" },
+    { num: fmt(stats?.grants, "185+"), label: "Grants", href: "/grants" },
+    { num: fmt(stats?.jobs, "500+"), label: "Jobs", href: "/jobs" },
+    { num: fmt(stats?.ngos, "55+"), label: "NGOs", href: "/ngos" },
+  ];
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
 
       {/* HERO */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-24 pb-16">
-        <div className="absolute inset-0 opacity-[0.025] pointer-events-none" style={{
-          backgroundImage: "linear-gradient(rgba(45,106,79,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(45,106,79,0.4) 1px, transparent 1px)",
-          backgroundSize: "60px 60px"
-        }} />
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          {/* HERO TOP — pitch + dashboard mockup, two columns on desktop */}
-<div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-10 items-center mb-12">
-
-  {/* LEFT: pitch */}
-  <div>
-    <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl md:text-5xl leading-[1.05] tracking-tight text-[#0f1a14] mb-5">
-      Built for the people building{" "}
-      <em className="text-[#2d6a4f] not-italic">the energy transition.</em>
-    </h1>
-
-    <p className="text-[#4a5568] text-base leading-relaxed mb-6 font-light">
-      News intelligence, investor matching, grant tracking, and hiring — all in one platform.
-    </p>
-
-    <div className="flex flex-wrap items-center gap-3 mb-3">
-      <Link href="/get-started" className="inline-flex items-center gap-1.5 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-5 py-3 hover:bg-[#235a40] transition-all">
-        Start free <ArrowRight size={14} />
-      </Link>
-      <button onClick={() => setShowDemo(true)} className="inline-flex items-center gap-1.5 border border-[#dbdfe4] text-[#0f1a14] font-semibold text-sm rounded-lg px-5 py-3 hover:border-[#2d6a4f] transition-all">
-        <Play size={14} /> Watch demo
-      </button>
-    </div>
-    <div className="text-xs text-[#718096] font-mono">
-      No credit card · Cancel anytime
-    </div>
-  </div>
-
-  {/* RIGHT: dashboard mockup */}
-  <div className="bg-white rounded-xl border border-[#e8eaee] overflow-hidden grid grid-cols-[140px_1fr] min-h-[420px]">
-
-    {/* Sidebar */}
-    <div className="bg-[#0f1a14] p-3">
-      <div className="mb-4 px-1.5">
-        <span style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-white text-sm">EP </span>
-        <span style={{ fontFamily: 'var(--font-display), sans-serif', fontStyle: "italic" }} className="text-[#2d6a4f] text-sm">Network</span>
-      </div>
-      <div className="flex flex-col gap-0.5">
-        {[
-          { label: "Overview", active: false },
-          { label: "For You", active: true },
-          { label: "Edit profile", active: false },
-          { label: "Raise capital", active: false },
-          { label: "Post a job", active: false },
-          { label: "Share an update", active: false },
-          { label: "Find investors", active: false },
-          { label: "Hire experts", active: false },
-        ].map(item => (
-          <div key={item.label}
-            className={`px-2 py-1.5 text-[11px] rounded ${
-              item.active
-                ? "bg-[rgba(45,106,79,0.4)] text-white font-medium"
-                : "text-white/50"
-            }`}>
-            {item.label}
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Feed pane */}
-    <div className="p-3.5 bg-[#fafbfc]">
-      <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">
-        Activity in your sector
-      </div>
-
-      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
-        <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e1f5ee] text-[#0f6e56] font-medium">IPO</div>
-          <div className="text-[8px] text-[#718096] font-mono">Climate Capital Weekly</div>
-          <div className="text-[8px] text-[#718096] ml-auto">2h</div>
-        </div>
-        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
-          Battery storage firm surges 23% on first trading day
-        </div>
-      </div>
-
-      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
-        <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#f2f4f6] text-[#2d6a4f] font-medium">Funding</div>
-          <div className="text-[8px] text-[#718096] font-mono">Energy Intelligence</div>
-          <div className="text-[8px] text-[#718096] ml-auto">8h</div>
-        </div>
-        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
-          Green hydrogen startup closes $80M Series B
-        </div>
-      </div>
-
-      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-3">
-        <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faece7] text-[#993c1d] font-medium">Activity</div>
-          <div className="text-[8px] text-[#718096] font-mono">Solar Futures</div>
-          <div className="text-[8px] text-[#718096] ml-auto">1d</div>
-        </div>
-        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
-          Free market and storage reshape Brazilian solar sector
-        </div>
-      </div>
-
-      <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">
-        Policy &amp; deadlines
-      </div>
-
-      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
-        <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#e6f1fb] text-[#185fa5] font-medium">Policy</div>
-          <div className="text-[8px] text-[#718096] font-mono">Nuclear Business</div>
-          <div className="text-[8px] text-[#718096] ml-auto">May 3</div>
-        </div>
-        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
-          Virginia coal combustion residuals approval proposed
-        </div>
-      </div>
-
-      <div className="bg-white border border-[#e8eaee] rounded-md p-2.5">
-        <div className="flex items-center gap-1.5 mb-1">
-          <div className="text-[8px] px-1.5 py-px rounded-full bg-[#faeeda] text-[#854f0b] font-medium">Grant</div>
-          <div className="text-[8px] text-[#718096] font-mono">DOE</div>
-          <div className="text-[8px] text-[#718096] ml-auto">5 days left</div>
-        </div>
-        <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">
-          H2 Bridge Demonstration · $14M deadline approaching
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-          <form onSubmit={handleSearch} className="flex max-w-2xl bg-[#ffffff] border border-[#dbdfe4] rounded-xl overflow-hidden mb-6 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
-            <div className="flex items-center flex-1 px-4 gap-3">
-              <Search size={16} className="text-[#718096] flex-shrink-0" />
-              <input
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search direct air capture, Breakthrough Energy, DOE grants…"
-                className="w-full py-4 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#718096]"
-              />
+      <section className="max-w-6xl mx-auto px-6 pt-16 pb-10">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-10 items-center">
+            <div>
+              <div className="text-[11px] font-mono uppercase tracking-[0.15em] text-[#2d6a4f] mb-3">The energy transition network</div>
+              <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-4xl md:text-[42px] font-bold leading-[1.08] tracking-tight mb-4">
+                Where the energy transition connects.
+              </h1>
+              <p className="text-[#4a5852] text-base leading-relaxed mb-6">
+                Build a profile, follow the companies and sectors you care about, and get a dashboard and feed built around you — updated daily.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <Link href="/get-started" style={{ fontFamily: "var(--font-display), sans-serif" }} className="bg-[#2d6a4f] text-white font-bold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
+                  Join the network
+                </Link>
+                <button onClick={() => setShowDemo(true)} style={{ fontFamily: "var(--font-display), sans-serif" }} className="border border-[#dbdfe4] text-[#0f1a14] font-bold text-sm rounded-lg px-6 py-3 hover:border-[#2d6a4f] transition-all">
+                  Watch demo
+                </button>
+              </div>
+              <div className="text-xs text-[#8a958f] font-mono">Free to join · from the team behind The Energy Pioneer</div>
             </div>
-            <button type="submit" className="bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm px-6 hover:bg-[#235a40] transition-colors">
-              Search
-            </button>
-          </form>
 
-          <div className="flex flex-wrap items-center gap-2 mb-12">
-            <span className="text-[#718096] text-xs font-mono tracking-wider">Browse:</span>
-            {quickTags.map(tag => (
-              <button key={tag.slug} onClick={() => handleSearch(null, tag.slug)}
-                className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#c8d8cc] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] hover:bg-[rgba(45,106,79,0.06)] transition-all">
-                {tag.label}
-              </button>
-            ))}
-          </div>
-
-          {/* ROLE CARDS — now 5 across on lg screens, 2-3 wrap on smaller */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {roleTiles.map(tile => (
-              <Link key={tile.title} href={tile.href}
-                className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] transition-all group">
-                <div className="w-9 h-9 rounded-lg bg-[#f2f4f6] flex items-center justify-center">
-                  <tile.icon size={18} className="text-[#2d6a4f]" />
+            {/* Dashboard hero mockup */}
+            <div className="bg-white rounded-xl border border-[#e8eaee] overflow-hidden grid grid-cols-[140px_1fr] min-h-[420px]">
+              <div className="bg-[#0f1a14] p-3">
+                <div className="mb-4 px-1.5">
+                  <span style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-white text-sm font-bold">EP </span>
+                  <span style={{ fontFamily: "var(--font-display), sans-serif", fontStyle: "italic" }} className="text-[#2d6a4f] text-sm font-bold">Network</span>
                 </div>
-                <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14]">{tile.title}</div>
-                <div className="text-xs text-[#4a5568] leading-relaxed font-light flex-1">{tile.desc}</div>
-                <div className="text-xs text-[#2d6a4f] font-mono flex items-center gap-1 group-hover:gap-2 transition-all mt-1">
-                  {tile.cta} <ArrowRight size={11} />
+                <div className="flex flex-col gap-0.5">
+                  {[
+                    { label: "Overview", active: false }, { label: "For You", active: true },
+                    { label: "Edit profile", active: false }, { label: "Raise capital", active: false },
+                    { label: "Post a job", active: false }, { label: "Share an update", active: false },
+                    { label: "Find investors", active: false }, { label: "Hire experts", active: false },
+                  ].map(item => (
+                    <div key={item.label} className={`px-2 py-1.5 text-[11px] rounded ${item.active ? "bg-[rgba(45,106,79,0.4)] text-white font-medium" : "text-white/50"}`}>{item.label}</div>
+                  ))}
                 </div>
-              </Link>
-            ))}
+              </div>
+              <div className="p-3.5 bg-[#fafbfc]">
+                <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2">Activity in your sector</div>
+                {[
+                  ["IPO", "#e1f5ee", "#0f6e56", "Climate Capital Weekly", "2h", "Battery storage firm surges 23% on first trading day"],
+                  ["Funding", "#f2f4f6", "#2d6a4f", "Energy Intelligence", "8h", "Green hydrogen startup closes $80M Series B"],
+                  ["Activity", "#faece7", "#993c1d", "Solar Futures", "1d", "Free market and storage reshape Brazilian solar sector"],
+                ].map(([k, bg, fg, src, w, t]) => (
+                  <div key={t} className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[8px] px-1.5 py-px rounded-full font-medium" style={{ background: bg, color: fg }}>{k}</span>
+                      <span className="text-[8px] text-[#718096] font-mono">{src}</span>
+                      <span className="text-[8px] text-[#718096] ml-auto">{w}</span>
+                    </div>
+                    <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">{t}</div>
+                  </div>
+                ))}
+                <div className="text-[9px] font-mono uppercase tracking-widest text-[#718096] mb-2 mt-3">Policy &amp; deadlines</div>
+                {[
+                  ["Policy", "#e6f1fb", "#185fa5", "Nuclear Business", "May 3", "Virginia coal combustion residuals approval proposed"],
+                  ["Grant", "#faeeda", "#854f0b", "DOE", "5 days left", "H2 Bridge Demonstration · $14M deadline approaching"],
+                ].map(([k, bg, fg, src, w, t]) => (
+                  <div key={t} className="bg-white border border-[#e8eaee] rounded-md p-2.5 mb-1.5">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[8px] px-1.5 py-px rounded-full font-medium" style={{ background: bg, color: fg }}>{k}</span>
+                      <span className="text-[8px] text-[#718096] font-mono">{src}</span>
+                      <span className="text-[8px] text-[#718096] ml-auto">{w}</span>
+                    </div>
+                    <div className="text-[11px] font-semibold text-[#0f1a14] leading-tight">{t}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </motion.div>
       </section>
 
-      {/* DIRECTORY BLOCKS */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">Explore EP Network</h2>
-          <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">View all →</Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {[
-            { num: "1,300+", title: "Companies", desc: "Browse climate companies by category, technology, and signals.", href: "/search" },
-            { num: "350", title: "Investors", desc: "VC firms, angel syndicates, and philanthropic capital.", href: "/investors" },
-            { num: "55+", title: "NGOs", desc: "Foundations, IGOs, research nonprofits, and implementation orgs.", href: "/ngos/directory" },
-            { num: "185+", title: "Grants", desc: "Track non-dilutive funding opportunities, sorted by deadline.", href: "/grants" },
-            { num: "500+", title: "Jobs", desc: "Roles across the energy transition — deep tech to climate finance.", href: "/jobs" },
-          ].map(card => (
-            <Link key={card.title} href={card.href}
-              className="relative bg-[#ffffff] border border-[#e8eaee] rounded-xl p-7 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
-              <div style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-4xl text-[#2d6a4f]">{card.num}</div>
-              <div className="text-base font-semibold text-[#0f1a14]">{card.title}</div>
-              <div className="text-sm text-[#4a5568] leading-relaxed font-light">{card.desc}</div>
-              <span className="absolute right-6 top-7 text-[#718096] group-hover:text-[#2d6a4f] group-hover:translate-x-1 transition-all text-lg">→</span>
+      {/* STATS BAR */}
+      <section className="max-w-6xl mx-auto px-6 pb-8">
+        <div className="bg-white border border-[#e8eaee] rounded-xl grid grid-cols-2 md:grid-cols-5 divide-x divide-[#e8eaee] overflow-hidden">
+          {statBar.map(s => (
+            <Link key={s.label} href={s.href} className="px-5 py-5 text-center hover:bg-[#fafbfc] transition-colors">
+              <div style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl md:text-3xl font-bold text-[#2d6a4f]">{s.num}</div>
+              <div className="text-xs text-[#4a5568] mt-1 font-mono uppercase tracking-wider">{s.label}</div>
             </Link>
           ))}
         </div>
       </section>
 
-      <div className="border-t border-[#e8eaee]" />
-
-      {/* LIVE FEEDS */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-8">Recently updated</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-[#e8eaee] border border-[#e8eaee] rounded-xl overflow-hidden">
-
-          <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
-              <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New companies</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            </div>
-            {recentCompanies.length > 0 ? recentCompanies.map(co => (
-              <Link key={co.id} href={`/companies/${co.slug || co.id}`}
-                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{co.name || co.url}</div>
-                  {co.industry_tags?.[0] && <div className="text-xs font-mono text-[#718096] mt-1">{formatSector(co.industry_tags[0])}</div>}
-                </div>
-              </Link>
-            )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
-                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
-              <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Investors</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            </div>
-            {recentInvestors.length > 0 ? recentInvestors.map(inv => (
-              <Link key={inv.id} href="/investors"
-                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{inv.name}</div>
-                  <div className="text-xs font-mono text-[#718096] mt-1">{inv.type?.replace(/_/g, " ") || "VC Firm"}</div>
-                </div>
-              </Link>
-            )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
-                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
-              <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">Grants closing soon</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            </div>
-            {recentGrants.length > 0 ? recentGrants.map(grant => (
-              <Link key={grant.id} href="/grants"
-                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{(grant.title || "").toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</div>
-                  {grant.deadline_date && (
-                    <div className="text-xs font-mono mt-1 px-2 py-0.5 rounded-full bg-[rgba(255,150,80,0.1)] text-[#ff9650] border border-[rgba(255,150,80,0.2)] inline-block">
-                      {new Date(grant.deadline_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
-                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-[#ffffff] p-6">
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-[#e8eaee]">
-              <span className="text-xs font-mono tracking-widest uppercase text-[#4a5568]">New jobs</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#2d6a4f] animate-pulse" />
-            </div>
-            {recentJobs.length > 0 ? recentJobs.map(job => (
-              <Link key={job.id} href="/jobs"
-                className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0 hover:opacity-80 transition-opacity group">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5 flex-shrink-0" />
-                <div>
-                  <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors">{job.title}</div>
-                  <div className="text-xs font-mono text-[#718096] mt-1">{job.company}</div>
-                </div>
-              </Link>
-            )) : [1,2,3,4,5].map(i => (
-              <div key={i} className="flex items-start gap-3 py-3 border-b border-[#e8eaee] last:border-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#dbdfe4] mt-1.5" />
-                <div className="h-4 bg-[#e8eaee] rounded w-32 animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-[#e8eaee]" />
-
-      {/* CATEGORIES */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="flex items-end justify-between mb-8">
-          <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14]">Browse by category</h2>
-          <Link href="/search" className="text-xs text-[#4a5568] font-mono tracking-wider hover:text-[#2d6a4f] transition-colors">All categories →</Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {categories.map(cat => (
-            <button key={cat.name} onClick={() => handleSearch(null, cat.slug)}
-              className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-2 text-left hover:border-[#2d6a4f] hover:bg-[#fafbfc] hover:-translate-y-0.5 transition-all">
-              <div className="text-sm font-medium text-[#0f1a14] leading-snug">{cat.name}</div>
-              <div className="text-xs text-[#718096] font-mono">{cat.count} companies</div>
+      {/* SEARCH */}
+      <section className="max-w-6xl mx-auto px-6 pb-4">
+        <form onSubmit={handleSearch} className="flex max-w-2xl bg-white border border-[#dbdfe4] rounded-xl overflow-hidden mb-4 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
+          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search companies, investors, grants, sectors…"
+            className="w-full py-3.5 px-4 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#8a958f]" />
+          <button type="submit" style={{ fontFamily: "var(--font-display), sans-serif" }} className="bg-[#2d6a4f] text-white font-bold text-sm px-6 hover:bg-[#235a40] transition-colors">Search</button>
+        </form>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[#8a958f] text-xs font-mono">Browse:</span>
+          {quickTags.map(tag => (
+            <button key={tag.slug} onClick={() => handleSearch(null, tag.slug)}
+              className="text-xs font-mono px-3 py-1.5 rounded-full border border-[#dbe2de] bg-[#f2f4f6] text-[#4a5568] hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+              {tag.label}
             </button>
           ))}
         </div>
       </section>
 
-      {/* EMAIL CAPTURE */}
-      <div className="bg-[#ffffff] border-y border-[#e8eaee]">
-        <div className="max-w-6xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] mb-3">
-              Get weekly <em className="text-[#2d6a4f] not-italic">EP Network</em> updates
-            </h2>
-            <p className="text-[#4a5568] text-sm leading-relaxed font-light max-w-sm">
-              New investors, grant deadlines, verified companies seeking capital — delivered every week.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            {emailStatus === "success" ? (
-              <div className="bg-[rgba(45,106,79,0.08)] border border-[#c8d8cc] rounded-lg px-4 py-3 text-sm text-[#2d6a4f] font-medium">
-                ✓ You're subscribed — check your inbox.
-              </div>
-            ) : (
-              <div className="flex bg-[#f6f7f9] border border-[#dbdfe4] rounded-lg overflow-hidden focus-within:border-[#2d6a4f] transition-all">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && handleEmailSubmit()}
-                  placeholder="your@email.com"
-                  className="flex-1 bg-transparent px-4 py-3 text-sm text-[#0f1a14] placeholder-[#718096] outline-none"
-                />
-                <button onClick={handleEmailSubmit} disabled={emailStatus === "loading"}
-                  className="bg-[#2d6a4f] text-[#f6f7f9] text-sm font-semibold px-5 hover:bg-[#235a40] transition-colors disabled:opacity-60">
-                  {emailStatus === "loading" ? "..." : "Subscribe"}
-                </button>
-              </div>
-            )}
-            <div className="flex gap-5 flex-wrap">
-              {["Weekly digest", "Grant deadline alerts", "New investor additions"].map(f => (
-                <span key={f} className="text-xs text-[#4a5568] font-mono flex items-center gap-1">
-                  <span className="text-[#2d6a4f]">✓</span> {f}
-                </span>
-              ))}
+      {/* JOIN AS */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl font-bold mb-6">Join as</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {roleTiles.map(tile => (
+            <Link key={tile.title} href={tile.href} className="bg-white border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-2 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all">
+              <div style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-lg font-bold text-[#0f1a14]">{tile.title}</div>
+              <div className="text-xs text-[#4a5568] leading-relaxed flex-1">{tile.desc}</div>
+              <div className="text-xs text-[#2d6a4f] font-semibold mt-1">{tile.cta}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* LIVE ON THE NETWORK */}
+      <section className="max-w-6xl mx-auto px-6 pb-4">
+        <div className="flex items-end justify-between mb-5">
+          <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl font-bold">Live on the network</h2>
+          <Link href="/announcements" className="text-xs text-[#4a5568] font-mono hover:text-[#2d6a4f] transition-colors">See the newsroom</Link>
+        </div>
+        <div className="bg-white border border-[#e8eaee] rounded-xl overflow-hidden">
+          {liveFeed.length > 0 ? liveFeed.map(item => {
+            const [bg, fg] = FEED_STYLE[item.kind] || FEED_STYLE.Update;
+            return (
+              <Link key={item.id} href={item.href} className="flex items-start gap-3 px-5 py-3.5 border-b border-[#f2f4f6] last:border-0 hover:bg-[#fafbfc] transition-colors">
+                <span className="text-[9px] font-mono uppercase tracking-wide px-2 py-1 rounded flex-shrink-0" style={{ background: bg, color: fg }}>{item.kind}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-semibold text-[#0f1a14] leading-snug">{item.title}</div>
+                </div>
+                <span className="text-xs text-[#8a958f] whitespace-nowrap flex-shrink-0">{ago(item.when)}</span>
+              </Link>
+            );
+          }) : [1, 2, 3, 4].map(i => (
+            <div key={i} className="flex items-center gap-3 px-5 py-3.5 border-b border-[#f2f4f6] last:border-0">
+              <div className="h-5 w-14 bg-[#f2f4f6] rounded animate-pulse" />
+              <div className="h-4 bg-[#f2f4f6] rounded w-64 animate-pulse" />
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ENERGY PIONEER STRIP */}
+      <section className="max-w-6xl mx-auto px-6 py-8">
+        <div className="bg-[#0f1a14] rounded-xl px-6 py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-white text-lg font-bold">Independent journalism on the energy transition.</div>
+            <div className="text-[#8a9a90] text-sm mt-0.5">EP Network is built by The Energy Pioneer — energy transition news and analysis, across the globe.</div>
           </div>
+          <a href="https://www.theenergypioneer.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: "var(--font-display), sans-serif" }}
+            className="flex-shrink-0 text-[#cdd6d1] text-sm font-bold border border-[#2f3d36] rounded-lg px-4 py-2.5 hover:bg-[#16241d] transition-colors">
+            Read The Energy Pioneer
+          </a>
+        </div>
+      </section>
+
+      {/* CATEGORIES */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <div className="flex items-end justify-between mb-6">
+          <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl font-bold">Browse by sector</h2>
+          <Link href="/search" className="text-xs text-[#4a5568] font-mono hover:text-[#2d6a4f] transition-colors">All sectors</Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {categories.map(cat => (
+            <button key={cat.name} onClick={() => handleSearch(null, cat.slug)}
+              className="bg-white border border-[#e8eaee] rounded-xl p-4 flex flex-col gap-1.5 text-left hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all">
+              <div className="text-sm font-semibold text-[#0f1a14] leading-snug">{cat.name}</div>
+              <div className="text-xs text-[#8a958f] font-mono">{cat.count} companies</div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* CREATE YOUR DASHBOARD */}
+      <div className="bg-white border-y border-[#e8eaee]">
+        <div className="max-w-6xl mx-auto px-6 py-16 text-center">
+          <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-3xl font-bold mb-3">Create your dashboard</h2>
+          <p className="text-[#4a5568] text-sm leading-relaxed max-w-md mx-auto mb-7">Follow the companies, investors, and sectors you care about, and get a feed and dashboard built around you — free.</p>
+          <Link href="/get-started" style={{ fontFamily: "var(--font-display), sans-serif" }}
+            className="inline-block bg-[#2d6a4f] text-white font-bold text-sm rounded-lg px-7 py-3.5 hover:bg-[#235a40] transition-all">
+            Create your dashboard
+          </Link>
         </div>
       </div>
 
-    
+      {/* DEMO MODAL */}
       {showDemo && (
-        <div onClick={() => setShowDemo(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div onClick={e => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden border border-[#2d6a4f]">
-            <button onClick={() => setShowDemo(false)}
-              className="absolute top-3 right-3 z-10 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition-colors">
-              <X size={18} />
-            </button>
-            <video
-              src="https://vfcfdoaxlbkfqpfzhzvu.supabase.co/storage/v1/object/public/Demo%20Video/EP%20Investing%20Dashboard%20Overview.mp4"
-              controls
-              autoPlay
-              preload="none"
-              className="w-full h-auto block"
-            />
+        <div onClick={() => setShowDemo(false)} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div onClick={e => e.stopPropagation()} className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden border border-[#2d6a4f]">
+            <button onClick={() => setShowDemo(false)} className="absolute top-2 right-3 z-10 text-white/80 hover:text-white text-xl leading-none">✕</button>
+            <video src="https://vfcfdoaxlbkfqpfzhzvu.supabase.co/storage/v1/object/public/Demo%20Video/EP%20Investing%20Dashboard%20Overview.mp4" controls autoPlay preload="none" className="w-full h-auto block" />
           </div>
         </div>
       )}
