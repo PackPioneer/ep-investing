@@ -15,7 +15,7 @@ import { NextResponse } from 'next/server';
 const VALID_TAGS = [
   'battery_storage', 'carbon_credits', 'clean_cooking', 'direct_air_capture',
   'electric_aviation', 'ev_charging', 'geothermal_energy', 'green_hydrogen',
-  'grid_storage', 'industrial_decarbonization', 'nuclear_technologies',
+  'grid_storage', 'grid_monitoring', 'industrial_decarbonization', 'nuclear_technologies',
   'saf_efuels', 'solar', 'wind_energy', 'energy_generation', 'energy_efficiency',
 ];
 

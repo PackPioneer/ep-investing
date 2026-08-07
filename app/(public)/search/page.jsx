@@ -24,7 +24,7 @@ const INDUSTRY_FILTERS = [
   "nuclear_technologies", "electric_aviation", "battery_storage",
   "green_hydrogen", "wind_energy", "solar", "geothermal_energy",
   "industrial_decarbonization", "ev_charging", "carbon_credits",
-  "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage",
+  "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage", "grid_monitoring",
   "energy_generation", "energy_efficiency"
 ];
 

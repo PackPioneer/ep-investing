@@ -198,6 +198,10 @@ export default function SubmitCompanyPage() {
                     className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "grid_storage" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     grid storage
                   </button>
+                  <button key="grid_monitoring" type="button" onClick={() => setSector(sector === "grid_monitoring" ? "" : "grid_monitoring")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "grid_monitoring" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                    grid monitoring
+                  </button>
                   <button key="other" type="button" onClick={() => setSector(sector === "other" ? "" : "other")}
                     className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "other" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     other
