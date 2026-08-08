@@ -15,6 +15,7 @@ import {
   Plus,
   Rss,
   Sparkles,
+  Megaphone,
 } from "lucide-react";
 import { useUser, UserButton } from "@clerk/nextjs";
 
@@ -26,6 +27,7 @@ const menu = [
   { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
   { name: "Add investor", href: "/admin/add-investor", icon: Plus },
   { name: "Claims", href: "/admin/claims", icon: Building2 },
+  { name: "Newsroom", href: "/admin/announcements", icon: Megaphone },
   { name: "Feed Queue", href: "/admin/feed-queue", icon: Rss },
   { name: "Enrichment", href: "/admin/enrichment-queue", icon: Sparkles },
   { name: "Enrich One", href: "/admin/enrich-one", icon: Sparkles },
