@@ -20,6 +20,30 @@ export async function GET(req) {
   return Response.json(data || []);
 }
 
+// Admin posts a curated newsroom item (e.g. a press release sent to EP, or a
+// company update pulled from their blog). Published + curated (newsroom-only).
+export async function POST(req) {
+  const userId = await requireAdmin();
+  if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
+  const { company_id, category, title, body, link_url, meta, published_at } = await req.json();
+  if (!company_id || !title || !title.trim()) return Response.json({ error: "company_id and title required" }, { status: 400 });
+  const { data, error } = await db().from("company_announcements").insert({
+    company_id,
+    category: category || "other",
+    title: title.trim(),
+    body: body || null,
+    link_url: link_url || null,
+    meta: meta && typeof meta === "object" ? meta : {},
+    status: "published",
+    is_curated: true,
+    published_at: published_at ? new Date(published_at).toISOString() : new Date().toISOString(),
+    reviewed_by: userId,
+    reviewed_at: new Date().toISOString(),
+  }).select().single();
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json(data);
+}
+
 export async function PATCH(req) {
   const userId = await requireAdmin();
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });

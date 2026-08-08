@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 
 const CAT_LABEL = { partnership: "Partnership", raise_open: "Raise — open", raise_close: "Raise — closed", product: "New product", award: "Award / grant", hire: "Key hire", milestone: "Milestone", expansion: "Expansion", other: "Other" };
 const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleString());
@@ -27,8 +26,38 @@ export default function AdminAnnouncements() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(null);
 
+  // Post-an-update form (press releases / scraped company updates).
+  const [showNew, setShowNew] = useState(false);
+  const [cQuery, setCQuery] = useState("");
+  const [cResults, setCResults] = useState([]);
+  const [selectedCo, setSelectedCo] = useState(null);
+  const [nCat, setNCat] = useState("product");
+  const [nTitle, setNTitle] = useState("");
+  const [nBody, setNBody] = useState("");
+  const [nLink, setNLink] = useState("");
+  const [nDate, setNDate] = useState("");
+  const [posting, setPosting] = useState(false);
+
   const load = (status) => { setLoading(true); fetch(`/api/admin/announcements?status=${status}`).then((r) => r.json()).then((d) => { setRows(Array.isArray(d) ? d : []); setLoading(false); }).catch(() => setLoading(false)); };
   useEffect(() => { load(tab); }, [tab]);
+
+  useEffect(() => {
+    if (!cQuery.trim() || (selectedCo && selectedCo.name === cQuery)) { setCResults([]); return; }
+    const t = setTimeout(() => {
+      fetch(`/api/companies?q=${encodeURIComponent(cQuery)}&limit=8`).then((r) => r.json()).then((d) => setCResults(Array.isArray(d) ? d : [])).catch(() => setCResults([]));
+    }, 250);
+    return () => clearTimeout(t);
+  }, [cQuery, selectedCo]);
+
+  const postUpdate = async () => {
+    if (!selectedCo || !nTitle.trim()) return;
+    setPosting(true);
+    await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, published_at: nDate || undefined }) });
+    setPosting(false);
+    setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setShowNew(false);
+    setTab("published"); load("published");
+  };
 
   const act = async (id, action, review_note) => {
     setBusy(id);
@@ -41,7 +70,60 @@ export default function AdminAnnouncements() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold text-slate-900 mb-1">Announcements — moderation</h1>
-      <p className="text-sm text-slate-500 mb-4">Announcements from vetted companies publish instantly. Moderate here — take down anything off-base, or boost the best ones.</p>
+      <p className="text-sm text-slate-500 mb-4">Announcements from vetted companies publish instantly. Post updates yourself (press releases, company blog posts) below, or moderate what's live.</p>
+
+      {!showNew ? (
+        <button onClick={() => setShowNew(true)} className="mb-5 text-sm font-semibold bg-emerald-600 text-white rounded-lg px-4 py-2 hover:bg-emerald-700">Post an update</button>
+      ) : (
+        <div className="mb-6 bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-900">Post a company update</span>
+            <button onClick={() => setShowNew(false)} className="text-xs text-slate-400 hover:text-slate-600">Cancel</button>
+          </div>
+          <div className="relative">
+            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Company</label>
+            {selectedCo ? (
+              <div className="flex items-center gap-2 text-sm"><span className="font-medium text-slate-800">{selectedCo.name}</span><button onClick={() => { setSelectedCo(null); setCQuery(""); }} className="text-xs text-slate-400 hover:text-red-500">change</button></div>
+            ) : (
+              <>
+                <input value={cQuery} onChange={(e) => setCQuery(e.target.value)} placeholder="Search company…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                {cResults.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                    {cResults.map((c) => (
+                      <button key={c.id} onClick={() => { setSelectedCo({ id: c.id, name: c.name }); setCResults([]); setCQuery(c.name); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{c.name}</button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Type</label>
+              <select value={nCat} onChange={(e) => setNCat(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg px-2 py-2 focus:outline-none focus:border-emerald-400">
+                {Object.entries(CAT_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Date</label>
+              <input type="date" value={nDate} onChange={(e) => setNDate(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg px-2 py-2 focus:outline-none focus:border-emerald-400" />
+            </div>
+          </div>
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Headline</label>
+            <input value={nTitle} onChange={(e) => setNTitle(e.target.value)} placeholder="e.g. Acme partners with BigCo to deploy 50 MW" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+          </div>
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Details (optional)</label>
+            <textarea value={nBody} onChange={(e) => setNBody(e.target.value)} rows={2} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+          </div>
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Source link (press release / blog)</label>
+            <input value={nLink} onChange={(e) => setNLink(e.target.value)} placeholder="https://…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+          </div>
+          <button onClick={postUpdate} disabled={posting || !selectedCo || !nTitle.trim()} className="text-sm font-semibold bg-emerald-600 text-white rounded-lg px-5 py-2 hover:bg-emerald-700 disabled:opacity-40">{posting ? "Posting…" : "Publish to newsroom"}</button>
+        </div>
+      )}
 
       <div className="flex gap-2 mb-5">
         {["published", "rejected", "all"].map((t) => (
@@ -49,7 +131,7 @@ export default function AdminAnnouncements() {
         ))}
       </div>
 
-      {loading ? <div className="flex justify-center py-16"><Loader2 className="animate-spin text-emerald-600" /></div>
+      {loading ? <div className="flex justify-center py-16"><div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" /></div>
         : rows.length === 0 ? <p className="text-sm text-slate-400 py-8">Nothing here.</p>
         : (
           <div className="flex flex-col gap-3">
