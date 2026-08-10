@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ctaLabelFor } from "@/lib/announcements/categories";
 
-const CAT_LABEL = { partnership: "Partnership", raise_open: "Now raising", raise_close: "Raise", product: "Product", award: "Award", hire: "Key hire", milestone: "Milestone", expansion: "Expansion", other: "News" };
+const CAT_LABEL = { partnership: "Partnership", raise_open: "Raises", raise_close: "Raises", product: "Product", award: "Award", hire: "Key hire", milestone: "Milestone", expansion: "Expansion", other: "News" };
 const CAT_COLOR = { raise_close: "#7c3aed", raise_open: "#2d6a4f", partnership: "#0ea5e9", product: "#d97706", award: "#059669", hire: "#4f46e5", milestone: "#0d9488", expansion: "#db2777", other: "#64748b" };
 const when = (d) => (d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "");
 

@@ -17,7 +17,7 @@ const CATS = [
   { id: "expansion", label: "Expansion" },
   { id: "other", label: "Other" },
 ];
-const CAT_LABEL = { partnership: "Partnership", raise_open: "Now raising", raise_close: "Raise", product: "Product", award: "Award", hire: "Key hire", milestone: "Milestone", expansion: "Expansion", other: "News" };
+const CAT_LABEL = { partnership: "Partnership", raise_open: "Raises", raise_close: "Raises", product: "Product", award: "Award", hire: "Key hire", milestone: "Milestone", expansion: "Expansion", other: "News" };
 const CAT_COLOR = { raise_close: "#7c3aed", raise_open: "#2d6a4f", partnership: "#0ea5e9", product: "#d97706", award: "#059669", hire: "#4f46e5", milestone: "#0d9488", expansion: "#db2777", other: "#64748b" };
 const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleString());
 
@@ -109,8 +109,8 @@ export default function NewsroomPage() {
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
                         {a.is_curated ? (
                           <>
-                            {co && <Link href={`/companies/${co.id}`} className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">View on EP →</Link>}
-                            {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-400 hover:text-slate-600">Source</a>}
+                            {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">Read release →</a>}
+                            {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
                           </>
                         ) : (
                           <>
