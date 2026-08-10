@@ -27,7 +27,8 @@ export async function POST(req) {
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
   const { company_id, category, title, body, link_url, meta, published_at } = await req.json();
   if (!company_id || !title || !title.trim()) return Response.json({ error: "company_id and title required" }, { status: 400 });
-  const { data, error } = await db().from("company_announcements").insert({
+  const supabase = db();
+  const payload = {
     company_id,
     category: category || "other",
     title: title.trim(),
@@ -39,7 +40,13 @@ export async function POST(req) {
     published_at: published_at ? new Date(published_at).toISOString() : new Date().toISOString(),
     reviewed_by: userId,
     reviewed_at: new Date().toISOString(),
-  }).select().single();
+  };
+  let { data, error } = await supabase.from("company_announcements").insert(payload).select().single();
+  // If the is_curated column hasn't been added yet, fall back so posting still works.
+  if (error && /is_curated/i.test(error.message)) {
+    delete payload.is_curated;
+    ({ data, error } = await supabase.from("company_announcements").insert(payload).select().single());
+  }
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json(data);
 }

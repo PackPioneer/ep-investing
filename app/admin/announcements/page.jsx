@@ -37,6 +37,7 @@ export default function AdminAnnouncements() {
   const [nLink, setNLink] = useState("");
   const [nDate, setNDate] = useState("");
   const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState("");
 
   const load = (status) => { setLoading(true); fetch(`/api/admin/announcements?status=${status}`).then((r) => r.json()).then((d) => { setRows(Array.isArray(d) ? d : []); setLoading(false); }).catch(() => setLoading(false)); };
   useEffect(() => { load(tab); }, [tab]);
@@ -51,12 +52,16 @@ export default function AdminAnnouncements() {
 
   const postUpdate = async () => {
     if (!selectedCo || !nTitle.trim()) return;
-    setPosting(true);
-    await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, published_at: nDate || undefined }) });
-    setPosting(false);
-    setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setShowNew(false);
-    setTab("published"); load("published");
+    setPosting(true); setPostError("");
+    try {
+      const res = await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, published_at: nDate || undefined }) });
+      const data = await res.json().catch(() => ({}));
+      setPosting(false);
+      if (!res.ok) { setPostError(data.error || `Failed (${res.status})`); return; }
+      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setShowNew(false);
+      setTab("published"); load("published");
+    } catch (e) { setPosting(false); setPostError(e.message || "Network error"); }
   };
 
   const act = async (id, action, review_note) => {
@@ -121,6 +126,7 @@ export default function AdminAnnouncements() {
             <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Source link (press release / blog)</label>
             <input value={nLink} onChange={(e) => setNLink(e.target.value)} placeholder="https://…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
           </div>
+          {postError && <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{postError}</div>}
           <button onClick={postUpdate} disabled={posting || !selectedCo || !nTitle.trim()} className="text-sm font-semibold bg-emerald-600 text-white rounded-lg px-5 py-2 hover:bg-emerald-700 disabled:opacity-40">{posting ? "Posting…" : "Publish to newsroom"}</button>
         </div>
       )}
