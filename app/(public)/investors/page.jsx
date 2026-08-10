@@ -11,7 +11,7 @@ function InvestorCard({ investor }) {
   const domain = website ? new URL(website).hostname.replace("www.", "") : null;
 
   return (
-    <div className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
+    <Link href={`/investors/${investor.id}`} className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
       <div className="flex items-start gap-3">
         {investor.logo_url ? (
           <img src={investor.logo_url} alt={investor.name}
@@ -73,19 +73,16 @@ function InvestorCard({ investor }) {
 
       <div className="mt-auto pt-3 border-t border-[#e8eaee] flex items-center justify-between">
         {website ? (
-          <a href={website} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-[#2d6a4f] font-medium hover:underline">
-            <ExternalLink size={11} /> {domain || "Visit website"}
-          </a>
+          <span onClick={(e) => { e.stopPropagation(); e.preventDefault(); window.open(website, "_blank", "noopener,noreferrer"); }}
+            className="text-xs text-[#2d6a4f] font-medium hover:underline cursor-pointer">
+            {domain || "Visit website"}
+          </span>
         ) : (
           <span className="text-xs text-[#a0aec0] font-mono">No website</span>
         )}
-        <Link href={`/investors/${investor.id}`}
-          className="text-[10px] font-mono text-[#718096] hover:text-[#2d6a4f] transition-colors">
-          Learn more →
-        </Link>
+        <span className="text-[10px] font-mono text-[#718096] group-hover:text-[#2d6a4f] transition-colors">View profile →</span>
       </div>
-    </div>
+    </Link>
   );
 }
 
