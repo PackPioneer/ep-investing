@@ -98,9 +98,12 @@ export default function NewsroomPage() {
                       {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-slate-500 hover:text-emerald-700">{co.name}</Link>}
                       <Link href={`/announcements/${a.id}`} className="block text-sm font-semibold text-slate-900 leading-snug hover:text-emerald-700">{a.title}</Link>
                       {metaLine(a) && <div className="text-xs text-slate-500 mt-0.5">{metaLine(a)}</div>}
-                      {a.meta?.investor_id && (
-                        <div className="text-xs text-slate-500 mt-0.5">Backed by <Link href={`/investors/${a.meta.investor_id}`} className="text-emerald-700 hover:underline font-medium">{a.meta.investor_name}</Link></div>
-                      )}
+                      {(() => {
+                        const invs = a.meta?.investors?.length ? a.meta.investors : (a.meta?.investor_id ? [{ id: a.meta.investor_id, name: a.meta.investor_name }] : []);
+                        return invs.length > 0 ? (
+                          <div className="text-xs text-slate-500 mt-0.5">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={`/investors/${iv.id}`} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
+                        ) : null;
+                      })()}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
                         {a.is_curated ? (

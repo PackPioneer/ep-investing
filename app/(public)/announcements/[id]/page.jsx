@@ -77,7 +77,12 @@ export default async function AnnouncementPage({ params }) {
 
           <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl font-bold text-slate-900 leading-snug mb-2">{a.title}</h1>
           {metaLine(a) && <div className="text-sm text-slate-500 mb-1">{metaLine(a)}</div>}
-          {a.meta?.investor_id && <div className="text-sm text-slate-500 mb-1">Backed by <Link href={`/investors/${a.meta.investor_id}`} className="text-emerald-700 hover:underline font-medium">{a.meta.investor_name}</Link></div>}
+          {(() => {
+            const invs = a.meta?.investors?.length ? a.meta.investors : (a.meta?.investor_id ? [{ id: a.meta.investor_id, name: a.meta.investor_name }] : []);
+            return invs.length > 0 ? (
+              <div className="text-sm text-slate-500 mb-1">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={`/investors/${iv.id}`} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
+            ) : null;
+          })()}
           {a.body && <p className="text-[15px] text-slate-700 leading-relaxed mt-3">{a.body}</p>}
 
           <div className="flex items-center gap-3 flex-wrap mt-6 pt-5 border-t border-slate-100">

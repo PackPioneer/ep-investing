@@ -40,14 +40,15 @@ export default function AdminAnnouncements() {
   const [postError, setPostError] = useState("");
   const [invAll, setInvAll] = useState([]);
   const [invQuery, setInvQuery] = useState("");
-  const [selectedInv, setSelectedInv] = useState(null);
+  const [selectedInvs, setSelectedInvs] = useState([]);
 
   const load = (status) => { setLoading(true); fetch(`/api/admin/announcements?status=${status}`).then((r) => r.json()).then((d) => { setRows(Array.isArray(d) ? d : []); setLoading(false); }).catch(() => setLoading(false)); };
   useEffect(() => { load(tab); }, [tab]);
   useEffect(() => { fetch("/api/investors").then((r) => r.json()).then((d) => setInvAll(Array.isArray(d) ? d : [])).catch(() => {}); }, []);
 
-  const invResults = (invQuery.trim() && !(selectedInv && selectedInv.name === invQuery))
-    ? invAll.filter((i) => (i.name || "").toLowerCase().includes(invQuery.toLowerCase())).slice(0, 8) : [];
+  const selInvIds = new Set(selectedInvs.map((i) => i.id));
+  const invResults = invQuery.trim()
+    ? invAll.filter((i) => (i.name || "").toLowerCase().includes(invQuery.toLowerCase()) && !selInvIds.has(i.id)).slice(0, 8) : [];
   const isRaise = nCat === "raise_close" || nCat === "raise_open";
 
   useEffect(() => {
@@ -62,13 +63,13 @@ export default function AdminAnnouncements() {
     if (!selectedCo || !nTitle.trim()) return;
     setPosting(true); setPostError("");
     try {
-      const meta = selectedInv ? { investor_id: selectedInv.id, investor_name: selectedInv.name } : {};
+      const meta = selectedInvs.length ? { investors: selectedInvs.map((i) => ({ id: i.id, name: i.name })) } : {};
       const res = await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, meta, published_at: nDate || undefined }) });
       const data = await res.json().catch(() => ({}));
       setPosting(false);
       if (!res.ok) { setPostError(data.error || `Failed (${res.status})`); return; }
-      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInv(null); setInvQuery(""); setShowNew(false);
+      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInvs([]); setInvQuery(""); setShowNew(false);
       setTab("published"); load("published");
     } catch (e) { setPosting(false); setPostError(e.message || "Network error"); }
   };
@@ -124,22 +125,28 @@ export default function AdminAnnouncements() {
             </div>
           </div>
           {isRaise && (
-            <div className="relative">
-              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Investor (optional — tags their profile too)</label>
-              {selectedInv ? (
-                <div className="flex items-center gap-2 text-sm"><span className="font-medium text-slate-800">{selectedInv.name}</span><button onClick={() => { setSelectedInv(null); setInvQuery(""); }} className="text-xs text-slate-400 hover:text-red-500">change</button></div>
-              ) : (
-                <>
-                  <input value={invQuery} onChange={(e) => setInvQuery(e.target.value)} placeholder="Search investors…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
-                  {invResults.length > 0 && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
-                      {invResults.map((iv) => (
-                        <button key={iv.id} onClick={() => { setSelectedInv({ id: iv.id, name: iv.name }); setInvQuery(iv.name); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{iv.name}</button>
-                      ))}
-                    </div>
-                  )}
-                </>
+            <div>
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Investors (optional — tags their profiles too)</label>
+              {selectedInvs.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {selectedInvs.map((iv) => (
+                    <span key={iv.id} className="inline-flex items-center gap-1 text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full pl-2.5 pr-1 py-1">
+                      {iv.name}
+                      <button onClick={() => setSelectedInvs((prev) => prev.filter((x) => x.id !== iv.id))} className="text-emerald-400 hover:text-red-500 px-1">✕</button>
+                    </span>
+                  ))}
+                </div>
               )}
+              <div className="relative">
+                <input value={invQuery} onChange={(e) => setInvQuery(e.target.value)} placeholder="Search investors — add as many as you like…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                {invResults.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                    {invResults.map((iv) => (
+                      <button key={iv.id} onClick={() => { setSelectedInvs((prev) => [...prev, { id: iv.id, name: iv.name }]); setInvQuery(""); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{iv.name}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
           <div>
