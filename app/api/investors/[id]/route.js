@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { idFromSlug } from "@/lib/slug";
 
 export async function GET(req, { params }) {
   try {
@@ -7,7 +8,7 @@ export async function GET(req, { params }) {
     const { data: investor, error } = await supabase
       .from("vc_firms")
       .select("*")
-      .eq("id", id)
+      .eq("id", idFromSlug(id))
       .single();
 
     if (error) throw error;

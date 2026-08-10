@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, ExternalLink } from "lucide-react";
+import { investorPath } from "@/lib/slug";
 
 const FOCUSES = ["All", "solar", "wind", "hydrogen", "nuclear", "battery tech", "electric vehicles", "carbon capture", "decarbonization", "renewables", "climate", "water", "mobility", "circular economy", "food tech"];
 
@@ -11,7 +11,7 @@ function InvestorCard({ investor }) {
   const domain = website ? new URL(website).hostname.replace("www.", "") : null;
 
   return (
-    <Link href={`/investors/${investor.id}`} className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
+    <Link href={investorPath(investor)} className="bg-white border border-[#e8eaee] rounded-xl p-6 flex flex-col gap-4 hover:border-[#2d6a4f] hover:shadow-sm transition-all group">
       <div className="flex items-start gap-3">
         {investor.logo_url ? (
           <img src={investor.logo_url} alt={investor.name}
@@ -133,7 +133,6 @@ export default function InvestorsPage() {
 
         <div className="flex flex-col md:flex-row gap-3 mb-6">
           <div className="flex items-center gap-3 flex-1 bg-white border border-[#dbdfe4] rounded-xl px-4 py-3 focus-within:border-[#2d6a4f] transition-all max-w-md">
-            <Search size={14} className="text-[#718096]" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, focus, or sector…"
               className="flex-1 bg-transparent text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none" />
@@ -185,7 +184,7 @@ export default function InvestorsPage() {
           </div>
           <Link href="/onboarding/investor"
             className="flex-shrink-0 flex items-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] transition-all">
-            Get investor access <ArrowRight size={14} />
+            Get investor access →
           </Link>
         </div>
 

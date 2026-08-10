@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import InvestorProfileClient from "./InvestorProfileClient";
+import { idFromSlug, investorPath } from "@/lib/slug";
 
 const BASE_URL = "https://www.epinvesting.com";
 
@@ -15,7 +16,7 @@ async function getInvestor(id) {
   const { data } = await supabase
     .from("vc_firms")
     .select("id, name, description, logo_url")
-    .eq("id", id)
+    .eq("id", idFromSlug(id))
     .single();
   return data;
 }
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }) {
   const description = (v.description || `${v.name} — a climate investor on EP Network, connecting partners across the energy transition.`)
     .replace(/\s+/g, " ")
     .slice(0, 155);
-  const canonical = `${BASE_URL}/investors/${v.id}`;
+  const canonical = `${BASE_URL}${investorPath(v)}`;
 
   return {
     title,
@@ -52,7 +53,7 @@ export default async function Page({ params }) {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: v.name,
-        url: `${BASE_URL}/investors/${v.id}`,
+        url: `${BASE_URL}${investorPath(v)}`,
         ...(v.logo_url ? { logo: v.logo_url } : {}),
         ...(v.description ? { description: v.description.replace(/\s+/g, " ").slice(0, 300) } : {}),
       }

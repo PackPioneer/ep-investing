@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { formatSector } from "@/lib/sectors";
+import { investorPath } from "@/lib/slug";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Building2, Wallet, FileText, Loader2, ArrowLeft, MapPin, Calendar, ChevronRight, Globe, TrendingUp, Users, SlidersHorizontal, X, BadgeCheck } from "lucide-react";
 import Link from "next/link";
@@ -194,7 +195,7 @@ function CompanyCard({ company }) {
 
 function InvestorCard({ investor }) {
   return (
-    <Link href={`/investors/${investor.id}`}
+    <Link href={investorPath(investor)}
       className="bg-[#ffffff] border border-[#e8eaee] rounded-xl p-5 flex flex-col gap-3 hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">

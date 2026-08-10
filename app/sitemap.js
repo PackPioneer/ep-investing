@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { investorPath } from "@/lib/slug";
 
 const BASE_URL = "https://www.epinvesting.com";
 
@@ -40,6 +41,7 @@ export default async function sitemap() {
     { url: `${BASE_URL}/jobs`, priority: 0.9, changeFrequency: "daily" },
     { url: `${BASE_URL}/experts`, priority: 0.8, changeFrequency: "weekly" },
     { url: `${BASE_URL}/insights`, priority: 0.7, changeFrequency: "weekly" },
+    { url: `${BASE_URL}/announcements`, priority: 0.8, changeFrequency: "daily" },
     { url: `${BASE_URL}/pricing`, priority: 0.7, changeFrequency: "monthly" },
     { url: `${BASE_URL}/ngos/about`, priority: 0.5, changeFrequency: "monthly" },
   ].map((p) => ({ ...p, lastModified: now }));
@@ -59,10 +61,10 @@ export default async function sitemap() {
       priority: 0.7,
     }));
 
-  // -------- INVESTORS (still id URLs — no slug column yet) --------
-  const investors = await fetchAll("vc_firms", "id, created_at");
+  // -------- INVESTORS (name-slug + id URLs for SEO) --------
+  const investors = await fetchAll("vc_firms", "id, name, created_at");
   const investorEntries = investors.map((i) => ({
-    url: `${BASE_URL}/investors/${i.id}`,
+    url: `${BASE_URL}${investorPath(i)}`,
     lastModified: new Date(i.created_at || now),
     changeFrequency: "weekly",
     priority: 0.7,
@@ -88,11 +90,25 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
+  // -------- ANNOUNCEMENTS (newsroom permalink pages) --------
+  const announcements = await fetchAll(
+    "company_announcements",
+    "id, published_at, status",
+    (q) => q.eq("status", "published")
+  );
+  const announcementEntries = announcements.map((a) => ({
+    url: `${BASE_URL}/announcements/${a.id}`,
+    lastModified: new Date(a.published_at || now),
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
+
   return [
     ...staticPages,
     ...companyEntries,
     ...investorEntries,
     ...ngoEntries,
     ...grantEntries,
+    ...announcementEntries,
   ];
 }

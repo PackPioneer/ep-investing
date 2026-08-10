@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatSector } from "@/lib/sectors";
 import { ctaLabelFor } from "@/lib/announcements/categories";
+import { investorPath } from "@/lib/slug";
 
 const CATS = [
   { id: "", label: "All" },
@@ -101,7 +102,7 @@ export default function NewsroomPage() {
                       {(() => {
                         const invs = a.meta?.investors?.length ? a.meta.investors : (a.meta?.investor_id ? [{ id: a.meta.investor_id, name: a.meta.investor_name }] : []);
                         return invs.length > 0 ? (
-                          <div className="text-xs text-slate-500 mt-0.5">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={`/investors/${iv.id}`} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
+                          <div className="text-xs text-slate-500 mt-0.5">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={investorPath(iv)} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
                         ) : null;
                       })()}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}

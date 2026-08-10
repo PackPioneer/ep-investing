@@ -3,26 +3,28 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  ArrowLeft, Globe, MapPin, TrendingUp, Users, DollarSign,
-  Target, Briefcase, ChevronRight, Mail, Building2, Zap, CheckCircle
-} from "lucide-react";
 
 const GEO_LABELS = {
-  us: "US", europe: "Europe", asia: "Asia",
+  us: "US", usa: "US", europe: "Europe", eu: "Europe", asia: "Asia",
   africa: "Africa", latam: "LatAm", mena: "MENA",
-  global: "Global", oceania: "Oceania",
+  global: "Global", oceania: "Oceania", uk: "UK", canada: "Canada",
 };
 
-const STAGE_COLORS = {
-  "pre-seed": "bg-slate-100 text-slate-600",
-  "seed": "bg-blue-100 text-blue-700",
-  "series a": "bg-violet-100 text-violet-700",
-  "series b": "bg-purple-100 text-purple-700",
-  "series c": "bg-fuchsia-100 text-fuchsia-700",
-  "growth": "bg-emerald-100 text-emerald-700",
-  "late stage": "bg-amber-100 text-amber-700",
-};
+function geoLabel(g) {
+  if (!g) return g;
+  return GEO_LABELS[String(g).toLowerCase()] || g;
+}
+
+function SectionLabel({ children, count }) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">{children}</h2>
+      {count != null && (
+        <span className="text-[10px] font-mono text-[#a0aec0]">{count}</span>
+      )}
+    </div>
+  );
+}
 
 function IntroForm({ investor }) {
   const [email, setEmail] = useState("");
@@ -50,8 +52,8 @@ function IntroForm({ investor }) {
   };
 
   if (status === "done") return (
-    <div className="flex items-center gap-2 text-sm text-[#2d6a4f] font-medium py-2">
-      <CheckCircle size={15} /> Request sent — we'll be in touch shortly.
+    <div className="text-sm text-[#2d6a4f] font-medium py-2">
+      Request sent — we'll be in touch shortly.
     </div>
   );
 
@@ -71,11 +73,21 @@ function IntroForm({ investor }) {
       <button
         type="submit"
         disabled={status === "loading" || !email.trim()}
-        className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors disabled:opacity-50"
+        className="w-full bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors disabled:opacity-50"
       >
-        <Mail size={13} /> Request introduction
+        {status === "loading" ? "Sending…" : "Request introduction"}
       </button>
     </form>
+  );
+}
+
+function Fact({ label, value }) {
+  if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) return null;
+  return (
+    <div>
+      <div className="text-[11px] text-[#718096] font-mono uppercase tracking-wide mb-1">{label}</div>
+      <div className="text-sm text-[#0f1a14]">{value}</div>
+    </div>
   );
 }
 
@@ -83,6 +95,7 @@ export default function InvestorProfilePage() {
   const { id } = useParams();
   const [investor, setInvestor] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [portfolio, setPortfolio] = useState([]);
 
   useEffect(() => {
     if (!id) return;
@@ -90,6 +103,10 @@ export default function InvestorProfilePage() {
       .then(r => r.json())
       .then(data => { setInvestor(data); setLoading(false); })
       .catch(() => setLoading(false));
+    fetch(`/api/investors/${id}/portfolio`)
+      .then(r => r.json())
+      .then(data => setPortfolio(Array.isArray(data?.companies) ? data.companies : []))
+      .catch(() => {});
   }, [id]);
 
   if (loading) return (
@@ -98,24 +115,36 @@ export default function InvestorProfilePage() {
     </div>
   );
 
-  if (!investor) return (
+  if (!investor || investor.message) return (
     <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center text-[#4a5568]">
       Investor not found.
     </div>
   );
 
   const website = investor.url || investor.website;
+  const websiteHref = website ? (website.startsWith("http") ? website : `https://${website}`) : null;
   const focusAreas = investor.climate_focus_areas || [];
   const stages = investor.investment_stages || [];
   const geographies = investor.geographies || [];
   const decisionMakers = investor.decision_makers || [];
+  const linkedin = investor.linkedin_url || investor.linkedin;
+  const twitter = investor.twitter_url || investor.twitter;
+
+  // Headline metrics for the hero strip — only render the ones we actually have.
+  const heroMetrics = [
+    investor.fund_size && { label: "Fund size", value: investor.fund_size },
+    investor.sweet_spot_check_size && { label: "Check size", value: investor.sweet_spot_check_size },
+    investor.total_aum && { label: "Total AUM", value: investor.total_aum },
+    stages.length > 0 && { label: "Stages", value: stages.slice(0, 2).map(s => s).join(", ") + (stages.length > 2 ? "…" : "") },
+    !investor.fund_size && investor.location && { label: "HQ", value: investor.location },
+  ].filter(Boolean).slice(0, 4);
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] text-[#0f1a14]" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
       <div className="max-w-6xl mx-auto px-6 py-10">
 
-        <Link href="/investors" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
-          <ArrowLeft size={14} /> Back to investors
+        <Link href="/investors" className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
+          ← Back to investors
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -125,7 +154,7 @@ export default function InvestorProfilePage() {
 
             {/* HERO CARD */}
             <div className="bg-white border border-[#e8eaee] rounded-2xl p-8">
-              <div className="flex items-start gap-5 mb-6">
+              <div className="flex items-start gap-5">
                 {investor.logo_url ? (
                   <>
                     <img src={investor.logo_url} alt={investor.name}
@@ -141,27 +170,31 @@ export default function InvestorProfilePage() {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight mb-1">
+                  <h1 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-3xl text-[#0f1a14] leading-tight mb-1.5">
                     {investor.name}
                   </h1>
-                  {investor.type && (
-                    <span className="text-xs font-mono text-[#718096] capitalize">
-                      {investor.type.replace(/_/g, " ")}
-                    </span>
-                  )}
-                  {website && (
-                    <a href={website.startsWith("http") ? website : `https://${website}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1 ml-3">
-                      <Globe size={12} /> {website.replace(/https?:\/\//, "")}
-                    </a>
-                  )}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {investor.type && (
+                      <span className="text-xs font-mono text-[#718096] capitalize">
+                        {investor.type.replace(/_/g, " ")}
+                      </span>
+                    )}
+                    {investor.location && (
+                      <span className="text-xs font-mono text-[#a0aec0]">· {investor.location}</span>
+                    )}
+                    {website && (
+                      <a href={websiteHref} target="_blank" rel="noopener noreferrer"
+                        className="text-xs font-mono text-[#2d6a4f] hover:underline">
+                        · {website.replace(/https?:\/\//, "").replace(/\/$/, "")}
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Focus area tags */}
               {focusAreas.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-5">
+                <div className="flex flex-wrap gap-2 mt-5">
                   {focusAreas.map((area, i) => (
                     <span key={i} className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[rgba(45,106,79,0.06)] text-[#2d6a4f]">
                       {area}
@@ -171,19 +204,28 @@ export default function InvestorProfilePage() {
               )}
 
               {investor.description && (
-                <p className="text-[#4a5568] leading-relaxed text-sm font-light">
+                <p className="text-[#4a5568] leading-relaxed text-sm font-light mt-5">
                   {investor.description}
                 </p>
+              )}
+
+              {/* Headline metrics strip */}
+              {heroMetrics.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#e8eaee]">
+                  {heroMetrics.map((m, i) => (
+                    <div key={i}>
+                      <div className="text-[11px] text-[#718096] font-mono uppercase tracking-wide mb-1">{m.label}</div>
+                      <div className="text-sm font-semibold text-[#0f1a14]">{m.value}</div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
             {/* INVESTMENT THESIS */}
             {investor.thesis && (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
-                <div className="flex items-center gap-2 mb-4">
-                  <Target size={16} className="text-[#2d6a4f]" />
-                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investment Thesis</h2>
-                </div>
+                <SectionLabel>Investment Thesis</SectionLabel>
                 <p className="text-sm text-[#4a5568] leading-relaxed">{investor.thesis}</p>
               </div>
             )}
@@ -191,15 +233,10 @@ export default function InvestorProfilePage() {
             {/* INVESTMENT STAGES */}
             {stages.length > 0 && (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp size={16} className="text-[#2d6a4f]" />
-                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Investment Stages</h2>
-                </div>
+                <SectionLabel>Investment Stages</SectionLabel>
                 <div className="flex flex-wrap gap-2">
                   {stages.map((stage, i) => (
-                    <span key={i} className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize ${
-                      STAGE_COLORS[stage.toLowerCase()] || "bg-slate-100 text-slate-600"
-                    }`}>
+                    <span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium capitalize bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
                       {stage}
                     </span>
                   ))}
@@ -207,13 +244,10 @@ export default function InvestorProfilePage() {
               </div>
             )}
 
-            {/* DECISION MAKERS */}
+            {/* KEY PEOPLE */}
             {decisionMakers.length > 0 && (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
-                <div className="flex items-center gap-2 mb-4">
-                  <Users size={16} className="text-[#2d6a4f]" />
-                  <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Key People</h2>
-                </div>
+                <SectionLabel count={decisionMakers.length}>Key People</SectionLabel>
                 <div className="flex flex-wrap gap-2">
                   {decisionMakers.map((person, i) => (
                     <span key={i} className="px-3 py-2 rounded-lg text-sm bg-[#fafbfc] border border-[#dbdfe4] text-[#4a5568]">
@@ -224,18 +258,39 @@ export default function InvestorProfilePage() {
               </div>
             )}
 
-            {/* PORTFOLIO — placeholder for future enrichment */}
+            {/* PORTFOLIO */}
             <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
-              <div className="flex items-center gap-2 mb-4">
-                <Briefcase size={16} className="text-[#2d6a4f]" />
-                <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Portfolio Companies</h2>
-              </div>
-              <p className="text-sm text-[#718096]">
-                Portfolio data coming soon.{" "}
-                <Link href="/search" className="text-[#2d6a4f] hover:underline">
-                  Browse all climate companies →
-                </Link>
-              </p>
+              <SectionLabel count={portfolio.length > 0 ? portfolio.length : null}>Portfolio Companies</SectionLabel>
+              {portfolio.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {portfolio.map((c) => (
+                    <Link key={c.id} href={`/companies/${c.slug || c.id}`}
+                      className="flex items-center gap-3 p-2.5 rounded-lg border border-[#e8eaee] hover:border-[#2d6a4f] hover:bg-[#fafbfc] transition-all group">
+                      {c.logo_url ? (
+                        <img src={c.logo_url} alt={c.name}
+                          onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }}
+                          className="w-8 h-8 rounded-md object-contain bg-white border border-[#e8eaee] p-1 flex-shrink-0" />
+                      ) : null}
+                      <div className={`w-8 h-8 rounded-md bg-[#f2f4f6] items-center justify-center text-xs font-bold text-[#2d6a4f] flex-shrink-0 ${c.logo_url ? "hidden" : "flex"}`}>
+                        {(c.name || "?")[0].toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-[#0f1a14] group-hover:text-[#2d6a4f] transition-colors truncate">{c.name}</div>
+                        {c.industry_tags?.length > 0 && (
+                          <div className="text-[10px] font-mono text-[#a0aec0] truncate">{c.industry_tags.slice(0, 2).join(", ")}</div>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#718096]">
+                  Portfolio data is still being compiled.{" "}
+                  <Link href="/search" className="text-[#2d6a4f] hover:underline">
+                    Browse all climate companies →
+                  </Link>
+                </p>
+              )}
             </div>
 
           </div>
@@ -247,56 +302,40 @@ export default function InvestorProfilePage() {
             <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 className="text-xs font-mono font-semibold text-[#4a5568] tracking-widest uppercase mb-5">Quick Facts</h3>
               <div className="flex flex-col gap-4">
-                {investor.fund_size && (
-                  <div className="flex items-start gap-3">
-                    <DollarSign size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-xs text-[#718096] font-mono mb-1">Fund Size</div>
-                      <div className="text-sm text-[#0f1a14]">{investor.fund_size}</div>
-                    </div>
-                  </div>
-                )}
-                {investor.total_aum && (
-                  <div className="flex items-start gap-3">
-                    <TrendingUp size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-xs text-[#718096] font-mono mb-1">Total AUM</div>
-                      <div className="text-sm text-[#0f1a14]">{investor.total_aum}</div>
-                    </div>
-                  </div>
-                )}
-                {geographies.length > 0 && (
-                  <div className="flex items-start gap-3">
-                    <Globe size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-xs text-[#718096] font-mono mb-1">Geographies</div>
-                      <div className="flex flex-wrap gap-1">
-                        {geographies.map((g, i) => (
-                          <span key={i} className="text-xs text-[#0f1a14]">
-                            {GEO_LABELS[g?.toLowerCase()] || g}{i < geographies.length - 1 ? "," : ""}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {investor.location && (
-                  <div className="flex items-start gap-3">
-                    <MapPin size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-xs text-[#718096] font-mono mb-1">HQ</div>
-                      <div className="text-sm text-[#0f1a14]">{investor.location}</div>
-                    </div>
-                  </div>
-                )}
+                <Fact label="Type" value={investor.type ? investor.type.replace(/_/g, " ") : null} />
+                <Fact label="Fund Size" value={investor.fund_size} />
+                <Fact label="Total AUM" value={investor.total_aum} />
+                <Fact label="Check Size" value={investor.sweet_spot_check_size} />
+                <Fact label="Stages" value={stages.length > 0 ? stages.join(", ") : null} />
+                <Fact label="Geographies" value={geographies.length > 0 ? geographies.map(geoLabel).join(", ") : null} />
+                <Fact label="HQ" value={investor.location} />
+                <Fact label="Founded" value={investor.founded_year || investor.founded} />
+                <Fact label="Portfolio" value={portfolio.length > 0 ? `${portfolio.length} companies tracked` : null} />
               </div>
 
-              {website && (
-                <a href={website.startsWith("http") ? website : `https://${website}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="mt-6 w-full flex items-center justify-center gap-2 border border-[#dbdfe4] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
-                  <Globe size={14} /> Visit website
-                </a>
+              {(website || linkedin || twitter) && (
+                <div className="flex flex-col gap-2 mt-6">
+                  {website && (
+                    <a href={websiteHref} target="_blank" rel="noopener noreferrer"
+                      className="w-full text-center border border-[#dbdfe4] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                      Visit website →
+                    </a>
+                  )}
+                  <div className="flex gap-2">
+                    {linkedin && (
+                      <a href={linkedin.startsWith("http") ? linkedin : `https://${linkedin}`} target="_blank" rel="noopener noreferrer"
+                        className="flex-1 text-center border border-[#dbdfe4] text-[#4a5568] text-xs font-mono rounded-lg py-2 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                        LinkedIn
+                      </a>
+                    )}
+                    {twitter && (
+                      <a href={twitter.startsWith("http") ? twitter : `https://${twitter}`} target="_blank" rel="noopener noreferrer"
+                        className="flex-1 text-center border border-[#dbdfe4] text-[#4a5568] text-xs font-mono rounded-lg py-2 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
+                        Twitter / X
+                      </a>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
@@ -314,30 +353,24 @@ export default function InvestorProfilePage() {
             {/* CLAIM / ONBOARDING CTA */}
             {!investor.claimed_by_clerk_user_id ? (
               <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap size={14} className="text-[#2d6a4f]" />
-                  <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Is this your firm?</span>
-                </div>
-                <p className="text-sm text-[#d0e4d8] leading-relaxed mb-4">
+                <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Is this your firm?</span>
+                <p className="text-sm text-[#d0e4d8] leading-relaxed mt-3 mb-4">
                   Claim this profile to manage it, update your details, and connect directly with founders.
                 </p>
                 <Link href={`/claim/investor/${investor.id}`}
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
-                  Claim this profile <ChevronRight size={13} />
+                  className="w-full block text-center bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  Claim this profile →
                 </Link>
               </div>
             ) : (
               <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap size={14} className="text-[#2d6a4f]" />
-                  <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Are you an investor?</span>
-                </div>
-                <p className="text-sm text-[#d0e4d8] leading-relaxed mb-4">
-                  Join EP Investing to access deal flow, company signals, and curated climate opportunities.
+                <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Are you an investor?</span>
+                <p className="text-sm text-[#d0e4d8] leading-relaxed mt-3 mb-4">
+                  Join EP Network to access deal flow, company signals, and curated climate opportunities.
                 </p>
                 <Link href="/onboarding/investor"
-                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
-                  Join as investor <ChevronRight size={13} />
+                  className="w-full block text-center bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
+                  Join as investor →
                 </Link>
               </div>
             )}
