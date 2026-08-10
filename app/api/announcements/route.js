@@ -11,22 +11,28 @@ export async function GET(req) {
   const companyId = searchParams.get("company_id");
   const limit = Math.min(Number(searchParams.get("limit")) || 100, 300);
 
-  let q = db().from("company_announcements")
-    .select("id, category, title, body, link_url, meta, is_featured, is_curated, published_at, company:companies(id, name, slug, logo_url, industry_tags)")
-    .eq("status", "published")
-    .order("is_featured", { ascending: false })
-    .order("published_at", { ascending: false })
-    .limit(limit);
-  if (category) q = q.eq("category", category);
-  // Show everything published for the company — curated items included, so the
-  // full announcement content renders on the profile (good for SEO).
-  if (companyId) q = q.eq("company_id", companyId);
+  const build = (sel) => {
+    let q = db().from("company_announcements")
+      .select(sel)
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(limit);
+    if (category) q = q.eq("category", category);
+    if (companyId) q = q.eq("company_id", companyId);
+    return q;
+  };
 
-  const { data, error } = await q;
+  const FULL = "id, category, title, body, link_url, meta, is_featured, is_curated, published_at, company:companies(id, name, slug, logo_url, industry_tags)";
+  let { data, error } = await build(FULL);
+  // Fall back gracefully if the is_curated column hasn't been added yet.
+  if (error && /is_curated/i.test(error.message)) {
+    ({ data, error } = await build(FULL.replace(", is_curated", "")));
+  }
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
   let rows = data || [];
-  // Sector filter is applied client-side on the joined company's tags.
+  // Featured first, then newest (done in JS so it works with the fallback select).
+  rows.sort((a, b) => (Number(b.is_featured) || 0) - (Number(a.is_featured) || 0) || (new Date(b.published_at || 0) - new Date(a.published_at || 0)));
   if (sector) rows = rows.filter((r) => (r.company?.industry_tags || []).includes(sector));
   return Response.json(rows);
 }
