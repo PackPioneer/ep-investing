@@ -1,5 +1,6 @@
 import { Mail, Linkedin, Twitter } from "lucide-react"
 import Link from "next/link"
+import FeedbackLink from "@/components/FeedbackLink"
 
 export default function Footer() {
   return (
@@ -19,7 +20,7 @@ export default function Footer() {
                 </div>
               </div>
               <div>
-                <span style={{ fontFamily: "Georgia, serif" }} className="text-[#0f1a14] text-lg font-normal">EP</span>
+                <span style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-[#0f1a14] text-lg font-bold">EP</span>
                 <span className="font-mono text-[10px] text-[#4a5568] tracking-widest ml-1.5 uppercase">Investing</span>
               </div>
             </div>
@@ -75,7 +76,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm flex flex-col">
               <Link href="/about" className="hover:text-[#2d6a4f] transition-colors">About</Link>
               <a href="mailto:otto@epinvesting.com" className="hover:text-[#2d6a4f] transition-colors">Contact</a>
-              
+              <FeedbackLink />
+
               <Link href="/privacy-policy" className="hover:text-[#2d6a4f] transition-colors">Privacy Policy</Link>
               <Link href="/terms-and-conditions" className="hover:text-[#2d6a4f] transition-colors">Terms of Service</Link>
               <Link href="/disclaimer" className="hover:text-[#2d6a4f] transition-colors">Disclaimer</Link>
