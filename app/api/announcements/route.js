@@ -12,12 +12,14 @@ export async function GET(req) {
   const limit = Math.min(Number(searchParams.get("limit")) || 100, 300);
 
   let q = db().from("company_announcements")
-    .select("id, category, title, body, link_url, meta, is_featured, published_at, company:companies(id, name, slug, logo_url, industry_tags)")
+    .select("id, category, title, body, link_url, meta, is_featured, is_curated, published_at, company:companies(id, name, slug, logo_url, industry_tags)")
     .eq("status", "published")
     .order("is_featured", { ascending: false })
     .order("published_at", { ascending: false })
     .limit(limit);
   if (category) q = q.eq("category", category);
+  // Show everything published for the company — curated items included, so the
+  // full announcement content renders on the profile (good for SEO).
   if (companyId) q = q.eq("company_id", companyId);
 
   const { data, error } = await q;
