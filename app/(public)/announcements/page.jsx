@@ -86,7 +86,7 @@ export default function NewsroomPage() {
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ background: (CAT_COLOR[a.category] || "#64748b") + "1a", color: CAT_COLOR[a.category] || "#64748b" }}>{CAT_LABEL[a.category] || a.category}</span>
                     {a.is_featured && <span className="text-[10px] px-1.5 py-0.5 rounded bg-violet-50 text-violet-700 border border-violet-200">Featured</span>}
-                    <span className="text-[11px] text-slate-400 ml-auto">{when(a.published_at)}</span>
+                    <Link href={`/announcements/${a.id}`} className="text-[11px] text-slate-400 hover:text-slate-600 ml-auto">{when(a.published_at)}</Link>
                   </div>
                   <div className="flex items-start gap-3">
                     {co && (
@@ -96,11 +96,7 @@ export default function NewsroomPage() {
                     )}
                     <div className="min-w-0 flex-1">
                       {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-slate-500 hover:text-emerald-700">{co.name}</Link>}
-                      {co ? (
-                        <Link href={`/companies/${co.id}`} className="block text-sm font-semibold text-slate-900 leading-snug hover:text-emerald-700">{a.title}</Link>
-                      ) : (
-                        <div className="text-sm font-semibold text-slate-900 leading-snug">{a.title}</div>
-                      )}
+                      <Link href={`/announcements/${a.id}`} className="block text-sm font-semibold text-slate-900 leading-snug hover:text-emerald-700">{a.title}</Link>
                       {metaLine(a) && <div className="text-xs text-slate-500 mt-0.5">{metaLine(a)}</div>}
                       {a.meta?.investor_id && (
                         <div className="text-xs text-slate-500 mt-0.5">Backed by <Link href={`/investors/${a.meta.investor_id}`} className="text-emerald-700 hover:underline font-medium">{a.meta.investor_name}</Link></div>
