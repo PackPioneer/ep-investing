@@ -48,6 +48,8 @@ export default function CompanyProfilePage() {
   const [postingUpdate, setPostingUpdate] = useState(false);
   const [isInvestor, setIsInvestor] = useState(false);
   const [companyNews, setCompanyNews] = useState({ mode: "none", items: [] });
+  const [jobs, setJobs] = useState([]);
+  const [showAllJobs, setShowAllJobs] = useState(false);
   useEffect(() => {
     if (!id) return;
     fetch(`/api/companies/${id}`)
@@ -71,6 +73,11 @@ export default function CompanyProfilePage() {
         fetch(`/api/companies/${id}/news`)
           .then(r => r.json())
           .then(n => setCompanyNews(n && Array.isArray(n.items) ? n : { mode: "none", items: [] }))
+          .catch(() => {});
+
+        fetch(`/api/companies/${id}/jobs`)
+          .then(r => r.json())
+          .then(j => setJobs(Array.isArray(j?.jobs) ? j.jobs : []))
           .catch(() => {});
       })
       .catch(() => setLoading(false));
@@ -320,6 +327,49 @@ async function postUpdate(e) {
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Manufacturing Capability</h2>
                 </div>
                 <p className="text-sm text-[#4a5568] leading-relaxed">{company.manufacturing_capability}</p>
+              </div>
+            )}
+
+            {/* OPEN ROLES — hidden if the company has no live listings */}
+            {jobs.length > 0 && (
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Open Roles</h2>
+                    <span className="text-[10px] font-mono text-[#a0aec0]">{jobs.length}</span>
+                  </div>
+                  <Link href="/jobs" className="text-xs text-[#2d6a4f] font-mono hover:underline">All jobs →</Link>
+                </div>
+                <div className="flex flex-col divide-y divide-[#e8eaee]">
+                  {(showAllJobs ? jobs : jobs.slice(0, 5)).map((job) => {
+                    const canApply = job.apply_url || job.contact_email;
+                    const href = job.apply_url || (job.contact_email ? `mailto:${job.contact_email}` : null);
+                    return (
+                      <div key={job.id} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-[#0f1a14] truncate">{job.title}</div>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-xs text-[#718096] font-mono">
+                            {job.location && <span>{job.location}</span>}
+                            {job.type && <span>{String(job.type).replace(/_/g, " ")}</span>}
+                            {(job.work_mode || job.experience_level) && <span>{[job.work_mode, job.experience_level].filter(Boolean).join(" · ").replace(/_/g, " ")}</span>}
+                          </div>
+                        </div>
+                        {canApply && href && (
+                          <a href={href} target={job.apply_url ? "_blank" : undefined} rel="noopener noreferrer"
+                            className="flex-shrink-0 text-xs font-semibold text-[#2d6a4f] border border-[#c8d8cc] bg-[#f2f4f6] rounded-lg px-3 py-1.5 hover:border-[#2d6a4f] transition-all">
+                            Apply →
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {jobs.length > 5 && (
+                  <button onClick={() => setShowAllJobs(v => !v)}
+                    className="mt-4 text-xs text-[#2d6a4f] font-mono hover:underline">
+                    {showAllJobs ? "Show less" : `Show ${jobs.length - 5} more`}
+                  </button>
+                )}
               </div>
             )}
 

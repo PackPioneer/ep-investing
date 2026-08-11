@@ -30,6 +30,9 @@ export default function CompanyNewsroom({ companyId }) {
               <span className="text-[10px] text-[#a0aec0] ml-auto">{when(a.published_at)}</span>
             </div>
             <div className="text-xs text-[#0f1a14] font-medium leading-snug">{a.title}</div>
+            {a.meta?.partners?.length > 0 && (
+              <div className="text-[11px] text-[#718096] mt-0.5">with {a.meta.partners.map((p) => p.name).join(", ")}</div>
+            )}
             {a.body && <div className="text-[11px] text-[#718096] mt-0.5 leading-snug line-clamp-2">{a.body}</div>}
             {a.link_url && (
               <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block mt-1.5 text-[11px] font-semibold bg-[#2d6a4f] text-white px-2.5 py-1 rounded-md hover:bg-[#235a40]">

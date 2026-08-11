@@ -112,11 +112,14 @@ export async function POST(req) {
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const limit = parseInt(searchParams.get("limit") || "100");
+  // Default high so the board shows the full set (scraper produces ~700).
+  // Capped at 1000 to stay under Supabase's single-select row limit.
+  const raw = parseInt(searchParams.get("limit") || "1000");
+  const limit = Math.min(isNaN(raw) ? 1000 : raw, 1000);
 
   const { data, error } = await supabase
     .from("job_listings")
-    .select("*")
+    .select("id, title, company, company_id, ngo_id, location, type, sector, sector_tags, work_mode, experience_level, apply_url, contact_email, created_at")
     .eq("status", "published")
     .order("created_at", { ascending: false })
     .limit(limit);

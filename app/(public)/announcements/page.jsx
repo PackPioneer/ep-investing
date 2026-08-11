@@ -25,7 +25,7 @@ const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleStrin
 function metaLine(a) {
   const m = a.meta || {};
   const bits = [];
-  if (m.partner_name) bits.push(m.partner_name);
+  if (!m.partners?.length && m.partner_name) bits.push(m.partner_name);
   if (m.round_type) bits.push(m.round_type);
   if (m.amount_usd) bits.push(usd(m.amount_usd));
   if (m.amount_target_usd) bits.push(`target ${usd(m.amount_target_usd)}`);
@@ -105,6 +105,9 @@ export default function NewsroomPage() {
                           <div className="text-xs text-slate-500 mt-0.5">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={investorPath(iv)} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
                         ) : null;
                       })()}
+                      {a.meta?.partners?.length > 0 && (
+                        <div className="text-xs text-slate-500 mt-0.5">In partnership with {a.meta.partners.map((p, i) => <span key={p.id ?? `t${i}`}>{i > 0 ? ", " : ""}{p.id ? <Link href={`/companies/${p.id}`} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>)}</div>
+                      )}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
                         {a.is_curated ? (

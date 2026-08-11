@@ -8,7 +8,8 @@ const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleStrin
 function meta(a) {
   const m = a.meta || {};
   const bits = [];
-  if (m.partner_name) bits.push(`Partner: ${m.partner_name}`);
+  if (m.partners?.length) bits.push(`Partner: ${m.partners.map((p) => p.name).join(", ")}`);
+  else if (m.partner_name) bits.push(`Partner: ${m.partner_name}`);
   if (m.round_type) bits.push(m.round_type);
   if (m.amount_usd) bits.push(usd(m.amount_usd));
   if (m.amount_target_usd) bits.push(`target ${usd(m.amount_target_usd)}`);
@@ -41,6 +42,10 @@ export default function AdminAnnouncements() {
   const [invAll, setInvAll] = useState([]);
   const [invQuery, setInvQuery] = useState("");
   const [selectedInvs, setSelectedInvs] = useState([]);
+  // Partnership tagging — who the partnership is with (directory company or free text)
+  const [pQuery, setPQuery] = useState("");
+  const [pResults, setPResults] = useState([]);
+  const [selectedPartners, setSelectedPartners] = useState([]);
 
   const load = (status) => { setLoading(true); fetch(`/api/admin/announcements?status=${status}`).then((r) => r.json()).then((d) => { setRows(Array.isArray(d) ? d : []); setLoading(false); }).catch(() => setLoading(false)); };
   useEffect(() => { load(tab); }, [tab]);
@@ -50,6 +55,8 @@ export default function AdminAnnouncements() {
   const invResults = invQuery.trim()
     ? invAll.filter((i) => (i.name || "").toLowerCase().includes(invQuery.toLowerCase()) && !selInvIds.has(i.id)).slice(0, 8) : [];
   const isRaise = nCat === "raise_close" || nCat === "raise_open";
+  const isPartnership = nCat === "partnership";
+  const selPartnerNames = new Set(selectedPartners.map((p) => (p.name || "").toLowerCase()));
 
   useEffect(() => {
     if (!cQuery.trim() || (selectedCo && selectedCo.name === cQuery)) { setCResults([]); return; }
@@ -59,17 +66,27 @@ export default function AdminAnnouncements() {
     return () => clearTimeout(t);
   }, [cQuery, selectedCo]);
 
+  useEffect(() => {
+    if (!pQuery.trim()) { setPResults([]); return; }
+    const t = setTimeout(() => {
+      fetch(`/api/companies?q=${encodeURIComponent(pQuery)}&limit=8`).then((r) => r.json()).then((d) => setPResults(Array.isArray(d) ? d : [])).catch(() => setPResults([]));
+    }, 250);
+    return () => clearTimeout(t);
+  }, [pQuery]);
+
   const postUpdate = async () => {
     if (!selectedCo || !nTitle.trim()) return;
     setPosting(true); setPostError("");
     try {
-      const meta = selectedInvs.length ? { investors: selectedInvs.map((i) => ({ id: i.id, name: i.name })) } : {};
+      const meta = {};
+      if (selectedInvs.length) meta.investors = selectedInvs.map((i) => ({ id: i.id, name: i.name }));
+      if (selectedPartners.length) meta.partners = selectedPartners.map((p) => ({ id: p.id ?? null, name: p.name }));
       const res = await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, meta, published_at: nDate || undefined }) });
       const data = await res.json().catch(() => ({}));
       setPosting(false);
       if (!res.ok) { setPostError(data.error || `Failed (${res.status})`); return; }
-      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInvs([]); setInvQuery(""); setShowNew(false);
+      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInvs([]); setInvQuery(""); setSelectedPartners([]); setPQuery(""); setShowNew(false);
       setTab("published"); load("published");
     } catch (e) { setPosting(false); setPostError(e.message || "Network error"); }
   };
@@ -144,6 +161,34 @@ export default function AdminAnnouncements() {
                     {invResults.map((iv) => (
                       <button key={iv.id} onClick={() => { setSelectedInvs((prev) => [...prev, { id: iv.id, name: iv.name }]); setInvQuery(""); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{iv.name}</button>
                     ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {isPartnership && (
+            <div>
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Partner(s) (optional — tags their profile too)</label>
+              {selectedPartners.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {selectedPartners.map((p, i) => (
+                    <span key={p.id ?? `t${i}`} className="inline-flex items-center gap-1 text-xs bg-sky-50 border border-sky-200 text-sky-800 rounded-full pl-2.5 pr-1 py-1">
+                      {p.name}{p.id == null && <span className="text-sky-400 text-[10px]">(text)</span>}
+                      <button onClick={() => setSelectedPartners((prev) => prev.filter((x) => x !== p))} className="text-sky-400 hover:text-red-500 px-1">✕</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="relative">
+                <input value={pQuery} onChange={(e) => setPQuery(e.target.value)} placeholder="Search companies, or type any partner name…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                {(pResults.length > 0 || pQuery.trim()) && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                    {pResults.filter((c) => !selPartnerNames.has((c.name || "").toLowerCase())).map((c) => (
+                      <button key={c.id} onClick={() => { setSelectedPartners((prev) => [...prev, { id: c.id, name: c.name }]); setPQuery(""); setPResults([]); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{c.name}</button>
+                    ))}
+                    {pQuery.trim() && !selPartnerNames.has(pQuery.trim().toLowerCase()) && (
+                      <button onClick={() => { setSelectedPartners((prev) => [...prev, { id: null, name: pQuery.trim() }]); setPQuery(""); setPResults([]); }} className="block w-full text-left px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-50 border-t border-slate-100">Add “{pQuery.trim()}” (not in directory)</button>
+                    )}
                   </div>
                 )}
               </div>

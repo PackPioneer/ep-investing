@@ -19,7 +19,7 @@ const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleStrin
 function metaLine(a) {
   const m = a.meta || {};
   const bits = [];
-  if (m.partner_name) bits.push(m.partner_name);
+  if (!m.partners?.length && m.partner_name) bits.push(m.partner_name);
   if (m.round_type) bits.push(m.round_type);
   if (m.amount_usd) bits.push(usd(m.amount_usd));
   if (m.amount_target_usd) bits.push(`target ${usd(m.amount_target_usd)}`);
@@ -84,6 +84,9 @@ export default async function AnnouncementPage({ params }) {
               <div className="text-sm text-slate-500 mb-1">Backed by {invs.map((iv, i) => <span key={iv.id}>{i > 0 ? ", " : ""}<Link href={investorPath(iv)} className="text-emerald-700 hover:underline font-medium">{iv.name}</Link></span>)}</div>
             ) : null;
           })()}
+          {a.meta?.partners?.length > 0 && (
+            <div className="text-sm text-slate-500 mb-1">In partnership with {a.meta.partners.map((p, i) => <span key={p.id ?? `t${i}`}>{i > 0 ? ", " : ""}{p.id ? <Link href={`/companies/${p.id}`} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>)}</div>
+          )}
           {a.body && <p className="text-[15px] text-slate-700 leading-relaxed mt-3">{a.body}</p>}
 
           <div className="flex items-center gap-3 flex-wrap mt-6 pt-5 border-t border-slate-100">
