@@ -882,11 +882,13 @@ async function deleteDeck() {
           <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
               <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Job Postings</div>
-              <button onClick={() => setShowJobForm(v => !v)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
-                + Add role
-              </button>
+              {!(showJobForm || jobs.length === 0) && (
+                <button onClick={() => setShowJobForm(true)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
+                  + Add role
+                </button>
+              )}
             </div>
-            {showJobForm && (
+            {(showJobForm || jobs.length === 0) && (
               <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
 
                 {/* MODE TOGGLE — quick (title + link) vs full listing */}
@@ -1016,7 +1018,7 @@ async function deleteDeck() {
                 </>)}
 
                 <div className="flex gap-2 justify-end pt-2">
-                  <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>
+                  {jobs.length > 0 && <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>}
                   <button type="submit" disabled={submittingJob} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-1.5 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                     {submittingJob ? "Posting..." : "Post job"}
                   </button>
@@ -1041,9 +1043,7 @@ async function deleteDeck() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-sm text-[#718096]">No open roles yet.</p>
-            )}
+            ) : null}
           </div>
         )}
 
