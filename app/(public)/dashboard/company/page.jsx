@@ -50,6 +50,7 @@ export default function CompanyDashboard() {
   const [saved, setSaved] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [showJobForm, setShowJobForm] = useState(false);
+  const [jobMode, setJobMode] = useState("quick"); // "quick" = title + link only; "full" = detailed listing
   const [jobForm, setJobForm] = useState({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null });
   const [submittingJob, setSubmittingJob] = useState(false);
   const [updates, setUpdates] = useState([]);
@@ -888,15 +889,37 @@ async function deleteDeck() {
             {showJobForm && (
               <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
 
+                {/* MODE TOGGLE — quick (title + link) vs full listing */}
+                <div className="flex gap-1.5 p-1 bg-[#eef0f2] rounded-lg self-start mb-1">
+                  {[["quick", "Quick — title + link"], ["full", "Full listing"]].map(([m, label]) => (
+                    <button key={m} type="button" onClick={() => setJobMode(m)}
+                      className={`text-xs font-medium px-3 py-1.5 rounded-md transition-all ${jobMode === m ? "bg-white text-[#0f1a14] shadow-sm" : "text-[#718096] hover:text-[#0f1a14]"}`}>{label}</button>
+                  ))}
+                </div>
+
                 {/* SECTION 1 — REQUIRED (always visible) */}
                 <div className="text-xs font-mono uppercase tracking-wide text-[#2d6a4f] pb-1">Required info</div>
                 <input required placeholder="Job title *" value={jobForm.title} onChange={e => setJobForm(p => ({ ...p, title: e.target.value }))}
                   className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
-                <input required placeholder="Location * (e.g., San Francisco, CA, or Remote)" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
-                <input required type="email" placeholder="Contact email *" value={jobForm.contact_email} onChange={e => setJobForm(p => ({ ...p, contact_email: e.target.value }))}
-                  className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                {jobMode === "quick" ? (
+                  <>
+                    <input required type="url" placeholder="Application link * (applicants go straight to your site)" value={jobForm.apply_url || ""} onChange={e => setJobForm(p => ({ ...p, apply_url: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    <input placeholder="Location (optional — e.g., Remote)" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    <p className="text-xs text-[#718096]">Fastest option — just the title and a link. Switch to “Full listing” to add salary, requirements, and more.</p>
+                  </>
+                ) : (
+                  <>
+                    <input required placeholder="Location * (e.g., San Francisco, CA, or Remote)" value={jobForm.location} onChange={e => setJobForm(p => ({ ...p, location: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                    <input required type="email" placeholder="Contact email *" value={jobForm.contact_email} onChange={e => setJobForm(p => ({ ...p, contact_email: e.target.value }))}
+                      className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  </>
+                )}
 
+                {/* SECTIONS 2–6 — full listing only */}
+                {jobMode === "full" && (<>
                 {/* SECTION 2 — JOB DETAILS */}
                 <details className="border-t border-[#e8eaee] pt-3">
                   <summary className="text-xs font-mono uppercase tracking-wide text-[#4a5568] cursor-pointer hover:text-[#2d6a4f]">Job details</summary>
@@ -990,6 +1013,7 @@ async function deleteDeck() {
                       className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
                   </div>
                 </details>
+                </>)}
 
                 <div className="flex gap-2 justify-end pt-2">
                   <button type="button" onClick={() => setShowJobForm(false)} className="text-xs text-[#718096] px-3 py-1.5 rounded-lg hover:bg-[#e8eaee]">Cancel</button>
