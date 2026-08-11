@@ -38,6 +38,10 @@ function metaLine(a) {
   return bits.join(" · ");
 }
 const when = (d) => (d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "");
+const partnerHref = (p) =>
+  p.kind === "ngo" && p.slug ? `/ngos/${p.slug}` :
+  p.kind === "investor" && p.id ? investorPath(p) :
+  p.id ? `/companies/${p.id}` : null;
 
 export default function NewsroomPage() {
   const [cat, setCat] = useState("");
@@ -106,7 +110,7 @@ export default function NewsroomPage() {
                         ) : null;
                       })()}
                       {a.meta?.partners?.length > 0 && (
-                        <div className="text-xs text-slate-500 mt-0.5">In partnership with {a.meta.partners.map((p, i) => <span key={p.id ?? `t${i}`}>{i > 0 ? ", " : ""}{p.id ? <Link href={`/companies/${p.id}`} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>)}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">In partnership with {a.meta.partners.map((p, i) => { const href = partnerHref(p); return <span key={`${p.kind || "t"}-${p.id ?? i}`}>{i > 0 ? ", " : ""}{href ? <Link href={href} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>; })}</div>
                       )}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">

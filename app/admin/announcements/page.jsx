@@ -68,11 +68,23 @@ export default function AdminAnnouncements() {
 
   useEffect(() => {
     if (!pQuery.trim()) { setPResults([]); return; }
-    const t = setTimeout(() => {
-      fetch(`/api/companies?q=${encodeURIComponent(pQuery)}&limit=8`).then((r) => r.json()).then((d) => setPResults(Array.isArray(d) ? d : [])).catch(() => setPResults([]));
+    const q = pQuery.trim();
+    const t = setTimeout(async () => {
+      try {
+        const [coRes, ngoRes] = await Promise.all([
+          fetch(`/api/companies?q=${encodeURIComponent(q)}&limit=6`).then((r) => r.json()).catch(() => []),
+          fetch(`/api/ngos?q=${encodeURIComponent(q)}&limit=6`).then((r) => r.json()).catch(() => ({ ngos: [] })),
+        ]);
+        const cos = (Array.isArray(coRes) ? coRes : []).map((c) => ({ id: c.id, name: c.name, kind: "company" }));
+        const ngos = ((ngoRes && ngoRes.ngos) || []).map((n) => ({ id: n.id, name: n.name, kind: "ngo", slug: n.slug }));
+        const invs = invAll.filter((i) => (i.name || "").toLowerCase().includes(q.toLowerCase())).slice(0, 6).map((i) => ({ id: i.id, name: i.name, kind: "investor" }));
+        setPResults([...cos, ...invs, ...ngos]);
+      } catch { setPResults([]); }
     }, 250);
     return () => clearTimeout(t);
-  }, [pQuery]);
+  }, [pQuery, invAll]);
+
+  const KIND_LABEL = { company: "Company", investor: "Investor", ngo: "NGO", text: "Text" };
 
   const postUpdate = async () => {
     if (!selectedCo || !nTitle.trim()) return;
@@ -80,7 +92,7 @@ export default function AdminAnnouncements() {
     try {
       const meta = {};
       if (selectedInvs.length) meta.investors = selectedInvs.map((i) => ({ id: i.id, name: i.name }));
-      if (selectedPartners.length) meta.partners = selectedPartners.map((p) => ({ id: p.id ?? null, name: p.name }));
+      if (selectedPartners.length) meta.partners = selectedPartners.map((p) => ({ id: p.id ?? null, name: p.name, kind: p.kind || (p.id ? "company" : "text"), ...(p.slug ? { slug: p.slug } : {}) }));
       const res = await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, meta, published_at: nDate || undefined }) });
       const data = await res.json().catch(() => ({}));
@@ -168,26 +180,28 @@ export default function AdminAnnouncements() {
           )}
           {isPartnership && (
             <div>
-              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Partner(s) (optional — tags their profile too)</label>
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Partner(s) — company, investor, or NGO (optional; tags their profile too)</label>
               {selectedPartners.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {selectedPartners.map((p, i) => (
-                    <span key={p.id ?? `t${i}`} className="inline-flex items-center gap-1 text-xs bg-sky-50 border border-sky-200 text-sky-800 rounded-full pl-2.5 pr-1 py-1">
-                      {p.name}{p.id == null && <span className="text-sky-400 text-[10px]">(text)</span>}
+                    <span key={`${p.kind || "text"}-${p.id ?? i}`} className="inline-flex items-center gap-1 text-xs bg-sky-50 border border-sky-200 text-sky-800 rounded-full pl-2.5 pr-1 py-1">
+                      {p.name}<span className="text-sky-400 text-[10px]">{KIND_LABEL[p.kind] || (p.id ? "Company" : "Text")}</span>
                       <button onClick={() => setSelectedPartners((prev) => prev.filter((x) => x !== p))} className="text-sky-400 hover:text-red-500 px-1">✕</button>
                     </span>
                   ))}
                 </div>
               )}
               <div className="relative">
-                <input value={pQuery} onChange={(e) => setPQuery(e.target.value)} placeholder="Search companies, or type any partner name…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                <input value={pQuery} onChange={(e) => setPQuery(e.target.value)} placeholder="Search companies, investors, NGOs — or type any name…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
                 {(pResults.length > 0 || pQuery.trim()) && (
                   <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
                     {pResults.filter((c) => !selPartnerNames.has((c.name || "").toLowerCase())).map((c) => (
-                      <button key={c.id} onClick={() => { setSelectedPartners((prev) => [...prev, { id: c.id, name: c.name }]); setPQuery(""); setPResults([]); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{c.name}</button>
+                      <button key={`${c.kind}-${c.id}`} onClick={() => { setSelectedPartners((prev) => [...prev, c]); setPQuery(""); setPResults([]); }} className="flex w-full items-center justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-slate-50">
+                        <span>{c.name}</span><span className="text-[10px] font-mono text-slate-400">{KIND_LABEL[c.kind]}</span>
+                      </button>
                     ))}
                     {pQuery.trim() && !selPartnerNames.has(pQuery.trim().toLowerCase()) && (
-                      <button onClick={() => { setSelectedPartners((prev) => [...prev, { id: null, name: pQuery.trim() }]); setPQuery(""); setPResults([]); }} className="block w-full text-left px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-50 border-t border-slate-100">Add “{pQuery.trim()}” (not in directory)</button>
+                      <button onClick={() => { setSelectedPartners((prev) => [...prev, { id: null, name: pQuery.trim(), kind: "text" }]); setPQuery(""); setPResults([]); }} className="block w-full text-left px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-50 border-t border-slate-100">Add “{pQuery.trim()}” (not in directory)</button>
                     )}
                   </div>
                 )}
