@@ -4,7 +4,7 @@ import { formatSector } from "@/lib/sectors";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight, Sparkles, BarChart3, Radar } from "lucide-react";
+import { TrendingUp, Bookmark, User, Search, LayoutDashboard, FileText, ArrowRight, Sparkles, BarChart3, Radar, Handshake } from "lucide-react";
 import { usePaywall } from "@/components/PaywallModal";
 import { usePipeline } from "@/components/pipeline/usePipeline";
 import ForYouFeed from "@/components/news/ForYouFeed";
@@ -42,6 +42,8 @@ export default function InvestorDashboard() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [investorLogoUrl, setInvestorLogoUrl] = useState(null);
   const [uploadingInvestorLogo, setUploadingInvestorLogo] = useState(false);
+  const [connections, setConnections] = useState([]);
+  const [connClaimed, setConnClaimed] = useState(false);
   const [changingStage, setChangingStage] = useState(null);
   const { triggerPaywall } = usePaywall();
 
@@ -93,6 +95,10 @@ export default function InvestorDashboard() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+    fetch("/api/investor-connect")
+      .then(r => r.json())
+      .then(d => { setConnections(Array.isArray(d.connections) ? d.connections : []); setConnClaimed(!!d.claimed); })
+      .catch(() => {});
     fetch("/api/grants?limit=20")
       .then(r => r.json())
       .then(data => setGrants(Array.isArray(data) ? data : []))
@@ -195,6 +201,7 @@ export default function InvestorDashboard() {
     { id: "raising", label: "Raising", icon: Radar },
     { id: "feed", label: "Companies", icon: TrendingUp },
     { id: "saved", label: "Saved", icon: Bookmark, badge: savedIds.size },
+    { id: "connections", label: "Connections", icon: Handshake, badge: connections.length },
     { id: "grants", label: "Grants", icon: FileText },
     { id: "profile", label: "Profile", icon: User },
   ];
@@ -672,6 +679,46 @@ export default function InvestorDashboard() {
                   </div>
                 )}
               </>
+            )}
+          </div>
+        )}
+
+        {/* CONNECTIONS TAB — companies that requested to connect */}
+        {activeTab === "connections" && (
+          <div className="flex flex-col gap-4">
+            {!connClaimed ? (
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center">
+                <p className="text-sm text-[#718096] mb-2">Claim your firm's public profile to receive connection requests.</p>
+                <Link href="/investors" className="text-xs text-[#2d6a4f] font-mono hover:underline">Find your firm in the directory →</Link>
+              </div>
+            ) : connections.length === 0 ? (
+              <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center">
+                <p className="text-sm text-[#718096]">No connection requests yet.</p>
+                <p className="text-xs text-[#a0aec0] mt-1">Companies that request to connect from your profile will appear here.</p>
+              </div>
+            ) : (
+              connections.map((conn) => {
+                const c = conn.company;
+                return (
+                  <div key={conn.id} className="bg-white border border-[#e8eaee] rounded-2xl p-5 flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 min-w-0">
+                      {c?.logo_url ? <img src={c.logo_url} alt="" className="w-10 h-10 rounded-lg object-contain border border-[#e8eaee] p-1 flex-shrink-0" /> : <div className="w-10 h-10 rounded-lg bg-[#f2f4f6] flex items-center justify-center text-sm font-bold text-[#2d6a4f] flex-shrink-0">{(c?.name || "?")[0]}</div>}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {c ? <Link href={`/companies/${c.slug || c.id}`} className="text-sm font-semibold text-[#0f1a14] hover:text-[#2d6a4f]">{c.name}</Link> : <span className="text-sm font-semibold text-[#0f1a14]">Company</span>}
+                          {c?.funding_stage && <span className="text-[10px] font-mono text-[#718096]">{String(c.funding_stage).replace(/_/g, " ")}</span>}
+                        </div>
+                        {conn.note && <p className="text-sm text-[#4a5568] mt-1 leading-relaxed">{conn.note}</p>}
+                        {Array.isArray(c?.industry_tags) && c.industry_tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1.5">{c.industry_tags.slice(0, 3).map((t) => <span key={t} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#f2f4f6] text-[#4a5568]">{t.replace(/_/g, " ")}</span>)}</div>
+                        )}
+                        <div className="text-[10px] font-mono text-[#a0aec0] mt-1.5">{new Date(conn.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+                      </div>
+                    </div>
+                    {c && <Link href={`/companies/${c.slug || c.id}`} className="flex-shrink-0 text-xs font-semibold text-[#2d6a4f] border border-[#c8d8cc] bg-[#f2f4f6] rounded-lg px-3 py-1.5 hover:border-[#2d6a4f] transition-all">View →</Link>}
+                  </div>
+                );
+              })
             )}
           </div>
         )}

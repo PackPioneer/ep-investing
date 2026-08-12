@@ -41,7 +41,7 @@ const CONFIG = {
     table: 'vc_firms',
     keyByNumericId: true,            // id (no slug column)
     urlCol: 'url',
-    fields: ['description', 'investment_thesis', 'climate_sectors', 'geographies_focus', 'investment_stages_text'],
+    fields: ['description', 'investment_thesis', 'climate_sectors', 'geographies_focus', 'investment_stages_text', 'fund_size', 'sweet_spot_check_size', 'total_aum', 'location', 'founded_year'],
     noun: 'climate investor / VC firm',
   },
 };
@@ -123,6 +123,11 @@ const FIELD_GUIDE = {
   climate_sectors: 'climate sectors/areas they invest in, as stated.',
   geographies_focus: 'geographies they invest in, as stated.',
   investment_stages_text: 'stages they invest at (pre-seed, seed, Series A, etc.), as stated.',
+  fund_size: 'size of their current/latest fund if stated (e.g. "$150M"), else null.',
+  sweet_spot_check_size: 'typical check / investment size if stated (e.g. "$1M–$5M"), else null.',
+  total_aum: 'total assets under management if stated (e.g. "$2B"), else null.',
+  location: 'headquarters city/region if stated (e.g. "San Francisco, CA"), else null.',
+  founded_year: 'year the firm was founded, if stated (e.g. "2018"), else null.',
 };
 
 export async function POST(req) {

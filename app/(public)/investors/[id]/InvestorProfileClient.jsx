@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const GEO_LABELS = {
   us: "US", usa: "US", europe: "Europe", eu: "Europe", asia: "Asia",
@@ -26,56 +27,58 @@ function SectionLabel({ children, count }) {
   );
 }
 
-function IntroForm({ investor }) {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("idle");
+// Member-gated: only a signed-in user with a registered company can request to
+// connect. The request surfaces to the investor (if they've claimed their firm).
+function ConnectBox({ investor }) {
+  const { user, isLoaded } = useUser();
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | loading | done | no_company
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setStatus("loading");
     try {
-      await fetch("/api/intro-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          investor_id: investor.id,
-          investor_name: investor.name,
-          email,
-          message,
-        }),
+      const res = await fetch("/api/investor-connect", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ investor_id: investor.id, note }),
       });
+      if (res.status === 403) { setStatus("no_company"); return; }
+      if (!res.ok) throw new Error();
       setStatus("done");
-    } catch {
-      setStatus("done");
-    }
+    } catch { setStatus("done"); }
   };
 
-  if (status === "done") return (
-    <div className="text-sm text-[#2d6a4f] font-medium py-2">
-      Request sent — we'll be in touch shortly.
+  if (!isLoaded) return <div className="h-9" />;
+
+  if (!user) return (
+    <div>
+      <p className="text-xs text-[#718096] leading-relaxed mb-3">Sign in with your company to request a connection.</p>
+      <Link href="/sign-in" className="w-full block text-center bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">Sign in</Link>
     </div>
   );
 
+  if (status === "no_company") return (
+    <div>
+      <p className="text-xs text-[#718096] leading-relaxed mb-3">You'll need a company registered on EP Network to connect with investors.</p>
+      <Link href="/onboarding/company" className="w-full block text-center bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors">Register your company</Link>
+    </div>
+  );
+
+  if (status === "done") return (
+    <div className="text-sm text-[#2d6a4f] font-medium py-2">Request sent — {investor.name} can see your company in their inbound requests.</div>
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <input
-        type="email" value={email} onChange={e => setEmail(e.target.value)}
-        placeholder="Your email" required
-        className="w-full px-3 py-2.5 rounded-lg border border-[#dbdfe4] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors"
-      />
+    <form onSubmit={submit} className="flex flex-col gap-3">
       <textarea
-        value={message} onChange={e => setMessage(e.target.value)}
-        placeholder="Brief intro — company name, stage, what you're raising…"
+        value={note} onChange={e => setNote(e.target.value)}
+        placeholder="Optional note — what you're building, stage, what you're raising…"
         rows={3}
         className="w-full px-3 py-2.5 rounded-lg border border-[#dbdfe4] text-sm text-[#0f1a14] placeholder-[#a0aec0] outline-none focus:border-[#2d6a4f] transition-colors resize-none"
       />
-      <button
-        type="submit"
-        disabled={status === "loading" || !email.trim()}
-        className="w-full bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors disabled:opacity-50"
-      >
-        {status === "loading" ? "Sending…" : "Request introduction"}
+      <button type="submit" disabled={status === "loading"}
+        className="w-full bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-3 hover:bg-[#235a40] transition-colors disabled:opacity-50">
+        {status === "loading" ? "Sending…" : "Request to connect"}
       </button>
     </form>
   );
@@ -353,12 +356,12 @@ export default function InvestorProfilePage() {
             {/* REQUEST INTRO */}
             <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
               <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-1">
-                Request an introduction
+                Request to connect
               </h3>
               <p className="text-xs text-[#718096] leading-relaxed mb-4">
-                Tell us about your company and we'll facilitate an introduction to {investor.name}.
+                Put your company in front of {investor.name} as inbound interest.
               </p>
-              <IntroForm investor={investor} />
+              <ConnectBox investor={investor} />
             </div>
 
             {/* CLAIM / ONBOARDING CTA */}
