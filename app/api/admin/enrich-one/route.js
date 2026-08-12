@@ -13,6 +13,7 @@ import { requireAdmin } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 import { NextResponse } from 'next/server';
+import { idFromSlug } from '@/lib/slug';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -51,13 +52,14 @@ function supa() {
 
 async function loadEntity(supabase, cfg, idOrSlug) {
   const isNumeric = /^\d+$/.test(String(idOrSlug));
-  // company & investor: numeric -> id; ngo: slug unless numeric (then id)
-  let col;
-  if (cfg.table === 'ngos') col = isNumeric ? 'id' : 'slug';
+  // vc_firms has no slug column — accept the SEO slug form (name-123) by pulling
+  // the trailing id. company & ngo: numeric -> id, else slug.
+  let col, key = idOrSlug;
+  if (cfg.table === 'vc_firms') { col = 'id'; key = idFromSlug(idOrSlug); }
   else col = isNumeric ? 'id' : 'slug';
   const selectCols = ['id', 'name', 'logo_url', cfg.urlCol, ...cfg.fields];
   if (cfg.table !== 'vc_firms') selectCols.push('slug');
-  const { data } = await supabase.from(cfg.table).select([...new Set(selectCols)].join(', ')).eq(col, idOrSlug).single();
+  const { data } = await supabase.from(cfg.table).select([...new Set(selectCols)].join(', ')).eq(col, key).single();
   return data;
 }
 

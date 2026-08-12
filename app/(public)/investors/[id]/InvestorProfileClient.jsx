@@ -123,9 +123,13 @@ export default function InvestorProfilePage() {
 
   const website = investor.url || investor.website;
   const websiteHref = website ? (website.startsWith("http") ? website : `https://${website}`) : null;
-  const focusAreas = investor.climate_focus_areas || [];
-  const stages = investor.investment_stages || [];
-  const geographies = investor.geographies || [];
+  // Split an enriched free-text field ("Seed, Series A") into chips.
+  const splitList = (s) => (s ? String(s).split(/[,;/|]|\band\b/).map((x) => x.trim()).filter(Boolean).slice(0, 12) : []);
+  // Read structured arrays first, then fall back to the enriched text columns.
+  const focusAreas = investor.climate_focus_areas?.length ? investor.climate_focus_areas : splitList(investor.climate_sectors);
+  const stages = investor.investment_stages?.length ? investor.investment_stages : splitList(investor.investment_stages_text);
+  const geographies = investor.geographies?.length ? investor.geographies : splitList(investor.geographies_focus);
+  const thesis = investor.thesis || investor.investment_thesis;
   const decisionMakers = investor.decision_makers || [];
   const linkedin = investor.linkedin_url || investor.linkedin;
   const twitter = investor.twitter_url || investor.twitter;
@@ -223,10 +227,10 @@ export default function InvestorProfilePage() {
             </div>
 
             {/* INVESTMENT THESIS */}
-            {investor.thesis && (
+            {thesis && (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <SectionLabel>Investment Thesis</SectionLabel>
-                <p className="text-sm text-[#4a5568] leading-relaxed">{investor.thesis}</p>
+                <p className="text-sm text-[#4a5568] leading-relaxed">{thesis}</p>
               </div>
             )}
 
