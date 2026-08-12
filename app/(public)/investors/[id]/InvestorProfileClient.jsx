@@ -123,12 +123,14 @@ export default function InvestorProfilePage() {
 
   const website = investor.url || investor.website;
   const websiteHref = website ? (website.startsWith("http") ? website : `https://${website}`) : null;
-  // Split an enriched free-text field ("Seed, Series A") into chips.
-  const splitList = (s) => (s ? String(s).split(/[,;/|]|\band\b/).map((x) => x.trim()).filter(Boolean).slice(0, 12) : []);
-  // Read structured arrays first, then fall back to the enriched text columns.
-  const focusAreas = investor.climate_focus_areas?.length ? investor.climate_focus_areas : splitList(investor.climate_sectors);
-  const stages = investor.investment_stages?.length ? investor.investment_stages : splitList(investor.investment_stages_text);
-  const geographies = investor.geographies?.length ? investor.geographies : splitList(investor.geographies_focus);
+  // Clean tag arrays render as chips; enriched free-text renders as prose (one
+  // home each, no chip-splitting of sentences).
+  const focusAreas = investor.climate_focus_areas?.length ? investor.climate_focus_areas : [];
+  const focusText = !focusAreas.length ? (investor.climate_sectors || null) : null;
+  const stageTags = investor.investment_stages?.length ? investor.investment_stages : [];
+  const stageText = !stageTags.length ? (investor.investment_stages_text || null) : null;
+  const geoTags = investor.geographies?.length ? investor.geographies : [];
+  const geoText = !geoTags.length ? (investor.geographies_focus || null) : null;
   const thesis = investor.thesis || investor.investment_thesis;
   const decisionMakers = investor.decision_makers || [];
   const linkedin = investor.linkedin_url || investor.linkedin;
@@ -139,8 +141,8 @@ export default function InvestorProfilePage() {
     investor.fund_size && { label: "Fund size", value: investor.fund_size },
     investor.sweet_spot_check_size && { label: "Check size", value: investor.sweet_spot_check_size },
     investor.total_aum && { label: "Total AUM", value: investor.total_aum },
-    stages.length > 0 && { label: "Stages", value: stages.slice(0, 2).map(s => s).join(", ") + (stages.length > 2 ? "…" : "") },
-    !investor.fund_size && investor.location && { label: "HQ", value: investor.location },
+    investor.location && { label: "HQ", value: investor.location },
+    (investor.founded_year || investor.founded) && { label: "Founded", value: investor.founded_year || investor.founded },
   ].filter(Boolean).slice(0, 4);
 
   return (
@@ -196,8 +198,8 @@ export default function InvestorProfilePage() {
                 </div>
               </div>
 
-              {/* Focus area tags */}
-              {focusAreas.length > 0 && (
+              {/* Focus areas — chips from tags, prose from enriched text */}
+              {focusAreas.length > 0 ? (
                 <div className="flex flex-wrap gap-2 mt-5">
                   {focusAreas.map((area, i) => (
                     <span key={i} className="px-3 py-1 rounded-full text-xs font-mono border border-[#c8d8cc] bg-[rgba(45,106,79,0.06)] text-[#2d6a4f]">
@@ -205,7 +207,9 @@ export default function InvestorProfilePage() {
                     </span>
                   ))}
                 </div>
-              )}
+              ) : focusText ? (
+                <p className="text-sm text-[#4a5568] leading-relaxed mt-5"><span className="text-[11px] font-mono uppercase tracking-wide text-[#718096] mr-2">Focus</span>{focusText}</p>
+              ) : null}
 
               {investor.description && (
                 <p className="text-[#4a5568] leading-relaxed text-sm font-light mt-5">
@@ -234,17 +238,21 @@ export default function InvestorProfilePage() {
               </div>
             )}
 
-            {/* INVESTMENT STAGES */}
-            {stages.length > 0 && (
+            {/* INVESTMENT STAGES — chips for tags, prose for enriched text */}
+            {(stageTags.length > 0 || stageText) && (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
                 <SectionLabel>Investment Stages</SectionLabel>
-                <div className="flex flex-wrap gap-2">
-                  {stages.map((stage, i) => (
-                    <span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium capitalize bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
-                      {stage}
-                    </span>
-                  ))}
-                </div>
+                {stageTags.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {stageTags.map((stage, i) => (
+                      <span key={i} className="px-3 py-1.5 rounded-full text-xs font-medium capitalize bg-[#f2f4f6] border border-[#e8eaee] text-[#4a5568]">
+                        {stage}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[#4a5568] leading-relaxed">{stageText}</p>
+                )}
               </div>
             )}
 
@@ -310,8 +318,7 @@ export default function InvestorProfilePage() {
                 <Fact label="Fund Size" value={investor.fund_size} />
                 <Fact label="Total AUM" value={investor.total_aum} />
                 <Fact label="Check Size" value={investor.sweet_spot_check_size} />
-                <Fact label="Stages" value={stages.length > 0 ? stages.join(", ") : null} />
-                <Fact label="Geographies" value={geographies.length > 0 ? geographies.map(geoLabel).join(", ") : null} />
+                <Fact label="Geographies" value={geoTags.length > 0 ? geoTags.map(geoLabel).join(", ") : geoText} />
                 <Fact label="HQ" value={investor.location} />
                 <Fact label="Founded" value={investor.founded_year || investor.founded} />
                 <Fact label="Portfolio" value={portfolio.length > 0 ? `${portfolio.length} companies tracked` : null} />
