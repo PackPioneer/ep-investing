@@ -24,6 +24,8 @@ const menu = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Members", href: "/admin/members", icon: Users },
   { name: "Companies", href: "/admin/companies", icon: Building2 },
+  { name: "Manage Investors", href: "/admin/manage-investors", icon: Building2 },
+  { name: "Manage NGOs", href: "/admin/manage-ngos", icon: Building2 },
   { name: "Add company", href: "/admin/add-company", icon: Plus },
   { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
   { name: "Add investor", href: "/admin/add-investor", icon: Plus },

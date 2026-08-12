@@ -13,7 +13,7 @@ export async function GET(req) {
     const to = from + limit - 1;
 
     let companiesQuery = supabase.from('companies').select('*', { count: 'exact' }).neq('is_hidden', true).range(from, to);
-    let investorsQuery = supabase.from('vc_firms').select('*', { count: 'exact' }).range(from, to);
+    let investorsQuery = supabase.from('vc_firms').select('*', { count: 'exact' }).neq('is_hidden', true).range(from, to);
     let grantsQuery = supabase.from('grants').select('*', { count: 'exact' }).range(from, to);
 
     if (query) {
@@ -24,9 +24,17 @@ export async function GET(req) {
 
     const [
       { data: companies, count: companiesCount, error: companiesError },
-      { data: investors, count: investorsCount, error: investorsError },
+      investorsRes,
       { data: grants, count: grantsCount, error: grantsError },
     ] = await Promise.all([companiesQuery, investorsQuery, grantsQuery]);
+
+    // Fall back to an unfiltered investor query if is_hidden isn't present yet.
+    let { data: investors, count: investorsCount, error: investorsError } = investorsRes;
+    if (investorsError) {
+      let fb = supabase.from('vc_firms').select('*', { count: 'exact' }).range(from, to);
+      if (query) fb = fb.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
+      ({ data: investors, count: investorsCount, error: investorsError } = await fb);
+    }
 
     if (companiesError) console.error('Companies search error:', companiesError);
     if (investorsError) console.error('Investors search error:', investorsError);

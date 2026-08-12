@@ -62,7 +62,8 @@ export default async function sitemap() {
     }));
 
   // -------- INVESTORS (name-slug + id URLs for SEO) --------
-  const investors = await fetchAll("vc_firms", "id, name, created_at");
+  const investorsRaw = await fetchAll("vc_firms", "id, name, created_at, is_hidden");
+  const investors = investorsRaw.filter((i) => !i.is_hidden);
   const investorEntries = investors.map((i) => ({
     url: `${BASE_URL}${investorPath(i)}`,
     lastModified: new Date(i.created_at || now),

@@ -7,11 +7,19 @@ const supabase = createClient(
 
 export async function GET() {
   try {
-    const { data: investors, error } = await supabase
+    // Prefer filtering out hidden investors; fall back if the column isn't there yet.
+    let { data: investors, error } = await supabase
       .from('vc_firms')
       .select('*')
+      .neq('is_hidden', true)
       .order('id', { ascending: false });
 
+    if (error) {
+      ({ data: investors, error } = await supabase
+        .from('vc_firms')
+        .select('*')
+        .order('id', { ascending: false }));
+    }
     if (error) throw error;
 
     return Response.json(investors);

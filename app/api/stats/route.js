@@ -22,7 +22,7 @@ export async function GET() {
     count("grants"),
     count("job_listings", (q) => q.eq("status", "published")),
     count("ngos"),
-    count("vc_firms"),
+    count("vc_firms", (q) => q.neq("is_hidden", true)),
   ]);
 
   return Response.json({ companies, investors, grants, jobs, ngos });
