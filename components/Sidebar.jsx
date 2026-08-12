@@ -28,6 +28,8 @@ const menu = [
   { name: "Add NGO", href: "/admin/add-ngo", icon: Plus },
   { name: "Add investor", href: "/admin/add-investor", icon: Plus },
   { name: "Claims", href: "/admin/claims", icon: Building2 },
+  { name: "VC Portfolios", href: "/admin/vc-portfolio", icon: Building2 },
+  { name: "Portfolio Review", href: "/admin/portfolio-review", icon: Building2 },
   { name: "Newsroom", href: "/admin/announcements", icon: Megaphone },
   { name: "Jobs", href: "/admin/jobs", icon: Briefcase },
   { name: "Feed Queue", href: "/admin/feed-queue", icon: Rss },
