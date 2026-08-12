@@ -17,18 +17,11 @@ export async function GET(req) {
   if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const q = (new URL(req.url).searchParams.get("q") || "").trim();
 
-  const run = async (cols) => {
-    let query = supabase.from("vc_firms").select(cols).order("name", { ascending: true }).limit(100);
-    if (q) query = query.or(`name.ilike.%${q}%,url.ilike.%${q}%`);
-    return query;
-  };
+  // select("*") never errors on a missing column, so this is robust to schema drift.
+  let query = supabase.from("vc_firms").select("*").order("name", { ascending: true }).limit(100);
+  if (q) query = query.or(`name.ilike.%${q}%,url.ilike.%${q}%`);
 
-  // Prefer selecting is_hidden; fall back if the column isn't there yet.
-  let { data, error } = await run("id, name, url, logo_url, type, is_hidden");
-  if (error) {
-    ({ data, error } = await run("id, name, url, logo_url, type"));
-    if (!error && data) data = data.map((r) => ({ ...r, is_hidden: false }));
-  }
+  const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ investors: data || [] });
 }
