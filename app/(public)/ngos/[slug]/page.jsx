@@ -22,7 +22,7 @@ const ORG_TYPE_LABELS = {
 async function getNgo(slug) {
   const { data } = await supabase
     .from("ngos")
-    .select("id, slug, name, org_type, short_description, bio, logo_url, website_url, headquarters_country")
+    .select("id, slug, name, org_type, short_description, bio, logo_url, website_url, headquarters_country, status")
     .eq("slug", slug)
     .single();
   return data;
@@ -39,10 +39,13 @@ export async function generateMetadata({ params }) {
     .replace(/\s+/g, " ")
     .slice(0, 155);
   const canonical = `${BASE_URL}/ngos/${n.slug}`;
+  const text = (n.short_description || n.bio || "").replace(/\s+/g, " ").trim();
+  const thin = (n.status && n.status !== "active") || text.length < 80;
 
   return {
     title,
     description,
+    ...(thin ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical },
     openGraph: {
       title, description, url: canonical, type: "website", siteName: "EP Network",

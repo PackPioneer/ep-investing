@@ -16,7 +16,7 @@ async function getCompany(idOrSlug) {
   const isNumeric = /^\d+$/.test(String(idOrSlug));
   const { data } = await supabase
     .from("companies")
-    .select("id, name, slug, description, sector, industry_tags, logo_url, url, headquarters_city, headquarters_country, location")
+    .select("id, name, slug, description, sector, industry_tags, logo_url, url, headquarters_city, headquarters_country, location, is_hidden")
     .eq(isNumeric ? "id" : "slug", idOrSlug)
     .single();
   return data;
@@ -37,9 +37,14 @@ export async function generateMetadata({ params }) {
     .slice(0, 155);
   const canonical = `${BASE_URL}/companies/${c.slug || c.id}`;
 
+  // Keep thin/hidden pages out of the index (crawlable, not indexed) so they
+  // don't dilute the directory's overall quality signal.
+  const thin = c.is_hidden || !c.description || c.description.replace(/\s+/g, " ").trim().length < 120;
+
   return {
     title,
     description,
+    ...(thin ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical },
     openGraph: {
       title,

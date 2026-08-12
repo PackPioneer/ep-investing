@@ -15,7 +15,7 @@ export const revalidate = 3600;
 async function getInvestor(id) {
   const { data } = await supabase
     .from("vc_firms")
-    .select("id, name, description, logo_url")
+    .select("id, name, description, logo_url, investment_thesis, is_hidden")
     .eq("id", idFromSlug(id))
     .single();
   return data;
@@ -31,10 +31,13 @@ export async function generateMetadata({ params }) {
     .replace(/\s+/g, " ")
     .slice(0, 155);
   const canonical = `${BASE_URL}${investorPath(v)}`;
+  const thin = v.is_hidden || (!v.description && !v.investment_thesis) ||
+    ((v.description || v.investment_thesis || "").replace(/\s+/g, " ").trim().length < 100);
 
   return {
     title,
     description,
+    ...(thin ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical },
     openGraph: {
       title, description, url: canonical, type: "website", siteName: "EP Network",

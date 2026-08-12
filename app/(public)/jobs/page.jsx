@@ -43,7 +43,7 @@ function JobCard({ job }) {
           {(company || "?")[0].toUpperCase()}
         </div>
         <div className="min-w-0">
-          <h3 className="font-semibold text-[#0f1a14] text-sm group-hover:text-[#2d6a4f] transition-colors">{job.title}</h3>
+          <Link href={`/jobs/${job.id}`} className="font-semibold text-[#0f1a14] text-sm hover:text-[#2d6a4f] transition-colors">{job.title}</Link>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-[#718096] font-mono">
             {company && (
               job.company_id ? (

@@ -104,6 +104,15 @@ export default async function sitemap() {
     priority: 0.6,
   }));
 
+  // -------- JOBS (per-job pages for Google for Jobs) --------
+  const jobs = await fetchAll("job_listings", "id, created_at, status", (q) => q.eq("status", "published"));
+  const jobEntries = jobs.map((j) => ({
+    url: `${BASE_URL}/jobs/${j.id}`,
+    lastModified: new Date(j.created_at || now),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
   return [
     ...staticPages,
     ...companyEntries,
@@ -111,5 +120,6 @@ export default async function sitemap() {
     ...ngoEntries,
     ...grantEntries,
     ...announcementEntries,
+    ...jobEntries,
   ];
 }
