@@ -9,7 +9,7 @@ const INDUSTRY_TAGS = [
   "battery_storage", "carbon_credits", "clean_cooking", "consultancy", "circular_economy",  "direct_air_capture",
   "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
   "grid_storage", "grid_monitoring", "industrial_decarbonization", "nuclear_technologies",
-  "saf_efuels", "solar", "wind_energy", "electric_vehicles", "energy_generation", "energy_efficiency",
+  "saf_efuels", "solar", "wind_energy", "electric_vehicles", "agtech", "energy_generation", "energy_efficiency",
 ];
 
 const FUNDING_STAGES = [
