@@ -22,7 +22,7 @@ export default function ManageNgos() {
   useEffect(() => { fetchData(""); }, [fetchData]);
   useEffect(() => { const t = setTimeout(() => fetchData(search), 350); return () => clearTimeout(t); }, [search, fetchData]);
 
-  const isHidden = (c) => c.status !== "active";
+  const isHidden = (c) => c.is_hidden === true;
 
   const setHidden = async (id, name, hide) => {
     if (hide && !confirm(`Hide "${name}"? It will be removed from the public NGO directory. You can unhide it later.`)) return;
@@ -30,7 +30,7 @@ export default function ManageNgos() {
       const res = await fetch("/api/admin/ngos-directory", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action: hide ? "hide" : "unhide" }) });
       if (!res.ok) throw new Error();
       toast.success(hide ? "Hidden" : "Restored");
-      setRows(prev => prev.map(c => c.id === id ? { ...c, status: hide ? "hidden" : "active" } : c));
+      setRows(prev => prev.map(c => c.id === id ? { ...c, is_hidden: hide } : c));
     } catch { toast.error("Action failed"); }
   };
 
@@ -61,7 +61,7 @@ export default function ManageNgos() {
                   <a href={`/ngos/${c.slug}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-slate-900 hover:text-emerald-600 truncate">{c.name}</a>
                   <span className="text-xs text-slate-300">#{c.id}</span>
                   {c.org_type && <span className="text-[10px] font-mono text-slate-400">{String(c.org_type).replace(/_/g, " ")}</span>}
-                  {hidden && <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">{c.status || "Hidden"}</span>}
+                  {hidden && <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">Hidden</span>}
                 </div>
                 {c.website_url && <div className="text-xs text-slate-400 truncate">{c.website_url}</div>}
               </div>

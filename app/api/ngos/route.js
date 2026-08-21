@@ -18,13 +18,24 @@ export async function GET(req) {
       .order("name", { ascending: true })
       .limit(limit);
 
-    if (orgType) query = query.eq("org_type", orgType);
-    if (sector) query = query.contains("sector_tags", [sector]);
-    if (geography) query = query.contains("geography_focus", [geography]);
-    if (partnership === "true") query = query.eq("open_to_partnerships", true);
-    if (search) query = query.ilike("name", `%${search}%`);
+    const applyFilters = (qb) => {
+      if (orgType) qb = qb.eq("org_type", orgType);
+      if (sector) qb = qb.contains("sector_tags", [sector]);
+      if (geography) qb = qb.contains("geography_focus", [geography]);
+      if (partnership === "true") qb = qb.eq("open_to_partnerships", true);
+      if (search) qb = qb.ilike("name", `%${search}%`);
+      return qb;
+    };
+    query = applyFilters(query.neq("is_hidden", true));
 
-    const { data, error } = await query;
+    let { data, error } = await query;
+    // Fall back if is_hidden column isn't present yet.
+    if (error) {
+      let q2 = supabase.from("ngos")
+        .select("id, slug, name, org_type, short_description, logo_url, website_url, headquarters_country, sector_tags, geography_focus, staff_size, open_to_partnerships, claimable, verified")
+        .eq("status", "active").order("name", { ascending: true }).limit(limit);
+      ({ data, error } = await applyFilters(q2));
+    }
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
     return Response.json({ ngos: data ?? [] });
