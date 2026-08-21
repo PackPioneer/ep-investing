@@ -2,6 +2,15 @@
 
 import { useState } from "react";
 import { Loader2, Search, Sparkles, Save, Upload } from "lucide-react";
+import { formatSector } from "@/lib/sectors";
+
+const ALL_TAGS = [
+  "battery_storage", "carbon_credits", "clean_cooking", "consultancy", "circular_economy", "direct_air_capture",
+  "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
+  "grid_storage", "grid_monitoring", "industrial_decarbonization", "nuclear_technologies",
+  "saf_efuels", "solar", "wind_energy", "electric_vehicles", "agtech", "maritime_shipping",
+  "energy_generation", "energy_efficiency", "energy_management",
+];
 
 const FIELD_LABELS = {
   description: "Description", core_technology: "Core Technology", target_market: "Target Market",
@@ -30,7 +39,10 @@ export default function EnrichOnePage() {
 const [pastedText, setPastedText] = useState("");
   const [showPaste, setShowPaste] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [industryTags, setIndustryTags] = useState([]);
   const typeCfg = TYPES.find((t) => t.key === entityType);
+
+  const reset = () => { setEntity(null); setDrafts(null); setLogo(null); setMsg(""); setPastedText(""); setShowPaste(false); setIndustryTags([]); };
 
   const post = async (payload) => {
     const res = await fetch("/api/admin/enrich-one", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entityType, ...payload }) });
@@ -45,7 +57,20 @@ const [pastedText, setPastedText] = useState("");
     setEntity(d.entity);
     setNameOverride(d.entity.name || "");
     setUrlOverride(d.entity[d.urlCol] || "");
+    setIndustryTags(Array.isArray(d.entity.industry_tags) ? d.entity.industry_tags : []);
   };
+
+  // Save the (manually corrected) industry tags — replaces the auto-classified set.
+  const saveTags = async () => {
+    if (!entity) return;
+    setBusy(true); setMsg("");
+    const d = await post({ action: "save", id: entity.id, industry_tags: industryTags });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    setEntity((p) => ({ ...p, industry_tags: industryTags }));
+    setMsg(`Saved industry tags for ${entity.name}.`);
+  };
+  const toggleTag = (t) => setIndustryTags((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
 
   // Manually save the name to the profile (fixes wrong scraped titles).
   const saveName = async () => {
@@ -192,6 +217,29 @@ const [pastedText, setPastedText] = useState("");
             </button>
           </div>
           <p className="text-[11px] text-gray-400 mt-1">Wrong link? Fix it here and click <span className="font-semibold">Save URL</span> — no scrape needed.</p>
+
+          {/* Industry tags (companies only) — correct the auto-chosen classification */}
+          {entityType === "company" && (
+            <div className="mt-4">
+              <label className="block text-xs font-semibold text-gray-500 mb-1">Industry tags (click to add / remove)</label>
+              <div className="flex flex-wrap gap-1.5">
+                {ALL_TAGS.map((t) => {
+                  const on = industryTags.includes(t);
+                  return (
+                    <button key={t} type="button" onClick={() => toggleTag(t)}
+                      className={"text-xs px-2.5 py-1 rounded-full border transition-colors " + (on ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-gray-600 border-gray-200 hover:border-emerald-400")}>
+                      {formatSector(t)}
+                    </button>
+                  );
+                })}
+              </div>
+              <button onClick={saveTags} disabled={busy}
+                className="mt-2 inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save industry tags
+              </button>
+              <p className="text-[11px] text-gray-400 mt-1">Overrides the AI-classified tags. Selected: {industryTags.length ? industryTags.map(formatSector).join(", ") : "none"}.</p>
+            </div>
+          )}
 
           {/* Logo upload (drag-drop or click) */}
           <label className="block text-xs font-semibold text-gray-500 mb-1 mt-4">Logo (drag a file or click to upload)</label>

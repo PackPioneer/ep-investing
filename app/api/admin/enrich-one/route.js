@@ -59,6 +59,7 @@ async function loadEntity(supabase, cfg, idOrSlug) {
   else col = isNumeric ? 'id' : 'slug';
   const selectCols = ['id', 'name', 'logo_url', cfg.urlCol, ...cfg.fields];
   if (cfg.table !== 'vc_firms') selectCols.push('slug');
+  if (cfg.table === 'companies') selectCols.push('industry_tags');
   const { data } = await supabase.from(cfg.table).select([...new Set(selectCols)].join(', ')).eq(col, key).single();
   return data;
 }
@@ -258,6 +259,10 @@ ${text}`;
       if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
       try { u = new URL(u).href; } catch { return NextResponse.json({ error: 'Invalid URL' }, { status: 400 }); }
       update[cfg.urlCol] = u;
+    }
+    // Editable industry tags (companies only) — replaces the auto-classified set.
+    if (cfg.table === 'companies' && Array.isArray(body.industry_tags)) {
+      update.industry_tags = body.industry_tags.filter((t) => typeof t === 'string' && t.trim());
     }
     if (Object.keys(update).length === 0) return NextResponse.json({ error: 'No valid fields to save' }, { status: 400 });
     const { error } = await supabase.from(cfg.table).update(update).eq('id', id);
