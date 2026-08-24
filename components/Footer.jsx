@@ -12,18 +12,9 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-[#2d6a4f] opacity-20 scale-150" />
-                <div className="w-7 h-7 rounded-full bg-[#2d6a4f] flex items-center justify-center relative z-10">
-                  <div className="w-2 h-2 rounded-full bg-white" />
-                </div>
-              </div>
-              <div>
-                <span style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-[#0f1a14] text-lg font-bold">EP</span>
-                <span className="font-mono text-[10px] text-[#4a5568] tracking-widest ml-1.5 uppercase">Investing</span>
-              </div>
-            </div>
+            <Link href="/" className="inline-block mb-4">
+              <img src="/ep-network-logo.png" alt="EP Network — The Energy Transition" className="h-16 w-auto" />
+            </Link>
             <p className="text-sm text-[#718096] leading-relaxed max-w-xs font-light">
               Climate & energy intelligence. Connecting founders, investors, NGOs, and experts across the energy transition.
             </p>

@@ -30,11 +30,8 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 border-b border-[#e8eaee] bg-[#f6f7f9]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-14">
 
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-2 h-2 rounded-full bg-[#2d6a4f] animate-pulse" />
-            <span style={{ fontFamily: "var(--font-display), sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }} className="text-base text-[#0f1a14]">
-              EP Network
-            </span>
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <img src="/ep-network-logo-horizontal.png" alt="EP Network" className="h-7 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-7">
