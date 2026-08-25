@@ -36,6 +36,10 @@ function DealFlowMock() {
           </div>
         ))}
       </div>
+      <div className="bg-white border border-slate-200 rounded-2xl p-4">
+        <div className="text-xs font-semibold text-slate-500 mb-2">New rounds per week</div>
+        <Bars color="#2d6a4f" />
+      </div>
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2.5">
           <span className="w-2.5 h-2.5 rounded-full bg-[#2d6a4f]" />
@@ -63,18 +67,48 @@ function DealFlowMock() {
   );
 }
 
+// --- tiny static chart mocks (blurred teaser only) ---
+function AreaChart({ color = "#2d6a4f" }) {
+  const pts = "0,86 36,74 72,80 108,54 144,60 180,40 216,46 252,26 288,32 324,16 360,20 400,8";
+  return (
+    <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-24">
+      <polygon fill={color + "14"} points={`${pts} 400,100 0,100`} />
+      <polyline fill="none" stroke={color} strokeWidth="2.5" points={pts} />
+    </svg>
+  );
+}
+function Bars({ color = "#7c3aed" }) {
+  const h = [40, 55, 48, 70, 62, 84, 76, 95, 88, 60, 72, 90];
+  return (
+    <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-24">
+      {h.map((v, i) => <rect key={i} x={i * 33 + 6} y={100 - v} width="22" height={v} rx="3" fill={color + "cc"} />)}
+    </svg>
+  );
+}
+function TickerStrip() {
+  const t = [["ENPH", "+2.1%", true], ["FSLR", "+1.4%", true], ["PLUG", "-3.2%", false], ["RUN", "+0.8%", true], ["BE", "-1.1%", false], ["NEE", "+0.5%", true], ["STEM", "+4.3%", true]];
+  return (
+    <div className="bg-[#0f1a14] rounded-xl px-4 py-2.5 flex items-center gap-5 overflow-hidden">
+      {t.map(([sym, chg, up]) => (
+        <span key={sym} className="flex items-center gap-1.5 whitespace-nowrap text-xs">
+          <span className="font-mono font-semibold text-white">{sym}</span>
+          <span className={up ? "text-emerald-400" : "text-red-400"}>{chg}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function MarketsMock() {
   const rows = [
-    { n: "Helio Grid Systems", s: "Solar", a: "$42M", st: "Series B", d: "Aug 2027" },
-    { n: "Northwind Storage", s: "Battery Storage", a: "$120M", st: "Growth", d: "Aug 2027" },
-    { n: "Atlas Geothermal", s: "Geothermal", a: "$210M", st: "Series C", d: "Jul 2027" },
-    { n: "Verdant Hydrogen", s: "Green Hydrogen", a: "$28M", st: "Series A", d: "Jul 2027" },
-    { n: "Orbit E-Fuels", s: "SAF / E-fuels", a: "$54M", st: "Series B", d: "Jul 2027" },
-    { n: "Cinder Carbon", s: "Direct Air Capture", a: "$8M", st: "Seed", d: "Jun 2027" },
-    { n: "Reef Renewables", s: "Offshore Wind", a: "$16M", st: "Series A", d: "Jun 2027" },
+    { n: "Helio Grid Systems", s: "Solar", a: "$42M", st: "Series B" },
+    { n: "Northwind Storage", s: "Battery Storage", a: "$120M", st: "Growth" },
+    { n: "Atlas Geothermal", s: "Geothermal", a: "$210M", st: "Series C" },
+    { n: "Verdant Hydrogen", s: "Green Hydrogen", a: "$28M", st: "Series A" },
   ];
   return (
     <div className="flex flex-col gap-4">
+      <TickerStrip />
       <div className="grid grid-cols-3 gap-3">
         {[["Median round", "$18M"], ["Deals tracked", "1,240"], ["Capital, 90d", "$3.9B"]].map(([l, n]) => (
           <div key={l} className="bg-white border border-slate-200 rounded-xl px-4 py-3">
@@ -83,16 +117,22 @@ function MarketsMock() {
           </div>
         ))}
       </div>
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-[1fr_auto_auto] gap-4 px-5 py-2.5 border-b border-slate-100 text-[11px] font-mono uppercase tracking-wide text-slate-400">
-          <span>Company</span><span>Amount</span><span>Date</span>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4">
+          <div className="text-xs font-semibold text-slate-500 mb-2">Capital deployed</div>
+          <AreaChart color="#2d6a4f" />
         </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4">
+          <div className="text-xs font-semibold text-slate-500 mb-2">Deals per month</div>
+          <Bars color="#2d6a4f" />
+        </div>
+      </div>
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
         <div className="divide-y divide-slate-100">
           {rows.map((r) => (
-            <div key={r.n} className="grid grid-cols-[1fr_auto_auto] gap-4 px-5 py-3 items-center">
+            <div key={r.n} className="grid grid-cols-[1fr_auto] gap-4 px-5 py-3 items-center">
               <div><div className="text-sm font-semibold text-slate-900">{r.n}</div><div className="text-xs text-slate-500">{r.s} · {r.st}</div></div>
               <div className="text-sm font-semibold text-slate-900 text-right">{r.a}</div>
-              <div className="text-xs text-slate-400 text-right w-20">{r.d}</div>
             </div>
           ))}
         </div>
@@ -111,14 +151,22 @@ function ReportsMock() {
     { t: "Direct Air Capture Cost Curve", g: "Research", c: "#db2777" },
   ];
   return (
-    <div className="grid sm:grid-cols-2 gap-3">
-      {reports.map((r) => (
-        <div key={r.t} className="bg-white border border-slate-200 rounded-xl p-5">
-          <span className="text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ background: r.c + "1a", color: r.c }}>{r.g}</span>
-          <div className="text-sm font-bold text-slate-900 mt-2 leading-snug">{r.t}</div>
-          <div className="text-xs text-slate-400 mt-2">PDF · 12 pages</div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5">
+        <span className="text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#2d6a4f1a] text-[#2d6a4f]">Featured report</span>
+        <div className="text-lg font-bold text-slate-900 mt-2 leading-snug">Q3 2027 Climate Capital Report</div>
+        <div className="text-xs text-slate-500 mb-2">Where capital flowed across the energy transition</div>
+        <AreaChart color="#7c3aed" />
+      </div>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {reports.map((r) => (
+          <div key={r.t} className="bg-white border border-slate-200 rounded-xl p-5">
+            <span className="text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ background: r.c + "1a", color: r.c }}>{r.g}</span>
+            <div className="text-sm font-bold text-slate-900 mt-2 leading-snug">{r.t}</div>
+            <div className="text-xs text-slate-400 mt-2">PDF · 12 pages</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
