@@ -33,28 +33,21 @@ export async function GET() {
 
   const customerId = company?.stripe_customer_id || investor?.stripe_customer_id;
 
-  if (!customerId) {
-    // Check by email in Stripe
-    if (email) {
-      const customers = await stripe.customers.list({ email, limit: 1 });
-      if (customers.data.length > 0) {
-        const methods = await stripe.paymentMethods.list({
-          customer: customers.data[0].id,
-          type: "card",
-        });
-        return NextResponse.json({ hasPayment: methods.data.length > 0 });
-      }
-    }
-    return NextResponse.json({ hasPayment: false });
+  // Resolve a customer id — from our tables, else by email in Stripe.
+  let resolvedId = customerId;
+  if (!resolvedId && email) {
+    const customers = await stripe.customers.list({ email, limit: 1 });
+    if (customers.data.length > 0) resolvedId = customers.data[0].id;
   }
+  if (!resolvedId) return NextResponse.json({ hasPayment: false });
 
-  // Check if customer has a saved payment method
+  // Access is granted by an ACTIVE subscription (member Pro) OR a saved card
+  // (legacy company/investor card-capture flow — kept so no one is locked out).
   try {
-    const methods = await stripe.paymentMethods.list({
-      customer: customerId,
-      type: "card",
-    });
-    return NextResponse.json({ hasPayment: methods.data.length > 0 });
+    const subs = await stripe.subscriptions.list({ customer: resolvedId, status: "active", limit: 1 });
+    if (subs.data.length > 0) return NextResponse.json({ hasPayment: true, via: "subscription" });
+    const methods = await stripe.paymentMethods.list({ customer: resolvedId, type: "card" });
+    return NextResponse.json({ hasPayment: methods.data.length > 0, via: methods.data.length > 0 ? "card" : null });
   } catch {
     return NextResponse.json({ hasPayment: false });
   }

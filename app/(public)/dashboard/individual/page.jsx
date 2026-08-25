@@ -10,15 +10,36 @@ import MarketsTab from "@/components/dashboard/MarketsTab";
 import RaisingTab from "@/components/dashboard/RaisingTab";
 
 // Pro features are open during the free period; flip to false to hard-gate.
-const FREE_PREVIEW = true;
+const FREE_PREVIEW = false; // set true to open Pro tabs to everyone (preview mode)
+const PRO_PRICE = "$19/mo";
 function ProGate({ hasPayment, children }) {
+  const [busy, setBusy] = useState(false);
   if (hasPayment || FREE_PREVIEW) return children;
+
+  const startCheckout = async () => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/stripe/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else throw new Error(data.error || "Checkout unavailable");
+    } catch (e) {
+      setBusy(false);
+      alert("Couldn't start checkout — " + e.message);
+    }
+  };
+
   return (
     <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center max-w-lg mx-auto">
       <div className="text-[10px] font-mono uppercase tracking-widest text-[#2d6a4f] mb-2">EP Network Pro</div>
       <h3 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl font-bold text-[#0f1a14] mb-2">Unlock the intelligence layer</h3>
-      <p className="text-sm text-[#4a5568] mb-5 max-w-sm mx-auto">Go Pro for the market tracker, live deal flow, and research reports across the energy transition.</p>
-      <a href="/pricing" className="inline-block bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40]">See Pro plans</a>
+      <p className="text-sm text-[#4a5568] mb-1 max-w-sm mx-auto">The market tracker, live deal flow, and research reports across the energy transition.</p>
+      <p className="text-sm text-[#0f1a14] font-semibold mb-5">{PRO_PRICE} · cancel anytime</p>
+      <button onClick={startCheckout} disabled={busy}
+        className="inline-block bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] disabled:opacity-50">
+        {busy ? "Starting…" : `Go Pro — ${PRO_PRICE}`}
+      </button>
+      <div className="mt-3"><a href="/pricing" className="text-xs text-[#718096] hover:text-[#2d6a4f] underline">See all plans</a></div>
     </div>
   );
 }
