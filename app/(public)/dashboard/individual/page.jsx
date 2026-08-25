@@ -37,9 +37,8 @@ function ProGate({ hasPayment, children }) {
       <p className="text-sm text-[#0f1a14] font-semibold mb-5">{PRO_PRICE} · cancel anytime</p>
       <button onClick={startCheckout} disabled={busy}
         className="inline-block bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] disabled:opacity-50">
-        {busy ? "Starting…" : `Go Pro — ${PRO_PRICE}`}
+        {busy ? "Starting…" : `Upgrade plan — ${PRO_PRICE}`}
       </button>
-      <div className="mt-3"><a href="/pricing" className="text-xs text-[#718096] hover:text-[#2d6a4f] underline">See all plans</a></div>
     </div>
   );
 }
