@@ -120,10 +120,20 @@ export default function IndividualDashboard() {
     const has = followIds.has(id);
     setFollowIds((prev) => { const n = new Set(prev); has ? n.delete(id) : n.add(id); return n; });
     try {
-      if (has) await fetch(`/api/dashboard/individual/follows?company_id=${id}`, { method: "DELETE" });
-      else await fetch("/api/dashboard/individual/follows", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ company_id: id }) });
-    } catch (e) {}
-    loadFollows();
+      const res = has
+        ? await fetch(`/api/dashboard/individual/follows?company_id=${id}`, { method: "DELETE" })
+        : await fetch("/api/dashboard/individual/follows", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ company_id: id }) });
+      if (!res.ok) {
+        const msg = await res.json().catch(() => ({}));
+        throw new Error(msg.error || `Save failed (${res.status})`);
+      }
+      loadFollows();
+    } catch (e) {
+      // Revert the optimistic toggle so the UI reflects reality, and surface why.
+      setFollowIds((prev) => { const n = new Set(prev); has ? n.add(id) : n.delete(id); return n; });
+      console.error("Follow toggle failed:", e.message);
+      alert("Couldn't save that company — please try again. (" + e.message + ")");
+    }
   };
 
   const saveListing = async (listNow) => {
