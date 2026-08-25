@@ -25,7 +25,7 @@ const MOCK_ROWS = [
   { n: "Pulse Grid AI", s: "Grid Monitoring · Seed", a: "$6M", c: "+12%" },
   { n: "Orbit E-Fuels", s: "SAF / E-fuels · Series B", a: "$54M", c: "+15%" },
 ];
-function ProMock() {
+function DealFlowMock() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-3 gap-3">
@@ -63,7 +63,70 @@ function ProMock() {
   );
 }
 
-function ProGate({ hasPayment, children }) {
+function MarketsMock() {
+  const rows = [
+    { n: "Helio Grid Systems", s: "Solar", a: "$42M", st: "Series B", d: "Aug 2027" },
+    { n: "Northwind Storage", s: "Battery Storage", a: "$120M", st: "Growth", d: "Aug 2027" },
+    { n: "Atlas Geothermal", s: "Geothermal", a: "$210M", st: "Series C", d: "Jul 2027" },
+    { n: "Verdant Hydrogen", s: "Green Hydrogen", a: "$28M", st: "Series A", d: "Jul 2027" },
+    { n: "Orbit E-Fuels", s: "SAF / E-fuels", a: "$54M", st: "Series B", d: "Jul 2027" },
+    { n: "Cinder Carbon", s: "Direct Air Capture", a: "$8M", st: "Seed", d: "Jun 2027" },
+    { n: "Reef Renewables", s: "Offshore Wind", a: "$16M", st: "Series A", d: "Jun 2027" },
+  ];
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-3 gap-3">
+        {[["Median round", "$18M"], ["Deals tracked", "1,240"], ["Capital, 90d", "$3.9B"]].map(([l, n]) => (
+          <div key={l} className="bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <div className="text-2xl font-bold text-slate-900">{n}</div>
+            <div className="text-xs text-slate-500 mt-0.5">{l}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+        <div className="grid grid-cols-[1fr_auto_auto] gap-4 px-5 py-2.5 border-b border-slate-100 text-[11px] font-mono uppercase tracking-wide text-slate-400">
+          <span>Company</span><span>Amount</span><span>Date</span>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {rows.map((r) => (
+            <div key={r.n} className="grid grid-cols-[1fr_auto_auto] gap-4 px-5 py-3 items-center">
+              <div><div className="text-sm font-semibold text-slate-900">{r.n}</div><div className="text-xs text-slate-500">{r.s} · {r.st}</div></div>
+              <div className="text-sm font-semibold text-slate-900 text-right">{r.a}</div>
+              <div className="text-xs text-slate-400 text-right w-20">{r.d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportsMock() {
+  const reports = [
+    { t: "State of Green Hydrogen — Q3 2027", g: "Sector report", c: "#2d6a4f" },
+    { t: "Battery Storage Funding Trends", g: "Market data", c: "#7c3aed" },
+    { t: "Who's Raising: Grid & Transmission", g: "Deal flow", c: "#0ea5e9" },
+    { t: "Nuclear & SMR Landscape 2027", g: "Sector report", c: "#d97706" },
+    { t: "Climate Hiring Index — August", g: "Talent", c: "#059669" },
+    { t: "Direct Air Capture Cost Curve", g: "Research", c: "#db2777" },
+  ];
+  return (
+    <div className="grid sm:grid-cols-2 gap-3">
+      {reports.map((r) => (
+        <div key={r.t} className="bg-white border border-slate-200 rounded-xl p-5">
+          <span className="text-[10px] font-medium uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ background: r.c + "1a", color: r.c }}>{r.g}</span>
+          <div className="text-sm font-bold text-slate-900 mt-2 leading-snug">{r.t}</div>
+          <div className="text-xs text-slate-400 mt-2">PDF · 12 pages</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const PRO_MOCKS = { markets: MarketsMock, raising: DealFlowMock, reports: ReportsMock };
+
+function ProGate({ hasPayment, variant = "raising", children }) {
+  const Mock = PRO_MOCKS[variant] || DealFlowMock;
   const [busy, setBusy] = useState(false);
   if (hasPayment || FREE_PREVIEW) return children;
 
@@ -84,7 +147,7 @@ function ProGate({ hasPayment, children }) {
     <div className="relative">
       {/* Instant, static teaser of what's behind the paywall (blurred) */}
       <div className="blur-[5px] pointer-events-none select-none max-h-[560px] overflow-hidden" aria-hidden="true">
-        <ProMock />
+        <Mock />
       </div>
       {/* Upgrade overlay — light scrim so the teaser stays visible */}
       <div className="absolute inset-0 flex items-start justify-center pt-20 bg-[#f6f7f9]/20">
@@ -458,14 +521,14 @@ export default function IndividualDashboard() {
         )}
 
         {/* MARKETS (Pro) */}
-        {tab === "markets" && <ProGate hasPayment={hasPayment}><MarketsTab isSaved={(id) => followIds.has(id)} onToggleSave={toggleFollow} /></ProGate>}
+        {tab === "markets" && <ProGate hasPayment={hasPayment} variant="markets"><MarketsTab isSaved={(id) => followIds.has(id)} onToggleSave={toggleFollow} /></ProGate>}
 
         {/* DEAL FLOW (Pro) */}
-        {tab === "raising" && <ProGate hasPayment={hasPayment}><RaisingTab isSaved={(id) => followIds.has(id)} onToggleSave={toggleFollow} /></ProGate>}
+        {tab === "raising" && <ProGate hasPayment={hasPayment} variant="raising"><RaisingTab isSaved={(id) => followIds.has(id)} onToggleSave={toggleFollow} /></ProGate>}
 
         {/* REPORTS (Pro) */}
         {tab === "reports" && (
-          <ProGate hasPayment={hasPayment}>
+          <ProGate hasPayment={hasPayment} variant="reports">
             <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl font-bold text-[#0f1a14] mb-4">Research reports</h2>
             {reports.length === 0 ? (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center text-sm text-[#4a5568]">No reports yet — check back soon.</div>
