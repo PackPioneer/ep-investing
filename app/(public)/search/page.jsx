@@ -26,7 +26,7 @@ const INDUSTRY_FILTERS = [
   "green_hydrogen", "wind_energy", "solar", "geothermal_energy",
   "industrial_decarbonization", "ev_charging", "carbon_credits",
   "clean_cooking", "direct_air_capture", "saf_efuels", "grid_storage", "grid_monitoring",
-  "electric_vehicles", "agtech", "maritime_shipping", "energy_generation", "energy_efficiency", "energy_management"
+  "electric_vehicles", "agtech", "maritime_shipping", "fintech", "energy_generation", "energy_efficiency", "energy_management"
 ];
 
 const STAGE_OPTIONS = ["pre_seed","seed","series_a","series_b","series_c","growth","public"];
