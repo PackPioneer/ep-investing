@@ -12,6 +12,57 @@ import RaisingTab from "@/components/dashboard/RaisingTab";
 // Pro features are open during the free period; flip to false to hard-gate.
 const FREE_PREVIEW = false; // set true to open Pro tabs to everyone (preview mode)
 const PRO_PRICE = "$19/mo";
+
+// Static, instantly-rendered mock of the Pro content — used as the blurred
+// teaser behind the paywall so it looks like real data immediately.
+const MOCK_ROWS = [
+  { n: "Helio Grid Systems", s: "Solar · Series B", a: "$42M", c: "+18%" },
+  { n: "Verdant Hydrogen", s: "Green Hydrogen · Series A", a: "$28M", c: "+9%" },
+  { n: "Northwind Storage", s: "Battery Storage · Growth", a: "$120M", c: "+24%" },
+  { n: "Atlas Geothermal", s: "Geothermal · Series C", a: "$210M", c: "+31%" },
+  { n: "Cinder Carbon", s: "Direct Air Capture · Seed", a: "$8M", c: "+5%" },
+  { n: "Reef Renewables", s: "Offshore Wind · Series A", a: "$16M", c: "+7%" },
+  { n: "Pulse Grid AI", s: "Grid Monitoring · Seed", a: "$6M", c: "+12%" },
+  { n: "Orbit E-Fuels", s: "SAF / E-fuels · Series B", a: "$54M", c: "+15%" },
+];
+function ProMock() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-3 gap-3">
+        {[["Raising now", "24", "#2d6a4f"], ["Recently raised", "18", "#7c3aed"], ["Likely soon", "42", "#d97706"]].map(([l, n, c]) => (
+          <div key={l} className="bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <div className="text-2xl font-bold text-slate-900">{n}</div>
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5"><span className="w-1.5 h-1.5 rounded-full" style={{ background: c }} />{l}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2d6a4f]" />
+          <div className="text-sm font-bold text-slate-900">Raising now <span className="text-slate-400 font-mono font-normal">24</span></div>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {MOCK_ROWS.map((r) => (
+            <div key={r.n} className="flex items-center justify-between px-5 py-3">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-300">☆</span>
+                <div>
+                  <div className="text-sm font-semibold text-slate-900">{r.n}</div>
+                  <div className="text-xs text-slate-500">{r.s}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-semibold text-slate-900">{r.a}</div>
+                <div className="text-[11px] text-emerald-600">{r.c}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProGate({ hasPayment, children }) {
   const [busy, setBusy] = useState(false);
   if (hasPayment || FREE_PREVIEW) return children;
@@ -31,12 +82,12 @@ function ProGate({ hasPayment, children }) {
 
   return (
     <div className="relative">
-      {/* Real content, blurred as a teaser of what's behind the paywall */}
-      <div className="blur-[6px] pointer-events-none select-none max-h-[640px] overflow-hidden" aria-hidden="true">
-        {children}
+      {/* Instant, static teaser of what's behind the paywall (blurred) */}
+      <div className="blur-[5px] pointer-events-none select-none max-h-[560px] overflow-hidden" aria-hidden="true">
+        <ProMock />
       </div>
-      {/* Upgrade overlay */}
-      <div className="absolute inset-0 flex items-start justify-center pt-16 bg-gradient-to-b from-[#f6f7f9]/30 via-[#f6f7f9]/70 to-[#f6f7f9]">
+      {/* Upgrade overlay — light scrim so the teaser stays visible */}
+      <div className="absolute inset-0 flex items-start justify-center pt-20 bg-[#f6f7f9]/20">
         <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center max-w-md shadow-xl">
           <div className="text-[10px] font-mono uppercase tracking-widest text-[#2d6a4f] mb-2">EP Network Pro</div>
           <h3 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl font-bold text-[#0f1a14] mb-2">Unlock the intelligence layer</h3>
