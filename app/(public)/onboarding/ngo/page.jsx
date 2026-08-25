@@ -15,7 +15,7 @@ const ORG_TYPES = [
 ];
 
 const SECTORS = [
-  "solar", "wind-energy", "battery-storage", "grid-storage", "green-hydrogen",
+  "solar", "wind-energy", "battery-storage", "grid-storage", "energy-storage", "green-hydrogen",
   "ev-charging", "electric-vehicles", "carbon-credits", "direct-air-capture",
   "saf-efuels", "nuclear-technologies", "geothermal-energy", "clean-cooking",
   "industrial-decarbonization", "buildings-efficiency", "transmission",
