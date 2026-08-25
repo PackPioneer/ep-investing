@@ -30,15 +30,24 @@ function ProGate({ hasPayment, children }) {
   };
 
   return (
-    <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center max-w-lg mx-auto">
-      <div className="text-[10px] font-mono uppercase tracking-widest text-[#2d6a4f] mb-2">EP Network Pro</div>
-      <h3 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl font-bold text-[#0f1a14] mb-2">Unlock the intelligence layer</h3>
-      <p className="text-sm text-[#4a5568] mb-1 max-w-sm mx-auto">The market tracker, live deal flow, and research reports across the energy transition.</p>
-      <p className="text-sm text-[#0f1a14] font-semibold mb-5">{PRO_PRICE} · cancel anytime</p>
-      <button onClick={startCheckout} disabled={busy}
-        className="inline-block bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] disabled:opacity-50">
-        {busy ? "Starting…" : `Upgrade plan — ${PRO_PRICE}`}
-      </button>
+    <div className="relative">
+      {/* Real content, blurred as a teaser of what's behind the paywall */}
+      <div className="blur-[6px] pointer-events-none select-none max-h-[640px] overflow-hidden" aria-hidden="true">
+        {children}
+      </div>
+      {/* Upgrade overlay */}
+      <div className="absolute inset-0 flex items-start justify-center pt-16 bg-gradient-to-b from-[#f6f7f9]/30 via-[#f6f7f9]/70 to-[#f6f7f9]">
+        <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center max-w-md shadow-xl">
+          <div className="text-[10px] font-mono uppercase tracking-widest text-[#2d6a4f] mb-2">EP Network Pro</div>
+          <h3 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-xl font-bold text-[#0f1a14] mb-2">Unlock the intelligence layer</h3>
+          <p className="text-sm text-[#4a5568] mb-1 max-w-sm mx-auto">The market tracker, live deal flow, and research reports across the energy transition.</p>
+          <p className="text-sm text-[#0f1a14] font-semibold mb-5">{PRO_PRICE} · cancel anytime</p>
+          <button onClick={startCheckout} disabled={busy}
+            className="inline-block bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg px-6 py-3 hover:bg-[#235a40] disabled:opacity-50">
+            {busy ? "Starting…" : `Upgrade plan — ${PRO_PRICE}`}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
