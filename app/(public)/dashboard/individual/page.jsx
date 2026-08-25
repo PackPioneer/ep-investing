@@ -214,30 +214,33 @@ export default function IndividualDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] px-6 py-10" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
 
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-3xl font-bold text-[#0f1a14] mb-2">Welcome back, {firstName}</h1>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-[#4a5568]">Following:</span>
-              {industries.length > 0 ? industries.map((slug) => (
-                <span key={slug} className="text-xs bg-white border border-[#e8eaee] rounded-full px-3 py-1 text-[#0f1a14]">{INDUSTRY_LABELS[slug] || slug}</span>
-              )) : <Link href="/onboarding/individual" className="text-xs text-[#2d6a4f] underline">Set up your industries</Link>}
-            </div>
+        {/* LEFT SIDEBAR */}
+        <aside className="md:w-56 flex-shrink-0 md:sticky md:top-6 md:self-start">
+          <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl font-bold text-[#0f1a14] mb-1">Welcome back, {firstName}</h1>
+          <div className="flex flex-wrap items-center gap-1.5 mb-6">
+            <span className="text-[11px] text-[#4a5568]">Following:</span>
+            {industries.length > 0 ? industries.map((slug) => (
+              <span key={slug} className="text-[11px] bg-white border border-[#e8eaee] rounded-full px-2.5 py-0.5 text-[#0f1a14]">{INDUSTRY_LABELS[slug] || slug}</span>
+            )) : <Link href="/onboarding/individual" className="text-[11px] text-[#2d6a4f] underline">Set up your industries</Link>}
           </div>
-          <button onClick={() => { setShowFeedback(true); setReqSent(false); }} className="text-xs text-[#8a958f] hover:text-[#2d6a4f] whitespace-nowrap mt-1">Send feedback</button>
-        </div>
 
-        <div className="flex gap-1 border-b border-[#e8eaee] mb-8 overflow-x-auto">
-          {TABS.map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors ${tab === t.id ? "border-[#2d6a4f] text-[#0f1a14]" : "border-transparent text-[#a0aec0] hover:text-[#4a5568]"}`}>
-              {t.label}
-              {t.pro && <span className="ml-1.5 text-[9px] font-mono uppercase tracking-wide bg-[#eef4f0] text-[#2d6a4f] rounded px-1 py-0.5 align-middle">Pro</span>}
-            </button>
-          ))}
-        </div>
+          <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible border-b md:border-b-0 border-[#e8eaee] pb-2 md:pb-0">
+            {TABS.map((t) => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                className={`flex items-center justify-between gap-2 text-left text-sm font-medium rounded-lg px-3 py-2 whitespace-nowrap transition-colors ${tab === t.id ? "bg-[#eef4f0] text-[#0f1a14]" : "text-[#4a5568] hover:bg-white hover:text-[#0f1a14]"}`}>
+                <span>{t.label}</span>
+                {t.pro && <span className="text-[9px] font-mono uppercase tracking-wide bg-[#eef4f0] text-[#2d6a4f] rounded px-1 py-0.5">Pro</span>}
+              </button>
+            ))}
+          </nav>
+
+          <button onClick={() => { setShowFeedback(true); setReqSent(false); }} className="hidden md:block text-xs text-[#8a958f] hover:text-[#2d6a4f] mt-6">Send feedback</button>
+        </aside>
+
+        {/* RIGHT CONTENT */}
+        <div className="flex-1 min-w-0">
 
         {/* YOUR FEED */}
         {tab === "feed" && (
@@ -437,6 +440,7 @@ export default function IndividualDashboard() {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* FEEDBACK MODAL */}
