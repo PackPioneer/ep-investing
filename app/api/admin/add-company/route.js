@@ -108,16 +108,21 @@ export async function POST(req) {
     }
     const hostname = new URL(normalizedUrl).hostname.replace(/^www\./, "");
 
-    const { data: existing } = await supabase
+    // Candidate matches by substring, then confirm by EXACT hostname so
+    // "sense.com" doesn't collide with "sentrisense.com".
+    const { data: candidates } = await supabase
       .from("companies")
-      .select("id, name")
+      .select("id, name, url")
       .ilike("url", `%${hostname}%`)
-      .limit(1);
+      .limit(20);
+    const dup = (candidates || []).find((c) => {
+      try { return new URL(c.url).hostname.replace(/^www\./, "") === hostname; } catch { return false; }
+    });
 
-    if (existing?.length > 0) {
+    if (dup) {
       return NextResponse.json({
-        error: `Already exists: ${existing[0].name}`,
-        existing_id: existing[0].id,
+        error: `Already exists: ${dup.name}`,
+        existing_id: dup.id,
       }, { status: 409 });
     }
 

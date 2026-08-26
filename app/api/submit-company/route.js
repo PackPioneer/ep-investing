@@ -133,17 +133,21 @@ export async function POST(req) {
 
     const hostname = new URL(normalizedUrl).hostname.replace(/^www\./, '');
 
-    // Check if already exists
-    const { data: existing } = await supabase
+    // Check if already exists — substring candidates, then confirm exact
+    // hostname so "sense.com" doesn't collide with "sentrisense.com".
+    const { data: candidates } = await supabase
       .from('companies')
-      .select('id, name')
+      .select('id, name, url')
       .ilike('url', `%${hostname}%`)
-      .limit(1);
+      .limit(20);
+    const existing = (candidates || []).find((c) => {
+      try { return new URL(c.url).hostname.replace(/^www\./, '') === hostname; } catch { return false; }
+    });
 
-    if (existing?.length > 0) {
+    if (existing) {
       return NextResponse.json({
         error: 'This company is already in our database',
-        existing: existing[0].name,
+        existing: existing.name,
       }, { status: 409 });
     }
 
