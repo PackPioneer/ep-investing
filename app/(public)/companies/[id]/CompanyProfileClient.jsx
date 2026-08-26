@@ -145,7 +145,7 @@ async function postUpdate(e) {
       />
       <div className="max-w-6xl mx-auto px-6 py-10">
 
-        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-[#4a5568] hover:text-[#0f1a14] transition-colors mb-8">
           <ArrowLeft size={14} /> Back to dashboard
         </Link>
 
