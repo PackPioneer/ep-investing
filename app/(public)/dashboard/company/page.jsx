@@ -14,19 +14,27 @@ const MODEL_OPTIONS = ["b2b","b2c","b2g","hardware","software","project_develope
 const MODEL_LABELS = { b2b:"B2B", b2c:"B2C", b2g:"B2G", hardware:"Hardware", software:"Software", project_developer:"Project Dev", marketplace:"Marketplace", mixed:"Mixed" };
 
 function AutoRedirect() {
-  const router = useRouter();
+  const [slow, setSlow] = useState(false);
   useEffect(() => {
-    const interval = setInterval(async () => {
-      const res = await fetch("/api/dashboard/company");
-      const data = await res.json();
-      if (data && !data.error) {
-        clearInterval(interval);
-        router.refresh();
-      }
-    }, 2000);
-    setTimeout(() => clearInterval(interval), 30000);
-    return () => clearInterval(interval);
-  }, [router]);
+    let done = false;
+    const check = async () => {
+      try {
+        const res = await fetch("/api/dashboard/company", { cache: "no-store" });
+        const data = await res.json();
+        if (data && !data.error && !done) {
+          done = true;
+          // Full reload so the dashboard component re-mounts and loads the data
+          // (router.refresh() alone leaves this client component's state stale).
+          window.location.reload();
+        }
+      } catch {}
+    };
+    check(); // poll immediately, not after 2s
+    const interval = setInterval(check, 2000);
+    const slowT = setTimeout(() => setSlow(true), 6000);
+    const stopT = setTimeout(() => clearInterval(interval), 30000);
+    return () => { clearInterval(interval); clearTimeout(slowT); clearTimeout(stopT); };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] flex items-center justify-center px-6"
@@ -35,6 +43,12 @@ function AutoRedirect() {
         <div className="w-10 h-10 rounded-full border-2 border-[#2d6a4f] border-t-transparent animate-spin mx-auto mb-6" />
         <h2 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-2xl text-[#0f1a14] mb-3">Setting up your dashboard</h2>
         <p className="text-[#4a5568] text-sm">Your company profile is being linked to your account. This usually takes just a moment.</p>
+        {slow && (
+          <button onClick={() => window.location.reload()}
+            className="mt-6 text-sm bg-[#2d6a4f] text-white font-semibold rounded-lg px-4 py-2 hover:bg-[#235a40]">
+            Reload dashboard
+          </button>
+        )}
       </div>
     </div>
   );
