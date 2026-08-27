@@ -9,7 +9,7 @@ const SECTORS = [
   "saf-efuels", "nuclear-technologies", "geothermal-energy", "clean-cooking",
   "industrial-decarbonization", "buildings-efficiency", "transmission",
   "methane", "air-quality", "water", "waste", "circular-economy", "permitting",
-  "environmental-justice", "agriculture", "forestry",
+  "information-services", "environmental-justice", "agriculture", "forestry",
 ];
 
 const STAFF_SIZES = ["1-10", "11-50", "51-200", "201-1000", "1000+"];

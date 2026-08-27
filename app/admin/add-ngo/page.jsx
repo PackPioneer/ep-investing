@@ -9,7 +9,7 @@ const SECTOR_OPTIONS = [
   "agriculture", "air-quality", "buildings-efficiency", "carbon-credits", "circular-economy",
   "clean-cooking", "clean-heat", "direct-air-capture", "disclosure",
   "electric-vehicles", "energy-storage", "environmental-justice", "forestry", "geothermal-energy",
-  "green-hydrogen", "industrial-decarbonization", "methane", "nuclear-technologies",
+  "green-hydrogen", "industrial-decarbonization", "information-services", "methane", "nuclear-technologies",
   "permitting", "saf-efuels", "solar", "transmission", "water", "wind-energy",
 ];
 

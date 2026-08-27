@@ -12,26 +12,33 @@ const supabase = createClient(
 // Resolve the company this user can manage, via Clerk Organization membership.
 // Any member of the company's org can view and edit (multi-user team support).
 async function resolveCompanyForUser(userId) {
-  const client = await clerkClient();
-  const { data: memberships } =
-    await client.users.getOrganizationMembershipList({ userId, limit: 100 });
-  const orgIds = memberships.map((m) => m.organization.id);
+  // Org membership (multi-user teams). Wrapped so a Clerk hiccup can't 500 the
+  // whole dashboard — fall through to the legacy owner/claimant lookup instead.
+  let orgIds = [];
+  try {
+    const client = await clerkClient();
+    const { data: memberships } = await client.users.getOrganizationMembershipList({ userId, limit: 100 });
+    orgIds = (memberships || []).map((m) => m.organization.id);
+  } catch { /* ignore — fall through */ }
 
   if (orgIds.length > 0) {
+    // limit(1), not maybeSingle(): a user matching >1 company must not error.
     const { data } = await supabase
       .from("companies")
       .select("*")
       .in("clerk_organization_id", orgIds)
-      .maybeSingle();
-    if (data) return data;
+      .order("id", { ascending: true })
+      .limit(1);
+    if (data && data[0]) return data[0];
   }
 
   const { data: legacy } = await supabase
     .from("companies")
     .select("*")
     .or(`clerk_user_id.eq.${userId},claimed_by_clerk_user_id.eq.${userId}`)
-    .maybeSingle();
-  return legacy || null;
+    .order("id", { ascending: true })
+    .limit(1);
+  return (legacy && legacy[0]) || null;
 }
 
 export async function GET() {
