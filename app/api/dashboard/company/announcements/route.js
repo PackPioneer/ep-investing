@@ -24,6 +24,20 @@ async function resolveCompany(userId) {
   return data || null;
 }
 
+// Whether a company may publish to the public newsroom board — a Growth-tier
+// capability. Step 2 will wire this to the company Stripe subscription; today it
+// honors a manual override (companies.newsroom_access = true) so a company can be
+// granted the board before billing ships. False otherwise (profile-only).
+async function companyCanPostToBoard(company) {
+  const supabase = db();
+  const { data, error } = await supabase.from("companies")
+    .select("newsroom_access")
+    .eq("id", company.id)
+    .maybeSingle();
+  if (error || !data) return false;   // column not migrated yet, or no row
+  return data.newsroom_access === true;
+}
+
 // Raise announcements feed the market tracker live (from a vetted company).
 async function applyRaiseFlywheel(supabase, company, ann) {
   const m = ann.meta || {};
@@ -76,7 +90,11 @@ export async function POST(req) {
 
   const supabase = db();
   const now = new Date().toISOString();
-  const { data, error } = await supabase.from("company_announcements").insert({
+  // Whether this update reaches the public newsroom board (and the feed + market
+  // tracker that follow from it) is a paid (Growth) capability. Until company
+  // billing is wired (Step 2), self-posted updates are profile-only.
+  const onBoard = await companyCanPostToBoard(company);
+  const baseRow = {
     company_id: company.id,
     category,
     title: title.trim(),
@@ -86,15 +104,20 @@ export async function POST(req) {
     status: "published",       // vetted companies publish immediately
     published_at: now,
     created_by: userId,
-  }).select().single();
+  };
+  let { data, error } = await supabase.from("company_announcements").insert({ ...baseRow, newsroom: onBoard }).select().single();
+  // Fall back if the newsroom column hasn't been migrated yet.
+  if (error && /newsroom/i.test(error.message)) {
+    ({ data, error } = await supabase.from("company_announcements").insert(baseRow).select().single());
+  }
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
-  // Raise announcements go live in the tracker right away.
-  const trackerId = await applyRaiseFlywheel(supabase, company, data);
-  if (trackerId) await supabase.from("company_announcements").update({ tracker_event_id: trackerId }).eq("id", data.id);
-
-  // Push into the personalized For You feed (sector + tracked-company matched).
-  try { await pushAnnouncementToFeed(supabase, company, data); } catch { /* non-fatal */ }
+  // Public propagation (market tracker + For You feed) only for board updates.
+  if (onBoard) {
+    const trackerId = await applyRaiseFlywheel(supabase, company, data);
+    if (trackerId) await supabase.from("company_announcements").update({ tracker_event_id: trackerId }).eq("id", data.id);
+    try { await pushAnnouncementToFeed(supabase, company, data); } catch { /* non-fatal */ }
+  }
 
   return Response.json(data);
 }

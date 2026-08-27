@@ -75,7 +75,7 @@ export default function CompanyAnnouncements() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-sm font-semibold text-[#0f1a14] mb-1">Announcements</div>
-            <p className="text-xs text-[#718096] max-w-lg">Post partnerships, raises, hires, milestones, and more. Each goes live on your profile and in the EP newsroom right away. Raise announcements feed the investor market tracker.</p>
+            <p className="text-xs text-[#718096] max-w-lg">Post partnerships, raises, hires, milestones, and more. Updates go live on your company profile right away. Publishing to the public EP newsroom board — and feeding the investor market tracker — is a Growth feature.</p>
           </div>
           {!open && (
             <button onClick={() => setOpen(true)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] flex-shrink-0">
@@ -160,6 +160,11 @@ export default function CompanyAnnouncements() {
                     <div className="flex items-center gap-2 flex-wrap mb-0.5">
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] border border-[#dbdfe4]">{catLabel(a.category)}</span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
+                      {a.status === "published" && (
+                        a.newsroom
+                          ? <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">On public board</span>
+                          : <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f2f4f6] text-[#718096] border border-[#dbdfe4]">Profile only</span>
+                      )}
                       {a.is_featured && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Boosted</span>}
                     </div>
                     <div className="text-sm text-[#0f1a14] font-medium truncate">{a.title}</div>

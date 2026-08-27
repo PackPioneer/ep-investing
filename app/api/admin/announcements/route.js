@@ -38,6 +38,7 @@ export async function POST(req) {
     meta: meta && typeof meta === "object" ? meta : {},
     status: "published",
     is_curated: true,
+    newsroom: true,   // admin-curated items always go to the public board
     published_at: published_at ? new Date(published_at).toISOString() : new Date().toISOString(),
     reviewed_by: userId,
     reviewed_at: new Date().toISOString(),
@@ -52,6 +53,11 @@ export async function POST(req) {
   if (error && /ngo_id/i.test(error.message)) {
     if (ngo_id) return Response.json({ error: "Run the ngo-announcements.sql migration to post NGO updates." }, { status: 400 });
     delete payload.ngo_id;
+    ({ data, error } = await supabase.from("company_announcements").insert(payload).select().single());
+  }
+  // If the newsroom column hasn't been added yet, still let admin post.
+  if (error && /newsroom/i.test(error.message)) {
+    delete payload.newsroom;
     ({ data, error } = await supabase.from("company_announcements").insert(payload).select().single());
   }
   if (error) return Response.json({ error: error.message }, { status: 500 });
