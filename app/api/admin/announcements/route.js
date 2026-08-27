@@ -55,7 +55,7 @@ export async function PATCH(req) {
   const userId = await requireAdmin();
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
   const supabase = db();
-  const { id, action, review_note } = await req.json();
+  const { id, action, review_note, fields } = await req.json();
   if (!id || !action) return Response.json({ error: "id and action required" }, { status: 400 });
 
   const { data: ann } = await supabase.from("company_announcements").select("*").eq("id", id).maybeSingle();
@@ -82,6 +82,21 @@ export async function PATCH(req) {
   if (action === "feature" || action === "unfeature") {
     await supabase.from("company_announcements").update({ is_featured: action === "feature" }).eq("id", id);
     return Response.json({ ok: true });
+  }
+
+  if (action === "edit") {
+    const f = fields || {};
+    const CATS = ["partnership", "raise_open", "raise_close", "product", "award", "hire", "milestone", "expansion", "other"];
+    const update = {};
+    if (typeof f.title === "string" && f.title.trim()) update.title = f.title.trim();
+    if (f.body !== undefined) update.body = f.body || null;
+    if (f.link_url !== undefined) update.link_url = f.link_url || null;
+    if (f.category && CATS.includes(f.category)) update.category = f.category;
+    if (f.published_at) update.published_at = new Date(f.published_at).toISOString();
+    if (Object.keys(update).length === 0) return Response.json({ error: "Nothing to update" }, { status: 400 });
+    const { data, error } = await supabase.from("company_announcements").update(update).eq("id", id).select().single();
+    if (error) return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ ok: true, announcement: data });
   }
 
   return Response.json({ error: "Unknown action" }, { status: 400 });

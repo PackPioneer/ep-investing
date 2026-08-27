@@ -26,6 +26,8 @@ export default function AdminAnnouncements() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(null);
+  const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ category: "", title: "", body: "", link_url: "", published_at: "" });
 
   // Post-an-update form (press releases / scraped company updates).
   const [showNew, setShowNew] = useState(false);
@@ -110,6 +112,22 @@ export default function AdminAnnouncements() {
     load(tab);
   };
   const takedown = (id) => { const note = prompt("Reason (shown to the company):"); if (note !== null) act(id, "takedown", note); };
+
+  const startEdit = (a) => {
+    setEditId(a.id);
+    setEditForm({
+      category: a.category || "other",
+      title: a.title || "",
+      body: a.body || "",
+      link_url: a.link_url || "",
+      published_at: a.published_at ? new Date(a.published_at).toISOString().slice(0, 10) : "",
+    });
+  };
+  const saveEdit = async (id) => {
+    setBusy(id);
+    await fetch("/api/admin/announcements", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action: "edit", fields: editForm }) });
+    setBusy(null); setEditId(null); load(tab);
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -250,6 +268,7 @@ export default function AdminAnnouncements() {
                     {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-700 hover:underline mt-1 inline-block">{a.link_url}</a>}
                   </div>
                   <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                    <button disabled={busy === a.id} onClick={() => (editId === a.id ? setEditId(null) : startEdit(a))} className="text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-50 border border-slate-200 text-slate-600 hover:bg-slate-50">{editId === a.id ? "Close" : "Edit"}</button>
                     {a.status === "published" && (
                       <>
                         <button disabled={busy === a.id} onClick={() => act(a.id, a.is_featured ? "unfeature" : "feature")} className="text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-50 border border-violet-200 text-violet-700 hover:bg-violet-50">{a.is_featured ? "Un-boost" : "Boost"}</button>
@@ -261,6 +280,39 @@ export default function AdminAnnouncements() {
                     )}
                   </div>
                 </div>
+
+                {editId === a.id && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Category</label>
+                        <select value={editForm.category} onChange={(e) => setEditForm((f) => ({ ...f, category: e.target.value }))} className="w-full text-sm border border-slate-200 rounded-lg px-2 py-2 focus:outline-none focus:border-emerald-400">
+                          {Object.entries(CAT_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Date</label>
+                        <input type="date" value={editForm.published_at} onChange={(e) => setEditForm((f) => ({ ...f, published_at: e.target.value }))} className="w-full text-sm border border-slate-200 rounded-lg px-2 py-2 focus:outline-none focus:border-emerald-400" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Headline</label>
+                      <input value={editForm.title} onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Details</label>
+                      <textarea value={editForm.body} onChange={(e) => setEditForm((f) => ({ ...f, body: e.target.value }))} rows={3} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Source link</label>
+                      <input value={editForm.link_url} onChange={(e) => setEditForm((f) => ({ ...f, link_url: e.target.value }))} placeholder="https://…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                    </div>
+                    <div className="flex gap-2">
+                      <button disabled={busy === a.id || !editForm.title.trim()} onClick={() => saveEdit(a.id)} className="text-sm font-semibold bg-emerald-600 text-white rounded-lg px-4 py-2 hover:bg-emerald-700 disabled:opacity-40">{busy === a.id ? "Saving…" : "Save changes"}</button>
+                      <button onClick={() => setEditId(null)} className="text-sm text-slate-500 hover:text-slate-700 px-3 py-2">Cancel</button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
