@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Plus, ArrowRight } from "lucide-react";
 
 const SECTOR_OPTIONS = [
-  "agriculture", "air-quality", "buildings-efficiency", "carbon-credits",
+  "agriculture", "air-quality", "buildings-efficiency", "carbon-credits", "circular-economy",
   "clean-cooking", "clean-heat", "direct-air-capture", "disclosure",
   "electric-vehicles", "energy-storage", "environmental-justice", "forestry", "geothermal-energy",
   "green-hydrogen", "industrial-decarbonization", "methane", "nuclear-technologies",

@@ -8,7 +8,7 @@ const SECTORS = [
   "ev-charging", "electric-vehicles", "carbon-credits", "direct-air-capture",
   "saf-efuels", "nuclear-technologies", "geothermal-energy", "clean-cooking",
   "industrial-decarbonization", "buildings-efficiency", "transmission",
-  "methane", "air-quality", "water", "waste", "permitting",
+  "methane", "air-quality", "water", "waste", "circular-economy", "permitting",
   "environmental-justice", "agriculture", "forestry",
 ];
 
