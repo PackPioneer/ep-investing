@@ -5,7 +5,6 @@ import { formatSector } from "@/lib/sectors";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
-import CompanyNewsroom from "@/components/CompanyNewsroom";
 import { ArrowLeft, Globe, MapPin, Calendar, Cpu, Users, TrendingUp, Target, Star, Factory, ChevronRight, Lock, Briefcase, BarChart2, Handshake, Plus, Rss, Newspaper, Linkedin, Twitter, BadgeCheck } from "lucide-react";
 const STAGE_COLORS = {
   pre_seed: "bg-slate-100 text-slate-600",
@@ -36,6 +35,13 @@ const GEO_LABELS = {
   global: "Global", oceania: "Oceania",
 };
 
+// Announcement category → short label for the profile's update feed.
+const UPDATE_CAT_LABEL = {
+  partnership: "Partnership", raise_open: "Raising", raise_close: "Raise closed",
+  product: "Product", award: "Award", hire: "Key hire", milestone: "Milestone",
+  expansion: "Expansion", other: "Update",
+};
+
 export default function CompanyProfilePage() {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
@@ -46,6 +52,7 @@ export default function CompanyProfilePage() {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [updateForm, setUpdateForm] = useState({ title: "", body: "", link: "", type: "milestone" });
   const [postingUpdate, setPostingUpdate] = useState(false);
+  const [canManage, setCanManage] = useState(false);
   const [isInvestor, setIsInvestor] = useState(false);
   const [companyNews, setCompanyNews] = useState({ mode: "none", items: [] });
   const [jobs, setJobs] = useState([]);
@@ -58,8 +65,9 @@ export default function CompanyProfilePage() {
         setCompany(data);
         setLoading(false);
         posthog.capture("company_viewed", { company_id: id, company_name: data.name });
-        // Fetch relevant grants based on industry tags
-        fetch(`/api/companies/${id}/updates`)
+        // Company updates now live in the unified announcements system, so the
+        // profile and the dashboard show the same posts.
+        fetch(`/api/announcements?company_id=${id}&limit=12`)
           .then(r => r.json())
           .then(u => setUpdates(Array.isArray(u) ? u : []))
           .catch(() => {});
@@ -85,22 +93,38 @@ export default function CompanyProfilePage() {
   .then(r => r.json())
   .then(d => setIsInvestor(d.isInvestor))
   .catch(() => {});
+      // Does the signed-in user manage THIS company? Only then show quick-add.
+      fetch("/api/dashboard/company")
+        .then(r => (r.ok ? r.json() : null))
+        .then(c => { if (c && String(c.id) === String(id)) setCanManage(true); })
+        .catch(() => {});
   }, [id]);
 async function postUpdate(e) {
     e.preventDefault();
     if (!updateForm.title.trim()) return;
     setPostingUpdate(true);
     try {
-      const res = await fetch(`/api/companies/${id}/updates`, {
+      // Posts to the same system as the dashboard. New updates are profile-only
+      // (the public newsroom board is a Growth feature); this stays in sync.
+      const res = await fetch(`/api/dashboard/company/announcements`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updateForm),
+        body: JSON.stringify({
+          category: updateForm.type,
+          title: updateForm.title,
+          body: updateForm.body,
+          link_url: updateForm.link,
+          meta: {},
+        }),
       });
       if (res.ok) {
-        const newUpdate = await res.json();
-        setUpdates(prev => [newUpdate, ...prev]);
         setUpdateForm({ title: "", body: "", link: "", type: "milestone" });
         setShowUpdateForm(false);
+        // Refetch so the new post renders in the unified announcement shape.
+        fetch(`/api/announcements?company_id=${id}&limit=12`)
+          .then(r => r.json())
+          .then(u => setUpdates(Array.isArray(u) ? u : []))
+          .catch(() => {});
       }
     } finally {
       setPostingUpdate(false);
@@ -380,13 +404,15 @@ async function postUpdate(e) {
                   <Rss size={16} className="text-[#2d6a4f]" />
                   <h2 className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Recent Updates</h2>
                 </div>
-                <button onClick={() => setShowUpdateForm(v => !v)}
-                  className="inline-flex items-center gap-1 text-xs text-[#2d6a4f] font-mono hover:underline">
-                  <Plus size={12} /> Add update
-                </button>
+                {canManage && (
+                  <button onClick={() => setShowUpdateForm(v => !v)}
+                    className="inline-flex items-center gap-1 text-xs text-[#2d6a4f] font-mono hover:underline">
+                    <Plus size={12} /> Add update
+                  </button>
+                )}
               </div>
 
-              {showUpdateForm && (
+              {canManage && showUpdateForm && (
                 <form onSubmit={postUpdate} className="mb-5 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
                   <input
                     required
@@ -413,10 +439,13 @@ async function postUpdate(e) {
                     onChange={e => setUpdateForm(p => ({ ...p, type: e.target.value }))}
                     className="text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]">
                     <option value="milestone">Milestone</option>
-                    <option value="hiring">Hiring</option>
-                    <option value="funding">Funding</option>
-                    <option value="product">Product</option>
                     <option value="partnership">Partnership</option>
+                    <option value="product">Product</option>
+                    <option value="hire">Key hire</option>
+                    <option value="raise_open">Raise — now open</option>
+                    <option value="raise_close">Raise — closed</option>
+                    <option value="award">Award / grant</option>
+                    <option value="expansion">Expansion</option>
                     <option value="other">Other</option>
                   </select>
                   <div className="flex gap-2 justify-end">
@@ -435,13 +464,13 @@ async function postUpdate(e) {
                   {updates.map(u => (
                     <div key={u.id} className="border-b border-[#e8eaee] last:border-0 pb-4 last:pb-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] border border-[#dbdfe4] capitalize">{u.type}</span>
-                        <span className="text-xs text-[#718096]">{new Date(u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#f2f4f6] text-[#4a5568] border border-[#dbdfe4]">{UPDATE_CAT_LABEL[u.category] || "Update"}</span>
+                        <span className="text-xs text-[#718096]">{new Date(u.published_at || u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       </div>
                       <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
                       {u.body && <p className="text-xs text-[#4a5568] mt-1 leading-relaxed">{u.body}</p>}
-                      {u.link && (
-                        <a href={u.link} target="_blank" rel="noopener noreferrer"
+                      {u.link_url && (
+                        <a href={u.link_url} target="_blank" rel="noopener noreferrer"
                           className="text-xs text-[#2d6a4f] hover:underline mt-1 inline-block">
                           Read more →
                         </a>
@@ -705,9 +734,6 @@ async function postUpdate(e) {
                 Browse all grants →
               </Link>
             </div>
-
-            {/* ANNOUNCEMENTS — hidden if the company has none */}
-            <CompanyNewsroom companyId={company.id} />
 
 {/* POINT OF CONTACT */}
 {company.show_contact && company.primary_contact_email && (
