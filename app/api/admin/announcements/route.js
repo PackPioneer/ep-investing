@@ -12,7 +12,7 @@ export async function GET(req) {
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
   const status = new URL(req.url).searchParams.get("status") || "published";
   let q = db().from("company_announcements")
-    .select("*, company:companies(id, name, slug, logo_url, industry_tags)")
+    .select("*, company:companies(id, name, slug, logo_url, industry_tags), ngo:ngos(id, name, slug, logo_url, sector_tags)")
     .order("created_at", { ascending: false }).limit(500);
   if (status !== "all") q = q.eq("status", status);
   const { data, error } = await q;
@@ -25,11 +25,12 @@ export async function GET(req) {
 export async function POST(req) {
   const userId = await requireAdmin();
   if (!userId) return Response.json({ error: "Forbidden" }, { status: 403 });
-  const { company_id, category, title, body, link_url, meta, published_at } = await req.json();
-  if (!company_id || !title || !title.trim()) return Response.json({ error: "company_id and title required" }, { status: 400 });
+  const { company_id, ngo_id, category, title, body, link_url, meta, published_at } = await req.json();
+  if ((!company_id && !ngo_id) || !title || !title.trim()) return Response.json({ error: "company_id or ngo_id, and title, required" }, { status: 400 });
   const supabase = db();
   const payload = {
-    company_id,
+    company_id: ngo_id ? null : company_id,
+    ngo_id: ngo_id || null,
     category: category || "other",
     title: title.trim(),
     body: body || null,
@@ -45,6 +46,12 @@ export async function POST(req) {
   // If the is_curated column hasn't been added yet, fall back so posting still works.
   if (error && /is_curated/i.test(error.message)) {
     delete payload.is_curated;
+    ({ data, error } = await supabase.from("company_announcements").insert(payload).select().single());
+  }
+  // If the ngo_id column hasn't been added yet, company posts should still work.
+  if (error && /ngo_id/i.test(error.message)) {
+    if (ngo_id) return Response.json({ error: "Run the ngo-announcements.sql migration to post NGO updates." }, { status: 400 });
+    delete payload.ngo_id;
     ({ data, error } = await supabase.from("company_announcements").insert(payload).select().single());
   }
   if (error) return Response.json({ error: error.message }, { status: 500 });

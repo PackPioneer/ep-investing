@@ -56,8 +56,8 @@ export default function NewsroomPage() {
       .catch(() => setLoading(false));
   }, [cat]);
 
-  const sectorOpts = useMemo(() => [...new Set(rows.flatMap((r) => r.company?.industry_tags || []))].filter(Boolean).sort(), [rows]);
-  const shown = sec ? rows.filter((r) => (r.company?.industry_tags || []).includes(sec)) : rows;
+  const sectorOpts = useMemo(() => [...new Set(rows.flatMap((r) => [...(r.company?.industry_tags || []), ...(r.ngo?.sector_tags || [])]))].filter(Boolean).sort(), [rows]);
+  const shown = sec ? rows.filter((r) => [...(r.company?.industry_tags || []), ...(r.ngo?.sector_tags || [])].includes(sec)) : rows;
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
@@ -86,6 +86,11 @@ export default function NewsroomPage() {
           <div className="flex flex-col gap-3">
             {shown.map((a) => {
               const co = a.company;
+              const ent = co
+                ? { name: co.name, logo_url: co.logo_url, href: `/companies/${co.id}` }
+                : a.ngo
+                ? { name: a.ngo.name, logo_url: a.ngo.logo_url, href: `/ngos/${a.ngo.slug}` }
+                : null;
               return (
                 <div key={a.id} className={`bg-white border rounded-xl p-4 ${a.is_featured ? "border-violet-200 ring-1 ring-violet-100" : "border-slate-200"}`}>
                   <div className="flex items-center gap-2 mb-1.5">
@@ -94,13 +99,13 @@ export default function NewsroomPage() {
                     <Link href={`/announcements/${a.id}`} className="text-[11px] text-slate-400 hover:text-slate-600 ml-auto">{when(a.published_at)}</Link>
                   </div>
                   <div className="flex items-start gap-3">
-                    {co && (
-                      <Link href={`/companies/${co.id}`} className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-semibold text-emerald-700 flex-shrink-0 overflow-hidden">
-                        {co.logo_url ? <img src={co.logo_url} alt="" className="w-full h-full object-contain p-0.5" /> : (co.name?.[0] || "?")}
+                    {ent && (
+                      <Link href={ent.href} className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-semibold text-emerald-700 flex-shrink-0 overflow-hidden">
+                        {ent.logo_url ? <img src={ent.logo_url} alt="" className="w-full h-full object-contain p-0.5" /> : (ent.name?.[0] || "?")}
                       </Link>
                     )}
                     <div className="min-w-0 flex-1">
-                      {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-slate-500 hover:text-emerald-700">{co.name}</Link>}
+                      {ent && <Link href={ent.href} className="text-xs font-semibold text-slate-500 hover:text-emerald-700">{ent.name}</Link>}
                       <Link href={`/announcements/${a.id}`} className="block text-sm font-semibold text-slate-900 leading-snug hover:text-emerald-700">{a.title}</Link>
                       {metaLine(a) && <div className="text-xs text-slate-500 mt-0.5">{metaLine(a)}</div>}
                       {(() => {
@@ -117,12 +122,12 @@ export default function NewsroomPage() {
                         {a.is_curated ? (
                           <>
                             {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">Read release →</a>}
-                            {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
+                            {ent && <Link href={ent.href} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
                           </>
                         ) : (
                           <>
                             {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">{ctaLabelFor(a.category, a.meta)} →</a>}
-                            {co && <Link href={`/companies/${co.id}`} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
+                            {ent && <Link href={ent.href} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
                           </>
                         )}
                       </div>

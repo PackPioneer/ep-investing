@@ -9,10 +9,22 @@ const db = () => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 
 async function getAnnouncement(id) {
   if (!/^\d+$/.test(String(id))) return null;
-  const { data } = await db().from("company_announcements")
-    .select("*, company:companies(id, name, slug, logo_url, industry_tags)")
-    .eq("id", id).eq("status", "published").maybeSingle();
+  const sel = "*, company:companies(id, name, slug, logo_url, industry_tags), ngo:ngos(id, name, slug, logo_url, sector_tags)";
+  let { data, error } = await db().from("company_announcements")
+    .select(sel).eq("id", id).eq("status", "published").maybeSingle();
+  // Fall back if the ngo relationship hasn't been migrated yet.
+  if (error) {
+    ({ data } = await db().from("company_announcements")
+      .select("*, company:companies(id, name, slug, logo_url, industry_tags)")
+      .eq("id", id).eq("status", "published").maybeSingle());
+  }
   return data;
+}
+// Resolve the owning entity (company or NGO) into one shape.
+function entityOf(a) {
+  if (a?.company) return { name: a.company.name, logo_url: a.company.logo_url, href: `/companies/${a.company.id}` };
+  if (a?.ngo) return { name: a.ngo.name, logo_url: a.ngo.logo_url, href: `/ngos/${a.ngo.slug}` };
+  return null;
 }
 
 const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleString());
@@ -41,15 +53,15 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
   const a = await getAnnouncement(id);
   if (!a) return { title: "Announcement — EP Network" };
-  const co = a.company;
-  const title = `${co?.name ? co.name + ": " : ""}${a.title}`;
-  const desc = (a.body || `${co?.name || "A climate & energy company"} on EP Network.`).slice(0, 160);
+  const ent = entityOf(a);
+  const title = `${ent?.name ? ent.name + ": " : ""}${a.title}`;
+  const desc = (a.body || `${ent?.name || "A climate & energy organization"} on EP Network.`).slice(0, 160);
   return {
     title: `${title} — EP Network`,
     description: desc,
     alternates: { canonical: `https://epinvesting.com/announcements/${id}` },
-    openGraph: { title, description: desc, url: `https://epinvesting.com/announcements/${id}`, type: "article", images: co?.logo_url ? [co.logo_url] : undefined },
-    twitter: { card: "summary", title, description: desc, images: co?.logo_url ? [co.logo_url] : undefined },
+    openGraph: { title, description: desc, url: `https://epinvesting.com/announcements/${id}`, type: "article", images: ent?.logo_url ? [ent.logo_url] : undefined },
+    twitter: { card: "summary", title, description: desc, images: ent?.logo_url ? [ent.logo_url] : undefined },
   };
 }
 
@@ -57,7 +69,7 @@ export default async function AnnouncementPage({ params }) {
   const { id } = await params;
   const a = await getAnnouncement(id);
   if (!a) notFound();
-  const co = a.company;
+  const ent = entityOf(a);
   const cta = a.is_curated ? "Read release" : ctaLabelFor(a.category, a.meta);
 
   return (
@@ -71,12 +83,12 @@ export default async function AnnouncementPage({ params }) {
             <span className="text-xs text-slate-400 ml-auto">{when(a.published_at)}</span>
           </div>
 
-          {co && (
-            <Link href={`/companies/${co.id}`} className="flex items-center gap-2.5 mb-4 group">
+          {ent && (
+            <Link href={ent.href} className="flex items-center gap-2.5 mb-4 group">
               <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-sm font-semibold text-emerald-700 overflow-hidden">
-                {co.logo_url ? <img src={co.logo_url} alt="" className="w-full h-full object-contain p-0.5" /> : (co.name?.[0] || "?")}
+                {ent.logo_url ? <img src={ent.logo_url} alt="" className="w-full h-full object-contain p-0.5" /> : (ent.name?.[0] || "?")}
               </div>
-              <span className="text-sm font-semibold text-slate-700 group-hover:text-emerald-700">{co.name}</span>
+              <span className="text-sm font-semibold text-slate-700 group-hover:text-emerald-700">{ent.name}</span>
             </Link>
           )}
 
@@ -95,7 +107,7 @@ export default async function AnnouncementPage({ params }) {
 
           <div className="flex items-center gap-3 flex-wrap mt-6 pt-5 border-t border-slate-100">
             {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-semibold bg-emerald-600 text-white px-5 py-2.5 rounded-lg hover:bg-emerald-700">{cta} →</a>}
-            {co && <Link href={`/companies/${co.id}`} className="text-sm font-semibold text-emerald-700 hover:underline">View {co.name} on EP →</Link>}
+            {ent && <Link href={ent.href} className="text-sm font-semibold text-emerald-700 hover:underline">View {ent.name} on EP →</Link>}
           </div>
         </div>
       </div>

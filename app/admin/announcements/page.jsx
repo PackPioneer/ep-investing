@@ -29,11 +29,16 @@ export default function AdminAnnouncements() {
   const [editId, setEditId] = useState(null);
   const [editForm, setEditForm] = useState({ category: "", title: "", body: "", link_url: "", published_at: "" });
 
-  // Post-an-update form (press releases / scraped company updates).
+  // Post-an-update form (press releases / scraped company or NGO updates).
   const [showNew, setShowNew] = useState(false);
+  const [postKind, setPostKind] = useState("company"); // "company" | "ngo"
   const [cQuery, setCQuery] = useState("");
   const [cResults, setCResults] = useState([]);
   const [selectedCo, setSelectedCo] = useState(null);
+  // NGO search (when posting an NGO update)
+  const [ngoQuery, setNgoQuery] = useState("");
+  const [ngoResults, setNgoResults] = useState([]);
+  const [selectedNgo, setSelectedNgo] = useState(null);
   const [nCat, setNCat] = useState("product");
   const [nTitle, setNTitle] = useState("");
   const [nBody, setNBody] = useState("");
@@ -69,6 +74,14 @@ export default function AdminAnnouncements() {
   }, [cQuery, selectedCo]);
 
   useEffect(() => {
+    if (!ngoQuery.trim() || (selectedNgo && selectedNgo.name === ngoQuery)) { setNgoResults([]); return; }
+    const t = setTimeout(() => {
+      fetch(`/api/ngos?q=${encodeURIComponent(ngoQuery)}&limit=8`).then((r) => r.json()).then((d) => setNgoResults((d && d.ngos) || [])).catch(() => setNgoResults([]));
+    }, 250);
+    return () => clearTimeout(t);
+  }, [ngoQuery, selectedNgo]);
+
+  useEffect(() => {
     if (!pQuery.trim()) { setPResults([]); return; }
     const q = pQuery.trim();
     const t = setTimeout(async () => {
@@ -88,19 +101,21 @@ export default function AdminAnnouncements() {
 
   const KIND_LABEL = { company: "Company", investor: "Investor", ngo: "NGO", text: "Text" };
 
+  const selectedEntity = postKind === "ngo" ? selectedNgo : selectedCo;
   const postUpdate = async () => {
-    if (!selectedCo || !nTitle.trim()) return;
+    if (!selectedEntity || !nTitle.trim()) return;
     setPosting(true); setPostError("");
     try {
       const meta = {};
       if (selectedInvs.length) meta.investors = selectedInvs.map((i) => ({ id: i.id, name: i.name }));
       if (selectedPartners.length) meta.partners = selectedPartners.map((p) => ({ id: p.id ?? null, name: p.name, kind: p.kind || (p.id ? "company" : "text"), ...(p.slug ? { slug: p.slug } : {}) }));
+      const owner = postKind === "ngo" ? { ngo_id: selectedNgo.id } : { company_id: selectedCo.id };
       const res = await fetch("/api/admin/announcements", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company_id: selectedCo.id, category: nCat, title: nTitle, body: nBody, link_url: nLink, meta, published_at: nDate || undefined }) });
+        body: JSON.stringify({ ...owner, category: nCat, title: nTitle, body: nBody, link_url: nLink, meta, published_at: nDate || undefined }) });
       const data = await res.json().catch(() => ({}));
       setPosting(false);
       if (!res.ok) { setPostError(data.error || `Failed (${res.status})`); return; }
-      setSelectedCo(null); setCQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInvs([]); setInvQuery(""); setSelectedPartners([]); setPQuery(""); setShowNew(false);
+      setSelectedCo(null); setCQuery(""); setSelectedNgo(null); setNgoQuery(""); setNTitle(""); setNBody(""); setNLink(""); setNDate(""); setNCat("product"); setSelectedInvs([]); setInvQuery(""); setSelectedPartners([]); setPQuery(""); setShowNew(false);
       setTab("published"); load("published");
     } catch (e) { setPosting(false); setPostError(e.message || "Network error"); }
   };
@@ -139,26 +154,54 @@ export default function AdminAnnouncements() {
       ) : (
         <div className="mb-6 bg-white border border-slate-200 rounded-xl p-5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-900">Post a company update</span>
+            <span className="text-sm font-semibold text-slate-900">Post a {postKind === "ngo" ? "NGO" : "company"} update</span>
             <button onClick={() => setShowNew(false)} className="text-xs text-slate-400 hover:text-slate-600">Cancel</button>
           </div>
-          <div className="relative">
-            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Company</label>
-            {selectedCo ? (
-              <div className="flex items-center gap-2 text-sm"><span className="font-medium text-slate-800">{selectedCo.name}</span><button onClick={() => { setSelectedCo(null); setCQuery(""); }} className="text-xs text-slate-400 hover:text-red-500">change</button></div>
-            ) : (
-              <>
-                <input value={cQuery} onChange={(e) => setCQuery(e.target.value)} placeholder="Search company…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
-                {cResults.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
-                    {cResults.map((c) => (
-                      <button key={c.id} onClick={() => { setSelectedCo({ id: c.id, name: c.name }); setCResults([]); setCQuery(c.name); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{c.name}</button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Posting on behalf of</label>
+            <div className="inline-flex rounded-lg border border-slate-200 overflow-hidden">
+              {[["company", "Company"], ["ngo", "NGO"]].map(([k, label]) => (
+                <button key={k} onClick={() => setPostKind(k)} className={`text-sm px-4 py-1.5 ${postKind === k ? "bg-emerald-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}>{label}</button>
+              ))}
+            </div>
           </div>
+          {postKind === "company" ? (
+            <div className="relative">
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Company</label>
+              {selectedCo ? (
+                <div className="flex items-center gap-2 text-sm"><span className="font-medium text-slate-800">{selectedCo.name}</span><button onClick={() => { setSelectedCo(null); setCQuery(""); }} className="text-xs text-slate-400 hover:text-red-500">change</button></div>
+              ) : (
+                <>
+                  <input value={cQuery} onChange={(e) => setCQuery(e.target.value)} placeholder="Search company…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                  {cResults.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                      {cResults.map((c) => (
+                        <button key={c.id} onClick={() => { setSelectedCo({ id: c.id, name: c.name }); setCResults([]); setCQuery(c.name); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{c.name}</button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="relative">
+              <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">NGO</label>
+              {selectedNgo ? (
+                <div className="flex items-center gap-2 text-sm"><span className="font-medium text-slate-800">{selectedNgo.name}</span><button onClick={() => { setSelectedNgo(null); setNgoQuery(""); }} className="text-xs text-slate-400 hover:text-red-500">change</button></div>
+              ) : (
+                <>
+                  <input value={ngoQuery} onChange={(e) => setNgoQuery(e.target.value)} placeholder="Search NGO…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
+                  {ngoResults.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                      {ngoResults.map((n) => (
+                        <button key={n.id} onClick={() => { setSelectedNgo({ id: n.id, name: n.name }); setNgoResults([]); setNgoQuery(n.name); }} className="block w-full text-left px-3 py-2 text-sm hover:bg-slate-50">{n.name}</button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] font-mono uppercase tracking-wide text-slate-400 block mb-1">Type</label>
@@ -239,7 +282,7 @@ export default function AdminAnnouncements() {
             <input value={nLink} onChange={(e) => setNLink(e.target.value)} placeholder="https://…" className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-400" />
           </div>
           {postError && <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{postError}</div>}
-          <button onClick={postUpdate} disabled={posting || !selectedCo || !nTitle.trim()} className="text-sm font-semibold bg-emerald-600 text-white rounded-lg px-5 py-2 hover:bg-emerald-700 disabled:opacity-40">{posting ? "Posting…" : "Publish to newsroom"}</button>
+          <button onClick={postUpdate} disabled={posting || !selectedEntity || !nTitle.trim()} className="text-sm font-semibold bg-emerald-600 text-white rounded-lg px-5 py-2 hover:bg-emerald-700 disabled:opacity-40">{posting ? "Posting…" : "Publish to newsroom"}</button>
         </div>
       )}
 
@@ -259,7 +302,8 @@ export default function AdminAnnouncements() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">{CAT_LABEL[a.category] || a.category}</span>
-                      <span className="text-sm font-semibold text-slate-900">{a.company?.name || "—"}</span>
+                      {a.ngo && !a.company && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">NGO</span>}
+                      <span className="text-sm font-semibold text-slate-900">{a.company?.name || a.ngo?.name || "—"}</span>
                       {a.is_featured && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Boosted</span>}
                     </div>
                     <div className="text-sm text-slate-800">{a.title}</div>
