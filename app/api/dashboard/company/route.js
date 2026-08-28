@@ -59,6 +59,7 @@ export async function PATCH(req) {
 
   const body = await req.json();
   const {
+    name,
     url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
     twitter_url, founding_year, employee_count, location, funding_stage, business_model,
     looking_to_raise, is_hiring, seeking_partnerships, industry_tags, raise_target,
@@ -72,9 +73,14 @@ export async function PATCH(req) {
   const founding_year_clean = founding_year === "" || founding_year === undefined ? null : founding_year;
   const employee_count_clean = employee_count === "" || employee_count === undefined ? null : employee_count;
 
+  // Company name — only apply when a non-empty value is provided (never blank it).
+  const name_clean = typeof name === "string" && name.trim() ? name.trim().slice(0, 200) : undefined;
+  const nameChanged = name_clean && name_clean !== company.name;
+
   const { data, error } = await supabase
     .from("companies")
     .update({
+      ...(name_clean ? { name: name_clean } : {}),
       url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
       twitter_url, founding_year: founding_year_clean, employee_count: employee_count_clean,
       location, funding_stage, business_model,
@@ -89,5 +95,12 @@ export async function PATCH(req) {
     .single();
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
+
+  // Job listings are matched to a company by its name string, so keep any
+  // existing roles attached when the company renames.
+  if (nameChanged && company.name) {
+    try { await supabase.from("job_listings").update({ company: name_clean }).eq("company", company.name); } catch { /* non-fatal */ }
+  }
+
   return Response.json(data);
 }

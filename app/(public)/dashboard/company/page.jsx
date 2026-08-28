@@ -165,6 +165,7 @@ const [teamMembers, setTeamMembers] = useState([]);
         if (!data || data.error) { setLoading(false); return; }
         setCompany(data);
         setForm({
+          name: data.name || "",
           url: data.url || "",
           description: data.description || "",
           tagline: data.tagline || "",
@@ -580,6 +581,12 @@ async function deleteDeck() {
             <div className="mb-6 pb-6 border-b border-[#e8eaee]">
               <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-4">Identity</div>
               <div className="flex flex-col gap-4">
+                <div>
+                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Company name</label>
+                  <input type="text" placeholder="Your company name" value={form.name || ""}
+                    onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                </div>
                 <div>
                   <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Tagline</label>
                   <input type="text" placeholder='e.g. "Climate intelligence for the energy transition"' value={form.tagline || ""}
