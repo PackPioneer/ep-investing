@@ -63,6 +63,10 @@ export default function CompanyDashboard() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [jobs, setJobs] = useState([]);
+  const [jobsBoardAccess, setJobsBoardAccess] = useState(false);
+  const [jobLimit, setJobLimit] = useState(3);
+  const [jobLimitHit, setJobLimitHit] = useState(false);
+  const [upgradingJobs, setUpgradingJobs] = useState(false);
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobMode, setJobMode] = useState("quick"); // "quick" = title + link only; "full" = detailed listing
   const [jobForm, setJobForm] = useState({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null });
@@ -199,7 +203,7 @@ const [teamMembers, setTeamMembers] = useState([]);
         setDeckUrl(data.pitch_deck_url || null);
         setLogoUrl(data.logo_url || null);
         setLoading(false);
-        fetch("/api/dashboard/jobs").then(r => r.json()).then(d => setJobs(Array.isArray(d.jobs) ? d.jobs : []));
+        fetch("/api/dashboard/jobs").then(r => r.json()).then(d => { setJobs(Array.isArray(d.jobs) ? d.jobs : []); setJobsBoardAccess(!!d.board_access); if (d.job_limit) setJobLimit(d.job_limit); });
         fetch("/api/companies/" + data.id + "/updates").then(r => r.json()).then(u => setUpdates(Array.isArray(u) ? u : []));
         fetch("/api/dashboard/matched-investors?company_id=" + data.id).then(r => r.json()).then(d => setMatchedInvestors(Array.isArray(d) ? d : []));
         fetch("/api/dashboard/matched-experts?company_id=" + data.id).then(r => r.json()).then(d => setMatchedExperts(Array.isArray(d) ? d : []));
@@ -226,9 +230,22 @@ const [teamMembers, setTeamMembers] = useState([]);
     e.preventDefault();
     triggerPaywall();
     setSubmittingJob(true);
+    setJobLimitHit(false);
     const res = await fetch("/api/dashboard/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(jobForm) });
     if (res.ok) { const j = await res.json(); setJobs(prev => [j, ...prev]); setJobForm({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null }); setShowJobForm(false); }
+    else if (res.status === 402) { setJobLimitHit(true); }
+    else { const err = await res.json().catch(() => ({})); alert("Could not post the job: " + (err.error || res.status)); }
     setSubmittingJob(false);
+  }
+
+  async function upgradeForJobs() {
+    setUpgradingJobs(true);
+    try {
+      const res = await fetch("/api/stripe/subscribe-company", { method: "POST" });
+      const d = await res.json();
+      if (d.url) window.location.href = d.url;
+      else { setUpgradingJobs(false); alert(d.error || "Could not start checkout."); }
+    } catch { setUpgradingJobs(false); alert("Could not start checkout."); }
   }
 
   async function deleteJob(id) {
@@ -892,17 +909,39 @@ async function deleteDeck() {
           </div>
         )}
 
-        {activeTab === "jobs" && (
+        {activeTab === "jobs" && (() => {
+          const atLimit = !jobsBoardAccess && jobs.length >= jobLimit;
+          return (
           <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-6">
-              <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Job Postings</div>
-              {!(showJobForm || jobs.length === 0) && (
+              <div className="flex items-center gap-2">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Job Postings</div>
+                {!jobsBoardAccess && <span className="text-[11px] text-[#718096]">{jobs.length} of {jobLimit} free posts used</span>}
+                {jobsBoardAccess && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Growth · unlimited</span>}
+              </div>
+              {atLimit ? (
+                <button onClick={upgradeForJobs} disabled={upgradingJobs} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50 transition-colors">
+                  {upgradingJobs ? "Starting…" : "Upgrade to Growth"}
+                </button>
+              ) : !(showJobForm || jobs.length === 0) && (
                 <button onClick={() => setShowJobForm(true)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] transition-colors">
                   + Add role
                 </button>
               )}
             </div>
-            {(showJobForm || jobs.length === 0) && (
+
+            {(jobLimitHit || atLimit) && (
+              <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+                <div className="text-xs text-[#0f1a14]">
+                  <span className="font-semibold">You've used all {jobLimit} free job posts.</span> Upgrade to Growth for unlimited postings and featured placement — or remove a role to free up a slot.
+                </div>
+                <button onClick={upgradeForJobs} disabled={upgradingJobs} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50 flex-shrink-0">
+                  {upgradingJobs ? "Starting…" : "Upgrade to Growth"}
+                </button>
+              </div>
+            )}
+
+            {!atLimit && (showJobForm || jobs.length === 0) && (
               <form onSubmit={submitJob} className="mb-6 flex flex-col gap-3 bg-[#fafbfc] rounded-xl p-4 border border-[#e8eaee]">
 
                 {/* MODE TOGGLE — quick (title + link) vs full listing */}
@@ -1059,7 +1098,8 @@ async function deleteDeck() {
               </div>
             ) : null}
           </div>
-        )}
+          );
+        })()}
 
         {activeTab === "updates" && (
           <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
