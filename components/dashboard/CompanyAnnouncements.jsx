@@ -30,6 +30,25 @@ const STATUS = {
   rejected: { label: "Needs changes", cls: "bg-red-50 text-red-600 border-red-200" },
 };
 const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || id;
+const when = (d) => (d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "");
+const usd = (n) => (n == null || n === "" ? null : "$" + Number(n).toLocaleString());
+// One-line summary of an announcement's structured fields (amount, partner, etc.).
+function metaLine(a) {
+  const m = a.meta || {};
+  const bits = [];
+  if (m.partners?.length) bits.push("with " + m.partners.map((p) => p.name).join(", "));
+  else if (m.partner_name) bits.push("with " + m.partner_name);
+  if (m.round_type) bits.push(m.round_type);
+  if (m.amount_usd) bits.push(usd(m.amount_usd));
+  if (m.amount_target_usd) bits.push("target " + usd(m.amount_target_usd));
+  if (m.lead_investor) bits.push("led by " + m.lead_investor);
+  if (m.product_name) bits.push(m.product_name);
+  if (m.person_name) bits.push(m.person_name + (m.role ? ", " + m.role : ""));
+  if (m.award_name) bits.push(m.award_name);
+  if (m.grantor) bits.push("from " + m.grantor);
+  if (m.location) bits.push(m.location);
+  return bits.join(" · ");
+}
 const inputClass = "w-full text-sm px-3 py-2 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]";
 const labelClass = "text-xs font-mono text-[#718096] uppercase tracking-wide mb-1 block";
 
@@ -210,7 +229,13 @@ export default function CompanyAnnouncements() {
                       )}
                       {a.is_featured && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">Boosted</span>}
                     </div>
-                    <div className="text-sm text-[#0f1a14] font-medium truncate">{a.title}</div>
+                    <div className="text-sm text-[#0f1a14] font-medium">{a.title}</div>
+                    {metaLine(a) && <div className="text-xs text-[#4a5568] mt-0.5">{metaLine(a)}</div>}
+                    {a.body && <div className="text-xs text-[#718096] mt-0.5 leading-relaxed line-clamp-2">{a.body}</div>}
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[11px] text-[#a0aec0]">{when(a.published_at || a.created_at)}</span>
+                      {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#2d6a4f] hover:underline">View link →</a>}
+                    </div>
                     {a.status === "rejected" && a.review_note && <div className="text-xs text-red-500 mt-0.5">Reviewer: {a.review_note}</div>}
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
