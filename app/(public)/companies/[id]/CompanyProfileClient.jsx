@@ -65,6 +65,8 @@ export default function CompanyProfilePage() {
         setCompany(data);
         setLoading(false);
         posthog.capture("company_viewed", { company_id: id, company_name: data.name });
+        // Record the view for the company's "who viewed you" analytics (signed-in only).
+        fetch(`/api/companies/${id}/view`, { method: "POST" }).catch(() => {});
         // Company updates now live in the unified announcements system, so the
         // profile and the dashboard show the same posts.
         fetch(`/api/announcements?company_id=${id}&limit=12`)
@@ -99,6 +101,7 @@ export default function CompanyProfilePage() {
         .then(c => { if (c && String(c.id) === String(id)) setCanManage(true); })
         .catch(() => {});
   }, [id]);
+const pingCta = (cta) => { fetch(`/api/companies/${id}/cta`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cta }) }).catch(() => {}); };
 async function postUpdate(e) {
     e.preventDefault();
     if (!updateForm.title.trim()) return;
@@ -209,6 +212,7 @@ async function postUpdate(e) {
                     </div>
                     {company.url && (
                       <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                        onClick={() => pingCta("website")}
                         target="_blank" rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-sm text-[#4a5568] hover:text-[#2d6a4f] transition-colors mt-1">
                         <Globe size={12} /> {company.url.replace(/https?:\/\//, "")}
@@ -379,7 +383,7 @@ async function postUpdate(e) {
                           </div>
                         </div>
                         {canApply && href && (
-                          <a href={href} target={job.apply_url ? "_blank" : undefined} rel="noopener noreferrer"
+                          <a href={href} onClick={() => pingCta("jobs")} target={job.apply_url ? "_blank" : undefined} rel="noopener noreferrer"
                             className="flex-shrink-0 text-xs font-semibold text-[#2d6a4f] border border-[#c8d8cc] bg-[#f2f4f6] rounded-lg px-3 py-1.5 hover:border-[#2d6a4f] transition-all">
                             Apply →
                           </a>
@@ -688,6 +692,7 @@ async function postUpdate(e) {
 
               {company.url && (
                 <a href={company.url.startsWith("http") ? company.url : `https://${company.url}`}
+                  onClick={() => pingCta("website")}
                   target="_blank" rel="noopener noreferrer"
                   className="mt-6 w-full flex items-center justify-center gap-2 border border-[#dbdfe4] text-[#0f1a14] text-sm rounded-lg py-2.5 hover:border-[#2d6a4f] hover:text-[#2d6a4f] transition-all">
                   <Globe size={14} /> Visit website
@@ -768,6 +773,7 @@ async function postUpdate(e) {
       )}
     </div>
     <a href={`mailto:${company.primary_contact_email}?subject=Inquiry via EP Investing — ${company.name}`}
+      onClick={() => pingCta("contact")}
       className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
       Get in touch
     </a>
@@ -779,6 +785,7 @@ async function postUpdate(e) {
                 <h3 style={{ fontFamily: 'var(--font-display), sans-serif' }} className="text-lg text-[#0f1a14] mb-2">Contact this company</h3>
                 <p className="text-xs text-[#4a5568] leading-relaxed mb-4">Reach out directly to the team at {company.name}.</p>
                 <a href={`mailto:${company.primary_contact_email}`}
+                  onClick={() => pingCta("contact")}
                   className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm rounded-lg py-2.5 hover:bg-[#235a40] transition-colors">
                   Send an email
                 </a>

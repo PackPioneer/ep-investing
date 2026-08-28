@@ -121,12 +121,12 @@ export default function NewsroomPage() {
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
                         {a.is_curated ? (
                           <>
-                            {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">Read release →</a>}
+                            {a.link_url && <a href={a.link_url} onClick={() => fetch(`/api/announcements/${a.id}/click`, { method: "POST" }).catch(() => {})} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">Read release →</a>}
                             {ent && <Link href={ent.href} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
                           </>
                         ) : (
                           <>
-                            {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">{ctaLabelFor(a.category, a.meta)} →</a>}
+                            {a.link_url && <a href={a.link_url} onClick={() => fetch(`/api/announcements/${a.id}/click`, { method: "POST" }).catch(() => {})} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">{ctaLabelFor(a.category, a.meta)} →</a>}
                             {ent && <Link href={ent.href} className="text-xs font-semibold text-emerald-700 hover:underline">View on EP →</Link>}
                           </>
                         )}

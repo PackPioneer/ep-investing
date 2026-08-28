@@ -67,6 +67,8 @@ export default function CompanyDashboard() {
   const [jobLimit, setJobLimit] = useState(3);
   const [jobLimitHit, setJobLimitHit] = useState(false);
   const [upgradingJobs, setUpgradingJobs] = useState(false);
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobMode, setJobMode] = useState("quick"); // "quick" = title + link only; "full" = detailed listing
   const [jobForm, setJobForm] = useState({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null });
@@ -212,6 +214,17 @@ const [teamMembers, setTeamMembers] = useState([]);
       .catch(() => setLoading(false));
   }, [isLoaded, user]);
 
+  // Lazy-load "who viewed you" analytics when its tab is opened.
+  useEffect(() => {
+    if (activeTab === "analytics" && !analytics && !analyticsLoading) {
+      setAnalyticsLoading(true);
+      fetch("/api/dashboard/company/analytics")
+        .then(r => r.json())
+        .then(d => { setAnalytics(d); setAnalyticsLoading(false); })
+        .catch(() => setAnalyticsLoading(false));
+    }
+  }, [activeTab, analytics, analyticsLoading]);
+
   async function saveProfile(e) {
     e.preventDefault();
     triggerPaywall(); // shows nudge but doesn't block
@@ -326,6 +339,7 @@ async function deleteDeck() {
     { id: "overview", label: "Overview" },
     { id: "for-you", label: "For You" },
     { id: "announcements", label: "Announcements" },
+    { id: "analytics", label: "Who viewed you" },
     { id: "profile", label: "Edit profile" },
     { id: "funding", label: "Raise capital" },
     { id: "jobs", label: "Post a job" },
@@ -913,6 +927,147 @@ async function deleteDeck() {
               </div>
             </form>
 
+          </div>
+        )}
+
+        {activeTab === "analytics" && (
+          <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase">Who viewed your profile</div>
+              {analytics?.board_access && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Growth</span>}
+            </div>
+            <p className="text-xs text-[#718096] mb-5">Investors and potential partners who viewed your EP profile — and who's engaging with your announcements.</p>
+
+            {analyticsLoading ? (
+              <div className="flex justify-center py-12"><div className="w-6 h-6 border-2 border-[#2d6a4f] border-t-transparent rounded-full animate-spin" /></div>
+            ) : analytics?.board_access ? (
+              (analytics.viewers || []).length === 0 ? (
+                <p className="text-sm text-[#718096] py-6">No investor or partner views yet. As they view your profile, they'll show up here.</p>
+              ) : (
+                <div className="flex flex-col divide-y divide-[#f6f7f9]">
+                  {analytics.viewers.map((v, i) => (
+                    <div key={i} className="py-3 flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${v.kind === "investor" ? "bg-violet-50 text-violet-700 border-violet-200" : "bg-sky-50 text-sky-700 border-sky-200"}`}>{v.kind === "investor" ? "Investor" : "Potential partner"}</span>
+                          <span className="text-sm font-medium text-[#0f1a14] truncate">{v.label}</span>
+                        </div>
+                        <div className="text-xs text-[#a0aec0] mt-0.5">Last viewed {new Date(v.last_viewed).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}{v.count > 1 ? ` · viewed ${v.count} times` : ""}</div>
+                      </div>
+                      {v.kind === "investor" && v.investor_id && (
+                        <a href={`/investors/${v.investor_id}`} className="text-xs font-semibold text-[#2d6a4f] hover:underline flex-shrink-0">View →</a>
+                      )}
+                      {v.kind === "company" && v.company_id && (
+                        <a href={`/companies/${v.company_id}`} className="text-xs font-semibold text-[#2d6a4f] hover:underline flex-shrink-0">View →</a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              // Free-tier teaser: show the counts, lock the names.
+              <div>
+                {(analytics?.investor_count || 0) + (analytics?.partner_count || 0) > 0 ? (
+                  <p className="text-sm text-[#0f1a14] mb-4">
+                    <span className="font-semibold">{analytics.investor_count} investor{analytics.investor_count === 1 ? "" : "s"}</span>
+                    {analytics.partner_count > 0 ? <> and <span className="font-semibold">{analytics.partner_count} potential partner{analytics.partner_count === 1 ? "" : "s"}</span></> : null}
+                    {" "}viewed your profile. Upgrade to Growth to see who.
+                  </p>
+                ) : (
+                  <p className="text-sm text-[#718096] mb-4">Upgrade to Growth to see which investors and potential partners view your profile.</p>
+                )}
+                <div className="relative rounded-xl border border-[#e8eaee] overflow-hidden">
+                  <div className="p-4 flex flex-col gap-3 blur-sm select-none" aria-hidden="true">
+                    {[["Investor", "Redwood Climate Partners"], ["Potential partner", "Aurora Grid Systems"], ["Investor", "Helios Capital"]].map(([k, n], i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${k === "Investor" ? "bg-violet-50 text-violet-700 border-violet-200" : "bg-sky-50 text-sky-700 border-sky-200"}`}>{k}</span>
+                        <span className="text-sm font-medium text-[#0f1a14]">{n}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/40">
+                    <button onClick={upgradeForJobs} disabled={upgradingJobs} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
+                      {upgradingJobs ? "Starting…" : "Upgrade to Growth to see who"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ENGAGEMENT — action-item clicks on announcements */}
+            {!analyticsLoading && (
+              <div className="mt-7 pt-6 border-t border-[#e8eaee]">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Action items clicked</div>
+                <p className="text-xs text-[#718096] mb-4">When someone clicks the button on one of your announcements.</p>
+                {analytics?.board_access ? (
+                  (analytics.engagement || []).length === 0 ? (
+                    <p className="text-sm text-[#718096] py-2">No clicks yet. Post an update with an action-item button to start tracking.</p>
+                  ) : (
+                    <div className="flex flex-col divide-y divide-[#f6f7f9]">
+                      {analytics.engagement.map((e) => (
+                        <div key={e.announcement_id} className="py-3">
+                          <div className="text-sm text-[#0f1a14]">
+                            Your action item <span className="font-semibold">“{e.cta_label}”</span> on <span className="font-medium">“{e.title}”</span> was clicked <span className="font-semibold">{e.clicks}</span> time{e.clicks === 1 ? "" : "s"}.
+                          </div>
+                          <div className="text-xs text-[#a0aec0] mt-0.5">
+                            {e.investors > 0 ? `${e.investors} by investors · ` : ""}{e.partners > 0 ? `${e.partners} by potential partners · ` : ""}Last click {new Date(e.last_clicked).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                ) : (analytics?.engagement_count || 0) > 0 ? (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+                    <div className="text-sm text-[#0f1a14]"><span className="font-semibold">{analytics.engagement_count}</span> click{analytics.engagement_count === 1 ? "" : "s"} on your announcement action items. Upgrade to Growth to see which updates are driving them.</div>
+                    <button onClick={upgradeForJobs} disabled={upgradingJobs} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50 flex-shrink-0">{upgradingJobs ? "Starting…" : "Upgrade"}</button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-[#718096] py-2">No clicks yet.</p>
+                )}
+              </div>
+            )}
+
+            {/* SIGNALS SEEN — reach per active signal */}
+            {!analyticsLoading && (analytics?.signals_seen || []).length > 0 && (
+              <div className="mt-7 pt-6 border-t border-[#e8eaee]">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Signals seen</div>
+                <p className="text-xs text-[#718096] mb-4">How many people saw each signal while it was live on your profile.</p>
+                <div className="flex flex-col divide-y divide-[#f6f7f9]">
+                  {analytics.signals_seen.map((s) => (
+                    <div key={s.signal} className="py-3 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">{s.label}</span>
+                        <span className="text-sm text-[#0f1a14]">seen <span className="font-semibold">{s.views}</span> time{s.views === 1 ? "" : "s"}</span>
+                      </div>
+                      <div className="text-xs text-[#a0aec0]">{s.investors > 0 ? `${s.investors} investor${s.investors === 1 ? "" : "s"}` : ""}{s.investors > 0 && s.partners > 0 ? " · " : ""}{s.partners > 0 ? `${s.partners} potential partner${s.partners === 1 ? "" : "s"}` : ""}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* CALLS TO ACTION CLICKED — website / apply / contact */}
+            {!analyticsLoading && (analytics?.cta_click_count || 0) > 0 && (
+              <div className="mt-7 pt-6 border-t border-[#e8eaee]">
+                <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Calls to action clicked</div>
+                <p className="text-xs text-[#718096] mb-4">Which buttons on your profile people are clicking.</p>
+                {analytics?.board_access ? (
+                  <div className="flex flex-col divide-y divide-[#f6f7f9]">
+                    {analytics.cta_clicks.map((c) => (
+                      <div key={c.cta} className="py-3 flex items-center justify-between gap-3">
+                        <span className="text-sm text-[#0f1a14]"><span className="font-medium">{c.label}</span> — clicked <span className="font-semibold">{c.clicks}</span> time{c.clicks === 1 ? "" : "s"}</span>
+                        <div className="text-xs text-[#a0aec0]">{c.investors > 0 ? `${c.investors} investor${c.investors === 1 ? "" : "s"}` : ""}{c.investors > 0 && c.partners > 0 ? " · " : ""}{c.partners > 0 ? `${c.partners} potential partner${c.partners === 1 ? "" : "s"}` : ""}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+                    <div className="text-sm text-[#0f1a14]"><span className="font-semibold">{analytics.cta_click_count}</span> click{analytics.cta_click_count === 1 ? "" : "s"} on your profile buttons. Upgrade to Growth to see who's clicking.</div>
+                    <button onClick={upgradeForJobs} disabled={upgradingJobs} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50 flex-shrink-0">{upgradingJobs ? "Starting…" : "Upgrade"}</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
