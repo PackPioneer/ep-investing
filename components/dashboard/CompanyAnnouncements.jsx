@@ -36,6 +36,9 @@ const labelClass = "text-xs font-mono text-[#718096] uppercase tracking-wide mb-
 export default function CompanyAnnouncements() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [boardAccess, setBoardAccess] = useState(false);
+  const [upgrading, setUpgrading] = useState(false);
+  const [busyId, setBusyId] = useState(null);
   const [open, setOpen] = useState(false);
   const [cat, setCat] = useState("partnership");
   const [title, setTitle] = useState("");
@@ -46,8 +49,30 @@ export default function CompanyAnnouncements() {
   const [submitting, setSubmitting] = useState(false);
 
   const load = () => fetch("/api/dashboard/company/announcements")
-    .then((r) => r.json()).then((d) => { setList(d.announcements || []); setLoading(false); }).catch(() => setLoading(false));
+    .then((r) => r.json()).then((d) => { setList(d.announcements || []); setBoardAccess(!!d.board_access); setLoading(false); }).catch(() => setLoading(false));
   useEffect(() => { load(); }, []);
+
+  const upgrade = async () => {
+    setUpgrading(true);
+    try {
+      const res = await fetch("/api/stripe/subscribe-company", { method: "POST" });
+      const d = await res.json();
+      if (d.url) window.location.href = d.url;
+      else { setUpgrading(false); alert(d.error || "Could not start checkout."); }
+    } catch { setUpgrading(false); alert("Could not start checkout."); }
+  };
+
+  const publishToBoard = async (id) => {
+    setBusyId(id);
+    try {
+      const res = await fetch("/api/dashboard/company/announcements", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action: "publish_to_board" }),
+      });
+      if (res.ok) load();
+      else { const d = await res.json().catch(() => ({})); alert(d.error || "Could not publish to the board."); }
+    } finally { setBusyId(null); }
+  };
 
   const reset = () => { setTitle(""); setBodyText(""); setLink(""); setMeta({}); setCat("partnership"); setCtaLabel(CTA.partnership.label); setOpen(false); };
   const activeFields = CATEGORIES.find((c) => c.id === cat)?.fields || [];
@@ -74,8 +99,15 @@ export default function CompanyAnnouncements() {
       <div className="bg-white border border-[#e8eaee] rounded-2xl p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="text-sm font-semibold text-[#0f1a14] mb-1">Announcements</div>
-            <p className="text-xs text-[#718096] max-w-lg">Post partnerships, raises, hires, milestones, and more. Updates go live on your company profile right away. Publishing to the public EP newsroom board — and feeding the investor market tracker — is a Growth feature.</p>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="text-sm font-semibold text-[#0f1a14]">Announcements</div>
+              {boardAccess && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Growth</span>}
+            </div>
+            <p className="text-xs text-[#718096] max-w-lg">
+              {boardAccess
+                ? "Post partnerships, raises, hires, milestones, and more. Your updates publish to the public EP newsroom board and feed the investor market tracker."
+                : "Post partnerships, raises, hires, milestones, and more. Updates go live on your company profile right away. Publishing to the public EP newsroom board — and feeding the investor market tracker — is a Growth feature."}
+            </p>
           </div>
           {!open && (
             <button onClick={() => setOpen(true)} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] flex-shrink-0">
@@ -83,6 +115,17 @@ export default function CompanyAnnouncements() {
             </button>
           )}
         </div>
+
+        {!loading && !boardAccess && (
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+            <div className="text-xs text-[#0f1a14]">
+              <span className="font-semibold">Reach the whole network.</span> Upgrade to Growth to publish updates to the public EP newsroom board, feed the investor market tracker, and re-post your existing updates to the board.
+            </div>
+            <button onClick={upgrade} disabled={upgrading} className="text-xs font-semibold bg-[#2d6a4f] text-white px-4 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50 flex-shrink-0">
+              {upgrading ? "Starting…" : "Upgrade to Growth"}
+            </button>
+          </div>
+        )}
 
         {open && (
           <div className="mt-5 pt-5 border-t border-[#e8eaee] flex flex-col gap-4">
@@ -170,7 +213,15 @@ export default function CompanyAnnouncements() {
                     <div className="text-sm text-[#0f1a14] font-medium truncate">{a.title}</div>
                     {a.status === "rejected" && a.review_note && <div className="text-xs text-red-500 mt-0.5">Reviewer: {a.review_note}</div>}
                   </div>
-                  <button onClick={() => remove(a.id)} className="text-xs text-[#a0aec0] hover:text-red-500 flex-shrink-0">Remove</button>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    {boardAccess && a.status === "published" && !a.newsroom && (
+                      <button onClick={() => publishToBoard(a.id)} disabled={busyId === a.id}
+                        className="text-xs font-semibold text-[#2d6a4f] hover:text-[#235a40] disabled:opacity-50">
+                        {busyId === a.id ? "Publishing…" : "Publish to board"}
+                      </button>
+                    )}
+                    <button onClick={() => remove(a.id)} className="text-xs text-[#a0aec0] hover:text-red-500">Remove</button>
+                  </div>
                 </div>
               );
             })}

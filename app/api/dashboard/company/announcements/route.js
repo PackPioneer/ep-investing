@@ -1,6 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { pushAnnouncementToFeed, removeAnnouncementFromFeed } from "@/lib/announcements/feed";
+import { companyHasBoardAccess } from "@/lib/company-billing";
 
 export const dynamic = "force-dynamic";
 const db = () => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -15,27 +16,24 @@ async function resolveCompany(userId) {
     const { data: memberships } = await client.users.getOrganizationMembershipList({ userId, limit: 100 });
     const orgIds = (memberships || []).map((m) => m.organization.id);
     if (orgIds.length) {
-      const { data } = await supabase.from("companies").select("id, name, industry_tags").in("clerk_organization_id", orgIds).maybeSingle();
-      if (data) return data;
+      const { data } = await supabase.from("companies").select("id, name, industry_tags")
+        .in("clerk_organization_id", orgIds).order("id", { ascending: true }).limit(1);
+      if (data && data[0]) return data[0];
     }
   } catch { /* ignore org lookup errors */ }
   const { data } = await supabase.from("companies").select("id, name, industry_tags")
-    .or(`clerk_user_id.eq.${userId},claimed_by_clerk_user_id.eq.${userId}`).maybeSingle();
-  return data || null;
+    .or(`clerk_user_id.eq.${userId},claimed_by_clerk_user_id.eq.${userId}`).order("id", { ascending: true }).limit(1);
+  return (data && data[0]) || null;
 }
 
-// Whether a company may publish to the public newsroom board — a Growth-tier
-// capability. Step 2 will wire this to the company Stripe subscription; today it
-// honors a manual override (companies.newsroom_access = true) so a company can be
-// granted the board before billing ships. False otherwise (profile-only).
-async function companyCanPostToBoard(company) {
+// Billing fields live behind newer columns; fetch them resiliently so a missing
+// migration never breaks the dashboard. Returns { stripe_customer_id, newsroom_access }.
+async function companyBilling(companyId) {
   const supabase = db();
   const { data, error } = await supabase.from("companies")
-    .select("newsroom_access")
-    .eq("id", company.id)
-    .maybeSingle();
-  if (error || !data) return false;   // column not migrated yet, or no row
-  return data.newsroom_access === true;
+    .select("stripe_customer_id, newsroom_access").eq("id", companyId).maybeSingle();
+  if (error || !data) return { stripe_customer_id: null, newsroom_access: false };
+  return data;
 }
 
 // Raise announcements feed the market tracker live (from a vetted company).
@@ -72,9 +70,11 @@ export async function GET() {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const company = await resolveCompany(userId);
   if (!company) return Response.json({ error: "No company found" }, { status: 404 });
+  const billing = await companyBilling(company.id);
+  const board_access = await companyHasBoardAccess({ ...company, ...billing });
   const { data } = await db().from("company_announcements")
     .select("*").eq("company_id", company.id).order("created_at", { ascending: false });
-  return Response.json({ company, announcements: data || [] });
+  return Response.json({ company, board_access, announcements: data || [] });
 }
 
 export async function POST(req) {
@@ -91,9 +91,10 @@ export async function POST(req) {
   const supabase = db();
   const now = new Date().toISOString();
   // Whether this update reaches the public newsroom board (and the feed + market
-  // tracker that follow from it) is a paid (Growth) capability. Until company
-  // billing is wired (Step 2), self-posted updates are profile-only.
-  const onBoard = await companyCanPostToBoard(company);
+  // tracker that follow from it) is a paid (Growth) capability. Free companies
+  // post profile-only; Growth companies reach the board.
+  const billing = await companyBilling(company.id);
+  const onBoard = await companyHasBoardAccess({ ...company, ...billing });
   const baseRow = {
     company_id: company.id,
     category,
@@ -120,6 +121,39 @@ export async function POST(req) {
   }
 
   return Response.json(data);
+}
+
+// Growth companies can push an existing profile-only update to the public board.
+export async function PATCH(req) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const company = await resolveCompany(userId);
+  if (!company) return Response.json({ error: "No company found" }, { status: 404 });
+
+  const { id, action } = await req.json().catch(() => ({}));
+  if (!id || action !== "publish_to_board") return Response.json({ error: "id and valid action required" }, { status: 400 });
+
+  const billing = await companyBilling(company.id);
+  const hasAccess = await companyHasBoardAccess({ ...company, ...billing });
+  if (!hasAccess) return Response.json({ error: "Publishing to the public board is a Growth feature." }, { status: 402 });
+
+  const supabase = db();
+  const { data: ann } = await supabase.from("company_announcements")
+    .select("*").eq("id", id).eq("company_id", company.id).maybeSingle();
+  if (!ann) return Response.json({ error: "Announcement not found" }, { status: 404 });
+  if (ann.newsroom) return Response.json({ ok: true, already: true });
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase.from("company_announcements")
+    .update({ newsroom: true, published_at: now }).eq("id", id).select().single();
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+
+  // Now that it's on the board, propagate to the tracker + For You feed.
+  const trackerId = await applyRaiseFlywheel(supabase, company, data);
+  if (trackerId) await supabase.from("company_announcements").update({ tracker_event_id: trackerId }).eq("id", data.id);
+  try { await pushAnnouncementToFeed(supabase, company, data); } catch { /* non-fatal */ }
+
+  return Response.json({ ok: true, announcement: data });
 }
 
 export async function DELETE(req) {
