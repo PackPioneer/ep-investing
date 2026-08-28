@@ -69,6 +69,9 @@ export default function CompanyDashboard() {
   const [upgradingJobs, setUpgradingJobs] = useState(false);
   const [analytics, setAnalytics] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [entSubmitting, setEntSubmitting] = useState(false);
+  const [entDone, setEntDone] = useState(false);
+  const [entModalOpen, setEntModalOpen] = useState(false);
   const [showJobForm, setShowJobForm] = useState(false);
   const [jobMode, setJobMode] = useState("quick"); // "quick" = title + link only; "full" = detailed listing
   const [jobForm, setJobForm] = useState({ title: "", location: "", contact_email: "", type: "", work_mode: "", experience_level: "", salary_min: null, salary_max: null, salary_currency: "USD", equity_offered: false, role_overview: "", responsibilities: "", requirements: "", nice_to_haves: "", sector_tags: [], mission_statement: "", apply_url: "", application_deadline: null });
@@ -266,6 +269,18 @@ const [teamMembers, setTeamMembers] = useState([]);
     await fetch("/api/dashboard/jobs", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     setJobs(prev => prev.filter(j => j.id !== id));
   }
+
+  async function submitEnterprise() {
+    setEntSubmitting(true);
+    try {
+      const res = await fetch("/api/dashboard/enterprise", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ interests: ["network"] }),
+      });
+      if (res.ok) { setEntDone(true); }
+      else { const d = await res.json().catch(() => ({})); alert(d.error || "Could not send. Please try again."); }
+    } finally { setEntSubmitting(false); }
+  }
   async function deleteUpdate(id) {
     await fetch(`/api/companies/${company.id}/updates/${id}`, { method: "DELETE" });
     setUpdates(prev => prev.filter(u => u.id !== id));
@@ -345,7 +360,8 @@ async function deleteDeck() {
     { id: "jobs", label: "Post a job" },
     { id: "updates", label: "Share an update" },
     { id: "investors", label: "Find investors" },
-    { id: "experts", label: "Hire experts" }, 
+    { id: "enterprise", label: "Grow network" },
+    { id: "experts", label: "Hire experts" },
     { id: "team", label: "Team" },
   ];
 
@@ -928,6 +944,55 @@ async function deleteDeck() {
             </form>
 
           </div>
+        )}
+
+        {activeTab === "enterprise" && (
+          <>
+          <div className="bg-white border border-[#e8eaee] rounded-2xl p-7">
+            <div className="text-xs font-mono font-semibold text-[#0f1a14] tracking-wide uppercase mb-1">Grow your network</div>
+            <p className="text-sm text-[#4a5568] max-w-xl mb-6">Get in front of the right people. Our partnerships team makes direct introductions to the companies, investors, and individuals across EP Network.</p>
+
+            <div className="relative rounded-xl border border-[#e8eaee] overflow-hidden">
+              <div className="p-5 flex flex-col gap-3 blur-sm select-none" aria-hidden="true">
+                {[["Investor", "Redwood Climate Partners"], ["Company", "Aurora Grid Systems"], ["Individual", "Head of Partnerships, Helios"], ["Investor", "Northwind Ventures"]].map(([k, n], i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${k === "Investor" ? "bg-violet-50 text-violet-700 border-violet-200" : k === "Company" ? "bg-sky-50 text-sky-700 border-sky-200" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>{k}</span>
+                    <span className="text-sm font-medium text-[#0f1a14]">{n}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-white/50">
+                <button onClick={() => { setEntDone(false); setEntModalOpen(true); }} className="text-sm font-semibold bg-[#2d6a4f] text-white px-5 py-2.5 rounded-lg hover:bg-[#235a40]">
+                  Talk to our partnerships team
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {entModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ background: "rgba(15,26,20,0.6)" }}>
+              <div className="bg-white rounded-2xl border border-[#e8eaee] max-w-md w-full p-8 relative">
+                <button onClick={() => setEntModalOpen(false)} className="absolute top-4 right-4 text-[#718096] hover:text-[#0f1a14]">✕</button>
+                {entDone ? (
+                  <>
+                    <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl text-[#0f1a14] mb-2">Request received</h2>
+                    <p className="text-sm text-[#4a5568] leading-relaxed mb-6">Our partnerships team will reach out shortly to set up a call.</p>
+                    <button onClick={() => setEntModalOpen(false)} className="w-full text-sm font-semibold bg-[#2d6a4f] text-white rounded-lg py-3 hover:bg-[#235a40]">Done</button>
+                  </>
+                ) : (
+                  <>
+                    <h2 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-2xl text-[#0f1a14] mb-2">Grow your network</h2>
+                    <p className="text-sm text-[#4a5568] leading-relaxed mb-6">Contact the companies, investors, and individuals that make up the network. Our partnerships team makes the introductions for you.</p>
+                    <button onClick={submitEnterprise} disabled={entSubmitting} className="w-full text-sm font-semibold bg-[#2d6a4f] text-white rounded-lg py-3 hover:bg-[#235a40] disabled:opacity-50">
+                      {entSubmitting ? "Sending…" : "Talk to our partnerships team"}
+                    </button>
+                    <p className="text-xs text-[#a0aec0] text-center mt-3">Custom pricing — scoped with you on a call. No commitment.</p>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+          </>
         )}
 
         {activeTab === "analytics" && (

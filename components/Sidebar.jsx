@@ -42,6 +42,7 @@ const menu = [
   { name: "VC Portfolios", href: "/admin/vc-portfolio", icon: Building2 },
   { name: "Portfolio Review", href: "/admin/portfolio-review", icon: Building2 },
   { name: "Newsroom", href: "/admin/announcements", icon: Megaphone },
+  { name: "Enterprise", href: "/admin/enterprise", icon: Megaphone },
   { name: "Jobs", href: "/admin/jobs", icon: Briefcase },
   { name: "Feed Queue", href: "/admin/feed-queue", icon: Rss },
   { name: "Enrichment", href: "/admin/enrichment-queue", icon: Sparkles },
