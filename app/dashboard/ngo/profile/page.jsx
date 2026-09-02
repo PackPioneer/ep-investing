@@ -5,7 +5,7 @@ import { Save, CheckCircle } from "lucide-react";
 
 const SECTORS = [
   "solar", "wind-energy", "battery-storage", "grid-storage", "energy-storage", "green-hydrogen",
-  "ev-charging", "electric-vehicles", "carbon-credits", "direct-air-capture",
+  "ev-charging", "electric-vehicles", "carbon-credits", "carbon-capture-storage", "direct-air-capture",
   "saf-efuels", "nuclear-technologies", "geothermal-energy", "clean-cooking",
   "industrial-decarbonization", "buildings-efficiency", "transmission",
   "methane", "air-quality", "water", "waste", "circular-economy", "permitting",

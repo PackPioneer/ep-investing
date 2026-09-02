@@ -38,7 +38,7 @@ const SECTOR_CATEGORIES = [
   {
     id: "carbon_climate",
     label: "Carbon & Climate Solutions",
-    sectors: ["Direct Air Capture", "Carbon Capture (Point Source)", "Carbon Credits", "Carbon Markets", "Nature-Based Solutions"],
+    sectors: ["Carbon Capture & Storage (CCS)", "Carbon Capture (Point Source)", "Carbon Credits", "Carbon Markets", "Nature-Based Solutions"],
   },
   {
     id: "industry_materials",

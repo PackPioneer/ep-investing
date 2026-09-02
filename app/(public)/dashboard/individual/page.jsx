@@ -20,7 +20,7 @@ const MOCK_ROWS = [
   { n: "Verdant Hydrogen", s: "Green Hydrogen · Series A", a: "$28M", c: "+9%" },
   { n: "Northwind Storage", s: "Battery Storage · Growth", a: "$120M", c: "+24%" },
   { n: "Atlas Geothermal", s: "Geothermal · Series C", a: "$210M", c: "+31%" },
-  { n: "Cinder Carbon", s: "Direct Air Capture · Seed", a: "$8M", c: "+5%" },
+  { n: "Cinder Carbon", s: "Carbon Capture & Storage (CCS) · Seed", a: "$8M", c: "+5%" },
   { n: "Reef Renewables", s: "Offshore Wind · Series A", a: "$16M", c: "+7%" },
   { n: "Pulse Grid AI", s: "Grid Monitoring · Seed", a: "$6M", c: "+12%" },
   { n: "Orbit E-Fuels", s: "SAF / E-fuels · Series B", a: "$54M", c: "+15%" },
@@ -148,7 +148,7 @@ function ReportsMock() {
     { t: "Who's Raising: Grid & Transmission", g: "Deal flow", c: "#0ea5e9" },
     { t: "Nuclear & SMR Landscape 2027", g: "Sector report", c: "#d97706" },
     { t: "Climate Hiring Index — August", g: "Talent", c: "#059669" },
-    { t: "Direct Air Capture Cost Curve", g: "Research", c: "#db2777" },
+    { t: "Carbon Capture & Storage (CCS) Cost Curve", g: "Research", c: "#db2777" },
   ];
   return (
     <div className="flex flex-col gap-3">

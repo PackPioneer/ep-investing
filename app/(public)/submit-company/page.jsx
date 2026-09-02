@@ -178,8 +178,8 @@ export default function SubmitCompanyPage() {
                     className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "carbon_credits" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     carbon credits
                   </button>
-                  <button key="direct_air_capture" type="button" onClick={() => setSector(sector === "direct_air_capture" ? "" : "direct_air_capture")}
-                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "direct_air_capture" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
+                  <button key="carbon_capture_storage" type="button" onClick={() => setSector(sector === "carbon_capture_storage" ? "" : "carbon_capture_storage")}
+                    className={`text-xs font-mono px-3 py-1.5 rounded-full border transition-all ${sector === "carbon_capture_storage" ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500 hover:border-emerald-400"}`}>
                     direct air capture
                   </button>
                   <button key="saf_efuels" type="button" onClick={() => setSector(sector === "saf_efuels" ? "" : "saf_efuels")}

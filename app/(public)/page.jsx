@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import posthog from "posthog-js";
 
 const quickTags = [
-  { slug: "direct_air_capture", label: "Direct Air Capture" },
+  { slug: "carbon_capture_storage", label: "Carbon Capture & Storage (CCS)" },
   { slug: "green_hydrogen", label: "Green Hydrogen" },
   { slug: "nuclear_technologies", label: "Nuclear Technologies" },
   { slug: "carbon_credits", label: "Carbon Credits" },

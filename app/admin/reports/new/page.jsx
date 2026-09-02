@@ -131,7 +131,7 @@ export default function NewReportPage() {
                 <label className={labelClass}>Sector *</label>
                 <select name="sector" value={form.sector} onChange={handleChange} required className={inputClass}>
                   <option value="">Select sector…</option>
-                  {["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","carbon_credits","industrial_decarb","ev_charging","geothermal","wind_energy","direct_air_capture","saf_efuels"].map(s => (
+                  {["green_hydrogen","nuclear_technologies","battery_storage","electric_aviation","solar","carbon_credits","industrial_decarb","ev_charging","geothermal","wind_energy","carbon_capture_storage", "direct_air_capture","saf_efuels"].map(s => (
                     <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
                   ))}
                 </select>

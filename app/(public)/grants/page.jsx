@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Search, Clock, DollarSign, FileText, ExternalLink } from "lucide-react";
 import posthog from "posthog-js";
 
-const CATEGORIES = ["All", "solar", "wind_energy", "battery_storage", "green_hydrogen", "nuclear_technologies", "ev_charging", "carbon_credits", "direct_air_capture", "saf_efuels", "electric_aviation", "geothermal_energy", "industrial_decarbonization", "energy_efficiency", "climate_tech"];
+const CATEGORIES = ["All", "solar", "wind_energy", "battery_storage", "green_hydrogen", "nuclear_technologies", "ev_charging", "carbon_credits", "carbon_capture_storage", "direct_air_capture", "saf_efuels", "electric_aviation", "geothermal_energy", "industrial_decarbonization", "energy_efficiency", "climate_tech"];
 
 function daysUntil(dateStr) {
   if (!dateStr) return null;

@@ -18,6 +18,7 @@ const SECTOR_LABELS = {
   wind_energy: "Wind Energy",
   geothermal_energy: "Geothermal",
   carbon_credits: "Carbon Credits",
+  carbon_capture_storage: "Carbon Capture & Storage (CCS)",
   direct_air_capture: "Direct Air Capture",
   industrial_decarbonization: "Industrial Decarbonization",
   saf_efuels: "SAF / E-fuels",
