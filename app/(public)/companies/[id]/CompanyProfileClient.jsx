@@ -628,15 +628,6 @@ async function postUpdate(e) {
                     </div>
                   </div>
                 )}
-                {company.total_funding_raised && (
-                  <div className="flex items-start gap-3">
-                    <TrendingUp size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
-                    <div>
-                      <div className="text-xs text-[#718096] font-mono mb-1">Total Funding</div>
-                      <div className="text-sm text-[#0f1a14]">{company.total_funding_raised}</div>
-                    </div>
-                  </div>
-                )}
                 {company.business_model && (
                   <div className="flex items-start gap-3">
                     <Briefcase size={14} className="text-[#2d6a4f] mt-0.5 flex-shrink-0" />
