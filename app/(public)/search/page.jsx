@@ -389,8 +389,10 @@ useEffect(() => {
           <div className="flex items-center flex-1 px-4 gap-3">
             <Search size={15} className="text-[#718096] flex-shrink-0" />
             <input
+              name="q"
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleSearch(e); } }}
               placeholder="Search companies, investors, grants…"
               className="w-full py-3.5 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#718096]"
             />
