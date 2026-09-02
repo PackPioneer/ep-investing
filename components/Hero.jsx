@@ -67,8 +67,10 @@ export default function Hero() {
               <div className="flex items-center flex-1 px-3 min-w-0">
                 <Search size={18} className="text-slate-400 mr-2 flex-shrink-0" />
                 <input
+                  name="q"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSearch(e); } }}
                   placeholder="Search direct air capture..."
                   className="w-full py-3 outline-none bg-transparent text-sm sm:text-base min-w-0"
                 />

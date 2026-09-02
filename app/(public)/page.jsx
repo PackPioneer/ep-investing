@@ -209,7 +209,7 @@ export default function HomePage() {
       {/* SEARCH */}
       <section className="max-w-6xl mx-auto px-6 pb-4">
         <form onSubmit={handleSearch} className="flex max-w-2xl bg-white border border-[#dbdfe4] rounded-xl overflow-hidden mb-4 focus-within:border-[#2d6a4f] focus-within:shadow-[0_0_0_3px_rgba(45,106,79,0.12)] transition-all">
-          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search companies, investors, grants, sectors…"
+          <input name="q" value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleSearch(e); } }} placeholder="Search companies, investors, grants, sectors…"
             className="w-full py-3.5 px-4 bg-transparent outline-none text-sm text-[#0f1a14] placeholder-[#8a958f]" />
           <button type="submit" style={{ fontFamily: "var(--font-display), sans-serif" }} className="bg-[#2d6a4f] text-white font-bold text-sm px-6 hover:bg-[#235a40] transition-colors">Search</button>
         </form>
