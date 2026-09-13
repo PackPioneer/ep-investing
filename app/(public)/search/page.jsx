@@ -404,7 +404,7 @@ useEffect(() => {
               </button>
             )}
           </div>
-          <button type="submit" className="bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm px-5 hover:bg-[#235a40] transition-colors">
+          <button type="button" onClick={handleSearch} className="bg-[#2d6a4f] text-[#f6f7f9] font-semibold text-sm px-5 hover:bg-[#235a40] transition-colors">
             Search
           </button>
         </form>
