@@ -398,7 +398,7 @@ useEffect(() => {
             />
             {(inputValue || query) && (
               <button type="button" aria-label="Clear search"
-                onClick={() => { setInputValue(""); router.push("/search?q="); }}
+                onClick={() => { setInputValue(""); clearAllFilters(); router.push("/search"); }}
                 className="text-[#718096] hover:text-[#0f1a14] flex-shrink-0 transition-colors">
                 <X size={15} />
               </button>
