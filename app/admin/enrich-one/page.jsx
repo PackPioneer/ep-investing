@@ -20,6 +20,11 @@ const FIELD_LABELS = {
   geographies_focus: "Geographies Focus", investment_stages_text: "Investment Stages",
 };
 const CONF = { high: "bg-emerald-50 text-emerald-700 border-emerald-200", medium: "bg-amber-50 text-amber-700 border-amber-200", low: "bg-red-50 text-red-700 border-red-200" };
+const STAGE_OPTIONS = [
+  { v: "unknown", l: "Unknown" }, { v: "pre_seed", l: "Pre-Seed" }, { v: "seed", l: "Seed" },
+  { v: "series_a", l: "Series A" }, { v: "series_b", l: "Series B" }, { v: "series_c", l: "Series C" },
+  { v: "growth", l: "Growth" }, { v: "public", l: "Public" },
+];
 const TYPES = [
   { key: "company", label: "Company", hint: "id or slug (e.g. 1552 or natron-energy-1552)" },
   { key: "ngo", label: "NGO", hint: "slug (e.g. green-climate-fund)" },
@@ -40,9 +45,11 @@ const [pastedText, setPastedText] = useState("");
   const [showPaste, setShowPaste] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [industryTags, setIndustryTags] = useState([]);
+  const [stage, setStage] = useState("unknown");
+  const [customers, setCustomers] = useState("");
   const typeCfg = TYPES.find((t) => t.key === entityType);
 
-  const reset = () => { setEntity(null); setDrafts(null); setLogo(null); setMsg(""); setPastedText(""); setShowPaste(false); setIndustryTags([]); };
+  const reset = () => { setEntity(null); setDrafts(null); setLogo(null); setMsg(""); setPastedText(""); setShowPaste(false); setIndustryTags([]); setStage("unknown"); setCustomers(""); };
 
   const post = async (payload) => {
     const res = await fetch("/api/admin/enrich-one", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entityType, ...payload }) });
@@ -58,6 +65,19 @@ const [pastedText, setPastedText] = useState("");
     setNameOverride(d.entity.name || "");
     setUrlOverride(d.entity[d.urlCol] || "");
     setIndustryTags(Array.isArray(d.entity.industry_tags) ? d.entity.industry_tags : []);
+    setStage(d.entity.funding_stage || "unknown");
+    setCustomers(d.entity.key_customers || "");
+  };
+
+  // Manually save funding stage + key customers (companies only).
+  const saveDetails = async () => {
+    if (!entity) return;
+    setBusy(true); setMsg("");
+    const d = await post({ action: "save", id: entity.id, funding_stage: stage, key_customers: customers });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    setEntity((e) => ({ ...e, funding_stage: stage, key_customers: customers }));
+    setMsg("Company details saved.");
   };
 
   // Save the (manually corrected) industry tags — replaces the auto-classified set.
@@ -238,6 +258,32 @@ const [pastedText, setPastedText] = useState("");
                 {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save industry tags
               </button>
               <p className="text-[11px] text-gray-400 mt-1">Overrides the AI-classified tags. Selected: {industryTags.length ? industryTags.map(formatSector).join(", ") : "none"}.</p>
+            </div>
+          )}
+
+          {/* Company details (companies only) — funding stage + customers */}
+          {entityType === "company" && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <label className="block text-xs font-semibold text-gray-500 mb-2">Company details</label>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <span className="block text-[11px] text-gray-400 mb-1">Financing stage</span>
+                  <select value={stage} onChange={(e) => setStage(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-emerald-400">
+                    {STAGE_OPTIONS.map((s) => <option key={s.v} value={s.v}>{s.l}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <span className="block text-[11px] text-gray-400 mb-1">Key customers (comma-separated names)</span>
+                  <input value={customers} onChange={(e) => setCustomers(e.target.value)}
+                    placeholder="e.g. Google, Shell, Ørsted"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-400" />
+                </div>
+                <button onClick={saveDetails} disabled={busy}
+                  className="self-start inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                  {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save company details
+                </button>
+              </div>
             </div>
           )}
 

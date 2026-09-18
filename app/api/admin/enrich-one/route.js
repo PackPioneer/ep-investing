@@ -59,7 +59,7 @@ async function loadEntity(supabase, cfg, idOrSlug) {
   else col = isNumeric ? 'id' : 'slug';
   const selectCols = ['id', 'name', 'logo_url', cfg.urlCol, ...cfg.fields];
   if (cfg.table !== 'vc_firms') selectCols.push('slug');
-  if (cfg.table === 'companies') selectCols.push('industry_tags');
+  if (cfg.table === 'companies') selectCols.push('industry_tags', 'funding_stage');
   const { data } = await supabase.from(cfg.table).select([...new Set(selectCols)].join(', ')).eq(col, key).single();
   return data;
 }
@@ -263,6 +263,12 @@ ${text}`;
     // Editable industry tags (companies only) — replaces the auto-classified set.
     if (cfg.table === 'companies' && Array.isArray(body.industry_tags)) {
       update.industry_tags = body.industry_tags.filter((t) => typeof t === 'string' && t.trim());
+    }
+    // Manual company fields — funding stage (enum) and key customers (allow clearing).
+    if (cfg.table === 'companies') {
+      const STAGES = ['pre_seed', 'seed', 'series_a', 'series_b', 'series_c', 'growth', 'public', 'unknown'];
+      if (typeof body.funding_stage === 'string' && STAGES.includes(body.funding_stage)) update.funding_stage = body.funding_stage;
+      if (typeof body.key_customers === 'string') update.key_customers = body.key_customers.trim() || null;
     }
     if (Object.keys(update).length === 0) return NextResponse.json({ error: 'No valid fields to save' }, { status: 400 });
     const { error } = await supabase.from(cfg.table).update(update).eq('id', id);
