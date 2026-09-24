@@ -270,6 +270,12 @@ ${text}`;
       if (typeof body.funding_stage === 'string' && STAGES.includes(body.funding_stage)) update.funding_stage = body.funding_stage;
       if (typeof body.key_customers === 'string') update.key_customers = body.key_customers.trim() || null;
     }
+    // Clear (blank out) specific profile fields so a section disappears.
+    if (Array.isArray(body.clearFields)) {
+      for (const f of body.clearFields) {
+        if (cfg.fields.includes(f)) update[f] = null;
+      }
+    }
     if (Object.keys(update).length === 0) return NextResponse.json({ error: 'No valid fields to save' }, { status: 400 });
     const { error } = await supabase.from(cfg.table).update(update).eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

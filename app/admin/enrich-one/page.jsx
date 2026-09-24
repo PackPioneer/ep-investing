@@ -47,6 +47,7 @@ const [pastedText, setPastedText] = useState("");
   const [industryTags, setIndustryTags] = useState([]);
   const [stage, setStage] = useState("unknown");
   const [customers, setCustomers] = useState("");
+  const [entityFields, setEntityFields] = useState([]);
   const typeCfg = TYPES.find((t) => t.key === entityType);
 
   const reset = () => { setEntity(null); setDrafts(null); setLogo(null); setMsg(""); setPastedText(""); setShowPaste(false); setIndustryTags([]); setStage("unknown"); setCustomers(""); };
@@ -67,6 +68,20 @@ const [pastedText, setPastedText] = useState("");
     setIndustryTags(Array.isArray(d.entity.industry_tags) ? d.entity.industry_tags : []);
     setStage(d.entity.funding_stage || "unknown");
     setCustomers(d.entity.key_customers || "");
+    setEntityFields(Array.isArray(d.fields) ? d.fields : []);
+  };
+
+  // Blank out a single stored field so its section disappears from the profile.
+  const clearField = async (f) => {
+    if (!entity) return;
+    if (!confirm(`Clear "${FIELD_LABELS[f] || f}" from ${entity.name}? This removes it from the profile.`)) return;
+    setBusy(true); setMsg("");
+    const d = await post({ action: "save", id: entity.id, clearFields: [f] });
+    setBusy(false);
+    if (d.error) { setMsg(d.error); return; }
+    setEntity((e) => ({ ...e, [f]: null }));
+    if (f === "key_customers") setCustomers("");
+    setMsg(`Cleared ${FIELD_LABELS[f] || f}.`);
   };
 
   // Manually save funding stage + key customers (companies only).
@@ -283,6 +298,27 @@ const [pastedText, setPastedText] = useState("");
                   className="self-start inline-flex items-center gap-1 bg-gray-900 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
                   {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save company details
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Current profile fields — clear any to remove that section from the profile */}
+          {entity && entityFields.some((f) => entity[f]) && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <label className="block text-xs font-semibold text-gray-500 mb-2">Current profile sections (clear to remove)</label>
+              <div className="flex flex-col divide-y divide-gray-100">
+                {entityFields.filter((f) => entity[f]).map((f) => (
+                  <div key={f} className="py-2 flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-gray-700">{FIELD_LABELS[f] || f}</div>
+                      <div className="text-xs text-gray-500 line-clamp-2">{String(entity[f])}</div>
+                    </div>
+                    <button onClick={() => clearField(f)} disabled={busy}
+                      className="flex-shrink-0 text-xs font-semibold text-red-600 border border-red-200 hover:bg-red-50 rounded-lg px-3 py-1.5 disabled:opacity-50">
+                      Clear
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
