@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/admin";
 
 const VALID_TAGS = [
   "battery_storage", "carbon_credits", "circular_economy", "clean_cooking", "consultancy",  "carbon_capture_storage", "direct_air_capture",
-  "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen",
+  "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen", "green_ammonia",
   "grid_storage", "grid_monitoring", "industrial_decarbonization", "nuclear_technologies",
   "saf_efuels", "solar", "wind_energy", "electric_vehicles", "agtech", "maritime_shipping", "fintech", "information_services", "energy_generation", "energy_efficiency", "energy_management",
 ];

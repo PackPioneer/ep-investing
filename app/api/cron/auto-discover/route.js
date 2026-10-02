@@ -24,6 +24,7 @@ const CATEGORY_PROMPTS = {
   ev_charging:                'List 15 real funded startup companies building EV charging networks or smart charging software. Include website URLs.',
   geothermal_energy:          'List 15 real funded startup companies working on geothermal energy or enhanced geothermal systems. Include website URLs.',
   green_hydrogen:             'List 15 real funded startup companies producing green hydrogen or building electrolyzers. Include website URLs.',
+  green_ammonia:              'List 15 real funded startup companies producing green ammonia or building green-ammonia synthesis / cracking technology for fuel or fertilizer. Include website URLs.',
   grid_storage:               'List 15 real funded startup companies working on long-duration grid storage or flow batteries. Include website URLs.',
   industrial_decarbonization: 'List 15 real funded startup companies decarbonizing heavy industry: green steel, cement, industrial heat. Include website URLs.',
   nuclear_technologies:       'List 15 real funded startup companies building advanced nuclear reactors, SMRs, or fusion energy. Include website URLs.',
