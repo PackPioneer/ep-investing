@@ -221,10 +221,13 @@ export async function PATCH(req) {
       try {
         const { clerkClient } = await import("@clerk/nextjs/server");
         const client = await clerkClient();
+        const dash = data?.profile_type === "investor" ? "/dashboard/investor"
+          : data?.profile_type === "ngo" ? "/dashboard/ngo"
+          : "/dashboard";
         await client.invitations.createInvitation({
           emailAddress: data.claimant_email,
-          redirectUrl: "https://www.epinvesting.com/sign-up",
-          publicMetadata: { company_id: data.target_id, claim_id: rawId },
+          redirectUrl: `https://www.epinvesting.com/sign-up?redirect_url=${encodeURIComponent(dash)}`,
+          publicMetadata: { profile_type: data?.profile_type || "company", target_id: data.target_id, claim_id: rawId },
           ignoreExisting: true,
         });
       } catch (inviteErr) {

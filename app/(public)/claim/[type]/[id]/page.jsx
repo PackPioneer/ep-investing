@@ -133,7 +133,7 @@ export default function ClaimProfilePage() {
   }
 
   const profileUrl = type === "company" ? `/companies/${id}` : type === "ngo" ? `/ngos/${id}` : `/investors/${id}`;
-  const profileLabel = type === "company" ? "company" : type === "ngo" ? "organization" : "investment firm";
+  const profileLabel = type === "company" ? "company" : type === "ngo" ? "organization" : "investor";
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] py-12 px-6"
@@ -207,7 +207,7 @@ export default function ClaimProfilePage() {
 
             <div>
               <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Your role *</label>
-              <input placeholder={type === "company" ? "e.g. CEO, Head of Marketing, Founder" : type === "ngo" ? "e.g. Executive Director, Communications Lead" : "e.g. Partner, Principal, Analyst"} value={form.claimant_role} onChange={e => setForm(p => ({ ...p, claimant_role: e.target.value }))}
+              <input placeholder={type === "company" ? "e.g. CEO, Head of Marketing, Founder" : type === "ngo" ? "e.g. Executive Director, Communications Lead" : "e.g. Partner, Principal, Angel Investor"} value={form.claimant_role} onChange={e => setForm(p => ({ ...p, claimant_role: e.target.value }))}
                 className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
             </div>
 
