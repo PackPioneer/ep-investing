@@ -122,7 +122,7 @@ export default function InvestorsPage() {
               Climate Investors
             </h1>
             <p className="text-[#4a5568] text-base font-light max-w-xl">
-              VCs, family offices, and institutional investors deploying capital across the energy transition.
+              VCs, angel investors, family offices, and philanthropic funders deploying capital across the energy transition.
             </p>
           </div>
           <div className="text-right">

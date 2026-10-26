@@ -47,10 +47,10 @@ export async function POST(req) {
     }
 }
 
-    // Check if email matches an approved investor request
+    // Check if email matches an approved investor request (self-serve onboarding)
     const { data: investor } = await supabase
       .from("matched_requests")
-      .select("id")
+      .select("id, vc_firm_id")
       .eq("email", email)
       .eq("status", "approved")
       .eq("path", "investor")
@@ -61,6 +61,13 @@ export async function POST(req) {
         .from("matched_requests")
         .update({ clerk_user_id })
         .eq("id", investor.id);
+      // Claim the unified public profile created for this investor.
+      if (investor.vc_firm_id) {
+        await supabase
+          .from("vc_firms")
+          .update({ claimed_by_clerk_user_id: clerk_user_id })
+          .eq("id", investor.vc_firm_id);
+      }
     }
 
     // NEW: Check the profile-claim flow (claim_requests table)

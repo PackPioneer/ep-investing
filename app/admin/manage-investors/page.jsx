@@ -37,7 +37,7 @@ export default function ManageInvestors() {
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-slate-900">Investors</h1>
-        <p className="text-sm text-slate-500 mt-1">Search the full investor directory. Hiding removes a VC from all public surfaces (reversible).</p>
+        <p className="text-sm text-slate-500 mt-1">Search the full investor directory. Hiding removes an investor from all public surfaces (reversible).</p>
       </div>
 
       <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-3 mb-6 focus-within:border-slate-400 transition-colors">

@@ -49,12 +49,12 @@ export default function AdminAddInvestor() {
         <h1 className="text-2xl font-semibold text-slate-900">Add investor</h1>
       </div>
       <p className="text-sm text-slate-500 mb-8">
-        Paste a URL and firm name. The system will scrape a description and logo. Takes ~5 seconds. The new investor profile will be claimable — share the link with the prospect.
+        Paste a URL and investor name. The system will scrape a description and logo. Takes ~5 seconds. The new investor profile will be claimable — share the link with the prospect.
       </p>
 
       <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col gap-5">
         <div>
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Firm name *</label>
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5 block">Investor name *</label>
           <input
             type="text"
             value={name}

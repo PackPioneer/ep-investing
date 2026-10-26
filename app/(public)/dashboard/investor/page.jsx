@@ -472,7 +472,7 @@ export default function InvestorDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-lg font-semibold text-[#0f1a14]">{profile?.name || "Your Name"}</div>
-                  <div className="text-sm text-[#718096]">{profile?.firm || "Your Firm"}</div>
+                  <div className="text-sm text-[#718096]">{profile?.firm || "Your profile"}</div>
                   {profile?.tagline && (
                     <div className="text-xs text-[#2d6a4f] italic mt-1.5 leading-relaxed">"{profile.tagline}"</div>
                   )}
@@ -519,7 +519,7 @@ export default function InvestorDashboard() {
                   <div className="text-xs font-mono font-semibold text-[#2d6a4f] uppercase tracking-wide mb-3">Identity</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label className={labelClass}>Name</label><input value={profileForm.name} onChange={e => setProfileForm(p => ({...p, name: e.target.value}))} className={inputClass} /></div>
-                    <div><label className={labelClass}>Firm</label><input value={profileForm.firm} onChange={e => setProfileForm(p => ({...p, firm: e.target.value}))} className={inputClass} /></div>
+                    <div><label className={labelClass}>Investor / firm name</label><input value={profileForm.firm} onChange={e => setProfileForm(p => ({...p, firm: e.target.value}))} className={inputClass} placeholder="Fund, firm, or your name" /></div>
                     <div className="md:col-span-2"><label className={labelClass}>Tagline (one-line description)</label><input value={profileForm.tagline} onChange={e => setProfileForm(p => ({...p, tagline: e.target.value}))} placeholder='e.g. "Backing climate founders at pre-seed"' className={inputClass} /></div>
                     <div><label className={labelClass}>Location</label><input value={profileForm.location} onChange={e => setProfileForm(p => ({...p, location: e.target.value}))} placeholder="San Francisco, CA" className={inputClass} /></div>
                     <div><label className={labelClass}>Point of contact</label><input value={profileForm.point_of_contact} onChange={e => setProfileForm(p => ({...p, point_of_contact: e.target.value}))} placeholder="jane@firm.com" className={inputClass} /></div>
@@ -688,8 +688,8 @@ export default function InvestorDashboard() {
           <div className="flex flex-col gap-4">
             {!connClaimed ? (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center">
-                <p className="text-sm text-[#718096] mb-2">Claim your firm's public profile to receive connection requests.</p>
-                <Link href="/investors" className="text-xs text-[#2d6a4f] font-mono hover:underline">Find your firm in the directory →</Link>
+                <p className="text-sm text-[#718096] mb-2">Claim your public investor profile to receive connection requests.</p>
+                <Link href="/investors" className="text-xs text-[#2d6a4f] font-mono hover:underline">Find yourself in the directory →</Link>
               </div>
             ) : connections.length === 0 ? (
               <div className="bg-white border border-[#e8eaee] rounded-2xl p-8 text-center">

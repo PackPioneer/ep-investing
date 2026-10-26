@@ -367,7 +367,7 @@ export default function InvestorProfilePage() {
             {/* CLAIM / ONBOARDING CTA */}
             {!investor.claimed_by_clerk_user_id ? (
               <div className="bg-[#0f1a14] border border-[#2d6a4f] rounded-2xl p-6">
-                <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Is this your firm?</span>
+                <span className="text-xs font-mono text-[#a0b8a8] uppercase tracking-widest">Is this you?</span>
                 <p className="text-sm text-[#d0e4d8] leading-relaxed mt-3 mb-4">
                   Claim this profile to manage it, update your details, and connect directly with founders.
                 </p>

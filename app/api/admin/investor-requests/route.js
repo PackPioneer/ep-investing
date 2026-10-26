@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Resend } from "resend";
 import { requireAdmin } from "@/lib/admin";
+import { requestToFirmFields } from "@/lib/investor";
 
 const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
@@ -33,6 +34,19 @@ export async function PATCH(req) {
     .single();
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
+
+  // On approval, ensure the investor has a public vc_firms profile (so they're
+  // discoverable in the directory immediately). The webhook links it to their
+  // Clerk user on signup.
+  if (status === "approved" && data && !data.vc_firm_id) {
+    try {
+      const { data: firm } = await supabase
+        .from("vc_firms").insert(requestToFirmFields(data)).select("id").single();
+      if (firm?.id) await supabase.from("matched_requests").update({ vc_firm_id: firm.id }).eq("id", id);
+    } catch (e) {
+      console.error("Create vc_firm on investor approval failed (non-fatal):", e);
+    }
+  }
 
   if (!error && status === "approved" && data?.email) {
     try {
