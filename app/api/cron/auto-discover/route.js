@@ -16,6 +16,7 @@ import { parse } from 'node-html-parser';
 
 const CATEGORY_PROMPTS = {
   battery_storage:            'List 15 real funded startup companies working on battery storage, lithium-ion, solid-state batteries, or grid-scale energy storage. Include website URLs.',
+  energy_storage:             'List 15 real funded startup companies building energy storage systems beyond lithium batteries — long-duration storage, thermal storage, mechanical/gravity storage, flow batteries, compressed air, or hydrogen storage. Include website URLs.',
   carbon_credits:             'List 15 real funded startup companies in voluntary carbon markets, carbon offsets, or carbon accounting software. Include website URLs.',
   clean_cooking:              'List 15 real companies making clean cookstoves or clean household energy for developing markets. Include website URLs.',
   carbon_capture_storage:     'List 15 real funded startup companies doing point-source carbon capture, utilization, and storage (CCUS) at industrial facilities or power plants. Include website URLs.',

@@ -8,7 +8,7 @@ const db = () => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 
 const PENDING_MARK = "scraped_from_vc_portfolio_pending";
 const VALID_TAGS = [
-  "battery_storage", "carbon_credits", "clean_cooking", "carbon_capture_storage", "direct_air_capture",
+  "battery_storage", "energy_storage", "carbon_credits", "clean_cooking", "carbon_capture_storage", "direct_air_capture",
   "electric_aviation", "ev_charging", "geothermal_energy", "green_hydrogen", "green_ammonia",
   "grid_storage", "grid_monitoring", "grid_construction", "industrial_decarbonization", "nuclear_technologies",
   "saf_efuels", "solar", "wind_energy", "electric_vehicles", "agtech", "maritime_shipping", "fintech", "information_services", "energy_generation", "energy_efficiency", "energy_management",
@@ -53,7 +53,7 @@ async function classifyTags(name, description) {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 100, messages: [{ role: "user", content: `Classify this climate company into 1-3 tags from this list only:\n${VALID_TAGS.join(", ")}\n\nCompany: ${name}\nDescription: ${description || ""}\n\nReply with ONLY a JSON array, e.g. ["solar","battery_storage"]` }] }),
+      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 100, messages: [{ role: "user", content: `Classify this climate company into 1-3 tags from this list only:\n${VALID_TAGS.join(", ")}\n\nCompany: ${name}\nDescription: ${description || ""}\n\nReply with ONLY a JSON array, e.g. ["solar","battery_storage", "energy_storage"]` }] }),
       signal: AbortSignal.timeout(12000),
     });
     const data = await res.json();

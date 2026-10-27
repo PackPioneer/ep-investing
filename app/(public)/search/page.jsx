@@ -22,7 +22,7 @@ const getAvatarColor = (name) => {
 };
 
 const INDUSTRY_FILTERS = [
-  "nuclear_technologies", "electric_aviation", "battery_storage",
+  "nuclear_technologies", "electric_aviation", "battery_storage", "energy_storage",
   "green_hydrogen", "green_ammonia", "wind_energy", "solar", "geothermal_energy",
   "industrial_decarbonization", "ev_charging", "carbon_credits",
   "clean_cooking", "carbon_capture_storage", "direct_air_capture", "saf_efuels", "grid_storage", "grid_monitoring", "grid_construction",
