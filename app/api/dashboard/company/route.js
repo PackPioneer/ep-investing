@@ -60,7 +60,7 @@ export async function PATCH(req) {
   const body = await req.json();
   const {
     name,
-    url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
+    url, description, tagline, core_technology, key_customers, headquarters_city, headquarters_country, linkedin_url,
     twitter_url, founding_year, employee_count, location, funding_stage, business_model,
     looking_to_raise, is_hiring, seeking_partnerships, industry_tags, raise_target,
     raise_current, raise_close_date, min_check_size, raise_round_type, raise_instrument,
@@ -81,7 +81,7 @@ export async function PATCH(req) {
     .from("companies")
     .update({
       ...(name_clean ? { name: name_clean } : {}),
-      url, description, tagline, headquarters_city, headquarters_country, linkedin_url,
+      url, description, tagline, core_technology, key_customers, headquarters_city, headquarters_country, linkedin_url,
       twitter_url, founding_year: founding_year_clean, employee_count: employee_count_clean,
       location, funding_stage, business_model,
       looking_to_raise, is_hiring, seeking_partnerships, industry_tags, show_contact,

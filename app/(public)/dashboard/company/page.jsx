@@ -174,6 +174,8 @@ const [teamMembers, setTeamMembers] = useState([]);
           url: data.url || "",
           description: data.description || "",
           tagline: data.tagline || "",
+          core_technology: data.core_technology || "",
+          key_customers: data.key_customers || "",
           headquarters_city: data.headquarters_city || "",
           headquarters_country: data.headquarters_country || "",
           founding_year: data.founding_year || null,
@@ -634,6 +636,19 @@ async function deleteDeck() {
                   <textarea rows={4} placeholder="What does your company do? Who are you serving?" value={form.description}
                     onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                     className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-vertical" />
+                </div>
+                <div>
+                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Core technology</label>
+                  <textarea rows={3} placeholder="The core technology behind your product — what it is and how it works." value={form.core_technology}
+                    onChange={e => setForm(p => ({ ...p, core_technology: e.target.value }))}
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f] resize-vertical" />
+                </div>
+                <div>
+                  <label className="text-xs font-mono text-[#718096] uppercase tracking-wide mb-1.5 block">Key customers &amp; partners</label>
+                  <input type="text" placeholder="e.g. Siemens, Ørsted, National Grid" value={form.key_customers}
+                    onChange={e => setForm(p => ({ ...p, key_customers: e.target.value }))}
+                    className="w-full text-sm px-3 py-2.5 rounded-lg border border-[#dbdfe4] bg-white focus:outline-none focus:border-[#2d6a4f]" />
+                  <p className="text-xs text-[#718096] mt-1.5">Comma-separated. Only list customers or partners you can name publicly.</p>
                 </div>
               </div>
             </div>
