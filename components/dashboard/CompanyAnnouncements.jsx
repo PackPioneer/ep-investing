@@ -66,6 +66,8 @@ export default function CompanyAnnouncements() {
   const [ctaLabel, setCtaLabel] = useState(CTA.partnership.label);
   const [meta, setMeta] = useState({});
   const [mode, setMode] = useState("link");   // "link" = link back (default) · "full" = host the release on EP
+  const [imageUrl, setImageUrl] = useState("");
+  const [uploadingImg, setUploadingImg] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const load = () => fetch("/api/dashboard/company/announcements")
@@ -94,7 +96,23 @@ export default function CompanyAnnouncements() {
     } finally { setBusyId(null); }
   };
 
-  const reset = () => { setTitle(""); setBodyText(""); setLink(""); setMeta({}); setCat("partnership"); setCtaLabel(CTA.partnership.label); setMode("link"); setOpen(false); };
+  const reset = () => { setTitle(""); setBodyText(""); setLink(""); setMeta({}); setCat("partnership"); setCtaLabel(CTA.partnership.label); setMode("link"); setImageUrl(""); setOpen(false); };
+
+  const onPickImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImg(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const res = await fetch("/api/dashboard/upload-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataUrl: reader.result }) });
+        const d = await res.json();
+        if (d.url) setImageUrl(d.url); else alert(d.error || "Upload failed");
+      } catch { alert("Upload failed"); }
+      setUploadingImg(false);
+    };
+    reader.readAsDataURL(file);
+  };
   const activeFields = CATEGORIES.find((c) => c.id === cat)?.fields || [];
 
   const submit = async () => {
@@ -103,7 +121,7 @@ export default function CompanyAnnouncements() {
     setSubmitting(true);
     await fetch("/api/dashboard/company/announcements", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category: cat, title, body: bodyText, link_url: link, meta: { ...meta, cta_label: ctaLabel, release_mode: mode } }),
+      body: JSON.stringify({ category: cat, title, body: bodyText, link_url: link, meta: { ...meta, cta_label: ctaLabel, release_mode: mode, ...(imageUrl ? { image_url: imageUrl } : {}) } }),
     });
     setSubmitting(false);
     reset();
@@ -198,6 +216,21 @@ export default function CompanyAnnouncements() {
               <textarea rows={mode === "full" ? 12 : 3} value={bodyText} onChange={(e) => setBodyText(e.target.value)}
                 placeholder={mode === "full" ? "Paste your full press release — dateline, body, boilerplate, and media contact. It'll be hosted on your EP page." : "A sentence or two of context."}
                 className={inputClass + (mode === "full" ? "" : " resize-none")} />
+            </div>
+
+            <div>
+              <label className={labelClass}>Photo (optional)</label>
+              {imageUrl ? (
+                <div className="flex items-center gap-3">
+                  <img src={imageUrl} alt="" className="w-24 h-24 rounded-lg object-cover border border-[#e8eaee]" />
+                  <button type="button" onClick={() => setImageUrl("")} className="text-xs text-[#718096] hover:text-red-500">Remove</button>
+                </div>
+              ) : (
+                <label className="inline-flex items-center gap-2 text-xs text-[#4a5568] border border-[#dbdfe4] rounded-lg px-3 py-2 cursor-pointer hover:border-[#2d6a4f]">
+                  {uploadingImg ? "Uploading…" : "Add a photo"}
+                  <input type="file" accept="image/*" onChange={onPickImage} className="hidden" />
+                </label>
+              )}
             </div>
             <div>
               <label className={labelClass}>Call-to-action button</label>

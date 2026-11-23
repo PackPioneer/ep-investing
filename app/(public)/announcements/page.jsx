@@ -48,6 +48,18 @@ export default function NewsroomPage() {
   const [sec, setSec] = useState("");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState("");
+  const [coMatches, setCoMatches] = useState([]);
+
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 2) { setCoMatches([]); return; }
+    const t = setTimeout(() => {
+      fetch(`/api/search?q=${encodeURIComponent(term)}&limit=6`)
+        .then((r) => r.json()).then((d) => setCoMatches((d.companies || []).slice(0, 6))).catch(() => setCoMatches([]));
+    }, 250);
+    return () => clearTimeout(t);
+  }, [q]);
 
   useEffect(() => {
     setLoading(true);
@@ -57,12 +69,25 @@ export default function NewsroomPage() {
   }, [cat]);
 
   const sectorOpts = useMemo(() => [...new Set(rows.flatMap((r) => [...(r.company?.industry_tags || []), ...(r.ngo?.sector_tags || [])]))].filter(Boolean).sort(), [rows]);
-  const shown = sec ? rows.filter((r) => [...(r.company?.industry_tags || []), ...(r.ngo?.sector_tags || [])].includes(sec)) : rows;
+  const ql = q.trim().toLowerCase();
+  const shown = rows.filter((r) => {
+    if (sec && ![...(r.company?.industry_tags || []), ...(r.ngo?.sector_tags || [])].includes(sec)) return false;
+    if (ql) {
+      const hay = [r.title, r.body, r.company?.name, r.ngo?.name, metaLine(r)].filter(Boolean).join(" ").toLowerCase();
+      if (!hay.includes(ql)) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
       <h1 style={{ fontFamily: "var(--font-display), sans-serif" }} className="text-3xl font-bold text-slate-900 mb-1">Newsroom</h1>
-      <p className="text-sm text-slate-500 mb-6">Raises, partnerships, launches, and hires from climate &amp; energy companies across the EP Network.</p>
+      <p className="text-sm text-slate-500 mb-4">Raises, partnerships, launches, and hires from climate &amp; energy companies across the EP Network.</p>
+
+      <div className="mb-4">
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search releases and companies — e.g. NeoVolta"
+          className="w-full text-sm px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:border-emerald-400" />
+      </div>
 
       <div className="flex flex-wrap gap-1.5 mb-3">
         {CATS.map((c) => (
@@ -79,6 +104,20 @@ export default function NewsroomPage() {
         </select>
         <span className="text-xs text-slate-400">{shown.length} update{shown.length === 1 ? "" : "s"}</span>
       </div>
+
+      {coMatches.length > 0 && (
+        <div className="mb-5">
+          <div className="text-xs font-semibold text-slate-500 mb-2">Companies</div>
+          <div className="flex flex-wrap gap-2">
+            {coMatches.map((c) => (
+              <Link key={c.id} href={`/companies/${c.slug || c.id}`} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:border-emerald-400 text-sm text-slate-700">
+                {c.logo_url && <img src={c.logo_url} alt="" className="w-5 h-5 rounded object-contain" />}
+                {c.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? <div className="flex justify-center py-20"><div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" /></div>
         : shown.length === 0 ? <p className="text-sm text-slate-400 py-10">No updates here yet.</p>
@@ -119,6 +158,7 @@ export default function NewsroomPage() {
                         <div className="text-xs text-slate-500 mt-0.5">In partnership with {a.meta.partners.map((p, i) => { const href = partnerHref(p); return <span key={`${p.kind || "t"}-${p.id ?? i}`}>{i > 0 ? ", " : ""}{href ? <Link href={href} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>; })}</div>
                       )}
                       {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed line-clamp-2">{a.body}</p>}
+                      {a.meta?.image_url && <img src={a.meta.image_url} alt="" className="w-full max-h-44 object-cover rounded-lg mt-2 border border-slate-100" />}
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
                         {isFullRelease && <Link href={`/announcements/${a.id}`} className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">View the whole release →</Link>}
                         {a.is_curated ? (
