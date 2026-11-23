@@ -472,7 +472,13 @@ async function postUpdate(e) {
                         <span className="text-xs text-[#718096]">{new Date(u.published_at || u.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       </div>
                       <p className="text-sm font-semibold text-[#0f1a14]">{u.title}</p>
-                      {u.body && <p className="text-xs text-[#4a5568] mt-1 leading-relaxed">{u.body}</p>}
+                      {u.body && <p className="text-xs text-[#4a5568] mt-1 leading-relaxed line-clamp-3">{u.body}</p>}
+                      {(u.meta?.release_mode === "full" || (!u.link_url && (u.body || "").length > 200)) && (
+                        <a href={`/announcements/${u.id}`}
+                          className="text-xs text-[#2d6a4f] hover:underline mt-1 inline-block">
+                          Read the whole release →
+                        </a>
+                      )}
                       {u.link_url && (
                         <a href={u.link_url} target="_blank" rel="noopener noreferrer"
                           className="text-xs text-[#2d6a4f] hover:underline mt-1 inline-block">

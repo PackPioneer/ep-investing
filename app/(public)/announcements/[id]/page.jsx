@@ -103,7 +103,7 @@ export default async function AnnouncementPage({ params }) {
           {a.meta?.partners?.length > 0 && (
             <div className="text-sm text-slate-500 mb-1">In partnership with {a.meta.partners.map((p, i) => { const href = partnerHref(p); return <span key={`${p.kind || "t"}-${p.id ?? i}`}>{i > 0 ? ", " : ""}{href ? <Link href={href} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>; })}</div>
           )}
-          {a.body && <p className="text-[15px] text-slate-700 leading-relaxed mt-3">{a.body}</p>}
+          {a.body && <p className="text-[15px] text-slate-700 leading-relaxed mt-3 whitespace-pre-wrap">{a.body}</p>}
 
           <div className="flex items-center gap-3 flex-wrap mt-6 pt-5 border-t border-slate-100">
             {a.link_url && <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-semibold bg-emerald-600 text-white px-5 py-2.5 rounded-lg hover:bg-emerald-700">{cta} →</a>}

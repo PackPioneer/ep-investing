@@ -91,6 +91,7 @@ export default function NewsroomPage() {
                 : a.ngo
                 ? { name: a.ngo.name, logo_url: a.ngo.logo_url, href: `/ngos/${a.ngo.slug}` }
                 : null;
+              const isFullRelease = a.meta?.release_mode === "full" || (!a.link_url && (a.body || "").length > 200);
               return (
                 <div key={a.id} className={`bg-white border rounded-xl p-4 ${a.is_featured ? "border-violet-200 ring-1 ring-violet-100" : "border-slate-200"}`}>
                   <div className="flex items-center gap-2 mb-1.5">
@@ -117,8 +118,9 @@ export default function NewsroomPage() {
                       {a.meta?.partners?.length > 0 && (
                         <div className="text-xs text-slate-500 mt-0.5">In partnership with {a.meta.partners.map((p, i) => { const href = partnerHref(p); return <span key={`${p.kind || "t"}-${p.id ?? i}`}>{i > 0 ? ", " : ""}{href ? <Link href={href} className="text-emerald-700 hover:underline font-medium">{p.name}</Link> : <span className="font-medium text-slate-600">{p.name}</span>}</span>; })}</div>
                       )}
-                      {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{a.body}</p>}
+                      {a.body && <p className="text-sm text-slate-600 mt-1.5 leading-relaxed line-clamp-2">{a.body}</p>}
                       <div className="mt-2.5 flex items-center gap-3 flex-wrap">
+                        {isFullRelease && <Link href={`/announcements/${a.id}`} className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">View the whole release →</Link>}
                         {a.is_curated ? (
                           <>
                             {a.link_url && <a href={a.link_url} onClick={() => fetch(`/api/announcements/${a.id}/click`, { method: "POST" }).catch(() => {})} target="_blank" rel="noopener noreferrer" className="inline-block text-xs font-semibold bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg hover:bg-emerald-700">Read release →</a>}

@@ -65,6 +65,7 @@ export default function CompanyAnnouncements() {
   const [link, setLink] = useState("");
   const [ctaLabel, setCtaLabel] = useState(CTA.partnership.label);
   const [meta, setMeta] = useState({});
+  const [mode, setMode] = useState("link");   // "link" = link back (default) · "full" = host the release on EP
   const [submitting, setSubmitting] = useState(false);
 
   const load = () => fetch("/api/dashboard/company/announcements")
@@ -93,15 +94,16 @@ export default function CompanyAnnouncements() {
     } finally { setBusyId(null); }
   };
 
-  const reset = () => { setTitle(""); setBodyText(""); setLink(""); setMeta({}); setCat("partnership"); setCtaLabel(CTA.partnership.label); setOpen(false); };
+  const reset = () => { setTitle(""); setBodyText(""); setLink(""); setMeta({}); setCat("partnership"); setCtaLabel(CTA.partnership.label); setMode("link"); setOpen(false); };
   const activeFields = CATEGORIES.find((c) => c.id === cat)?.fields || [];
 
   const submit = async () => {
     if (!title.trim()) return;
+    if (mode === "full" && !bodyText.trim()) return;
     setSubmitting(true);
     await fetch("/api/dashboard/company/announcements", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category: cat, title, body: bodyText, link_url: link, meta: { ...meta, cta_label: ctaLabel } }),
+      body: JSON.stringify({ category: cat, title, body: bodyText, link_url: link, meta: { ...meta, cta_label: ctaLabel, release_mode: mode } }),
     });
     setSubmitting(false);
     reset();
@@ -149,6 +151,25 @@ export default function CompanyAnnouncements() {
         {open && (
           <div className="mt-5 pt-5 border-t border-[#e8eaee] flex flex-col gap-4">
             <div>
+              <label className={labelClass}>Format</label>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setMode("full")}
+                  className={"text-xs px-3 py-2 rounded-lg border " + (mode === "full" ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#dbdfe4]")}>
+                  Write the full release
+                </button>
+                <button type="button" onClick={() => setMode("link")}
+                  className={"text-xs px-3 py-2 rounded-lg border " + (mode === "link" ? "bg-[#2d6a4f] text-white border-[#2d6a4f]" : "bg-white text-[#4a5568] border-[#dbdfe4]")}>
+                  Link to your site
+                </button>
+              </div>
+              <p className="text-[11px] text-[#a0aec0] mt-1.5">
+                {mode === "full"
+                  ? (boardAccess ? "Host the full release on EP — it shows on your page and the public EP newsroom." : "Host the full release on your EP page (reaching the public newsroom is a Growth feature).")
+                  : "Post a short update that links back to the release on your own site."}
+              </p>
+            </div>
+
+            <div>
               <label className={labelClass}>Type</label>
               <select value={cat} onChange={(e) => { const id = e.target.value; setCat(id); setMeta({}); setCtaLabel(CTA[id]?.label || "Learn more"); }} className={inputClass}>
                 {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
@@ -173,8 +194,10 @@ export default function CompanyAnnouncements() {
             )}
 
             <div>
-              <label className={labelClass}>Details (optional)</label>
-              <textarea rows={3} value={bodyText} onChange={(e) => setBodyText(e.target.value)} placeholder="A sentence or two of context." className={inputClass + " resize-none"} />
+              <label className={labelClass}>{mode === "full" ? "Full release" : "Details (optional)"}</label>
+              <textarea rows={mode === "full" ? 12 : 3} value={bodyText} onChange={(e) => setBodyText(e.target.value)}
+                placeholder={mode === "full" ? "Paste your full press release — dateline, body, boilerplate, and media contact. It'll be hosted on your EP page." : "A sentence or two of context."}
+                className={inputClass + (mode === "full" ? "" : " resize-none")} />
             </div>
             <div>
               <label className={labelClass}>Call-to-action button</label>
@@ -197,7 +220,7 @@ export default function CompanyAnnouncements() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button onClick={submit} disabled={submitting || !title.trim()} className="bg-[#2d6a4f] text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
+              <button onClick={submit} disabled={submitting || !title.trim() || (mode === "full" && !bodyText.trim())} className="bg-[#2d6a4f] text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-[#235a40] disabled:opacity-50">
                 {submitting ? "Publishing…" : "Publish"}
               </button>
               <button onClick={reset} className="text-sm text-[#718096] hover:text-[#0f1a14]">Cancel</button>

@@ -39,6 +39,11 @@ export default function CompanyNewsroom({ companyId }) {
                 {ctaLabelFor(a.category, a.meta)} →
               </a>
             )}
+            {(a.meta?.release_mode === "full" || (!a.link_url && (a.body || "").length > 200)) && (
+              <a href={`/announcements/${a.id}`} className="inline-block mt-1.5 text-[11px] font-semibold bg-[#2d6a4f] text-white px-2.5 py-1 rounded-md hover:bg-[#235a40]">
+                View the whole release →
+              </a>
+            )}
           </div>
         ))}
       </div>
